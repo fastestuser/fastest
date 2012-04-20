@@ -1,0 +1,36 @@
+This is pdfTeXk, Version 3.141592-1.40.3 (Web2C 7.5.6) (format=pdflatex 2008.4.11)  6 NOV 2008 11:58
+entering extended mode
+ %&-line parsing enabled.
+**dirtree.tex
+(./dirtree.tex
+LaTeX2e <2005/12/01>
+Babel <v3.8h> and hyphenation patterns for english, usenglishmax, dumylang, noh
+yphenation, loaded.
+`dirtree' v0.2, 2006/01/25 (jcc)
+\DT@offset=\dimen102
+\DT@width=\dimen103
+\DT@sep=\dimen104
+\DT@all=\dimen105
+\DT@rulewidth=\dimen106
+\DT@dotwidth=\dimen107
+\DTbaselineskip=\dimen108
+\DT@counti=\count79
+\DT@countii=\count80
+\DT@countiii=\count81
+\DT@countiv=\count82
+)
+! Emergency stop.
+<*> dirtree.tex
+               
+*** (job aborted, no legal \end found)
+
+ 
+Here is how much of TeX's memory you used:
+ 38 strings out of 95086
+ 424 string characters out of 1183255
+ 45034 words of memory out of 1500000
+ 3310 multiletter control sequences out of 10000+50000
+ 3640 words of font info for 14 fonts, out of 1200000 for 2000
+ 28 hyphenation exceptions out of 8191
+ 5i,0n,8p,89b,8s stack positions out of 5000i,500n,6000p,200000b,5000s
+!  ==> Fatal error occurred, no output PDF file produced!

@@ -1,0 +1,3424 @@
+\documentclass[12pt,a4paper,fleqn]{report}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[cm]{fullpage}
+\usepackage{longtable}
+\usepackage{dirtree}
+\usepackage{multicol}
+\usepackage[pdftex,colorlinks,linkcolor=blue]{hyperref}
+
+\newcounter{rfc} %contador para requerimientos funcionales
+\newcommand{\rfi}[1]{\item\hypertarget{rf:#1}{{\bf #1 --}}}
+\newenvironment{rfe}{\begin{list}{{\bf RF\arabic{rfc} --}}{\usecounter{rfc}}}{\end{list}}
+\newcommand{\rfr}[1]{\hyperlink{rf:#1}{{\bf #1}}}
+
+\newcounter{icc} %contador para requerimientos funcionales
+\newcommand{\ici}[1]{\item\hypertarget{ic:#1}{{\bf #1 --}}}
+\newenvironment{ice}{\begin{list}{{\bf IC\arabic{icc} --}}{\usecounter{icc}}}{\end{list}}
+\newcommand{\icr}[1]{\hyperlink{ic:#1}{{\bf #1}}}
+
+\newcommand{\modulo}{{\bf Module }}
+
+\newenvironment{module}[1]{\hypertarget{mi:#1}{} \vspace{0.5cm}\noindent\begin{tabular}{|p{0.2\textwidth} p{0.75\textwidth}|} \hline{\bf Module} & {\bf #1} \\}{\hline\end{tabular}\vspace{0.5cm}}
+
+\newenvironment{gmodule}[2]{\hypertarget{mi:#1}{} \vspace{0.5cm}\noindent\begin{tabular}{|p{0.2\textwidth} p{0.75\textwidth}|} \hline{\bf Generic Module} & {\bf #1}(#2) \\}{\hline\end{tabular}\vspace{0.5cm}}
+
+\newenvironment{hmodule}[2]{\hypertarget{mi:#1}{} \vspace{0.5cm}\noindent\begin{tabular}{|p{0.2\textwidth} p{0.75\textwidth}|} \hline{\bf Module} & {\bf #1 inherits from} \hyperlink{mi:#2}{#2} \\}{\hline\end{tabular}\vspace{0.5cm}}
+
+\newcommand{\cmodule}[3]{\hypertarget{mi:#1}{} \vspace{0.5cm}\noindent\begin{tabular}{|p{0.2\linewidth} p{0.75\linewidth}|} \hline {\bf Module} & {\bf #1 is} \hyperlink{mi:#2}{#2}(\hyperlink{mi:#3}{#3})\\ \hline\end{tabular}\vspace{0.5cm}}
+
+
+\newcommand{\eproc}{{\bf exportsproc}}
+
+\newcommand{\annev}{{\bf announceevents}}
+
+\newcommand{\callonev}{{\bf callonevents}}
+
+\newcommand{\priv}{{\bf private}}
+
+\newcommand{\proc}[1]{& #1 \\}
+
+\newcommand{\e}[1]{{\bf i} \hyperlink{mi:#1}{#1}}
+
+\newcommand{\eb}[1]{{\bf i} #1}
+
+\newcommand{\s}[1]{{\bf o} \hyperlink{mi:#1}{#1}}
+
+\newcommand{\es}[1]{{\bf io} \hyperlink{mi:#1}{#1}}
+
+\newcommand{\compr}{{\bf comprises}}
+
+\newcommand{\subm}[1]{& \hyperlink{mi:#1}{#1} \\}
+
+\newcommand{\imp}[1]{{\bf imports} & #1 \\}
+
+\newcommand{\comm}[1]{{\bf comments} & #1 \\}
+
+\newcommand{\mdr}[1]{\hyperlink{mi:#1}{#1}}
+
+\newcommand{\extraline}[1]{& #1 \\}
+
+\newenvironment{pattern}[1]{\vspace{0.5cm}\noindent\begin{tabular}{|p{0.2\textwidth} p{0.70\textwidth}|} \hline{\bf Pattern} & {\bf #1} \\}{\hline\end{tabular}\vspace{0.5cm}}
+\newcommand{\based}[1]{{\bf based on} & #1 \\}
+\newcommand{\bec}[1]{{\bf because} & #1 \\}
+\newcommand{\pwhere}{{\bf where}}
+\newcommand{\is}{{\bf is} }
+
+
+\title{Especificación de Interfaces de los Módulos de Fastest}
+\author{Pablo Rodriguez Monetti}
+\date{Rosario, 2009}
+
+\begin{document}
+ \maketitle
+
+
+\begin{gmodule}{AbstractIterator}{X}
+\eproc
+\proc{first()}
+\proc{next()}
+\proc{hasNext(): Bool}
+\proc{remove()}
+\proc{currentElement(): X}
+\comm{first() inicializa el elemento actual al primer elemento. next() avanza el elemento actual al siguiente elemento. hasNext() comprueba si hay más elementos. remove() elimina el elemento actual. currentElement() devuelve el elemento actual.}
+\end{gmodule}
+
+
+\begin{module}{AbstractionFunc}
+ 
+\end{module}
+
+
+\begin{hmodule}{AbstractionFuncLoaded}{Event}
+\imp{AbstractionFunc}
+\eproc
+\proc{setAbstractionFunc(\e {AbstractionFunc})}
+\proc{getAbstractionFunc(): \mdr{AbstractionFunc}}
+\end{hmodule}
+
+
+
+\begin{hmodule}{Abstractor}{IIComponent}
+\imp{AbstractionFunc, AbstractionFuncLoaded, AbstractTCase, ClientUI,}
+\extraline{ConcreteOutput,EventAdmin, OpName, OutputAbstracted,}
+\extraline{TCaseExecuted}
+\eproc
+\proc{manageEvent(\e {Event})}
+\annev
+\proc{makeResultAbstract(): \mdr{OutputAbstracted}}
+\callonev
+\proc{tCaseExecuted::manageEvent(tCaseExecuted)}
+\proc{abstractionFuncLoaded::manageEvent(abstractionFuncLoaded)}
+\priv
+\proc{makeResultAbstract()}
+\proc{abstractTCase: \mdr{AbstractTCase}}
+\proc{abstractionFunc: \mdr{AbstractionFunc}}
+\proc{opName: \mdr{OpName}}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de AbstractionFuncLoaded ni de TCaseExecuted. La subrutina abstractResult() es llamada desde manageEvent(), luego de que se establezca el valor de alguna/s de las variables instancia del módulo en base a alguno/s de los parámetros del evento que se le pasa como argumento. abstractResult() comprueba que todas estas variables estén seteadas, y de ser así, realiza la abstracción de la salida concreta correspondiente, anunciando a continuación el evento outputAbstracted. La implementación del anuncio del evento se realiza a través de una llamada a la subrutina announceEvent() de la instancia única de EventAdmin, pasando la apropiada instancia de OutputAbstracted como argumento. Si no están seteadas todas estas variables, abstractResult() regresa sin anunciar ningún evento.}
+\end{hmodule}	
+
+
+
+\begin{module}{AbstractOrder}
+\eproc
+\proc{run()}
+\end{module}
+
+
+
+\begin{hmodule}{AbstractOutput}{OutputClass}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAbstractOutput(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): SchName}
+\proc{Todos los de AxPara}
+\comm{Es un interfaz que hereda de la interfaz OutputClass.}
+\end{hmodule}
+
+
+\begin{hmodule}{AbstractOutputImpl}{AbstractOutput}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAbstractOutput(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isAbstractOutput() determina si su argumento es un AbstractOutput. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{gmodule}{AbstractRepository}{X}
+\imp{AbstractIterator}
+\eproc
+\proc{addElement(\eb {X})}
+\proc{createIterator(): \mdr{AbstractIterator}(X)}
+\end{gmodule}
+
+
+
+\begin{hmodule}{AddTacticCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, CZT, }
+\extraline{OpScheme, OpSchemeImpl, SpecUtils, Tactic}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{AbstractTCase}{TClass}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAbstractTCase(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\comm{Es una interfax que hereda de la interfaz TClass.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{AbstractTCaseImpl}{AbstractTCase}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAbstractTCase(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isAbstractTCase() determina si su argumento es un AbstractTCase. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{AllTCasesGenerated}{Event}
+\imp{OpName}
+\end{hmodule}
+
+
+\begin{hmodule}{AllTCasesRequested}{Event}
+\imp{TTreeNode, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setTTree(\e {TClassNode})}
+\proc{getTTree(): \mdr{TClassNode}}
+\end{hmodule}
+
+
+\begin{hmodule}{AllTTreesGenerated}{Event}
+\imp{OpName}
+\end{hmodule}
+
+
+
+\begin{module}{AndOrPredDistributor}
+\imp{AndPred, NegPred, Pred, Pred2}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): Pred}
+\proc{visitNegPred(\eb {NegPred}): Pred}
+\proc{visitPred2(\eb {Pred2}): Pred}	
+\proc{visitPred(\eb {Pred}): Pred}	
+\comm{Pred, AndPred, NegPred y Pred2 son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{AndOrPredDistributorVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is AndOrPredDistributor}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is NegPred}
+\proc{ElementoConcreto3 \is Pred}
+\proc{ElementoConcreto4 \is Pred2}
+\comm{Pred, AndPred, NegPred, Pred2, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{AndPredClausesExtractor}
+\imp{AndPred, AbstractIterator, ConcreteRepository, OrPred, Pred}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): Pred}	
+\proc{visitPred(\eb {Pred}): Pred}	
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{AndPredClausesExtractorVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is AndPredClausesExtractor}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{Pred, AndPred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{AndPredClausesRemover}
+\imp{AndPred, OrPred, Pred, VarNameRepository}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): Pred}
+\proc{visitPred(\eb {Pred}): Pred}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{pattern}{AndPredClausesRemoverVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is AndPredClausesRemover}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{Pred, AndPred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{AndPredSimplifier}
+\imp{AbstractIterator, AbstractRepository, AndPred,}
+\extraline{AndPredClausesExtractor, AndPredClausesRemover,}
+\extraline{AndPredVisitor, OrPred, Pred, PredInOrVerifier,}
+\extraline{PredVisitor, SpecUtils}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): Pred}	
+\proc{visitPred(\eb {Pred}): Pred}	
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{AndPredSimplifierVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is AndPredSimplifier}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{AndPred, Pred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{ApplyCommand}{Command}
+\imp{AxPara, ClientTextUI, Controller, PruneAnalizer, PruneUtils,}
+\extraline{TClass, TreePruner, TypecheckingUtils}
+\eproc
+\proc{run(\e{ClientTextUI}, \eb{String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{AxDef}{AxPara}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAxDef(\eb {AxPara}): Bool}
+\proc{getMyAxPara(): AxPara}
+\proc{setMyAxPara(\eb AxPara)}
+\proc{Todos los de AxPara}
+\comm{Es una interfaz que hereda de la interfaz AxPara.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{AxDefImpl}{AxDef}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isAxDef(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{myAxPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isAxDef() determina si su argumento es un AxDef. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{cmodule}{AxParaRepository}{AbstractRepository}{AxPara}
+\end{cmodule}
+
+
+
+\begin{hmodule}{CEPTactic}{Tactic}
+\imp{CEPTacticInfo, OpScheme, TClass}
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{setTacticInfo(\e {CEPTacticInfo})}
+\proc{getTacticInfo(): \mdr{CEPTacticInfo}}
+\priv
+\proc{originalOp: \mdr{OpScheme}}
+\proc{tacticInfo: \mdr{CEPTacticInfo}}
+\comm{La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{CEPTacticInfo}{TacticInfo}
+\imp{OutputClassRepository}
+\eproc
+\proc{setOutputClassRepository(\e {OutputClassRepository})}
+\proc{getOutputClassRepository(): \mdr{OutputClassRepository}}
+\priv
+\proc{outputClassRepository: \mdr{OutputClassRepository}}
+\comm{La instancia outputClassRepository debe ser una partición del espacio de salida de la operación para la que quiere generarse un árbol de pruebas. El constructor de instancias de este módulo debe invocar a la subrutina setTacticName() pasando como argumento el nombre de la táctica asociada, que en este caso es Cause Effect Propagation.}
+\end{hmodule}
+
+
+
+\begin{module}{Client}
+\compr
+\subm{ClientBusinessLogic}
+\subm{ClientPresentation}
+\subm{Util}
+\end{module}
+
+
+
+\begin{module}{ClientBusinessLogic}
+\compr
+\subm{ClientManagement}
+\subm{Testing}
+\end{module}
+
+
+
+\begin{hmodule}{ClientGUI}{ClientUI}
+\imp{EventAdmin}
+\eproc
+\proc{run()}
+\end{hmodule}
+
+
+
+\begin{module}{ClientManagement}
+\compr
+\subm{Communication}
+\subm{ImplicitInvocation}
+\subm{Controller}
+\end{module}
+
+
+
+\begin{module}{ClientPresentation}
+\compr
+\subm{Commands}
+\subm{ClientGUI}
+\subm{ClientTextUI}
+\subm{ClientUI}
+\subm{TCaseStrategyParsers}
+\end{module}
+
+
+
+\begin{module}{ClientPrunning}
+\compr
+\subm{PrePruner}
+\subm{TClassPruneClient}
+\subm{TClassPruneClientRunner}
+\subm{TPrunning}
+\end{module}
+
+
+
+\begin{module}{ClientTCaseChecking}
+\compr
+\subm{TCaseCheckerClient}
+\subm{TCaseCheckerClientRunner}
+\end{module}
+
+
+
+\begin{module}{ClientTCaseGeneration}
+\compr
+\subm{TCaseGenClient}
+\subm{TCaseGenClientRunner}
+\subm{TClassExtractor}
+\end{module}
+
+
+
+\begin{hmodule}{ClientTextUI}{ClientUI}
+\imp{BufferedReader, Command, CServersConfigLoader, EventAdmin,}
+\extraline{PrintWriter}
+\eproc
+\proc{main()}
+\proc{processCommand(\eb {String}, \eb {String})}
+\proc{readAction()}
+\proc{getVersion(): String}
+\proc{getBanner(): String}
+\comm{La subrutina processCommand() crea y ejecuta (llamando a su subrutina run()) la instancia de Command correspondiente al comando indicado por el String que se recibe como primer argumento junto con los parámetros indicados por el String que se recibe como segundo argumento. Se supone que tales instancias de String son creadas en función del comando tipeado por el usuario en el intérprete de comandos de la interfaz de usuario en modo texto.}
+\extraline{La subrutina readAction() imprime el prompt del intérprete de comandos y espera por un nuevo comando del usuario.}
+\extraline{Las subrutinas getVersion() y getBanner() devuelven, respectivamente, un String con la versión actual de Fastest y un String con el banner que se muestra al inicio de la ejecución del sistema usando la interfaz en modo texto.}
+\end{hmodule}
+
+
+
+\begin{module}{ClientUI}
+\imp{EventAdmin, Controller}
+\eproc
+\proc{setMyController(\e {Controller})}
+\proc{getMyController(): \mdr{Controller}}
+\end{module}
+
+
+
+\begin{module}{Command}
+\imp{ClientTextUI}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{module}
+
+
+
+\begin{module}{Commands}
+\compr
+\subm{AddTacticCommand}
+\subm{ApplyCommand}
+\subm{Command}
+\subm{EvalCommand}
+\subm{GenAllTCasesCommand}
+\subm{GenAllTTCommand}
+\subm{LoadElimTheoremsCommand}
+\subm{LoadSpecCommand}
+\subm{PruneBelowCommand}
+\subm{PruneFromCommand}
+\subm{PruneTreeCommand}
+\subm{ResetCommand}
+\subm{SelOpCommand}
+\subm{SetAxDefCommand}
+\subm{SearchTheoremsCommand}
+\subm{SetFiniteModelsCommand}
+\subm{ShowAxDefsCommand}
+\subm{ShowAxDefValuesCommand}
+\subm{ShowHelpCommand}
+\subm{ShowLoadedOpsCommand}
+\subm{ShowTacticsCommand}
+\subm{ShowSchCommand}
+\subm{ShowSelOpsCommand}
+\subm{ShowSpecCommand}
+\subm{ShowTTCommand}
+\subm{ShowVersionCommand}
+\subm{UnPruneCommand}
+\subm{UnSelAllOpsCommand}
+\subm{UnSelOpCommand}
+\end{module}
+
+
+
+\begin{module}{Common}
+\compr
+\subm{OpName}
+\subm{RepositoryModules}
+\subm{ZAbstraction}
+\end{module}
+
+
+
+\begin{module}{Communication}
+\compr
+\subm{CServersControl}
+\subm{CServersConfigLoader}
+\subm{DServerConfig}
+\subm{ServerConfig}
+\subm{ServerConfigRepository}
+\subm{ServerName}
+\subm{ServiceMediator}
+\end{module}
+
+
+
+\begin{hmodule}{CompleteTCaseStrategy}{TCaseStrategy}
+\imp{AbstractTCase, AxPara, Decl, Expr, EvaluationResp, NameList, }
+\extraline{NormalTypeAndFM, RefExpr, SchemeEvaluator, Spec, SpecUtils,}
+\extraline{SetExpr, TClass, TypeFMsGenVisitor, VarDecl, VarDeclList,}
+\extraline{VarValueMap, ZDeclList, ZExprList, ZFactory}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}): \mdr{AbstractTCase}}
+\proc{setFMSize(\eb {Int})}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+\begin{hmodule}{CompleteTCaseStrategyParser}{TCaseStrategyParser}
+\imp{TCaseStrategy}
+\eproc
+\proc{parse(\eb{String}, \e{TCaseStrategy}): Bool} 
+\end{hmodule}
+
+
+
+\begin{module}{CompServer}
+\compr
+\subm{ServerTCaseChecking}
+\subm{ServerTCaseGeneration}
+\subm{ServerManagement}
+\end{module}
+
+
+
+\begin{hmodule}{ConcreteIterator}{AbstractIterator}
+\eproc
+\proc{first()}
+\proc{next()}
+\proc{hasNext(): Bool}
+\proc{remove()}
+\proc{currentElement(): X}
+\comm{first() inicializa el elemento actual al primer elemento. next() avanza el elemento actual al siguiente elemento. hasNext() comprueba si hay más elementos. remove() elimina el elemento actual. currentElement() devuelve el elemento actual.}
+\end{hmodule}
+
+
+
+\begin{module}{ContainsTermVerifier}
+\imp{SpecUtils, Term, TermVisitor}
+\eproc
+\proc{visitTerm(\eb{Term}): Bool}
+\end{module}
+
+
+
+\begin{pattern}{ContainsTermVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is ContainsTerm}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is Term}
+\comm{Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{Controller}{IIComponent}
+\imp{AbstractIterator, AbstractRepository, AbstractTCase, AllTCasesGenerated,}
+\extraline{AllTCasesRequested, AllTTreesGenerated, AxPara, ClientUI,}
+\extraline{ClientTextUI, ConcreteRepository, ContainsTermVerifier, Event,}
+\extraline{Expr, Event\_, EventAdmin, FastestResetted, IIComponent, }
+\extraline{NotTClassLeavesFounded, OpName, OpNameRepository, Pred,}
+\extraline{PruneTClassRequested, PruneTTreeRequested, PruneUtils,}
+\extraline{PrunningResult, RefExpr, SectionManager, Spec, Scheme,}
+\extraline{SchemeTTreeFinder, SpecUtils, Tactic, TCaseGenerated,}
+\extraline{TCaseNodeAdder, TCaseRequested, TClass, TClassNode, TreePruner,}
+\extraline{TTreeGenerated, TTreeStrategy, ZDeclList}
+\eproc
+\proc{manageEvent(\e {Event})}
+\proc{setMyClientUI(\e {ClientUI})}
+\proc{setOriginalSpec(\eb {Spec})}
+\proc{getOriginalSpec(): Spec}
+\proc{setUnfoldedSpec(\eb {Spec})}
+\proc{getUnfoldedSpec(): Spec}
+\proc{setOpsToTestRep(\e {OpNameRepository})}
+\proc{getOpsToTestRep(): \mdr{OpNameRepository}}
+\proc{setLoadedOpRep(\e {OpNameRepository})}
+\proc{getLoadedOpRep(): \mdr{OpNameRepository}}
+\proc{setOpTTreeStrategyMap(\eb {List(record\{\mdr{OpName}, \mdr{TTreeStrategy}\})})}
+\proc{getOpTTreeStrategyMap(): List(record\{\mdr{OpName}, \mdr{TTreeStrategy}\})}
+\proc{setOpTacticMap(\eb {List(record\{\mdr{OpName}, \mdr{TacticRepository}\})})}
+\proc{getOpTacticMap(): List(record\{\mdr{OpName}, \mdr{TacticRepository}\})}
+\proc{setOpTTreeMap(\eb {List(record\{\mdr{OpName}, \mdr{TClassNode}\})})}
+\proc{getOpTTreeMap(): List(record\{\mdr{OpName}, \mdr{TClassNode}\})}
+\proc{setTypeCheckerManager(\eb{SectionManager})}
+\proc{getTypeCheckerManager(): SectionManager}
+\proc{setMaxEval(\eb{Int})}
+\proc{getMaxEval(): Int}
+\proc{setAxDefsRequired(\eb{List(record\{\mdr{VarName}, Expr\})})}
+\proc{getAxDefsRequired(): List(record\{\mdr{VarName}, Expr\})}
+\proc{setAxDefsValues(\eb{List(record\{RefExpr, Expr\})})}
+\proc{getAxDefsValues(): List(record\{RefExpr, Expr\}) }
+\proc{setBasicAxDefs(\eb{List(record\{String, List(String)\})})}
+\proc{getBasicAxDefs(): List(record\{String, List(String)\}) }
+\proc{setAxDefsRequiredPreds(\eb{List(record\{\mdr{VarName}, List(Pred)\}) })}
+\proc{getAxDefsRequiredPreds(): List(record\{\mdr{VarName}, List(Pred)\}) }
+\proc{setAxDefsPredVars(\eb{List(record\{Pred, List(\mdr{VarName})\})})}
+\proc{getAxDefsPredVars(): List(record\{Pred, List(\mdr{VarName})\})}
+\proc{setAuxiliarDecls(\eb{List(record\{\mdr{VarName}, ZDeclList\})})}
+\proc{getAuxiliarDecls(): List(record\{\mdr{VarName}, ZDeclList\})}
+\proc{setBlockedAxDefs(\eb{List(\mdr{VarName})})}
+\proc{getBlockedAxDefs(): List(\mdr{VarName})}
+\comm{La subrutina manageEvent() deberá lanzar una excepción si la instancia de Event que recibe como argumento no es una instancia de los eventos de interés para este módulo.}
+\end{hmodule}
+
+
+\begin{hmodule}{CServersControl}{ServerConfigRepository}
+\imp{AbstractRepository, AbstractIterator, ServerConfig, ServerConfigRepository}
+\eproc
+\proc{getInstance(): \mdr{CServersControl}}
+\proc{getRandomServerConfig(): \mdr{ServerConfig}}
+\priv
+\proc{compServersControl: \mdr{CServersControl}}
+\comm{getInstance() debe ser una subrutina estática, es decir, que no pueda ser invocada para un objeto particular de la clase que el módulo implemente, sino solo invocada a nivel
+ de tal clase. Esta subrutina tiene que devolver el objeto compServersControl, antes realizando su creación de ser necesario. El constructor del módulo no puede ser una subrutina pública. getRandomServerConfig() devuelve una instancia de ServerConfig, aleatoria, del repositorio compServersControl.}
+\end{hmodule}
+
+
+\begin{pattern}{CServersControlSinglPatt}
+\based{Singleton}
+\bec{Debe haber exactamente una instancia de este módulo y debe ser accesible a los clientes desde un punto de acceso conocido.}
+\pwhere
+\proc{Singleton is CServersControl}
+\end{pattern}
+
+
+
+\begin{module}{CServersConfigLoader}
+\imp{CompServersControl, DServerConfig, ServerConfig, ServerName}
+\eproc
+\proc{loadCompServersConfig()}
+\comm{loadCompServersConfig() carga información de los servidores de cómputo en la única instancia del CServersControl, desde el servidor de datos o desde un archivo de configuración (por el momento es de la segunda manera).}
+\end{module}
+
+
+
+\begin{module}{CZT}
+\compr
+\subm{CZTVisitors}
+\subm{UniqueZLive}
+\end{module}
+
+
+
+\begin{module}{CZTCloner}
+\imp{Term}
+\eproc
+\proc{Term visitTerm(\eb {Term})}
+\comm{Term es un módulo que hereda de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{CZTClonerVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is CZTCloner}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is Term}
+\comm{Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{CZTReplacer}
+\imp{VarNameRepository, Pred}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): AndPred}
+\proc{visitPred(\eb {Pred}): Pred}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{pattern}{CZTReplacerVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is CZTReplacer}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{Pred, AndPred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+\begin{module}{CZTVisitors}
+\compr
+\subm{AndOrPredDistributor}
+\subm{AndPredClausesExtractor}
+\subm{AndPredClausesRemover}
+\subm{AndPredSimplifier}
+\subm{CZTCloner}
+\subm{CZTReplacer}
+\subm{ImpliesPredRemover}
+\subm{NegPredDistributor}
+\subm{OrPredRemover}
+\subm{PredInOrVerifier}
+\subm{PredRemover}
+\subm{PrimeVarsMaker}
+\subm{StringToNumReplacer}
+\subm{WordsFinder}
+\end{module}
+
+
+
+\begin{hmodule}{DNFTactic}{Tactic}
+\imp{DNFTacticInfo, OpScheme, TClass }
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{setTacticInfo(\e {DNFTacticInfo})}
+\proc{getTacticInfo(): \mdr{DNFTacticInfo}}
+\priv
+\proc{originalOp: \mdr{OpScheme}}
+\proc{tacticInfo: \mdr{DNFTacticInfo}}
+\comm{La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{DNFTacticInfo}{TacticInfo}
+\comm{El constructor de instancias de este módulo debe invocar a la subrutina setTacticName() pasando como argumento el nombre de la táctica asociada, que en este caso es Disjunctive Normal Form.}
+\end{hmodule}
+
+
+
+\begin{module}{DServerConfig}
+\imp{File, ServerConfig}
+\eproc
+\proc{getInstance(): \mdr{DServerConfig}}
+\proc{readConfigFile()}
+\proc{setConfigFile(\eb {File})}
+\proc{getConfigFile(): File}
+\proc{setServerConfig(\e {ServerConfig})}
+\proc{getServerConfig(): \mdr{ServerConfig}}
+\priv
+\proc{dataServerConfig: \mdr{DServerConfig}}
+\proc{serverConfig: \mdr{ServerConfig}}
+\comm{getInstance() debe ser una subrutina estática, es decir, que no pueda ser invocada para un objeto particular de la clase que el módulo implemente, sino solo invocada a nivel de tal clase. Esta subrutina tiene que devolver el objeto dataServerConfig, antes realizando su creación de ser necesario. El constructor no puede ser una subrutina pública.}
+\end{module}
+
+
+
+\begin{pattern}{DServerConfigSinglPatt}
+\based{Singleton}
+\bec{Debe haber exactamente una instancia de este módulo y debe ser accesible a los clientes desde un punto de acceso conocido.}
+\pwhere
+\proc{Singleton is DServerConfig}
+\end{pattern}
+
+
+
+\begin{module}{DesignPatterns}
+\compr
+\subm{AndOrPredDistributorVisPatt}
+\subm{AndPredClausesExtractorVisPatt}
+\subm{AndPredClausesRemoverVisPatt}
+\subm{AndPredRemoverVisPatt}
+\subm{AndPredSimplifierVisPatt}
+\subm{ContainsTermVerifierVisPatt}
+\subm{CServersControlSinglPatt}
+\subm{CZTClonerVisPatt}
+\subm{CZTReplacerVisPatt}
+\subm{DServerConfigSinglPatt}
+\subm{EventAdminCommandPatt}
+\subm{EventAdminSinglPatt}
+\subm{FiniteModelCreatorVisPatt}
+\subm{ImpliesPredRemoverVisPatt}
+\subm{IteratorPatt}
+\subm{NegPredDistributorVisPatt}
+\subm{OrPredRemoverVisPatt}
+\subm{ParamExtractorVisPatt}
+\subm{PredInOrVerifierVisPatt}
+\subm{PredRemoverVisPatt}
+\subm{PrimeVarsMakerVisPatt}
+\subm{StringToNumReplacerVisPatt}
+\subm{TacticManagerSinglPatt}
+\subm{TCaseStrategyPatt}
+\subm{TTreeCompositePatt}
+\subm{TTreeStrategyPatt}
+\subm{TTreeVisPatt}
+\subm{TypeFMsGenVisPatt}
+\subm{WordsFinderVisPatt}
+\end{module}
+
+
+\begin{hmodule}{EvalCommand}{Command}
+\imp{ClientTextUI, Expr, Pred, SpecUtils, UniqueZLive}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{module}{Evaluation}
+\compr
+\subm{EvaluationResp}
+\subm{NormalTypeAndFM}
+\subm{SchemeEvaluator}
+\subm{VarValueMap}
+\end{module}
+
+
+
+\begin{module}{EvaluationResp}
+\eproc
+\proc{setLog(\eb {String})} 
+\proc{getLog(): String}
+\proc{setResult(\eb {Bool})}
+\proc{getResult(): Bool}
+\end{module}
+
+
+
+\begin{module}{Event}
+\imp{EventName}
+\eproc
+\proc{setEventName(\e {Event}Name)}
+\proc{getEventName(): \mdr{EventName}}
+\end{module}
+
+
+
+\begin{module}{EventAdmin}
+\imp{AbstractRepository, AbstractIterator, File, ClientUI, Event,}
+\extraline{IIComponent, IIOrder, EventName, Subscriptor}
+\eproc
+\proc{getInstance(\eb {File}, \e {ClientUI}): \mdr{EventAdmin}}
+\proc{getInstance(): \mdr{EventAdmin}}
+\proc{announceEvent(\e {Event})}
+\proc{readFile()}
+\proc{setFile(\eb {File})}
+\proc{getFile(\eb {File})}
+\priv
+\proc{file: File}
+\proc{myClientUI: \mdr{ClientUI}}
+\proc{eventAdmin: \mdr{EventAdmin}}
+\proc{eventTable: \mdr{EventTable}}
+\comm{Las subrutinas getInstance() y getInstance(\eb {File}, \e {ClientUI}) y la variable de instancia eventAdmin son estáticas, es decir, tiene sentido hablar de ellas a nivel de módulo pero no a nivel de una instancia del módulo. Todas las demás subrutinas y variables no deben ser estáticas. La subrutina getInstance(\eb {File}, \e {ClientUI}) debe llamarse una sola vez y antes que cualquier otra subrutina del módulo, caso contrario se lanzará una excepción. Esto se debe a la necesidad de construir la instancia eventAdmin en una única ocasión. El constructor del módulo no puede ser una subrutina pública pues se desea que solo pueda ser invocado por getInstance(\eb {File}, \e {ClientUI}).}
+\extraline{La subrutina readFile() carga desde el archivo indicado por la instancia file la tabla de eventos indicada por la instancia eventTable. En esta tabla se listan las ternas (evento, componente interesado en el evento, subrutina del componente a ser llamada al lanzarse el evento). Además de completar la tabla de eventos, la subrutina readFile() tiene la responsabilidad de crear cada uno de los componentes indicados en la tabla, y luego establecer en cada uno de ellos la referencia a clientUI.}
+\extraline{La subrutina announceEvent() debe invocar a cada método interesado en el evento que se pasa como argumento, es decir, a cada método indicado indicado por los subscriptores listados en la instancia eventTable. Cada invocación debe hacerse en un thread diferente por cuestiones de performance.}
+\end{module}
+
+
+
+\begin{pattern}{EventAdminCommandPatt}
+\based{Command}
+\bec{Queremos tener módulos relacionados que sólo difieran en su comportamiento. Las estrategias permiten configurar un módulo con un determinado comportamiento de entre muchos posibles.}
+\pwhere
+\proc{Orden is AbstractOrder}
+\proc{OrdenConcreta is IIOrder}
+\proc{Invocador is EventAdmin}
+\proc{Receptor is Component}
+\proc{Client is EventAdmin}
+\end{pattern}
+
+
+
+\begin{pattern}{EventAdminSinglPatt}
+\based{Singleton}
+\bec{Debe haber exactamente una instancia de este módulo y debe ser accesible a los clientes desde un punto de acceso conocido.}
+\pwhere
+\proc{Singleton is EventAdmin}
+\end{pattern}
+
+
+
+\begin{module}{Events}
+\compr
+\subm{AbstractionFuncLoaded}
+\subm{AllTCasesGenerated}
+\subm{AllTCasesRequested}
+\subm{AllTTreesGenerated}
+\subm{Event}
+\subm{NotTClassLeavesFounded}
+\subm{OutputAbstracted}
+\subm{RefFunctionLoaded}
+\subm{SpecLoaded}
+\subm{TCaseChecked}
+\subm{TCaseExecuted}
+\subm{TCaseGenerated}
+\subm{TCaseRefined}
+\subm{TCaseRequested}
+\subm{TCaseStrategySelected}
+\subm{TTreeGenerated}
+\subm{TTreeRequested}
+\end{module}
+
+
+
+\begin{cmodule}{EventTable}{AbstractRepository}{Subscriptor}
+\end{cmodule}
+
+
+
+\begin{module}{EventName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{hmodule}{Executor}{IIComponent} 
+\end{hmodule}
+
+
+
+\begin{module}{Fastest}
+\compr
+\subm{Client}
+\subm{Common}
+\subm{CompServer}
+\subm{DServer}
+\end{module}
+
+
+
+\begin{module}{FiniteModel}
+\imp{Expr}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\comm{Este módulo no se implementa, solo brinda una interfaz a los módulos que heredan de él.}
+\end{module}
+
+
+
+\begin{module}{FiniteModelCreator}
+\imp{AxPara, ApplExpr, Freetype, FiniteModel, GivenPara, ProdExpr,}
+\extraline{PowerExpr, RefExpr, TypeFMsGenMap}
+\eproc
+\proc{getExprMap(): \mdr{TypeFMsGenMap}}
+\proc{visitAxPara(\eb {AxPara}): \mdr{FiniteModel}}
+\proc{visitApplExpr(\eb {ApplExpr}): \mdr{FiniteModel}}
+\proc{visitFreetype(\eb {Freetype}): \mdr{FiniteModel}}
+\proc{visitGivenPara(\eb {GivenPara}): \mdr{FiniteModel}}
+\proc{visitPowerExpr(\eb {PowerExpr}): \mdr{FiniteModel}}
+\proc{visitProdExpr(\eb {ProdExpr}): \mdr{FiniteModel}}
+\proc{visitRefExpr(\eb {RefExpr}): \mdr{FiniteModel}}
+\proc{visitSetExpr(\eb {SetExpr}): \mdr{FiniteModel}}
+\proc{visitExpr(\eb {Expr}): \mdr{FiniteModel}}
+\proc{getExprMap(): }
+\priv
+\proc{size: Int}
+\proc{typeFMsGenMap: \mdr{TypeFMsGenMap}}
+\comm{size y typeFMsGenMap los toma como argumento el constructor del módulo. typeFMsGenMap contiene las correspondencias entre cada tipo y el generador de modelo finito del tal tipo.}
+\end{module}
+
+
+
+\begin{pattern}{FiniteModelCreatorVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is FiniteModelCreator}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AxPara}
+\proc{ElementoConcreto2 \is ApplExpr}
+\proc{ElementoConcreto3 \is Freetype}
+\proc{ElementoConcreto4 \is GivenPara}
+\proc{ElementoConcreto5 \is PowerExpr}
+\proc{ElementoConcreto6 \is ProdExpr}
+\proc{ElementoConcreto7 \is RefExpr}
+\proc{ElementoConcreto8 \is SetExpr}
+\comm{AxPara, ApplExpr,Freetype, GivenPara, PowerExpr, ProdExpr, RefExpr, SetExprTerm y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{FiniteModelGeneration}
+\compr
+\subm{FiniteModel}
+\subm{FiniteModelCreator}
+\subm{FreetypeFiniteModel}
+\subm{FromToFiniteModel}
+\subm{GivenFiniteModel}
+\subm{IntFiniteModelGeneration}
+\subm{NatFiniteModelGeneration}
+\subm{PFuncFiniteModel}
+\subm{PowerFiniteModel}
+\subm{ProdFiniteModel}
+\subm{RelFiniteModel}
+\subm{SeqFiniteModel}
+\subm{SetFiniteModel}
+\subm{TClassFiniteModel}
+\subm{TFuncFiniteModel}
+\subm{TypeFMsGenVisitor}
+\end{module}
+
+
+
+\begin{hmodule}{FromToFiniteModel}{FiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{leftValue: Int}
+\proc{rightValue: Int}
+\proc{index: Int}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. leftValue y rightValue se reciben como argumentos en el constructor del módulo.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{GenAllTCasesCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller,}
+\extraline{EventAdmin, Tactic, TTreeRequested, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{GenAllTTCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, }
+\extraline{EventAdmin, Tactic, TTreeRequested, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{GivenIntFiniteModel}{IntFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+\begin{module}{GivenIntFiniteModelParser}
+\imp{IntFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{IntFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{GivenNatFiniteModel}{NatFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{GivenNatFiniteModelParser}
+\imp{NatFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{NatFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{HorizDef}{AxPara}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isHorizDef(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Es una interfaz que hereda de la interfaz AxPara.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{HorizDefImpl}{HorizDef}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isHorizDef(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isHorizDef() determina si su argumento es un HorizDef. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{module}{IIComponent}
+\imp{ClientUI, Event}
+\eproc
+\proc{manageEvent(\e {Event})}
+\proc{setMyClientUI(\e {ClientUI})}
+\proc{getMyClientUI(): \mdr{ClientUI}}
+\end{module}
+
+
+
+\begin{hmodule}{IIOrder}{AbstractOrder}
+\imp{IIComponent, MethodName, Event}
+\eproc
+\proc{run()}
+\proc{getImplicitParam(): \mdr{IIComponent}}
+\proc{getMethodName(): \mdr{MethodName}}
+\proc{getExplicitParam(): \mdr{Event}}
+\proc{setImplicitParam(\e {IIComponent})}
+\proc{setMethodName(\e {MethodName})}
+\proc{setExplicitParam(\e {Event})}
+\priv
+\proc{implicitParam: \mdr{IIComponent}}
+\proc{methodName: \mdr{MethodName}}
+\proc{explicitParam: \mdr{Event}}
+\end{hmodule}
+
+
+
+\begin{module}{ImplicitInvocation}
+\compr
+\subm{Events}
+\subm{EventAdmin}
+\subm{EventName}
+\subm{EventTable}
+\subm{IIComponent}
+\subm{IIOrder}
+\subm{MethodName}
+\subm{Subscriptor}
+\end{module}
+
+
+
+\begin{module}{ImpliesPredRemover}
+\imp{Pred, IffPred, ImpliesPred, Pred2, NegPred}
+\eproc
+\proc{visitIffPred(\eb {IffPred}): Pred}
+\proc{visitImpliesPred(\eb {ImpliesPred}): Pred}
+\proc{visitPred2(\eb {Pred2}): Pred}
+\proc{visitNegPred(\eb {NegPred}): Pred}
+\proc{visitPred(\eb {Pred}): Pred}	
+\comm{Pred, IffPred, ImpliesPred, NegPred y Pred2 son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{ImpliesPredRemoverVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is ImpliesPredRemover}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is IffPred}
+\proc{ElementoConcreto3 \is ImpliesPred}
+\proc{ElementoConcreto4 \is NegPred}
+\proc{ElementoConcreto5 \is Pred}
+\proc{ElementoConcreto6 \is Pred2}
+\comm{AndPred, IffPred, ImpliesPred, NegPred, Pred, Pred2, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{IntFiniteModel}{FiniteModel}
+\comm{Interfaz que hereda de la interfaz FiniteModel.}
+\end{hmodule}
+
+
+\begin{module}{IntFiniteModelGeneration}
+\subm{GivenIntFiniteModel}
+\subm{IntFiniteModel}
+\subm{SeedsIntFiniteModel}
+\subm{ZeroIntFiniteModel}
+\end{module}
+
+
+\begin{module}{IntFiniteModelParser}
+\imp{IntFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{IntFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{IterativeTCaseStrategy}{TCaseStrategy}
+\imp{AbstractTCase, AxPara, Expr, EvaluationResp, FiniteModelCreator,}
+\extraline{IntFiniteModel, NatFiniteModel, NumericConstsExtractor,RefExpr,}
+\extraline{SchemeEvaluator, Spec, TClass, TClassFiniteModel, ZeroIntFiniteModel,}
+\extraline{ZeroNatFiniteModel}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}): \mdr{AbstractTCase}}
+\proc{setFMSize(\eb {Int})}
+\proc{getFMSize(): Int}
+\proc{setIntFiniteModel(\e {IntFiniteModel})}
+\proc{getIntFiniteModel(): \mdr{IntFiniteModel}}
+\proc{setNatFiniteModel(\e {NatFiniteModel})}
+\proc{getNatFiniteModel(): \mdr{NatFiniteModel}}
+\end{hmodule}
+
+
+
+\begin{module}{IterativeTTreeStrategy}
+\imp{SpecUtils, OpScheme, TacticRepository, TTreeNode, TClassNode}
+\eproc
+\proc{generateTTree(\e {OpScheme}, \e {TacticRepository}): \mdr{TClassNode}}
+\comm{Este módulo no se implementa, solo sirve como interfaz para los módulos que heredan de él.}
+\end{module}
+
+
+
+\begin{pattern}{IteratorPatt}
+\based{Iterator}
+\bec{Para acceder al contenido de los objetos agregados sin exponer su representación interna.}
+\pwhere
+\proc{Iterador is AbstractIterator}
+\proc{IteradorConcreto \is ConcreteIterator}
+\proc{Agregado \is AbstractRepository}
+\proc{AgregadoConcreto \is ConcreteRepository}
+\end{pattern}
+
+
+
+
+\begin{hmodule}{FreetypeFiniteModel}{FiniteModel}
+\imp{Expr, Name, ZBranchList, ZFactory}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{index: Int}
+\proc{zBranchList: ZBranchList}
+\comm{La instancia de normalizedType se una sola vez al construirse una instancia del módulo. El valor de size se recibe como argumento en el constructor del modulo. }
+\end{hmodule}
+
+
+
+
+\begin{hmodule}{FTTactic}{Tactic}
+\imp{AndPredSimplifier, AxPara, Branch, ContainsTermVerifier, CZTCloner,}
+\extraline{BranchList, Decl, DeclList, Expr, FreePara, Freetype,}
+\extraline{FreetypeList, MemPred, Name, NameList, OpScheme, Para, ParaList,}
+\extraline{ParseUtils, Pred, RefExpr, Sect, SetExpr, Spec, SpecUtils,}
+\extraline{StringSource, TClass, TClassImpl, Term, TextUI, UniqueZLive,}
+\extraline{VarDecl, ZBranchListImpl, ZDeclList, ZExprList, ZFactory,}
+\extraline{ZFactoryImpl, ZFreetypeListImpl, ZName, ZNameListImpl, ZLive,}
+\extraline{ZParaList, ZSect}
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{parseArgs(String): Bool}
+\proc{setTacticInfo(\e {SPTacticInfo})}
+\proc{getTacticInfo(): \mdr{SPTacticInfo}}
+\priv
+\proc{originalOp: \mdr{OpScheme}}
+\proc{tacticInfo: \mdr{SPTacticInfo}}
+\comm{La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía. parseArgs() parsea el parámetro que se indica al agregar la táctica a la lista de tácticas para una operación. Este parámetro es el nombre de la variable que sea del tipo libre que quiere tenerse en cuenta para aplicar la táctica. Si éstos parámetros son correctos se devuelve true; caso contrario, se devuelve false. Para que lo sea, el nombre de variable no puede ser de una variable primada y la variable debe estar declarada en el esquema de operación como una de un tipo libre definido en la especificación cargada en Fastest.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{FTTacticInfo}{TacticInfo}
+\imp{Freetype}
+\eproc
+\proc{setVar(\e {String})}
+\proc{getVar(): \mdr{String}}
+\proc{setFreetype(\e {Freetype})}
+\proc{getFreetype(): \mdr{Freetype}}
+\priv
+\proc{stdPartition: \mdr{StdPartition}}
+\proc{realParamList: List(Term)}
+\end{hmodule}
+
+
+
+
+\begin{hmodule}{GivenFiniteModel}{FiniteModel}
+\imp{Expr, ZFactory, ZName}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{index: Int}
+\proc{typeName: String}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. Los valores de size y de typeName se reciben como argumento en el constructor del modulo. }
+\end{hmodule}
+
+
+\begin{hmodule}{IterativeTCaseStrategyParser}{TCaseStrategyparser}
+\imp{TCaseStrategy}
+\eproc
+\proc{parse(\eb{String}, \e{TCaseStrategy}): Bool} 
+\end{hmodule}
+
+
+\begin{hmodule}{LoadElimTheoremsCommand}{Command}
+\imp{AbstractIterator, ClientTextUI, RWRule, RWRulesControl,}
+\extraline{RWRulesLoader, Theorem, TheoremsControl, TheoremsLoader}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{LoadSpecCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, CZT,}
+\extraline{EventAdmin, OpSchemeImpl, UnfoldUtils, SpecLoaded, SpecUtils,}
+\extraline{Tactic, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{ManualTCaseStrategy}{TCaseStrategy}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}): \mdr{AbstractTCase}}
+\proc{setFMSize(\eb {Int})}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{MethodName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{hmodule}{NatFiniteModel}{FiniteModel}
+\comm{Interfaz que hereda de la interfaz FiniteModel.}
+\end{hmodule}
+
+
+
+\begin{module}{NatFiniteModelParser}
+\imp{NatFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{NatFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{module}{NegPredDistributor}
+\imp{Pred, Pred2, NegPred}
+\eproc
+\proc{visitNegPred(\eb {NegPred}): Pred}
+\proc{visitPred2(\eb {Pred2}): Pred}
+\proc{visitPred(\eb {Pred}): Pred}	
+\comm{Pred, NegPred y Pred2 son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{NegPredDistributorVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is NegPredDistributor}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is NegPred}
+\proc{ElementoConcreto2 \is Pred}
+\proc{ElementoConcreto3 \is Pred2}
+\comm{NegPred, Pred, Pred2, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{NormalTypeAndFM}
+\imp{Expr, SetExpr}
+\eproc
+\proc{setNormalType(\eb {Expr})} 
+\proc{getNormalType(): Expr}
+\proc{setFM(\eb {SetExpr})}
+\proc{getFM(): SetExpr}
+\end{module}
+
+
+
+\begin{module}{OpName}
+\comm{Este módulo no se implementa y solo existe para que, al utilizarlo, el diseño sea más sugestivo. En la implementación del sistema, se usa una instancia de String cada vez que el diseño indique usar una instancia de él.}
+\end{module}
+
+
+
+\begin{cmodule}{OpNameRepository}{AbstractRepository}{OpName}
+\end{cmodule}
+
+
+
+\begin{hmodule}{OpScheme}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isOpScheme(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\comm{Es una interfaz que hereda de la interfaz Scheme.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{OpSchemeImpl}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isOpScheme(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isOpScheme() determina si su argumento es un OpScheme. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{module}{OrPredRemover}
+\imp{AndPred, OrPred, Pred, VarNameRepository}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): Pred}
+\proc{visitOrPred(\eb {OrPred}): Pred}
+\proc{visitPred(\eb {Pred}): Pred}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{pattern}{OrPredRemoverVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is OrPredRemover}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is OrPred}
+\proc{ElementoConcreto3 \is Pred}
+\comm{AndPred, OrPred, Pred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{OutputAbstracted}{Event}
+\imp{AbstractTCase, AbstractOutput, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setAbstractOutput(\e AbstractOutput)}
+\proc{getAbstractOutput(): \mdr{AbstractOutput}}
+\end{hmodule}
+
+
+
+\begin{hmodule}{OutputClass}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isOutputClass(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\comm{Interfaz que hereda de la interfaz Scheme.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{OutputClassImpl}{OutputClass}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isOutputClass(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isOutputClass() determina si su argumento es un OutputClass. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{cmodule}{OutputClassRepository}{AbstractRepository}{OutputClass}
+\end{cmodule}
+
+
+\begin{module}{ParamExtractor}
+\imp{ApplExpr, ApplExprVisitor, Expr, ExprPred, ExprPredVisitor, ExprVisitor,}
+\extraline{MemPred, MemPredVisitor, Pred, PredVisitor, RefExpr, SetExpr, Term,}
+\extraline{TupleExpr, ZExprList}
+\eproc
+\proc{visitPred(\eb{Pred}): List(Term)}
+\proc{visitExpr(\eb{Expr}): List(Term)}
+\proc{visitMemPred(\eb{MemPred}): List(Term)}
+\proc{visitApplExpr(\eb{ApplExpr}): List(Term)}
+\proc{visitExprPred(\eb{ExprPred}): List(Term)} 
+\end{module}
+
+
+
+\begin{pattern}{ParamExtractorVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is ParamExtractor}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is ApplExpr}
+\proc{ElementoConcreto2 \is Expr}
+\proc{ElementoConcreto3 \is ExprPred}
+\proc{ElementoConcreto4 \is MemPred}
+\proc{ElementoConcreto5 \is Pred}
+\comm{ApplExpr, Expr, ExprPred, MemPred, Pred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{PFuncFiniteModel}{FiniteModel}
+\imp{Expr, TupleExpr, ZExprList, ZFactory, ZName}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{leftFiniteModel: \mdr{FiniteModel}}
+\proc{rightFiniteModel: \mdr{FiniteModel}}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. leftFiniteModel y rightFiniteModel se reciben como argumentos en el constructor del módulo. }
+\end{hmodule}
+
+
+
+\begin{hmodule}{PowerFiniteModel}{FiniteModel}
+\imp{Expr, ZExprList, ZFactory, ZName}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{fMGen: \mdr{FiniteModel}}
+\proc{Indices internos}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. fMGen se recibe como argumento en el constructor del módulo. }
+\end{hmodule}
+
+
+
+\begin{module}{PredInOrVerifier}
+\imp{Pred, OrPred, SpecUtils}
+\eproc
+\proc{visitOrPred(\eb {OrPred}): Bool}
+\proc{visitPred(\eb {Pred}): Bool}	
+\comm{Pred y OrPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{module}
+
+
+
+\begin{pattern}{PredInOrVerifierVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is PredInOrVerifier}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is OrPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{OrPred, Pred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{PredRemover}
+\imp{VarNameRepository, Pred}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): AndPred}
+\proc{visitPred(\eb {Pred}): Pred}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{pattern}{PredRemoverVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is PredRemover}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AndPred}
+\proc{ElementoConcreto2 \is Pred}
+\comm{AndPred, Pred, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{PrimeVarsMaker}
+\imp{VarNameRepository, Term}
+\eproc
+\proc{setVarNameRep(\e {VarNameRepository})}
+\proc{visitTerm(\eb {Term}): Term}
+\proc{visitZName(\eb {ZName}): ZName}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Term y ZName son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+\begin{pattern}{PrimeVarsMakerVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is PrimeVarsMaker}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is Term}
+\proc{ElementoConcreto2 \is ZName}
+\comm{Term, Visitor y ZName son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{ProdFiniteModel}{FiniteModel}
+\imp{Expr, TupleExpr, ZExprList, ZFactory}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{fMGenList: List(\mdr{FiniteModel})}
+\proc{Indices internos}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. fMGenList se recibe como argumento en el constructor del módulo. }
+\end{hmodule}
+
+
+
+\begin{hmodule}{PruneBelowCommand}{Command}
+\imp{ClientTextUI, Controller, TClassNode, TTreeBelowPruner}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{PruneFromCommand}{Command}
+\imp{ClientTextUI, Controller, TClassNode, TTreeFromPruner}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{PruneTreeCommand}{Command}
+\imp{AbstractRepository, ClientTextUI, Controller, EventAdmin,}
+\extraline{PruneTTreeRequested, PruneUtils, TClass}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{module}{RefinementFunc} 
+\end{module}
+
+
+\begin{hmodule}{RefinementFuncLoaded}{Event}
+\imp{RefinementFunc}
+\eproc
+\proc{setRefinementFunc(\e {RefinementFunc})}
+\proc{getRefinementFunc(): \mdr{RefinementFunc}}
+\end{hmodule}
+
+
+\begin{hmodule}{Refinator}{IIComponent}
+\imp{AbstractTCase, ClientUI, ConcreteTCase, EventAdmin, OpName, }
+\extraline{RefinementFunc, RefinementFuncLoaded, ,}
+\extraline{TCaseGenerated, TCaseRefined}
+\eproc
+\proc{manageEvent(\e {Event})}
+\annev
+\proc{refineTCase()::tCaseRefined}
+\callonev
+\proc{refinamentFuncLoaded::manageEvent(refinamentFuncLoaded)}
+\proc{tCaseGenerated::manageEvent(tCaseGenerated)}
+\priv
+\proc{refineTCase()}
+\proc{abstractTCase: \mdr{AbstractTCase}}
+\proc{abstractionFunc: \mdr{AbstractionFunc}}
+\proc{opName: \mdr{OpName}}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de RefinementFuncLoaded ni de TCaseGenerated. La subrutina refineTCase() es llamada desde manageEvent(), luego de que se establezca el valor de alguna/s de las variables instancia del módulo en base a alguno/s de los parámetros del evento que se le pasa como argumento. refineTCase() comprueba si todas estas variables estén seteadas, y de ser así, realiza el refinamiento del caso de prueba abstracto correspondiente, anunciando a continuación el evento tCaseRefined. La implementación del anuncio del evento se realiza a través de una llamada a la subrutina announceEvent() de la instancia única de EventAdmin, pasando la apropiada instancia de TCaseRefined como argumento. Si no están seteadas todas estas variables, refineTCase() regresa sin anunciar ningún evento.}
+\end{hmodule}	
+
+
+\begin{hmodule}{RelFiniteModel}{FiniteModel}
+\imp{Expr}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{leftFiniteModel: \mdr{FiniteModel}}
+\proc{rightFiniteModel: \mdr{FiniteModel}}
+\proc{Indices internos}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. leftFiniteModel y rightFiniteModel se reciben como argumentos en el constructor del módulo. }
+\end{hmodule}
+
+
+\begin{module}{RepositoryModules}
+\compr
+\subm{AbstractIterator}
+\subm{AbstractRepository}
+\subm{ConcreteRepository}
+\end{module}
+
+
+\begin{hmodule}{ResetCommand}{Command}
+\imp{ClientTextUI, Controller, Tactic, TClassNode, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{Scheme}{AxPara}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isScheme(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isScheme() determina si su argumento es un Scheme. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+\begin{hmodule}{Scheme}{AxPara}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isScheme(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\comm{Interfaz que hereda de AxPara}
+\end{hmodule}
+
+
+
+\begin{module}{SchemeEvaluator}
+\imp{EvaluationResp, TClass, VarValueMap, , ZLive}
+\eproc
+\proc{evalSchemeSat(\e {TClass}, \e VarValueMap): \mdr{EvaluationResp}}
+\comm{La subrutina evalSchemeSat() requiere de los servicios del subsistema ZLive de CZT para evaluar el predicado que resulta de reemplazar cada variable por la expresión que tiene asignada en la instancia de VarValueMap. }
+\end{module}
+
+
+
+\begin{hmodule}{SchemeImpl}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isScheme(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isScheme() determina si su argumento es un Scheme. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SchemeTTreeFinder}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{module}{SchName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{module}{SchemeUnfolder}
+\imp{AbstractIterator, AbstractRepository, AndExpr, AxPara, Box, ConstDecl,}
+\extraline{CZTCloner, Decl, DeclList, DecorExpr, Expr, InclDecl, OrExpr, Para,}
+\extraline{ParaList, Pred, PrimeVarsMaker, RefExpr, SchExpr, Sect, Spec, Term,}
+\extraline{Visitor, ZFactory, ZParaList, ZSchText, ZSect}
+\eproc
+\proc{unfoldSpec(\eb{Spec}): Spec}
+\proc{unfoldAxPara(\eb{AxPara}, \eb{ZParaList})}
+\proc{unfoldExpr(\eb {Expr}, \eb{ZParaList}): Expr}
+\proc{unfoldExpr(\eb {SchExpr}, \eb{ZParaList}): SchExpr}
+\proc{unfoldAndExpr(\eb {AndExpr}, \eb{ZParaList}): SchExpr}	
+\proc{unfoldOrExpr(\eb {OrExpr}, \eb{ZParaList}): SchExpr}	
+\proc{unfoldRefExpr(\eb {RefExpr}, \eb{ZParaList}): SchExpr}
+\end{module}
+
+
+
+\begin{hmodule}{SearchTheoremsCommand}{Command}
+\imp{AbstractIterator, ClientTextUI, RWRule, RWRulesControl,}
+\extraline{RWRulesLoader, Theorem, TheoremsControl, TheoremsLoader}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SeedsIntFiniteModel}{IntFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{SeedsIntFiniteModelParser}
+\imp{IntFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{IntFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{SeedsNatFiniteModel}{NatFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{SeedsNatFiniteModelParser}
+\imp{NatFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{NatFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{SelOpCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, }
+\extraline{Tactic, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SeqFiniteModel}{FiniteModel}
+\imp{Expr, NumExpr, ProdExpr, RefExpr, SetExpr. TupleExpr, }
+\extraline{ZExprList, ZFactory, ZName}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{fMGen: \mdr{FiniteModel}}
+\proc{Indices internos}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo.  se reciben como argumentos en el constructor del módulo. El valor de size se establece en el constructor del modulo. }
+\end{hmodule}
+
+
+
+\begin{module}{ServerConfig}
+\imp{InetAddress, ServerName}
+\eproc
+\proc{setServerName(\e {ServerName})}
+\proc{getServerName(): \mdr{ServerName}}
+\proc{setInetAddress(\eb {InetAddress})}
+\proc{getInetAddress(): InetAddress}
+\proc{setPortNumber(\eb {Int})}
+\proc{getPortNumber(): Int}
+\end{module}
+
+
+
+\begin{cmodule}{ServerConfigRepository}{AbstractRepository}{ServerConfig}
+\end{cmodule}
+
+
+
+\begin{module}{ServerManagement}
+\compr
+\subm{ServerThread}
+\subm{ServiceManager}
+\end{module}
+
+
+
+\begin{module}{ServiceMediator}
+\imp{InetAddress, Spec, TClass, TCaseStrategy}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass},}
+\extraline{ \e {TCaseStrategy}): \mdr{AbstractTCase}}
+\proc{checkCorresp(\eb {Spec}, \e {AbstractTCase}, \e {AbstractOutput}): Bool}
+\priv
+\comm{Al ejecutar las subrutinas generateAbstractTCase() o checkCorresp() se establece una conexión con un servidor de cómputo a través de una interfaz de socket.
+El servidor de cómputo con el que se realizará la conexión se establece en el constructor de este módulo, a través de una instancia de InetAddress y el entero que corresponde al puerto que el servidor escuchará.}
+\end{module}
+
+
+
+\begin{module}{ServerName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{module}{ServerTCaseChecking}
+\compr
+\subm{TCaseChecker}
+\end{module}
+
+
+
+\begin{module}{ServerTCaseGeneration}
+\compr
+\subm{Evaluation}
+\subm{FiniteModelGeneration}
+\subm{TCaseStrategies}
+\subm{TCaseGen}
+\end{module}
+
+
+
+\begin{module}{ServerThread}
+\imp{AbstractTCase, AxPara, JaxbXmlReader, JaxbXmlWriter, }
+\extraline{SpecUtils, TCaseGen, TCaseStrategy, TClass, Term,}
+\extraline{XmlReader, XmlWriter}
+\eproc
+\proc{run()}
+\proc{generateAbstractTCase()}
+\proc{checkCorrespondence()}
+\end{module}
+
+
+
+\begin{module}{ServiceManager}
+\imp{ServerThread}
+\eproc
+\proc{main()}
+\comm{La subrutina main() se encarga de atender los pedidos de conexión de los clientes y de brindar los servicios que ellos puedan solicitar. La comunicación se lleva a cabo a través de sockets. Cada servicio se procesa en un thread diferente, que ejecuta la subrutina run() de una instancia del módulo ServerThread.}
+\end{module}
+
+
+\begin{hmodule}{SetAxDefCommand}{Command}
+\imp{ClientTextUI, Controller, CZTCloner, CZTReplacer, Expr,}
+\extraline{ExprPred, Para, ParaList, ParseUtils, Pred,}
+\extraline{RefExpr, SectionManager, Spec, StringToNumReplacer,}
+\extraline{Term, TypeCheckUtils, UniqueZLive, ZLive, ZName,}
+\extraline{ZExprList, ZFactory, ZFactoryImpl, ZParaList}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{SetFiniteModel}{FiniteModel}
+\imp{Expr, ZExprList}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{index: Int}
+\proc{valueList: List(String)}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. El valor de valueList se recibe como argumento en el constructor del modulo.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SetFiniteModelsCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, EventAdmin, TCaseStrategy, TCaseStrategyParser, TCaseStrategySelected, TClassLeavesFinder, TClass, TClassNode}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{hmodule}{ShowAxDefsCommand}{Command}
+\imp{AxPara, Box, ClientTextUI, Controller, Para, ParaList,}
+\extraline{Sect, Spec, SpecUtils, ZParaList, ZSect}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowAxDefValuesCommand}{Command}
+\imp{ClientTextUI, Controller, Expr, RefExpr, Spec, SpecUtils}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowHelpCommand}{Command}
+\imp{ClientTextUI, Controller, Expr, RefExpr, Spec,}
+\extraline{SpecUtils}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+
+
+
+\begin{hmodule}{ShowHelpCommand}{Command}
+\imp{ClientTextUI}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowLoadedOpsCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowSchCommand}{Command}
+\imp{ClientTextUI, Controller}
+\extraline{EventAdmin, Scheme, SchemeTTreeFinder, SpecUtils, Tactic,}
+\extraline{TCaseNodeTextUIPrinter,  TClassNode, TClassNodeTextUIPrinter,}
+\extraline{TTreeRequested, TTreeStrategy, TTreeVisitor}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+
+\begin{hmodule}{ShowSelOpsCommand}{Command}
+\imp{AbstractIterator, AbstractRepository, ClientTextUI, Controller, }
+\extraline{Tactic, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+
+\begin{hmodule}{ShowSpecCommand}{Command}
+\imp{ClientTextUI, Controller, SpecUtils}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowTacticsCommand}{Command}
+\imp{ClientTextUI, Tactic}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+
+
+\begin{hmodule}{ShowTTCommand}{Command}
+\imp{ClientTextUI, Controller,TClassNode, TTreeTextUIPrinter}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{ShowVersionCommand}{Command}
+\imp{ClientTextUI}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SMTactic}{Tactic}
+\imp{SMTacticInfo, OpScheme, TClass}
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{setTacticInfo(\e {SMTacticInfo})}
+\proc{getTacticInfo(): \mdr{SMTacticInfo}}
+\priv
+\proc{originalOp: \mdr{OpScheme}}
+\proc{tacticInfo: \mdr{SMTacticInfo}}
+\comm{applyTactic() lanzará una excepción si la instancia originalOp no tiene como operación mutante al OpScheme miembro de SMTacticInfo. La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SMTacticInfo}{TacticInfo}
+\imp{OpScheme}
+\eproc
+\proc{setMutantOp(\e {OpScheme})}
+\proc{getMutantOp(): \mdr{OpScheme}}
+\priv
+\proc{mutantOp: \mdr{OpScheme}}
+\comm{La instancia mutantOp debe ser el esquema de operación mutante de la operación original para la que quiere generarse un árbol de pruebas. El constructor de instancias de este módulo debe invocar a la subrutina setTacticName() pasando como argumento el nombre de la táctica asociada, que en este caso es Specification Mutation.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SpecLoaded}{Event}
+\imp{Spec}
+\eproc
+\proc{setSpec(\eb {Spec})}
+\proc{getSpec(): Spec}
+\end{hmodule}
+
+
+
+\begin{module}{SpecUtils}
+\imp{AxPara, DeclList, Pred, VarNameRepository, SchExpr,}
+\extraline{ZDeclList, VarDecl, ZName }
+\eproc
+\proc{getAxParaName(\eb {AxPara}): String}
+\proc{getAxParaListOfDecl(\eb {AxPara}): DeclList}
+\proc{getAxParaSchExpr(\eb {AxPara}): SchExpr}
+\proc{getAxParaPred(\eb {AxPara}): Pred}
+\proc{getVarNames(AxPara): \mdr{VarNameRepository}}
+\proc{isThereTransition(\e {VarNameRepository}): Bool}
+\proc{isThereIO(\e {VarNameRepository}): Bool}
+\proc{andExprs(\eb {SchExpr}, \eb {SchExpr}): SchExpr}
+\proc{orExprs(\eb {SchExpr}, \eb {SchExpr}): SchExpr}
+\proc{makeDeclListUnion(\eb {SchExpr}, \eb {SchExpr}): SchExpr}
+\proc{axParaSearch(\eb {String}, \eb {ZParaList}): AxPara}
+\proc{insertZDeclList(\eb {ZDeclList}, \eb {ZDeclList})}
+\proc{insertVarDecl(\eb {ZDeclList}, \eb {VarDecl}, \eb {Int}): Bool}
+\proc{containsName(\eb {ZDeclList}, \eb {ZName}): Bool}
+\proc{andPreds(\eb {Pred}, \eb {Pred}): Pred}
+\proc{orPreds(\eb {Pred}, \eb {Pred}): Pred}
+\proc{createEqualPred(\eb {String}): Pred}
+\proc{getCNF(\eb {Pred}): Pred}
+\proc{getDNF(\eb {Pred}): Pred}
+\proc{divideOrAxPara(\eb {AxPara}): \mdr{AxParaRepository}}
+\proc{axParaToLatex(\eb {AxPara}): String}
+\proc{areEqualTerms(\eb {Term}, \eb {Term}): Bool}
+\priv
+\proc{lookUp(VarNameRepository, \e {VarName}): Bool}
+\comm{Los modulos DeclList, Pred, SchExpr, ZDeclList, VarDecl, ZName heredan de CZT de acuerdo a la estructura de modulos.}
+
+\end{module}
+
+
+
+\begin{hmodule}{SPTactic}{Tactic}
+\imp{ContainsTermVerifier, OpScheme, ParamExtractor, SPTacticInfo, TClass}
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{parseArgs(String): Bool}
+\proc{setTacticInfo(\e {SPTacticInfo})}
+\proc{getTacticInfo(): \mdr{SPTacticInfo}}
+\priv
+\proc{originalOp: \mdr{OpScheme}}
+\proc{tacticInfo: \mdr{SPTacticInfo}}
+\comm{La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía. parseArgs() parsea los parámetros que se indican al agregar la táctica a la lista  de tácticas para una operación, como por ejemplo, el operador sobre el que se va a aplicar alguna partición estándar, y el término que lo contiene, dentro del predicado de la operación seleccionada. Si éstos parámetros son correctos se devuelve true; caso contrario, se devuelve false. Para que lo sean, debe haber una partición estándar cargada para el operador seleccionado y el término indicado debe estar contenido en la operación original.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{SPTacticInfo}{TacticInfo}
+\imp{CZT, StdPartition}
+\eproc
+\proc{setStdPartition(\e {StdPartition})}
+\proc{getStdPartition(): \mdr{StdPartition}}
+\proc{setRealParamList(\eb {List(Term)})}
+\proc{getRealParamList(): List(Term)}
+\priv
+\proc{stdPartition: \mdr{StdPartition}}
+\proc{realParamList: List(Term)}
+\end{hmodule}
+
+
+
+\begin{module}{StdPartition}
+\imp{Pred}
+\eproc
+\proc{getPredList(): List(Pred)}
+\proc{setPredList(\eb {List(Pred)})}
+\proc{getFormalParamList(): List(String)}
+\proc{setFormalParamList(\eb {List(String)})}
+\proc{setDefinition(\eb {String})}
+\proc{getDefinition(): String}
+\proc{setOperator(\eb {String})}
+\proc{getOperator(): String}
+\end{module}
+
+
+\begin{module}{StdPartitionLoader}
+\imp{CZT, StdPartition, StdPartitionsControl}
+\eproc
+\proc{loadStdPartitions()}
+\end{module}
+
+
+
+\begin{hmodule}{StdPartitionsControl}{StdPartitionsRepository}
+\imp{AbstractRepository, AbstractIterator, StdPartition, StdPartitionRepository}
+\eproc
+\proc{getInstance(): \mdr{StdPartitionsControl}}
+\priv
+\proc{stdPartitionsControl: \mdr{StdPartitionsControl}}
+\comm{getInstance() debe ser una subrutina estática, es decir, que no pueda ser invocada para un objeto particular de la clase que el módulo implemente, sino solo invocada a nivel
+ de tal clase. Esta subrutina tiene que devolver el objeto stdPartitionsControl, antes realizando su creación de ser necesario. El constructor del módulo no puede ser una subrutina pública.}
+\end{hmodule}
+
+
+
+\begin{cmodule}{StdPartitionsRepository}{AbstractRepository}{StdPartition}
+\end{cmodule}
+
+
+
+\begin{module}{StringToNumReplacer}
+\imp{VarNameRepository, Pred}
+\eproc
+\proc{visitAndPred(\eb {AndPred}): AndPred}
+\proc{visitPred(\eb {Pred}): Pred}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Pred y AndPred son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{module}{Subscriptor}
+\imp{EventName, AbstractOrder, IIOrder}
+\eproc
+\proc{getEventName(): \mdr{EventName}}
+\proc{getIIOrder(): \mdr{IIOrder}}
+\priv
+\proc{eventName: \mdr{EventName}}
+\proc{iIOrder: \mdr{IIOrder}}
+\comm{El constructor de instancias de este módulo debe tomar como argumentos instancias de EventName y de IIOrder para luego guardarlas como los valores de las variables de instancia eventName y iIOrder.}
+\end{module}
+
+
+
+\begin{hmodule}{SuggestiveTCaseStrategy}{TCaseStrategy}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}): \mdr{AbstractTCase}}
+\proc{setFMSize(\eb {Int})}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{Tactic}
+\imp{OpScheme, TClass}
+\eproc
+\proc{applyTactic(\e {TClass}): List(\mdr{TClass})}
+\proc{setOriginalOp(\e {OpScheme})}
+\proc{getOriginalOp(): \mdr{OpScheme}}
+\proc{setTacticInfo(\e {TacticInfo})}
+\proc{getTacticInfo(): \mdr{TacticInfo}}
+\comm{Este módulo no se implementa, solo brinda una interfaz a los módulos que heredan de él. La subrutina applyTactic() devuelve la lista de instancias de TClass de la forma [a1,b1,a2,b2,...,an,bn] que se obtienen de aplicar la táctica a la clase de prueba que se pasa como argumento y donde para cada i entre 1 y n, ai es la clase de prueba en forma compacta y bi es la misma clase de prueba pero en forma expandida. Si la táctica no genera nuevas clases de prueba para la clase de prueba dada, la subrutina devuelve la lista vacía.}
+\end{module}
+
+
+
+\begin{module}{Tactics}
+\compr
+\subm{CEPTactic}
+\subm{CEPTacticInfo}
+\subm{DNFTactic}
+\subm{DNFTacticInfo}
+\subm{FTTactic}
+\subm{FTTacticInfo}
+\subm{SMTactic}
+\subm{SMTacticInfo}
+\subm{SPTactic}
+\subm{SPTacticInfo}
+\subm{Tactic}
+\subm{TacticInfo}
+\subm{TacticName}
+\subm{TacticRepository}
+\end{module}
+
+
+
+\begin{module}{TacticInfo}
+\imp{TacticName}
+\eproc
+\proc{setTacticName(\e {TacticName})}
+\proc{getTacticName(): \mdr{TacticName}}
+\comm{La instancia de TacticName permite reconocer a que tipo de táctica nos referimos, por ejemplo, DNF, mutación de especificaciones, etc. }
+\end{module}
+
+
+
+\begin{module}{TacticManager}
+\imp{DServerConfig}
+\eproc
+\proc{getInstance(): \mdr{TacticManager}}
+\proc{addTacticDef(\eb {File}, \e {TacticName})}
+\proc{getTacticDef(\e {TacticName}): File}
+\priv
+\proc{tacticManager: \mdr{TacticManager}}
+\comm{La subrutina getTacticDef() realiza la transferencia del archivo indicado por su primer argumento y devuelve información del archivo en una instancia de File.  getInstance() debe ser una subrutina estática, es decir, que no pueda ser invocada para un objeto particular de la clase que el módulo implemente, sino solo invocada a nivel de tal clase. Esta subrutina tiene que devolver el objeto tacticManager, antes realizando su creación de ser necesario. El constructor no puede ser una subrutina pública.}
+\end{module}
+
+
+
+\begin{pattern}{TacticManagerSinglPatt}
+\based{Singleton}
+\bec{Debe haber exactamente una instancia de este módulo y debe ser accesible a los clientes desde un punto de acceso conocido.}
+\pwhere
+\proc{Singleton is TacticManager}
+\end{pattern}
+
+
+
+\begin{module}{TacticName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{cmodule}{TacticRepository}{AbstractRepository}{Tactic}
+\end{cmodule}
+
+
+
+\begin{module}{TCaseAbstraction}
+\compr
+\subm{AbstractionFunc}
+\subm{Abstractor}
+\end{module}
+
+
+
+\begin{hmodule}{TCaseChecked}{Event}
+\imp{AbstracTCase, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setResult(\eb {Bool})}
+\proc{getResult(): Bool}
+\end{hmodule}
+
+
+
+\begin{module}{TCaseChecker}
+\imp{AbstractOutput, AbstractTCase, OpScheme}
+\eproc
+\proc{testCorrespondence(\eb {Spec}, \e {OpName}, \e {AbstractTCase}, \e {AbstractOutput}): Bool}
+\comm{La subrutina testCorrespondence() determina si se corresponden el caso de prueba abstracto, el esquema de operación, y la salida abstracta representados por las instancias de AbstractTCase, OpScheme y AbstractOutput que recibe como argumentos, respectivamente.}
+\end{module}
+
+	
+
+\begin{hmodule}{TCaseCheckerClient}{IIComponent}
+\imp{AbstractTCase, AbstractOutput, ClientUI, Event, EventAdmin, IIComponent, }
+\extraline{OpName, OutputAbstracted, Spec,SpecLoaded, TCaseChecked, }
+\extraline{TCaseCheckerClientRunner}
+\eproc
+\proc{manageEvent(\e {Event})}
+\callonev
+\proc{specLoaded::manageEvent(specLoaded)}
+\proc{outputAbstracted::manageEvent(outputAbstracted)}
+\annev
+\proc{checkCorresp()::tCaseChecked}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de SpecLoaded ni de OutputAbstracted. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de SpecLoaded, la instancia de Spec que el evento specLoaded tiene como parámetro debe guardarse en la variable spec. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de outputAbstracted, se comprobará si la variable instancia spec está seteada. De ser así, se creará una instancia de TCaseCheckerClientRunner, pasando como argumentos de su constructor el valor de spec y los de las instancias de opName, specTCase y abstractOutput que son parámetros del evento outputAbstracted y a continuación se llamará a la subrutina run() del objeto creado. Esta subrutina se deberá correr en un nuevo thread y así manageEvent() podrá regresar. Si al llamar a manageEvent(), pasando como argumento una instancia de OutputAbstracted, la variable spec no está seteada, la subrutina regresará inmediatamente.}
+\end{hmodule}
+
+
+
+
+\begin{module}{TCaseCheckerClientRunner}
+\imp{AbstractTCase, AbstractOutput, CServersControl, EventAdmin, InetAddress,}
+\extraline{OpName, ServerConfig, ServiceMediator, Spec, TCaseChecked}
+\eproc
+\proc{run()}
+\annev
+\proc{run()::TCaseChecked}
+\priv
+\proc{spec: Spec}
+\proc{opName: \mdr{OpName}}
+\proc{abstractTCase: \mdr{AbstractTCase}}
+\proc{abstractOutput: \mdr{AbstractOutput}}
+\comm{Las variables instancia listadas se establecen al momento de crear una instancia de este módulo. Al llamar a la subrutina run() se deberá solicitar a uno de los servidores de cómputo la comprobación de la correspondencia entre el caso de prueba abstracto indicado por abstractTCase, la operación indicada por opName y spec, y la salida abstracta indicada por abstractOutput. Para esto se llamará a la subrutina checkCorresp() de un nueva instancia de ServiceMediator pasando los argumentos necesarios. El valor booleano devuelto por checkCorresp() será establecido como parámetro de un evento de tipo TCaseChecked que TCaseCheckerClientRunner deberá anunciar.}
+\end{module}
+
+
+
+\begin{hmodule}{TCaseGenClient}{IIComponent}
+\imp{ClientUI, Event, GivenIntFiniteModel, GivenNatFiniteModel, IIComponent, IterativeTCaseStrategy, OpName, Spec, SpecLoaded,}
+\extraline{TCaseGenClientRunner, TCaseRequested, TCaseStrategy,}
+\extraline{TCaseStrategySelected, TClass}
+\eproc
+\proc{manageEvent(\e {Event})}
+\callonev
+\proc{specLoaded::manageEvent(specLoaded)}
+\proc{tCaseRequested::manageEvent(tCaseRequested)}
+\proc{tCaseStrategySelected::manageEvent(tCaseStrategySelected)}
+\priv
+\proc{spec: Spec}
+\proc{tCaseStrategy: \mdr{TCaseStrategy}}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de SpecLoaded, de TCaseRequested, ni de TCaseStrategySelected. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de SpecLoaded, la instancia de Spec que el evento specLoaded tiene como parámetro debe guardarse en la variable spec. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de TCaseRequested, se comprobará si la variable instancia spec está seteada. De ser así, se creará una instancia de TCaseGenClientRunner, pasando como argumentos de su constructor el valor de spec y los de las instancias de OpName, TClass y TCaseStrategy (las dos primeras son parámetros del evento TCaseStrategy mientras que la tercera puede ser la que se crea por defecto salvo que se haya lanzado un evento TCaseStrategySelected, en cuyo caso se toma el parámetro que viene con él) y a continuación se llamará a la subrutina run() del objeto creado. Esta subrutina se deberá correr en un nuevo thread y así manageEvent() podrá regresar. Si al llamar a manageEvent() pasando como argumento una instancia de TCaseRequested y la variable spec no está seteada, la subrutina regresará inmediatamente. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de TCaseStrategy, se guarda en el estado del módulo la asociación entre el nombre de la clase de prueba y la estrategia de generación de casos de prueba que indican los parámetros del evento.}
+\end{hmodule}
+
+
+
+\begin{module}{TCaseGenClientRunner}
+\imp{AbstractTCase, CServersControl, EventAdmin, OpName, ServerConfig, ServiceMediator, }
+\extraline{Spec, TCaseStrategy, TClass, TTreeGenerated}
+\eproc
+\proc{run()}
+\annev
+\proc{run()::tTreeGenerated}
+\priv
+\proc{spec: Spec}
+\proc{opName: \mdr{OpName}}
+\proc{tClass: \mdr{TClass}}
+\proc{tCaseStrategy: \mdr{TCaseStrategy}}
+\comm{Las variables instancia listadas se establecen al momento de crear una instancia de este módulo. Al llamar a la subrutina run() se deberá solicitar a uno de los servidores de cómputo la generación del caso de prueba asociado a la especificación spec y a la clase de prueba tClass, haciendo uso de la estrategia de generación de modelos finitos tCaseStrategy. Para esto se llamará a la subrutina generateAbstractTCase() de una nueva instancia de ServiceMediator pasando los argumentos necesarios. La instancia de AbstractTCase devuelta por generateAbstractTCase() será establecida como parámetro de un evento de tipo TCaseGenerated que TCaseGenClientHelper deberá anunciar.} 
+\end{module}
+
+
+
+\begin{hmodule}{TCaseExecuted}{Event}
+\imp{AbstractTCase, ConcreteOutput, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setConcreteOutput(\e {ConcreteOutput})}
+\proc{getConcreteOutput(): \mdr{ConcreteOutput}}
+\end{hmodule}
+
+
+
+\begin{module}{TCaseGen}
+\imp{AbstractTCase, Spec, TClass, TCaseStrategy}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}, \e TCaseStrategy): \mdr{AbstractTCase}}
+\comm{La subrutina generateAbstractTCase() genera (o intenta generar) un caso de prueba abstracto para la clase de prueba que recibe como argumento. El caso de prueba abstracto es devuelto en una instancia de AbstractTCase. Para llevar a cabo su tarea, esta subrutina llama a la subrutina generateAbstractTCase() de la instancia de TCaseStrategy que recibió como argumento.}
+\end{module}
+
+
+
+\begin{hmodule}{TCaseGenerated}{Event}
+\imp{AbstractTCase, OpName, TClass}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setTClass(\e {TClass})}
+\proc{getTClass(): \mdr{TClass}}
+\end{hmodule}
+
+
+
+\begin{module}{TCaseExecution}
+\compr
+\subm{ConcreteOutput}
+\subm{ConcreteTCase}
+\subm{Executor}
+\end{module}
+
+
+
+\begin{hmodule}{TCaseNode}{TTreeNode}
+\imp{AbstractTCase, TacticInfo, TTreeNodeRepository, TTreeVisitor}
+\eproc
+\proc{setChildren(\e TTreeNodeRepository)}
+\proc{getChildren(): \mdr{TTreeNodeRepository)}}
+\proc{setDadNode(\e {TClassNode})}
+\proc{getDadNode(): \mdr{TClassNode}}
+\proc{acceptVisitor(\e {TTreeVisitor})}
+\proc{setTacticInfo(\e {TacticInfo})}
+\proc{getTacticInfo(): \mdr{TacticInfo}}
+\proc{setValue(\e {Scheme})}
+\proc{getValue(): \mdr{AbstractTCase}}
+\proc{setUnfoldedValue(\e {Scheme})}
+\proc{getUnfoldedValue(): \mdr{AbstractTCase}}
+\comm{La subrutina getChildren() es reimplementada para devolver un TTreeNodeRepository nulo. setChildren() es reimplementada para lanzar una excepción en caso de ser llamada. Las subrutinas setTacticInfo() y getTacticInfo() se reimplementan para, respectivamente, lanzar una excepción en caso de ser llamada y devolver siempre null (del lenguaje de programación a utilizar).}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TCaseNodeAdder}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TCaseNodeTextUIPrinter}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TCaseRequested}{Event}
+\imp{OpName, TCaseStrategy, TClass}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setTClass(\e {TClass})}
+\proc{getTClass(): \mdr{TClass}}
+\comm{El evento lleva como parámetros el nombre de la operación y la clase de prueba de la que quiere obtenerse un caso de prueba, indicada por una instancia de TClass.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TCaseRefined}{Event}
+\imp{AbstractTCase, ImplTCase, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setConcreteTCase(\e {ConcreteTCase})}
+\proc{getConcreteTCase(): \mdr{ConcreteTCase}}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TCaseRefined}{Event}
+\imp{AbstractTCase, ImplTCase, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setAbstractTCase(\e {AbstractTCase})}
+\proc{getAbstractTCase(): \mdr{AbstractTCase}}
+\proc{setConcreteTCase(\e {ConcreteTCase})}
+\proc{getConcreteTCase(): \mdr{ConcreteTCase}}
+\end{hmodule}
+
+
+
+\begin{module}{TCaseRefinement}
+\compr
+\subm{RefinementFunc}
+\subm{Refinator}
+\end{module}
+
+
+
+\begin{module}{TCaseStrategies}
+\compr
+\subm{CompleteTCaseStrategy}
+\subm{IterativeTCaseStrategy}
+\subm{ManualTCaseStrategy}
+\subm{SuggestiveTCaseStrategy}
+\subm{TCaseStrategy}
+\end{module}
+
+
+
+\begin{module}{TCaseStrategy}
+\imp{AbstractTCase, Spec, TClass}
+\eproc
+\proc{generateAbstractTCase(\eb {Spec}, \e {TClass}): \mdr{AbstractTCase}}
+\proc{setFMSize(\eb {Int})}
+\proc{getFMSize(): Int}
+\end{module}
+
+
+
+\begin{pattern}{TCaseStrategyPatt}
+\based{Strategy}
+\bec{Queremos tener módulos relacionados que sólo difieran en su comportamiento. Las estrategias permiten configurar un módulo con un determinado comportamiento de entre muchos posibles.}
+\pwhere
+\proc{Estrategia is TCaseStrategy}
+\proc{EstrategiaConcreta1 is CompleteTCaseStrategy}
+\proc{EstrategiaConcreta2 is IterativeTCaseStrategy}
+\proc{EstrategiaConcreta3 is ManualTCaseStrategy}
+\proc{EstrategiaConcreta3 is SuggestiveTCaseStrategy}
+\proc{Contexto is TCaseGen}
+\end{pattern}
+
+
+
+\begin{module}{TCaseStrategyParser}
+\imp{TCaseStrategy}
+\eproc
+\proc{parse(\eb{String}, \e{TCaseStrategy}): Bool} 
+\end{module}
+
+
+
+\begin{module}{TCaseStrategyParsers}
+\compr
+\subm{CompleteTCaseStrategyParser}
+\subm{GivenIntFiniteModelParser}
+\subm{GivenNatFiniteModelParser}
+\subm{IntFiniteModelParser}
+\subm{IterativeTCaseStrategyParser}
+\subm{NatFiniteModelParser}
+\subm{SeedsIntFiniteModelParser}
+\subm{SeedsNatFiniteModelParser}
+\subm{TCaseStrategyParser}
+\subm{ZeroIntFiniteModelParser}
+\subm{ZeroNatFiniteModelParser}
+\end{module}
+
+
+
+
+
+
+
+
+
+\begin{hmodule}{TCaseStrategySelected}{Event}
+\imp{TCaseStrategy}
+\eproc
+\proc{setTCaseStrategy(\e {TCaseStrategy})}
+\proc{getTCaseStrategy(): \mdr{TCaseStrategy}}
+\proc{setTClassName(\eb {String})}
+\proc{getTClassName(): String}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TClass}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isTClass(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\comm{Interfaz que hereda de Scheme.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TClassExtractor}{IIComponent}
+\imp{AbstractIterator, AbstractRepository, Event, EventAdmin, OpName,}
+\extraline{TCaseRequested,TClass, TClassLeavesFinder, TClassNode,} 
+\extraline{TTreeGenerated }
+\eproc
+\proc{manageEvent(\e {Event})}
+\annev
+\proc{manageEvent()::tCaseRequested}
+\callonev
+\proc{tTreeGenerated::manageEvent(tTreeGenerated)}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de AllTCasesRequested.}
+\end{hmodule}
+
+
+
+\begin{module}{TClassFiniteModel}
+\imp{AxPara, Decl, DeclList, Expr, FiniteModel, }
+\extraline{FiniteModelCreator, NameList, RefExpr, SetExpr,}
+\extraline{VarDecl, ZDeclList, ZExprList, ZFactory}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): \mdr{VarValueMap}}
+\priv
+\proc{size: Int}
+\proc{index: Int}
+\proc{varList: ZExprList}
+\proc{fMGenList: List(\mdr{FiniteModel})}
+\comm{El constructor del módulo recibe una instancia de FiniteModelCreator.}
+\end{module}
+
+
+
+\begin{hmodule}{TClassImpl}{Scheme}
+\imp{Todos los imports de AxPara}
+\eproc
+\proc{isTClass(\eb {AxPara}): Bool}
+\proc{setMyAxPara(\eb {AxPara})}
+\proc{getMyAxPara(): AxPara}
+\proc{setSchName(\e {SchName})}
+\proc{getSchName(): \mdr{SchName}}
+\proc{Todos los de AxPara}
+\priv
+\proc{axPara: AxPara}
+\comm{Cada subrutina heredada de AxPara se reimplementa para llamar a la subrutina con el mismo nombre del objeto myAxPara. isTClass() determina si su argumento es un TClass. La subrutina setMyAxPara() guarda en la variable myAxPara el valor de su argumento.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TClassLeavesFinder}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TClassNode}{TTreeNode}
+\imp{Scheme, TacticInfo, TClass, TTreeNode, TTreeNodeRepository}
+\eproc
+\proc{setChildren(\e {TTreeNodeRepository})}
+\proc{getChildren(): \mdr{TTreeNodeRepository)}}
+\proc{setDadNode(\e {TClassNode})}
+\proc{getDadNode(): \mdr{TClassNode}}
+\proc{acceptVisitor(\e {TTreeVisitor})}
+\proc{setTacticInfo(\e {TacticInfo})}
+\proc{getTacticInfo(): \mdr{TacticInfo}}
+\proc{setValue(\e {Scheme})}
+\proc{getValue(): \mdr{TClass}}
+\proc{setUnfoldedValue(\e {Scheme})}
+\proc{getUnfoldedValue(): \mdr{TClass}}	
+\proc{setPruned(\eb Bool)}
+\proc{isPruned(): Bool}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TClassNodeTextUIPrinter}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+\begin{hmodule}{TClassPruneClient}{IIComponent}
+\eproc
+\proc{manageEvent(\e {Event})}
+\callonev
+\proc{specLoaded::manageEvent(specLoaded)}
+\proc{pruneTClassRequested::manageEvent(pruneTClassRequested)}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de SpecLoaded ni de PruneTClassRequested. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de SpecLoaded, la instancia de Spec que el evento specLoaded tiene como parámetro debe guardarse en la variable spec. Cuando se llama a manageEvent() y el argumento que se le pasa es una instancia de PruneTClassRequested, se comprobará si la variable instancia spec está seteada. De ser así, se creará una instancia de TClassPruneClientRunner,  a continuación se llamará a la subrutina run() del objeto creado. Esta subrutina se deberá correr en un nuevo thread y así manageEvent() podrá regresar.}
+\end{hmodule}
+
+
+
+\begin{module}{TClassPruneClientRunner}
+\eproc
+\proc{run()}
+\annev
+\proc{run()::prunningResult}
+\end{module}
+
+
+
+
+\begin{cmodule}{TClassRepository}{AbstractRepository}{TClass}
+\end{cmodule}
+
+
+
+\begin{module}{Testing}
+\compr
+\subm{ClientPrunning}
+\subm{ClientTCaseChecking}
+\subm{ClientTCaseGeneration}
+\subm{TCaseAbstraction}
+\subm{TCaseExecution}
+\subm{TCaseRefinement}
+\subm{TTreeModules}
+\end{module}
+
+
+
+\begin{hmodule}{TFuncFiniteModel}{FiniteModel}
+\imp{Expr, SetExpr, TupleExpr, ZExprList, ZFactory, ZName}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\priv
+\proc{size: Int}
+\proc{normalizedType: Expr}
+\proc{leftFiniteModel: \mdr{FiniteModel}}
+\proc{rightFiniteModel: \mdr{FiniteModel}}
+\proc{Indices internos}
+\comm{La instancia de normalizedType se crea una sola vez al construirse una instancia del módulo. leftFiniteModel y rightFiniteModel se reciben como argumentos en el constructor del módulo. }
+\end{hmodule}
+
+
+\begin{hmodule}{TPrunning}{IIComponent}
+\imp{}
+\eproc
+\proc{manageEvent(\e {Event})}
+\callonev
+\proc{pruneTTreeRequested::manageEvent(pruneTTreeRequested)}
+\proc{prunningResult::manageEvent(prunningResult)}
+\annev
+\proc{manageEvent()::pruneTClassRequested}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de PruneTTreeRequested ni de PrunningResult.}
+\end{hmodule}
+
+
+
+\begin{pattern}{TTreeCompositePatt}
+\based{Composite}
+\bec{Se quiere representar una jerarquía de objetos parte-todo y que los clientes sean capaces de obviar las diferencias entre composiciones de objetos y objetos individuales. Así, los clientes tratarán a todos los objetos de la estructura compuesta de manera uniforme.}
+\pwhere
+\proc{Componente is TTreeNode}
+\proc{Hoja1 \is TCaseNode}
+\proc{Compuesto \is TClassNode}
+\end{pattern}
+
+
+
+\begin{hmodule}{TTreeGen}{IIComponent}
+\imp{ClientUI, Event, EventAdmin, OpName, Spec, SpecLoaded, SpecUtils, }
+\extraline{TacticRepository, TTreeGenerated,TTreeRequested, TTreeStrategy}
+\eproc
+\proc{manageEvent(\e {Event})}
+\annev
+\proc{generateTTree()::tTreeGenerated}
+\callonev
+\proc{specLoaded::manageEvent(specLoaded)}
+\proc{tTreeRequested::manageEvent(tTreeRequested)}
+\priv
+\proc{generateTTree()}
+\proc{spec: Spec}
+\proc{tacticList: List(\mdr{Tactic})}
+\proc{tTreeStrategy: \mdr{TTreeStrategy}}
+\proc{opName: \mdr{OpName}}
+\comm{La subrutina manageEvent() debe lanzar una excepción si su argumento no es una instancia de SpecLoaded ni de TTreeRequested. La subrutina generateTTree() es llamada desde manageEvent(), luego de que se establezca el valor de alguna/s de las variables instancia del módulo en base a alguno/s de los parámetros del evento que se le pasa como argumento. generateTTree() comprueba que todas estas variables estén seteadas, y de ser así, realiza la generación del árbol de pruebas correspondiente, anunciando a continuación el evento tTreeGenerated. La implementación del anuncio del evento se realiza a través de una llamada a la subrutina announceEvent() de la instancia única de EventAdmin, pasando la apropiada instancia de TTreeGenerated como argumento. Si no están seteadas todas estas variables, generateTTree() regresa sin anunciar ningún evento.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TTreeGenerated}{Event}
+\imp{TTreeNode, OpName}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setTTree(\e {TClassNode})}
+\proc{getTTree(): \mdr{TClassNode}}
+\end{hmodule}
+
+
+
+\begin{module}{TTreeModules}
+\compr
+\subm{TacticName}
+\subm{Tactics}
+\subm{TTreeStrategies}
+\subm{TTreeVisitors}
+\subm{TacticManager}
+\subm{TCaseNode}
+\subm{TClassNode}
+\subm{TTreeGen}
+\subm{TTreeNode}
+\end{module}
+
+
+
+\begin{module}{TTreeNode}
+\imp{Scheme, TacticInfo, TTreeNodeRepository, TTreeVisitor}
+\eproc
+\proc{setChildren(\e {TTreeNodeRepository})}
+\proc{getChildren(): \mdr{TTreeNodeRepository}}
+\proc{setDadNode(\e {TTreeNode})}
+\proc{getDadNode(): \mdr{TTreeNode}}
+\proc{acceptVisitor(\e {TTreeVisitor})}
+\proc{setTacticInfo(\e {TacticInfo})}
+\proc{getTacticInfo(): \mdr{TacticInfo}}
+\proc{setValue(\e {Scheme})}
+\proc{getValue(): \mdr{Scheme}}
+\proc{setUnfoldedValue(\e {Scheme})}
+\proc{getUnfoldedValue(): \mdr{Scheme}}
+\comm{Este módulo no se implementa, solo brinda una interfaz a los módulos que heredan de él.}
+\end{module}
+
+
+
+\begin{cmodule}{TTreeNodeRepository}{AbstractRepository}{TTreeNode}
+\end{cmodule}
+
+
+
+\begin{hmodule}{TTreeBelowPruner}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TTreeFromPruner}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+\begin{hmodule}{TTreeRequested}{Event}
+\imp{OpName, Tactic, TTreeStrategy}
+\eproc
+\proc{setOpName(\e {OpName})}
+\proc{getOpName(): \mdr{OpName}}
+\proc{setTacticList(\eb {List(\mdr{Tactic})})}
+\proc{getTacticList(): List(\mdr{Tactic})}
+\proc{setTTreeStrategy(\e {TTreeStrategy})}
+\proc{getTTreeStrategy(): \mdr{TTreeStrategy}}
+\end{hmodule}
+
+
+
+\begin{module}{TTreeStrategies}
+\compr
+\subm{IterativeTTreeStrategy}
+\subm{TTreeStrategy}
+\end{module}
+
+
+
+\begin{module}{TTreeStrategy}
+\imp{SpecUtils, OpScheme, TacticRepository, TTreeNode, TClassNode}
+\eproc
+\proc{generateTTree(\e {OpScheme}, \eb {List(\mdr{Tactic})}): \mdr{TClassNode}}
+\comm{Este módulo no se implementa, solo sirve como interfaz para los módulos que heredan de él.}
+\end{module}
+
+
+\begin{pattern}{TTreeStrategyPatt}
+\based{Strategy}
+\bec{Queremos tener módulos relacionados que sólo difieran en su comportamiento. Las estrategias permiten configurar un módulo con un determinado comportamiento de entre muchos posibles.}
+\pwhere
+\proc{Estrategia is TTreeStrategy}
+\proc{EstrategiaConcreta1 is IterativeTTreeStrategy}
+\proc{Contexto is TTreeGen}
+\end{pattern}
+
+
+
+\begin{hmodule}{TTreeTextUIPrinter}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\end{hmodule}
+
+
+
+
+\begin{module}{TTreeVisitor}
+\imp{TCaseNode, TClassNode}
+\eproc
+\proc{visitTClassNode(\e {TClassNode})}
+\proc{visitTCaseNode(\e {TCaseNode})}
+\comm{Este módulo no se implementa, solo brinda una interfaz a los módulos que heredan de él.}
+\end{module}
+
+
+
+\begin{pattern}{TTreeVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is TTreeVisitor}
+\proc{VisitanteConcreto1 is SchemeTTreeFinder}
+\proc{VisitanteConcreto2 is TCaseNodeAdder}
+\proc{VisitanteConcreto3 is TCaseNodeTextUIPrinter}
+\proc{VisitanteConcreto4 is TClassLeavesFinder}
+\proc{VisitanteConcreto5 is TClassNodeTextUIPrinter}
+\proc{VisitanteConcreto6 is TTreeTextUIPrinter}
+\proc{VisitanteConcreto7 is TTreeBelowPruner}
+\proc{VisitanteConcreto8 is TTreeFromPruner}
+\proc{Elemento \is TTreeNode}
+\proc{ElementoConcreto1 \is TClassNode}
+\proc{ElementoConcreto2 \is TCaseNode}
+\end{pattern}
+
+
+
+\begin{module}{TTreeVisitors}
+\compr
+\subm{SchemeTTreeFinder}
+\subm{TCaseNodeAdder}
+\subm{TCaseNodeTextUIPrinter}
+\subm{TClassLeavesFinder}
+\subm{TClassNodeTextUIPrinter}
+\subm{TTreeBelowPruner}
+\subm{TTreeFromPruner}
+\subm{TTreeTextUIPrinter}
+\subm{TTreeVisitor}
+\end{module}
+
+
+
+\begin{module}{TypeFMsGenMap}
+\imp{Expr, FiniteModel}
+\eproc
+\proc{put(\eb {Expr}, \e {FiniteModel})}
+\proc{get(\eb {Expr}): \mdr{FiniteModel}}
+\proc{containsKey(\eb {Expr}): Bool}
+\proc{containsValue(\e {FiniteModel}): Bool}
+\proc{remove(\eb {Expr})}
+\comm{El módulo se implementa usando la coleccion Map instanciada en los tipos Expr y FiniteModel de la API de Java.}
+\end{module}
+
+
+
+\begin{module}{TypeFMsMap}
+\imp{Expr, NormalTypeAndFM}
+\eproc
+\proc{put(\eb {Expr}, \e {NormalTypeAndFM})}
+\proc{get(\eb {Expr}): \mdr{NormalTypeAndFM}}
+\proc{containsKey(\eb {Expr}): Bool}
+\proc{containsValue(\e {NormalTypeAndFM}): Bool}
+\proc{remove(\eb {Expr})}
+\comm{El módulo se implementa usando la coleccion Map instanciada en los tipos Expr y NormalTypeAndFM de la API de Java.}
+\end{module}
+
+
+
+\begin{module}{TypeFMsGenVisitor}
+\imp{ApplExpr, AxPara, Expr, Freetype, GivenPara, NormalTypeAndFM, }
+\extraline{ProdExpr, PowerExpr, RefExpr, SetExpr, Term,}
+\extraline{TypeFMsMap}
+\eproc
+\proc{visitTerm(\eb {Term}): \mdr{NormalTypeAndFM}}
+\proc{visitAxPara(\eb {AxPara}): \mdr{NormalTypeAndFM}}
+\proc{visitGivenPara(\eb {GivenPara}): \mdr{NormalTypeAndFM}}
+\proc{visitFreetype(\eb {Freetype}): \mdr{NormalTypeAndFM}}
+\proc{visitRefExpr(\eb {RefExpr}): \mdr{NormalTypeAndFM}}
+\proc{visitApplExpr(\eb {ApplExpr}): \mdr{NormalTypeAndFM}}
+\proc{visitPowerExpr(\eb {PowerExpr}): \mdr{NormalTypeAndFM}}
+\proc{visitProdExpr(\eb {ProdExpr}): \mdr{NormalTypeAndFM}}
+\proc{visitSetExpr(\eb {SetExpr}): \mdr{NormalTypeAndFM}}
+\proc{visitExpr(\eb {Expr}): \mdr{NormalTypeAndFM}}
+\proc{visitSetExpr(\eb {SetExpr}): \mdr{NormalTypeAndFM}}
+\proc{getExprMap(): \mdr{TypeFMsMap}}
+\priv
+\proc{fMSize: Int}
+\proc{exprMap: \mdr{TypeFMsMap}}
+\end{module}
+
+
+
+\begin{pattern}{TypeFMsGenVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is TypeFMsGenVisitor}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is AxPara}
+\proc{ElementoConcreto2 \is ApplExpr}
+\proc{ElementoConcreto3 \is Freetype}
+\proc{ElementoConcreto4 \is GivenPara}
+\proc{ElementoConcreto5 \is PowerExpr}
+\proc{ElementoConcreto6 \is ProdExpr}
+\proc{ElementoConcreto7 \is RefExpr}
+\proc{ElementoConcreto8 \is SetExpr}
+\comm{AxPara, ApplExpr,Freetype, GivenPara, PowerExpr, ProdExpr, RefExpr, SetExprTerm, Term y Visitor son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{hmodule}{UnSelAllOpsCommand}{Command}
+\imp{AbstractRepository, ClientTextUI, Controller, }
+\extraline{Tactic, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{hmodule}{UnSelOpCommand}{Command}
+\imp{AbstractRepository, ClientTextUI, Controller, }
+\extraline{Tactic, TTreeStrategy}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+
+\begin{module}{Util}
+\compr
+\subm{AbstractOrder}
+\end{module}
+
+
+
+\begin{module}{UtilSymbols}
+\eproc
+\proc{primeSymbol(): String}
+\proc{naturalSymbol():String}
+\proc{relationSymbol():String}
+\proc{partialFunctionSymbol():String}
+\proc{totalFunctionSymbol():String}
+\proc{emptySetSymbol():String}
+\proc{leftAngleSymbol():String}
+\proc{rightAngleSymbol():String}
+\comm{Deben ser todas subrutinas estáticas, es decir, que no puedan ser invocadas para una instancia particular del módulo, sino solo invocada a nivel de módulo.}
+\end{module}
+
+
+
+
+\begin{module}{UniqueZLive}
+\imp{ZLive}
+\eproc
+\proc{getInstance(): ZLive}
+\priv
+\proc{zLive: ZLive}
+\comm{getInstance() debe ser una subrutina estática, es decir, que no pueda ser invocada para un objeto particular de la clase que el módulo implemente, sino solo invocada a nivel de tal clase. Esta subrutina tiene que devolver el objeto zLive, antes realizando su creación de ser necesario. El constructor del módulo no puede ser una subrutina pública. }
+\end{module}
+
+
+\begin{hmodule}{UnPruneCommand}{Command}
+\imp{ClientTextUI, Controller, TClassNode, TTreeFromPruner}
+\eproc
+\proc{run(\e {ClientTextUI}, \eb {String})}
+\comm{La subrutina run() ejecuta la orden correspondiente asumiendo que se está trabajando con la interfaz de usuario en modo texto.}
+\end{hmodule}
+
+
+\begin{module}{VarName}
+\comm{En su lugar se usa el módulo String.}
+\end{module}
+
+
+
+\begin{cmodule}{VarNameRepository}{AbstractRepository}{VarName}
+\end{cmodule}
+
+
+
+\begin{module}{VarValueMap}
+\imp{Expr, RefExpr}
+\eproc
+\proc{put(\eb {RefExpr}, \eb {Expr})}
+\proc{get(\eb {RefExpr}): Expr}
+\proc{containsKey(\eb {RefExpr}): Bool}
+\proc{containsValue(\eb {Expr}): Bool}
+\proc{remove(\eb {Expr})}
+\comm{El módulo se implementa usando la coleccion Map instanciada en los tipos RefExpr y Expr de la API de Java.}
+\end{module}
+
+
+
+\begin{module}{VISGen}
+\imp{AbstractRepository, AbstractIterator, AxPara, CZTCloner, Decl, }
+\extraline{DeclList, NameList, Pred, PredRemover, VarDecl, ZDeclList}
+\eproc
+\proc{generateVIS(\e {OpScheme}): \mdr{TClass}}
+\end{module}
+
+
+
+\begin{module}{WordsFinder}
+\imp{VarNameRepository, Term}
+\eproc
+\proc{visitTerm(\eb {Term}): Term}
+\proc{visitZName(\eb {ZName}): ZName}
+\priv
+\proc{varNamesRep: \mdr{VarNameRepository}}
+\comm{Term y ZName son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\extraline{Debe pasarse una instancia de VarNameRepository al constructor de instancias de este módulo de tal forma de poder establecer el valor de la variable varNamesRep.}
+\end{module}
+
+
+
+\begin{pattern}{WordsFinderVisPatt}
+\based{Visitor}
+\bec{Las clases que definen la estructura de objetos no cambian frecuentemente pero es posible necesitar que se definan nuevas operaciones sobre la estructura. Este patrón nos permite mantener juntas operaciones relacionadas definiéndolas en una clase.}
+\pwhere
+\proc{Visitante is Visitor}
+\proc{VisitanteConcreto is WordsFinder}
+\proc{Elemento \is Term}
+\proc{ElementoConcreto1 \is Term}
+\proc{ElementoConcreto2 \is ZName}
+\comm{Term, Visitor y ZName son módulos que heredan de CZT de acuerdo a la estructura de modulos.}
+\end{pattern}
+
+
+
+\begin{module}{ZAbstraction}
+\compr
+\subm{CZT}
+\subm{AbstractOutput}
+\subm{AbstractOutputImpl}
+\subm{AbstractTCase}
+\subm{AxDef}
+\subm{AxDefImpl}
+\subm{AxParaRepository}
+\subm{HorizDef}
+\subm{HorizDefImpl}
+\subm{OpNameRepository}
+\subm{OpScheme}
+\subm{OpSchemeImpl}
+\subm{OutputClass}
+\subm{OutputClassImpl}
+\subm{OutputClassRepository}
+\subm{Scheme}
+\subm{SchemeImpl}
+\subm{SchemeUnfolder}
+\subm{SchName}
+\subm{SpecUtils}
+\subm{TClass}
+\subm{TClassImpl}
+\subm{TClassRepository}
+\subm{UtilSymbols}
+\subm{VarName}
+\subm{VarNameRepository}
+\subm{VISGen}
+\end{module}
+
+
+\begin{hmodule}{ZeroIntFiniteModel}{IntFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+
+\begin{module}{ZeroIntFiniteModelParser}
+\imp{NatFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{NatFiniteModel}): Int} 
+\end{module}
+
+
+
+\begin{hmodule}{ZeroNatFiniteModel}{NatFiniteModel}
+\imp{Expr, NumExpr, RefExpr, ZExprList, ZFactory, ZName, ZNumeral}
+\eproc
+\proc{initialize()}
+\proc{hasNext(): Bool}
+\proc{next(): Expr}
+\proc{getNormalizedType(): Expr}
+\proc{getFMSize(): Int}
+\end{hmodule}
+
+
+\begin{module}{ZeroNatFiniteModelParser}
+\imp{NatFiniteModel}
+\eproc
+\proc{parse(\eb{List(String)}, \e{NatFiniteModel}): Int} 
+\end{module}
+
+
+
+
+
+\end{document}

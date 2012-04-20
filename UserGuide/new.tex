@@ -1,0 +1,40 @@
+\section{What's New on This Version}
+
+\begin{itemize}
+\item Command \verb+loadelimtheorems+ has been added.
+
+\item In elimination theorems, set extensions can be better expressed through the directive \verb+\se+.
+
+%AVISAR: si el conjunto por extensión de la clase de prueba tiene como uno de sus elementos un conjunto por comprensión (ver si esto lo acepta CZT), entonces prunett no va a podar esa clase.
+%Los valores del conjunto no tienen que tener comas ",". Esta pensado para valores de tipos simples.
+
+\item The general pruning algorithm was slightly changed (see section \ref{prunett}).
+
+%AVISAR: Poda los nodos de los cuales podo todos los hijos, poda las hojas que no tienen caso de prueba, se puede volver a ejecutar prunett luego de genalltca.
+
+\item The elimination theorem library delivered with this version is included in Appendix \ref{etl}.
+
+\item This version partially supports axiomatic definitions (see section \ref{axdef}).
+%AVISAR:
+%setaxdef se debe ejecutar luego de loadspec y antes de prunett; antes de prunett se pueden cambiar valores, luego ya no se puede. 
+
+\item Commands \verb+setaxdef+, \verb+showaxdef+ and \verb+showaxdefvalues+ have been added.
+
+\item Limited support for four new testing tactics have been added: Numeric Ranges (NR), Mandatory Test Set (MTS), Weak Existential Quantifier (WEQ) and Strong Existential Quantifier (SEQ) (see sections \ref{nr}, \ref{mts}, \ref{weq} and \ref{seq}, respectively).
+
+\item Testing tactics ISE, PSSE and SSE have been fixed to support expressions at the left of $\in$, $\subset$ or $\subseteq$, and not only variables.
+
+\item Section \ref{tips} was added to document some tips on how to write Z models more suitable to be loaded on Fastest.
+
+\item Appendix \ref{unsfeatures} lists some Z features {\it still} unsupported by Fastest.
+
+\item An application-level parameter has been added to limit the number of evaluations when searching for abstract test cases (see section \ref{genalltca}).
+
+\item It is possible to load specifications where terms are used before their declarations.
+
+\item Command-line editing features (like tab completion) have been added (see section \ref{readline}).
+
+%\item Command \verb+eval+ has been added to allow users to find values satisfying predicates (see section \ref{eval}).
+\end{itemize}
+
+

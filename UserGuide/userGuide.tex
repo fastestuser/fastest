@@ -1,0 +1,110 @@
+\documentclass[a4paper,12pt, fleqn]{article}
+\usepackage{multicol}
+\usepackage{dirtree}
+\usepackage[pdftex,colorlinks, citecolor=black, linkcolor=black, urlcolor=blue]{hyperref}
+\usepackage[pdftex]{graphicx}
+\usepackage{comment}
+\usepackage{czt}
+\usepackage{subfig}
+\usepackage{longtable}
+\usepackage[svgnames]{xcolor}
+\usepackage[cm]{fullpage}
+
+\renewenvironment{theorem}[2]{\vspace{3mm} {\bf Elimination Theorem} #1 [$#2$] \vspace{-3mm}\begin{zed}}{\end{zed}\vspace{-5mm}}
+
+\renewcommand{\const}{\textrm{const }}
+\newcommand{\sw}{\textrm{somewhere}}
+\newcommand{\anything}{\textrm{anything}}
+\newcommand{\eval}{\textrm{eval}}
+\newcommand{\se}{\textrm{setExtension}}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+\begin{center}
+
+\mbox{}\vspace{7cm}
+
+{\Huge The Fastest 1.3.6 User's Guide}
+
+\vspace{.5cm}
+
+{\LARGE Automating Software Testing}
+
+\vspace{2cm}
+
+{\large Maximiliano Cristi\'{a}
+
+{\tt mcristia@flowgate.net}
+
+\vspace{0.5cm}
+
+
+\begin{multicols}{2}
+Pablo Rodr\'{\i}guez Monetti 
+
+{\tt prodriguez@flowgate.net}
+
+\vspace{0.5cm}
+
+Pablo Albertengo
+
+{\tt palbertengo@flowgate.net}
+
+\end{multicols}}
+
+\vspace{1.5cm}
+\includegraphics[scale=.4]{logo.jpg}
+\vspace{1.5cm}
+
+{\large Flowgate Consulting 
+
+Maip\'{u} 778 Piso 1 Oficina 10
+
+(2000) Rosario
+
+Argentina}
+
+\vspace{1cm}
+
+Release date: July 2010
+\end{center}
+
+\pagebreak
+
+\tableofcontents
+
+\pagebreak
+
+\input{new} \pagebreak
+
+\input{mbt} \pagebreak
+
+\input{ttf} \pagebreak
+
+\input{arch} \pagebreak
+
+\input{example} \pagebreak
+
+\input{tips} \pagebreak
+
+\input{manual} \pagebreak
+
+\appendix
+
+\input{unsfeatures} \pagebreak
+
+\input{tcl} \pagebreak
+
+\input{stdpartition} \pagebreak
+
+\section{\label{etl}Elimination Theorems}
+This appendix lists the elimination theorems delivered with this version. All the elimination theorems except ExtensionalUndefinition and  UndefinitionByEmptiness were certified with the Z/EVES proof assistant \cite{ZEVES}. Slightly weaker versions of the following elimination theorems were certified with Z/EVES: SingletonNotSet, SingletonIsNotEmpty, SingletonNotSubset, SingletonMappletNotInDom, SingletonNotSubsetDom, NrresCap, SingletonMappletNotEqualRel1, SingletonNotSubsetRel, ExcludedMiddleSingletonSub1 and NotinSetExtension.
+
+\input{elimTheorems} \pagebreak
+
+\bibliographystyle{alpha}
+\bibliography{biblio}
+
+\end{document}
