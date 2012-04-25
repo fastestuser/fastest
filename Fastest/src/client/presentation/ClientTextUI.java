@@ -28,8 +28,8 @@ public class ClientTextUI extends ClientUI {
             // The error output is closed; if you want to see the messages 
             //printed by exceptions, comment the following line.
             System.err.close();
-//            URL url = ClientTextUI.class.getResource("ClientTextUI.class");
-//            String urlStr = url.toString();
+//          URL url = ClientTextUI.class.getResource("ClientTextUI.class");
+//          String urlStr = url.toString();
             String currentDir = "";
             EventAdmin.getInstance(this);
             (new CServersConfigLoader(currentDir + "lib/conf/cserversinfo.conf")).loadCServersInfo();
