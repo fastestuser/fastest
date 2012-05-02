@@ -68,7 +68,12 @@ public class ContainsTermInPredVerifier implements
         ZSchText zSchText = schExpr.getZSchText();
         Pred pred = zSchText.getPred();
 
-        Boolean termInPred = pred.accept(new ContainsTermVerifier(termToFind)).
+        if (pred == null) {
+        	return false;
+        }
+        
+        ContainsTermVerifier containsTermVerifier = new ContainsTermVerifier(termToFind);
+        Boolean termInPred = pred.accept(containsTermVerifier).
                 booleanValue();
         if (termInPred.booleanValue()) {
             return termInPred;
@@ -146,7 +151,7 @@ public class ContainsTermInPredVerifier implements
     }
 
     public Boolean visitAxPara(AxPara axPara) {
-        Boolean termInAxPara = null;
+        Boolean termInAxPara = false;
         ZSchText zSchText = axPara.getZSchText();
         DeclList declList = zSchText.getDeclList();
         if (declList instanceof ZDeclList) {

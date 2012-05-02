@@ -44,9 +44,9 @@ public class SPTactic extends AbstractTactic {
      * Creates instances of SPTactic.
      */
     public SPTactic() {
-        URL url = SPTactic.class.getResource("SPTactic.class");
-        String urlStr = url.toString();
-        String currentDir = urlStr.substring(9, urlStr.indexOf("fastest.jar"));
+        //URL url = SPTactic.class.getResource("SPTactic.class");
+        //String urlStr = url.toString();
+        String currentDir = "";
         (new StdPartitionLoader(currentDir + "lib/conf/stdpartition.spf")).loadStdPartitions();
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
