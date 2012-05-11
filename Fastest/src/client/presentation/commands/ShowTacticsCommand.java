@@ -33,9 +33,10 @@ public class ShowTacticsCommand implements Command{
             try{             
                 List<String> tacticNameList = new ArrayList<String>();
 
-		URL url = ClientTextUI.class.getResource("ClientTextUI.class");
-		String urlStr = url.toString();
-		String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar"));
+		//		URL url = ClientTextUI.class.getResource("ClientTextUI.class"); //MODIFICADO
+		//		String urlStr = url.toString(); //MODIFICADO
+		//		String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar")); //MODIFICADO
+                String currentDir = ""; //MODIFICADO
                 File file = new File(currentDir + "lib/conf/listoftactics.conf");
                 BufferedReader in = new BufferedReader(new FileReader(file));
                 String line;

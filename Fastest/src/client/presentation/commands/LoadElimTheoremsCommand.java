@@ -27,9 +27,10 @@ public class LoadElimTheoremsCommand implements Command{
 
 	PrintWriter output = clientTextUI.getOutput();
 	try{
-		URL url = LoadElimTheoremsCommand.class.getResource("LoadElimTheoremsCommand.class");
-		String urlStr = url.toString();
-		String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar"));
+		//URL url = LoadElimTheoremsCommand.class.getResource("LoadElimTheoremsCommand.class"); //MODIFICADO
+		//String urlStr = url.toString(); //MODIFICADO
+		//String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar")); //MODIFICADO
+		String currentDir = ""; //MODIFICADO
 		String configurationFilePath = currentDir+"lib/conf/elimTheorems.tex";
 		String operatorsFilePath =currentDir+"lib/conf/thmoperators.conf";
 		String rwRulesFilePath = currentDir+"lib/conf/rwRules.tex";

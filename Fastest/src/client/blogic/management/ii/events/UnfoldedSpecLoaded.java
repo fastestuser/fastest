@@ -17,7 +17,7 @@ public class UnfoldedSpecLoaded extends Event_ {
      */
     public UnfoldedSpecLoaded(Spec spec) {
         this.spec = spec;
-        super.setEventName("specLoaded");
+        super.setEventName("unfoldedSpecLoaded"); 
     }
 
     /**

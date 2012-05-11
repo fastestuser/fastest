@@ -910,7 +910,8 @@ public class VarAbstraction{
 			try{
 			URL url = VarAbstraction.class.getResource("VarAbstraction.class");
 			String urlStr = url.toString();
-			String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar"));
+			// String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar")); //MODIFICADO
+			String currentDir = ""; //MODIFICADO
 			BufferedReader in = new BufferedReader(new FileReader(screenPath));
 			String line;
 			int row = 0;

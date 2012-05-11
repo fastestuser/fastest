@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import net.sourceforge.czt.base.ast.Term;
+import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.util.Visitor;
 import net.sourceforge.czt.z.ast.AndExpr;
 import net.sourceforge.czt.z.ast.AndPred;
@@ -47,10 +48,12 @@ import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.z.visitor.AndExprVisitor;
 import net.sourceforge.czt.z.visitor.AxParaVisitor;
+import net.sourceforge.czt.z.visitor.ExprPredVisitor;
 import net.sourceforge.czt.z.visitor.ExprVisitor;
 import net.sourceforge.czt.z.visitor.IffExprVisitor;
 import net.sourceforge.czt.z.visitor.ImpliesExprVisitor;
 import net.sourceforge.czt.z.visitor.OrExprVisitor;
+import net.sourceforge.czt.z.visitor.Pred2Visitor;
 import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.SchExprVisitor;
 import net.sourceforge.czt.z.visitor.SpecVisitor;
@@ -67,7 +70,10 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         RefExprVisitor<Term>,
         ImpliesExprVisitor<Term>,
         IffExprVisitor<Term>,
-        ExprVisitor<Term> {
+        ExprVisitor<Term>,
+        Pred2Visitor<Term>,
+        ExprPredVisitor<Term>,
+        TermVisitor<Term>{
 
     private AbstractRepository<String> opNames;
     private AbstractRepository<String> schPredNames;
@@ -157,8 +163,11 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
 
     public SchExpr visitSchExpr(SchExpr schExpr) {
         ZSchText zSchText = schExpr.getZSchText();
+        //MODIFICADO
         ZDeclList zDeclList = zSchText.getZDeclList();
+        //Pred pred = zSchText.getPred();
         Pred pred = zSchText.getPred();
+        
         int declListSize = zDeclList.size();
         for (int j = 0; j < declListSize; j++) {
             Decl decl = zDeclList.get(j);
@@ -326,7 +335,9 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                 }
             }
         }
-        zSchText.setPred((Pred) pred.accept(this));
+        if (pred != null) {
+        	zSchText.setPred((Pred) pred.accept(this));
+        }
         return schExpr;
     }
 
@@ -642,4 +653,11 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         }
         return newPred;
     }
+
+	//MODIFICADO
+	public Term visitTerm(Term term) {
+		Visitor<Term> cloneVisitor = new CZTCloner();
+	    Term clonedTerm = (Term) term.accept(cloneVisitor);
+		return clonedTerm;
+	}
 }

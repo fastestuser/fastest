@@ -52,14 +52,15 @@ public class GenAllTTCommand implements Command {
 
 /*            Spec unfoldedSpec = (Spec) spec.accept
                     (new SchemeUnfolder(opNames,schPredNames));
-
+*/
             Spec unfoldedSpec = spec;
 
-            
-            eventAdmin.announceEvent(new UnfoldedSpecLoaded(unfoldedSpec));
-            controller.setUnfoldedSpec(unfoldedSpec);
-*/
             boolean someEventAnnounced = false;
+            UnfoldedSpecLoaded unfoldedSpecLoaded = new UnfoldedSpecLoaded(unfoldedSpec);
+            eventAdmin.announceEvent(unfoldedSpecLoaded);
+            controller.setUnfoldedSpec(unfoldedSpec);
+
+        
 
             Map<String, TTreeStrategy> opTTreeStrategyMap =
                     controller.getOpTTreeStrategyMap();

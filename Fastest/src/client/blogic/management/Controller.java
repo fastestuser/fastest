@@ -605,6 +605,7 @@ public class Controller extends IIComponent {
             selectedRefLaw = null;
             refining = false;
             FastestUtils.resetTacticsNumbersMap();
+            
         } else {
             throw new IllegalArgumentException();
         }

@@ -128,9 +128,10 @@ public class FastestUtils {
         try {
             List<String> tacticNameList = new ArrayList<String>();
 
-            URL url = FastestUtils.class.getResource("FastestUtils.class");
-            String urlStr = url.toString();
-            String currentDir = urlStr.substring(9, urlStr.indexOf("fastest.jar"));
+//            URL url = FastestUtils.class.getResource("FastestUtils.class");  //MODIFICADO
+//            String urlStr = url.toString();  //MODIFICADO 
+//            String currentDir = urlStr.substring(9, urlStr.indexOf("fastest.jar")); //MODIFICADO
+            String currentDir = ""; //MODIFICADO
             File file = new File(currentDir + "lib/conf/listoftactics.conf");
             BufferedReader in = new BufferedReader(new FileReader(file));
             String line;

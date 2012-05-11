@@ -56,7 +56,8 @@ public class ScriptTestWriterC implements ScriptTestWriter{
 		try{
 		URL url = ScriptTestWriterC.class.getResource("ScriptTestWriterC.class");
 		String urlStr = url.toString();
-		String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar"));
+		//String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar")); //MODIFICADO
+		String currentDir = ""; //MODIFICADO
 		declarations.add("FILE *xmlFile;\n");
 		// Esto es una pequeña licencia. En realidad en el prologo van solo
 		// las declaraciones. ARREGLAR

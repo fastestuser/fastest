@@ -79,8 +79,8 @@ public class TClassPruneClientRunner implements Runnable
 		Pred tClassPred = null;
 		try{
 		// We force the typechecking of tClass to guarantee TypeAnns
-		List<? extends ErrorAnn> errors = 
-				TypeCheckUtils.typecheck(axPara, manager, false, sectionName);
+		//List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false, sectionName); //MODIFICADO
+		List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false);
 		if(errors.size() >0)
 			System.out.println("ErroreS: "+errors.toString());
 		tClassPred = SpecUtils.getAxParaPred(axPara);

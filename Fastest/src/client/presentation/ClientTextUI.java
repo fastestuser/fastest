@@ -38,6 +38,7 @@ public class ClientTextUI extends ClientUI {
                     currentDir + "lib/conf/thmoperators.conf")).loadTheorems();
 
             reader = new ConsoleReader();
+            reader.setInput(new BufferedInputStream(System.in)); //MODIFICADO
             List completors = new LinkedList();
 
             String commands[] = obtainCommands();
@@ -104,7 +105,7 @@ public class ClientTextUI extends ClientUI {
     public boolean readAction()
             throws IOException {
 
-        String line = reader.readLine("Fastest> ");
+		String line = reader.readLine("Fastest> ");
 
         if (line != null) {
             line = line.trim();
