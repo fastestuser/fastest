@@ -230,7 +230,7 @@ public class LoadSpecCommand implements Command {
 
             spec = (Spec) spec.accept(new EmptySetReplacer());
             controller.setOriginalSpec(spec);
-            //controller.setUnfoldedSpec(spec);
+            controller.setUnfoldedSpec(spec);
             controller.setLoadedOpsRep(opNamesRep);
             controller.setOpsToTestRep(new ConcreteRepository<String>());
             controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
@@ -243,12 +243,12 @@ public class LoadSpecCommand implements Command {
             controller.setBasicAxDefs(basicAxDefs);
             
            //MODIFICADO
-            AbstractRepository<String> opNames = controller.getOpsToTestRep();
-            opNames.addElement("KeepMaxReading");
-            opNames.addElement("KeepMaxReadingOk");
-            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
-            controller.setUnfoldedSpec((Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames)));
-            
+//            AbstractRepository<String> opNames = controller.getOpsToTestRep();
+//            opNames.addElement("KeepMaxReading");
+//            opNames.addElement("KeepMaxReadingOk");
+//            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+//            controller.setUnfoldedSpec((Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames)));
+//            
             EventAdmin eventAdmin = EventAdmin.getInstance();
             SpecLoaded specLoaded = new SpecLoaded(spec);
             eventAdmin.announceEvent(specLoaded);

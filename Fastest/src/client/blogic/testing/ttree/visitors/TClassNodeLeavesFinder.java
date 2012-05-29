@@ -21,35 +21,40 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
      */
 	public AbstractRepository<TClassNode> visitTClassNode(TClassNode tClassNode){
 
-	AbstractRepository<TClassNode> tClassRep = new ConcreteRepository<TClassNode>();
-
-        if(tClassNode.isPruned())
-            return tClassRep;
-
-        AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-	AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
-	// This test class node will be consider a leaf if it has not any child 
-        // or every child is a pruned test class node
-        boolean isALeaf = true;
-	while(childrenIt.hasNext()){
-            TTreeNode tTreeNode = childrenIt.next();
-            if(tTreeNode instanceof TClassNode && !((TClassNode) tTreeNode).isPruned()){
-                    isALeaf = false;
-            }
-            else if(tTreeNode instanceof TCaseNode){
-                isALeaf = false;
-            }
-
-	    AbstractRepository<TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
-	    if(tClassChildRep != null){
-		AbstractIterator<TClassNode> tClassIt = tClassChildRep.createIterator();
-		while(tClassIt.hasNext())
-			tClassRep.addElement(tClassIt.next());
-	    }
-	}
+		AbstractRepository<TClassNode> tClassRep = new ConcreteRepository<TClassNode>();
+	
+	    if(tClassNode.isPruned())
+	    	return null;
+	
+	    AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
+		AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+		// This test class node will be consider a leaf if it has not any child 
+	    // or every child is a pruned test class node
+	    boolean isALeaf = true;
+		while(childrenIt.hasNext()){
+	        TTreeNode tTreeNode = childrenIt.next();
+	        if(tTreeNode instanceof TClassNode && !((TClassNode) tTreeNode).isPruned()){
+	                isALeaf = false;
+	        }
+	        else if(tTreeNode instanceof TCaseNode){
+	            isALeaf = false;
+	        }
+	        
+	        //if (!isALeaf){
+			    AbstractRepository<TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
+			    if(tClassChildRep != null){
+			    	AbstractIterator<TClassNode> tClassIt = tClassChildRep.createIterator();
+			    	while(tClassIt.hasNext())
+			    		tClassRep.addElement(tClassIt.next());
+			    }
+		
+	        //}
+		}
+		
 		if(isALeaf)
 			tClassRep.addElement(tClassNode);
 		return tClassRep;
+		
 	}
 
     

@@ -3,6 +3,8 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import net.sourceforge.czt.z.ast.AxPara;
+
 import client.presentation.ClientTextUI;
 import common.repository.ConcreteRepository;
 import client.blogic.management.Controller;
@@ -12,9 +14,12 @@ import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
+import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
+import common.z.SpecUtils;
 import common.z.TClass;
+import common.z.czt.visitors.TClassNodeUnfolder;
 
 /**
  * Instances of this class allow the generation of test cases for the operations for which 
@@ -96,15 +101,15 @@ public class GenAllTCasesCommand implements Command {
 
                 // Extracts all the TCLassNodes that are leaves of the tClassNode test tree
                 // except for those leaves that are descendants of pruned test classes.
-                AbstractRepository<TClass> tClassLeaves =
-                        opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
-                AbstractIterator<TClass> tClassIt =
-                        tClassLeaves.createIterator();
-                while (tClassIt.hasNext()) {
+                AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
+                AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
+                while (tClassNodeIt.hasNext()) {
                     someEventAnnounced = true;
-                    TClass tClass = tClassIt.next();
-                    TCaseRequested tCaseRequested =
-                            new TCaseRequested(opName, tClass, maxEval);
+                    TClassNode tClassNode = tClassNodeIt.next();
+                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, opName, controller);
+                    tClassNode.acceptVisitor(tClassNodeUnfolder);
+                    TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
+                    TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
                     eventAdmin.announceEvent(tCaseRequested);
                 }
 
