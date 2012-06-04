@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.ZDeclList;
 
 import client.presentation.ClientTextUI;
 import common.repository.ConcreteRepository;
@@ -91,14 +92,18 @@ public class GenAllTCasesCommand implements Command {
             Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
             Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
             int maxEval = controller.getMaxEval();
-
+            
+            Iterator<ZDeclList> it = controller.getAuxiliarDecls().values().iterator();
+            while (it.hasNext())
+            	System.out.println(SpecUtils.termToLatex(it.next()));	
+            
             boolean someEventAnnounced = false;
             while (iterator.hasNext()) {
                 Map.Entry<String, TClassNode> mapEntry = iterator.next();
                 String opName = mapEntry.getKey();
                 TClassNode opTTreeRoot = mapEntry.getValue();
 
-
+                
                 // Extracts all the TCLassNodes that are leaves of the tClassNode test tree
                 // except for those leaves that are descendants of pruned test classes.
                 AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());

@@ -7,19 +7,29 @@ import java.util.List;
 import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.ConstDecl;
+import net.sourceforge.czt.z.ast.Decl;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.InclDecl;
+import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.SchExpr;
+import net.sourceforge.czt.z.ast.Sect;
+import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZFactory;
 import net.sourceforge.czt.z.ast.ZName;
+import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSchText;
+import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.*;
 import client.blogic.testing.ttree.tactics.DNFIterator;
+import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
 import common.repository.AbstractIterator;
+import common.z.DeclDecoration;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
@@ -33,6 +43,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	private Controller controller;
 	private TClassNode root;
 	
+		
 	public TClassNodeUnfolder(TClassNode tClassNode, String opName, Controller controller){
 		 root = tClassNode;
 		 predUnfolded = null;
@@ -62,9 +73,46 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 
 
 		TClassNode tClassNodePadre = tClassNode.getDadNode();
-		//habria que pasarle schemeUnfolder al squema del padre????
+		//Consideramos que las incluciones *_Decls solo estan en el root
 		if (tClassNodePadre==null){
-			return tClassNode;
+			AxPara axPara = tClassNode.getValue().getMyAxPara();
+			ZSchText zSchText = axPara.getZSchText();
+	        ZDeclList zDeclList = ( (SchExpr) ((ConstDecl) zSchText.getZDeclList().get(0)).getExpr()).getZSchText().getZDeclList();
+	        int declListSize = zDeclList.size();
+	        for (int j = 0; j < declListSize; j++) {
+	            Decl decl = zDeclList.get(j);
+	            
+							            if (decl instanceof InclDecl) {
+							                Expr expr = ((InclDecl) decl).getExpr();
+						
+							                if (expr instanceof RefExpr) {
+							                	String includedSchemeName  = ((RefExpr) expr).getName().toString();
+							                	if (includedSchemeName.endsWith("_Decls")){
+							                		//Obtenemos el AxPara incluido de la especificación
+							                		String includedSchemeNameAux = includedSchemeName.substring(0, includedSchemeName.length()-6);
+							                		TTreeNode includedRoot = controller.getOpTTreeMap().get(includedSchemeNameAux);
+							                		
+							                		//Obtenemos el ZParaList para poder unfolderalo
+						
+							                        Spec spec = controller.getOriginalSpec(); 
+							                        for (Sect sect : spec.getSect()) {
+							                            if (sect instanceof ZSect) {
+							                                ParaList paraList = ((ZSect) sect).getParaList();
+							                                if (paraList instanceof ZParaList) {
+							                                    DeclsExtractorFull declsExtractor = new DeclsExtractorFull((ZParaList) paraList, controller);
+							                                    System.out.println("IMPRIMIMOS ANTES\n" + SpecUtils.termToLatex(zDeclList));
+							                                    //zDeclList.addAll(includedRoot.getValue().getMyAxPara().accept(declsExtractor));
+							                                    SpecUtils.insertZDeclList(zDeclList, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
+							                                    System.out.println("IMPRIMIMOS DESPUES\n" + SpecUtils.termToLatex(zDeclList));
+							                                }
+							                            }
+							                        }
+							                	}
+							                }
+							            }
+	        }
+	     
+            return tClassNode;
 		}
 		
 		tClassNodePadre.acceptVisitor(this);
