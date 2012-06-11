@@ -111,7 +111,7 @@ public class GenAllTCasesCommand implements Command {
                 while (tClassNodeIt.hasNext()) {
                     someEventAnnounced = true;
                     TClassNode tClassNode = tClassNodeIt.next();
-                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, opName, controller);
+                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
                     tClassNode.acceptVisitor(tClassNodeUnfolder);
                     TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
                     System.out.println("Eschemas:\n" + SpecUtils.termToLatex(tClass.getMyAxPara()));                    

@@ -1,10 +1,5 @@
 package common.z.czt.visitors;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-
-import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.ConstDecl;
 import net.sourceforge.czt.z.ast.Decl;
@@ -17,19 +12,14 @@ import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
-import net.sourceforge.czt.z.ast.ZFactory;
-import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSchText;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.*;
-import client.blogic.testing.ttree.tactics.DNFIterator;
-import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
 import common.repository.AbstractIterator;
-import common.z.DeclDecoration;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
@@ -39,33 +29,24 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	private Pred predUnfolded; //predUnfolded es el que se envia a genalltca,
 	private ZDeclList zDeclListRoot;; // zDeclListRoot es el que se envia a genalltca, 
 	private String schName;
-	private String opName;
 	private Controller controller;
 	private TClassNode root;
 	
 		
-	public TClassNodeUnfolder(TClassNode tClassNode, String opName, Controller controller){
+	public TClassNodeUnfolder(TClassNode tClassNode, Controller controller){
 		 predUnfolded = null;
 		 zDeclListRoot = (new ZFactoryImpl()).createZDeclList();
 		 this.controller = controller;
-		 this.opName = opName;
 	}
 	
 	public TClass getTClassUnfolded(){
 		  
-		System.out.println("NOMBREEEEE: "+ schName); 
 		if (schName.endsWith("VIS")){
 			return root.getValue();
 		} else {
 			AxPara axPara  = SpecUtils.createAxPara(zDeclListRoot, predUnfolded);
 			return new TClassImpl(axPara,schName);
 		}
-		//if (predUnfolded != null){
-//			 AxPara axPara  = SpecUtils.createAxPara(zDeclListRoot, predUnfolded);
-//		 	return new TClassImpl(axPara,schName);
-		 //}
-		//se pide TCase para el Vis, entonces no se inicializo pred y zDeclListRoot esta vacia entonces se devuelve el root
-		 //return root.getValue();
 	}
 
 
@@ -107,13 +88,10 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	                                ParaList paraList = ((ZSect) sect).getParaList();
 	                                if (paraList instanceof ZParaList) {
 	                                    DeclsExtractorFull declsExtractor = new DeclsExtractorFull((ZParaList) paraList, controller);
-	                                    //System.out.println("IMPRIMIMOS ANTES\n" + SpecUtils.termToLatex(zDeclList));
-	                                    //zDeclList.addAll(includedRoot.getValue().getMyAxPara().accept(declsExtractor));
 	                                    zDeclList.remove(j); //Borramos el Decl que expandido
 	                                    j--;
 	                                    declListSize = zDeclList.size();
 	                                    SpecUtils.insertZDeclList(zDeclList, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
-	                                    //System.out.println("IMPRIMIMOS DESPUES\n" + SpecUtils.termToLatex(zDeclList));
 	                                }
 	                            }
 	                        }
