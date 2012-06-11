@@ -7,6 +7,7 @@ import net.sourceforge.czt.z.ast.Pred;
 import common.repository.AbstractIterator;
 import common.z.TClass;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
+import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
 import net.sourceforge.czt.z.ast.AxPara;
 import common.repository.AbstractRepository;
 import client.blogic.testing.ttree.TClassNode;
@@ -173,6 +174,29 @@ public class PruneUtils {
 			AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
 			while(tClassIt.hasNext()){
 		                    TClass tClass = tClassIt.next();
+				    leaves.addElement(tClass);
+			}
+            	}
+		return leaves;
+		}
+		return null;
+	}
+	
+	//MODIFICADO Agregado Joaquin Cuenca para poder unfolder
+	public static AbstractRepository<TClassNode> obtainTClassesNodes(Controller controller)
+	{
+		AbstractRepository<TClassNode> leaves = new ConcreteRepository<TClassNode>();
+		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+		if(!opTTreeMap.isEmpty()){
+            	Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+            	Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+            	while(iterator.hasNext()){
+                	Map.Entry<String, TClassNode> mapEntry = iterator.next();
+                	TClassNode opTTreeRoot = mapEntry.getValue();
+			AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
+			AbstractIterator<TClassNode> tClassIt = tClassNodeLeaves.createIterator();
+			while(tClassIt.hasNext()){
+		                    TClassNode tClass = tClassIt.next();
 				    leaves.addElement(tClass);
 			}
             	}

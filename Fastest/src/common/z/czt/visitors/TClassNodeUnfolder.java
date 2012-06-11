@@ -45,7 +45,6 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	
 		
 	public TClassNodeUnfolder(TClassNode tClassNode, String opName, Controller controller){
-		 root = tClassNode;
 		 predUnfolded = null;
 		 zDeclListRoot = (new ZFactoryImpl()).createZDeclList();
 		 this.controller = controller;
@@ -54,12 +53,19 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	
 	public TClass getTClassUnfolded(){
 		  
-		 if (predUnfolded != null){
-			 AxPara axPara  = SpecUtils.createAxPara(zDeclListRoot, predUnfolded);
-		 	return new TClassImpl(axPara,schName);
-		 }
+		System.out.println("NOMBREEEEE: "+ schName); 
+		if (schName.endsWith("VIS")){
+			return root.getValue();
+		} else {
+			AxPara axPara  = SpecUtils.createAxPara(zDeclListRoot, predUnfolded);
+			return new TClassImpl(axPara,schName);
+		}
+		//if (predUnfolded != null){
+//			 AxPara axPara  = SpecUtils.createAxPara(zDeclListRoot, predUnfolded);
+//		 	return new TClassImpl(axPara,schName);
+		 //}
 		//se pide TCase para el Vis, entonces no se inicializo pred y zDeclListRoot esta vacia entonces se devuelve el root
-		 return root.getValue();
+		 //return root.getValue();
 	}
 
 
@@ -71,10 +77,11 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
      */
 	public TClassNode visitTClassNode(TClassNode tClassNode){
 
-
 		TClassNode tClassNodePadre = tClassNode.getDadNode();
 		//Consideramos que las incluciones *_Decls solo estan en el root
 		if (tClassNodePadre==null){
+			schName = tClassNode.getValue().getSchName();
+			root = tClassNode;
 			AxPara axPara = tClassNode.getValue().getMyAxPara();
 			ZSchText zSchText = axPara.getZSchText();
 	        ZDeclList zDeclList = ( (SchExpr) ((ConstDecl) zSchText.getZDeclList().get(0)).getExpr()).getZSchText().getZDeclList();
@@ -82,34 +89,37 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	        for (int j = 0; j < declListSize; j++) {
 	            Decl decl = zDeclList.get(j);
 	            
-							            if (decl instanceof InclDecl) {
-							                Expr expr = ((InclDecl) decl).getExpr();
-						
-							                if (expr instanceof RefExpr) {
-							                	String includedSchemeName  = ((RefExpr) expr).getName().toString();
-							                	if (includedSchemeName.endsWith("_Decls")){
-							                		//Obtenemos el AxPara incluido de la especificación
-							                		String includedSchemeNameAux = includedSchemeName.substring(0, includedSchemeName.length()-6);
-							                		TTreeNode includedRoot = controller.getOpTTreeMap().get(includedSchemeNameAux);
-							                		
-							                		//Obtenemos el ZParaList para poder unfolderalo
-						
-							                        Spec spec = controller.getOriginalSpec(); 
-							                        for (Sect sect : spec.getSect()) {
-							                            if (sect instanceof ZSect) {
-							                                ParaList paraList = ((ZSect) sect).getParaList();
-							                                if (paraList instanceof ZParaList) {
-							                                    DeclsExtractorFull declsExtractor = new DeclsExtractorFull((ZParaList) paraList, controller);
-							                                    System.out.println("IMPRIMIMOS ANTES\n" + SpecUtils.termToLatex(zDeclList));
-							                                    //zDeclList.addAll(includedRoot.getValue().getMyAxPara().accept(declsExtractor));
-							                                    SpecUtils.insertZDeclList(zDeclList, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
-							                                    System.out.println("IMPRIMIMOS DESPUES\n" + SpecUtils.termToLatex(zDeclList));
-							                                }
-							                            }
-							                        }
-							                	}
-							                }
-							            }
+	            if (decl instanceof InclDecl) {
+	                Expr expr = ((InclDecl) decl).getExpr();
+
+	                if (expr instanceof RefExpr) {
+	                	String includedSchemeName  = ((RefExpr) expr).getName().toString();
+	                	if (includedSchemeName.endsWith("_Decls")){
+	                		//Obtenemos el AxPara incluido de la especificacion
+	                		String includedSchemeNameAux = includedSchemeName.substring(0, includedSchemeName.length()-6);
+	                		TTreeNode includedRoot = controller.getOpTTreeMap().get(includedSchemeNameAux);
+	                		
+	                		//Obtenemos el ZParaList para poder unfolderalo
+
+	                        Spec spec = controller.getOriginalSpec(); 
+	                        for (Sect sect : spec.getSect()) {
+	                            if (sect instanceof ZSect) {
+	                                ParaList paraList = ((ZSect) sect).getParaList();
+	                                if (paraList instanceof ZParaList) {
+	                                    DeclsExtractorFull declsExtractor = new DeclsExtractorFull((ZParaList) paraList, controller);
+	                                    //System.out.println("IMPRIMIMOS ANTES\n" + SpecUtils.termToLatex(zDeclList));
+	                                    //zDeclList.addAll(includedRoot.getValue().getMyAxPara().accept(declsExtractor));
+	                                    zDeclList.remove(j); //Borramos el Decl que expandido
+	                                    j--;
+	                                    declListSize = zDeclList.size();
+	                                    SpecUtils.insertZDeclList(zDeclList, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
+	                                    //System.out.println("IMPRIMIMOS DESPUES\n" + SpecUtils.termToLatex(zDeclList));
+	                                }
+	                            }
+	                        }
+	                	}
+	                }
+	            }
 	        }
 	     
             return tClassNode;
@@ -134,6 +144,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 		decl = (ConstDecl) zDeclList.get(0);
 		schExpr = (SchExpr) decl.getExpr();
 		Pred pred = schExpr.getZSchText().getPred();
+        pred = pred.accept(new PreExprCleaner());
 		
 		//soy la Hoja si no tengo hijos, o mis hijos es un TCase o son TClass pero estan pruneados
 		AbstractIterator<? extends TTreeNode> childrenIt = tClassNode.getChildren().createIterator();
@@ -151,8 +162,9 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 			else break;
 		}
 		// si soy la hoja, obtengo el nombre del scheme
-		if (esHoja)
+		if (esHoja){
 			schName = tClassNode.getValue().getSchName();//nombre para el foldeado
+		}
 		
 		//si padre no es el root saco el pred, SpecUils.andPreds CREA un nuevo predicado
 		if (tClassNodePadre.getDadNode() != null){

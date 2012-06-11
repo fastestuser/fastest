@@ -114,6 +114,7 @@ public class GenAllTCasesCommand implements Command {
                     TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, opName, controller);
                     tClassNode.acceptVisitor(tClassNodeUnfolder);
                     TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
+                    System.out.println("Eschemas:\n" + SpecUtils.termToLatex(tClass.getMyAxPara()));                    
                     TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
                     eventAdmin.announceEvent(tCaseRequested);
                 }
