@@ -1,5 +1,6 @@
 package client.blogic.management.ii.events;
 
+import common.z.SpecUtils;
 import common.z.TClass;
 import client.blogic.management.communic.ServerConfig;
 
@@ -20,6 +21,8 @@ public class PruneTClassRequested extends Event_{
      */
 	public PruneTClassRequested(TClass tClass, ServerConfig serverConfig){
 		this.tClass = tClass;
+		System.out.println("PRUNETCLASREQÇUESTEDDDDDDDDD: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
+
 		this.serverConfig = serverConfig;
 		super.setEventName("pruneTClassRequested");
 	}

@@ -1,8 +1,11 @@
 package client.blogic.testing.ttree.visitors;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
 import client.blogic.testing.ttree.*;
 import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
 import common.repository.AbstractIterator;
 
 
@@ -10,7 +13,7 @@ import common.repository.AbstractIterator;
  * Instances of this class make possible the traversal over a test tree to 
  * obtain those TClassNode that are leaves of the test tree.
  */
-public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<TClassNode>>{
+public class TClassNodeLeavesFinderHash implements TTreeVisitor<Map<String,TClassNode>>{
 
     /**
      * Visit the specified instance of TClassNode and returns the TClassNodes of
@@ -18,9 +21,9 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
      * @param tClassNode
      * @return the test classes of this subtree that are leaves of the test tree.
      */
-	public AbstractRepository<TClassNode> visitTClassNode(TClassNode tClassNode){
+	public Map<String,TClassNode> visitTClassNode(TClassNode tClassNode){
 
-		AbstractRepository<TClassNode> tClassRep = new ConcreteRepository<TClassNode>();
+		Map<String,TClassNode> tClassRep = new HashMap<String,TClassNode>();
 	
 	    if(tClassNode.isPruned())
 	    	return null;
@@ -40,18 +43,20 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
 	        }
 	        
 	        //if (!isALeaf){
-			    AbstractRepository<TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
+			    Map<String,TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
 			    if(tClassChildRep != null){
-			    	AbstractIterator<TClassNode> tClassIt = tClassChildRep.createIterator();
-			    	while(tClassIt.hasNext())
-			    		tClassRep.addElement(tClassIt.next());
+			    	Iterator<TClassNode> tClassIt = tClassChildRep.values().iterator();
+			    	while(tClassIt.hasNext()){
+			    		TClassNode nodo = tClassIt.next();
+			    		tClassRep.put(nodo.getValue().getSchName(),nodo);
+			    	}
 			    }
 		
 	        //}
 		}
 		
 		if(isALeaf)
-			tClassRep.addElement(tClassNode);
+			tClassRep.put(tClassNode.getValue().getSchName(),tClassNode);
 		return tClassRep;
 		
 	}
@@ -63,7 +68,7 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
      * @param tCaseNode
      * @return null
      */
-	public AbstractRepository<TClassNode> visitTCaseNode(TCaseNode tCaseNode){
+	public Map<String,TClassNode> visitTCaseNode(TCaseNode tCaseNode){
 		return null;
 	}
 }

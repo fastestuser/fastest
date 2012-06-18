@@ -2,7 +2,7 @@ package client.blogic.testing.prunning;
 
 import java.util.*;
 import client.blogic.management.ii.events.PruneTClassRequested;
-import client.blogic.management.ii.events.UnfoldedSpecLoaded;
+import client.blogic.management.ii.events. UnfoldedSpecLoaded;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
@@ -48,7 +48,7 @@ public class TClassPruneClient extends IIComponent {
 		throws IllegalArgumentException{
 
 		if(event_ instanceof UnfoldedSpecLoaded){
-			Spec spec = ((UnfoldedSpecLoaded)event_).getSpec();
+			Spec spec = (( UnfoldedSpecLoaded)event_).getSpec();
 			for (Sect sect : spec.getSect()) {
 					if (sect instanceof ZSect) {
 						ZSect zSect = (ZSect) sect;
@@ -62,6 +62,8 @@ public class TClassPruneClient extends IIComponent {
 			Controller controller = clientUI.getMyController();
 			tClass = pruneTClassRequested.getTClass();
 
+			//System.out.println("TCLASSSSS: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
+			
 			serverConfig = pruneTClassRequested.getServerConfig();
 			manager = controller.getTypeCheckerManager();
 			Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
