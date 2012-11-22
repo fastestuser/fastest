@@ -10,6 +10,7 @@ import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZFactory;
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.ZExprList;
@@ -25,10 +26,15 @@ import common.z.TClass;
 import common.z.TClassImpl;
 import common.z.czt.UniqueZLive;
 import common.repository.AbstractIterator;
+import common.repository.AbstractRepository;
+import common.z.czt.visitors.ContainsTermInPredStringVerifier;
+import common.z.czt.visitors.ContainsTermVerifier;
 import common.z.czt.visitors.ParamExtractor;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.ContainsTermInPredVerifier;
+import common.z.czt.visitors.SchemeUnfolder;
+
 import java.net.URL;
 
 /**
@@ -198,13 +204,22 @@ public class SPTactic extends AbstractTactic {
 
             // We check if the input expression is contained in the predicate.
             AxPara opAxPara = (AxPara) originalOp.getMyAxPara();
-            if (!opAxPara.accept(new ContainsTermInPredVerifier(parsedTerm, spec, controller)).booleanValue()) {
+            //MODIFICADO
+            /*AbstractRepository<String> opNames = controller.getOpsToTestRep();
+            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+            Spec specAux = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
+            System.out.println("specAux " + SpecUtils.termToLatex(specAux) );
+            System.out.println("spec " + SpecUtils.termToLatex(spec) );
+            */
+            
+            if (!opAxPara.accept(new ContainsTermInPredStringVerifier(termStr, spec, controller)).booleanValue()) {
                 System.out.println("The specified term (" + SpecUtils.termToLatex(parsedTerm) + ") is "
                         + "not contained in the predicate of the operation's "
                         + "schema.");
                 return false;
             }
-
+          //FIN MODIFICADO
+          
             // We get expression's real parameters
             List<Term> realParamList = null;
 
