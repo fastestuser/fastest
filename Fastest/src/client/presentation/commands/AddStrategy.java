@@ -14,22 +14,15 @@ import net.sourceforge.czt.z.ast.AxPara;
 
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.ttree.tactics.Tactic;
-import client.blogic.testing.ttree.tactics.MTSTactic;
 import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
-import common.repository.ConcreteRepository;
 import common.z.SpecUtils;
-import common.z.OpScheme;
-import common.z.OpSchemeImpl;
-import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.*;
-import common.z.TClass;
 import common.fastest.FastestUtils;
 
-import net.sourceforge.czt.typecheck.z.ErrorAnn;
-import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
-import common.z.czt.visitors.CZTCloner;
+import net.sourceforge.czt.base.ast.Term;
+import net.sourceforge.czt.util.Visitor;
+import common.z.czt.visitors.AtomicPredExtractor;
+import common.z.czt.visitors.SchemeUnfolder;
 
 
 /**
@@ -119,8 +112,8 @@ public class AddStrategy implements Command{
 		}
 		
 		//Corremos genalltt
-		Command command = new GenAllTTCommand();
-		command.run(clientTextUI, "");
+//		Command genalltt = new GenAllTTCommand();
+//		genalltt.run(clientTextUI, "");
 		
 		//Instancia de prune para cuando haga falta
 		Command prunett = new PruneTreeCommand();
@@ -128,37 +121,42 @@ public class AddStrategy implements Command{
 		//Buscamos las apariciones de "\in" en la definiciones de la operación,
 		//la cual deberá tomarse de forma unfoldeada
 		
-		AbstractRepository<AxPara> expressions = new ConcreteRepository<AxPara>();
+		Map<Term, String> expressions;// = new ConcreteRepository<AxPara>();
 		//ExpressionsSPVisitor searcher = new ExpressionsSPVisitor();
 		
 		//Buscamos las expresiones que se encuentran en la operacion unfoldeada,
 		// y las almacenamos en expressions
 		
-		
 		Spec spec = controller.getUnfoldedSpec();
-
+		AbstractRepository<String> opNames = controller.getOpsToTestRep();
+    	AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+    	spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
+		
         AxPara axPara = null;
         for (Sect sect : spec.getSect()) {
             if (sect instanceof ZSect) {
                 ParaList paraList = ((ZSect) sect).getParaList();
                 if (paraList instanceof ZParaList) {
-                    axPara = SpecUtils.axParaSearch(opName,
-                            (ZParaList) paraList);
+                    axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
                 }
             }
         }
+        
+        System.out.println("AXPARA: " + SpecUtils.termToLatex(axPara));
+        Visitor<Map<Term, String>> searcher = new AtomicPredExtractor();
+		expressions = axPara.accept(searcher);
 		
-        //expressions = axPara.accept(searcher);
-		
-		AbstractIterator<AxPara> expressionsIt = expressions.createIterator();
+		Iterator<Term> expressionsIt = expressions.keySet().iterator();
+
 		while (expressionsIt.hasNext()) {
-			AxPara exp = expressionsIt.next();
-			command = new AddTacticCommand();
-			command.run(clientTextUI, opName + " SP " + "\\in " + exp.toString());
+			Term exp = expressionsIt.next();
 			
+			Command command = new AddTacticCommand();
+			System.out.println("Aplicamos: " + opName + " SP " + expressions.get(exp) + " " + SpecUtils.termToLatex(exp));
+			//command.run(clientTextUI, opName + " SP " + expressions.get(exp) + " " + SpecUtils.termToLatex(exp));
+			//genalltt.run(clientTextUI, "");
 			//pruneamos
-			prunett.run(clientTextUI, "");
+			//prunett.run(clientTextUI, "");
 		}
 	}
-
 }

@@ -34,10 +34,11 @@ public class TPrunning extends IIComponent{
 	private List<ServerConfig> serversList;
 	private Map<InetAddress, Integer> mapRequests;
 	// Cantidad maxima de solicitudes a un servidor en particular
-	private final int maxRequests = 20; //MODIFICADO TABA EN CUATRO
+	private final int maxRequests = 4;
 	private AbstractIterator<TClass> tClassIt;
 	private boolean blocked;
 	private int serverNumber;
+	private Map<String,TClassNode> nodeLeaves;
 
     /**
      * Creates new instances of TPrunning.
@@ -46,6 +47,7 @@ public class TPrunning extends IIComponent{
 		mapRequests = new HashMap<InetAddress, Integer>();
 		blocked = false;
 		serverNumber = 0;
+		nodeLeaves = new HashMap<String, TClassNode>();
 	}
 
     /**
@@ -57,6 +59,9 @@ public class TPrunning extends IIComponent{
 	public synchronized void manageEvent(Event_ event_)
 		throws IllegalArgumentException{
 
+		
+		
+		
 		if(event_ instanceof PruneTTreeRequested){
 			try{
 				blocked = false;
@@ -71,6 +76,21 @@ public class TPrunning extends IIComponent{
 					nroLeaves++;*/
 				tClassIt = leaves.createIterator();
 				//EventAdmin eventAdmin = EventAdmin.getInstance();
+				
+				//MODIFICADO obtiene todos las hojas nodos en una tabla hash, con clave nombre String, para poder unfoldear.
+    			Controller controller = this.getMyClientUI().getMyController();
+    			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+    			if(!opTTreeMap.isEmpty()){
+    	        	Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+    	        	Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+    	        	while(iterator.hasNext()){
+    	            	Map.Entry<String, TClassNode> mapEntry = iterator.next();
+    	            	TClassNode opTTreeRoot = mapEntry.getValue();
+    	                Map<String,TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinderHash());
+    				    nodeLeaves.putAll(tClassNodeLeaves);
+    	        	}
+    			} //FIN MODIFICADO
+				
 				while(tClassIt.hasNext() && !blocked){
 					blocked = requestPrune();
 				}
@@ -88,9 +108,35 @@ public class TPrunning extends IIComponent{
 			try{
 			EventAdmin eventAdmin = EventAdmin.getInstance();
 			if(tClassIt.hasNext()){
-        			TClass tClass = tClassIt.next();
-				PruneTClassRequested pruneTClassRequested = 
-                           		new PruneTClassRequested(tClass, auxServer);
+    			TClass tClass = tClassIt.next();
+    			
+    			
+//    			//MODIFICADO obtiene todos las hojas nodos en una tabla hash, con clave nombre String, para poder unfoldear.
+//    			Controller controller = this.getMyClientUI().getMyController();
+//    			Map<String,TClassNode> leaves = new HashMap<String,TClassNode>();
+//    			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+//    			if(!opTTreeMap.isEmpty()){
+//    	        	Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+//    	        	Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+//    	        	while(iterator.hasNext()){
+//    	            	Map.Entry<String, TClassNode> mapEntry = iterator.next();
+//    	            	TClassNode opTTreeRoot = mapEntry.getValue();
+//    	                Map<String,TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinderHash());
+//    				    leaves.putAll(tClassNodeLeaves);
+//    	        	}
+//    			}
+    			
+    			//MODIFICADO , unfoldeamo el nodo ala pasada
+    			Controller controller = this.getMyClientUI().getMyController();
+        		TClassNode tClassNode = nodeLeaves.get(tClass.getSchName());
+        		TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
+                tClassNode.acceptVisitor(tClassNodeUnfolder);
+                tClass = tClassNodeUnfolder.getTClassUnfolded();
+
+                // FIN MODIFICADO
+    			
+    			
+				PruneTClassRequested pruneTClassRequested = new PruneTClassRequested(tClass, auxServer);
 				eventAdmin.announceEvent(pruneTClassRequested);
 				//mapRequests.put(inetAddress,new Integer(req+1));
 			}
@@ -118,25 +164,26 @@ public class TPrunning extends IIComponent{
 		}
 		InetAddress inetAddress = serverConfig.getInetAddress();
 		
-		//MODIFICADO obtiene todos las hojas nodos en una tabla hash, con clave nombre String, para poder unfoldear.
-		Controller controller = this.getMyClientUI().getMyController();
-		Map<String,TClassNode> leaves = new HashMap<String,TClassNode>();
-		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-		if(!opTTreeMap.isEmpty()){
-        	Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
-        	Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-        	while(iterator.hasNext()){
-            	Map.Entry<String, TClassNode> mapEntry = iterator.next();
-            	TClassNode opTTreeRoot = mapEntry.getValue();
-                Map<String,TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinderHash());
-			    leaves.putAll(tClassNodeLeaves);
-        	}
-		}
+//		//MODIFICADO obtiene todos las hojas nodos en una tabla hash, con clave nombre String, para poder unfoldear.
+//		Controller controller = this.getMyClientUI().getMyController();
+//		Map<String,TClassNode> leaves = new HashMap<String,TClassNode>();
+//		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+//		if(!opTTreeMap.isEmpty()){
+//        	Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+//        	Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+//        	while(iterator.hasNext()){
+//            	Map.Entry<String, TClassNode> mapEntry = iterator.next();
+//            	TClassNode opTTreeRoot = mapEntry.getValue();
+//                Map<String,TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinderHash());
+//			    leaves.putAll(tClassNodeLeaves);
+//        	}
+//		}
 		
 		
 		
 		
 		//FIN MODIFICADO
+		Controller controller = this.getMyClientUI().getMyController();
 		
 		if(mapRequests.containsKey(inetAddress)){
 			Integer value = mapRequests.get(inetAddress);
@@ -144,53 +191,42 @@ public class TPrunning extends IIComponent{
 			if(req<maxRequests){
         		TClass tClass = tClassIt.next();
         		//MODIFICADO , unfoldeamo el nodo ala pasada
-        		TClassNode tClassNode = leaves.get(tClass.getSchName());	
+        		TClassNode tClassNode = nodeLeaves.get(tClass.getSchName());	
         		TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
                 tClassNode.acceptVisitor(tClassNodeUnfolder);
                 tClass = tClassNodeUnfolder.getTClassUnfolded();
-
-    			System.out.println("TPRUNINNNNIIIIIINNG: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
 
                 // FIN MODIFICADO
 				PruneTClassRequested pruneTClassRequested = new PruneTClassRequested(tClass, serverConfig);
 				eventAdmin.announceEvent(pruneTClassRequested);
 				mapRequests.put(inetAddress,new Integer(req+1));
-			}
-			else{
+			}else{
 				serverConfig = getNextFreeServer();
 				if(serverConfig!=null){
-				inetAddress = serverConfig.getInetAddress();
-        	    TClass tClass = tClassIt.next();
-        		//MODIFICADO , unfoldeamo el nodo ala pasada
-        		TClassNode tClassNode = leaves.get(tClass.getSchName());	
-        		TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
-                tClassNode.acceptVisitor(tClassNodeUnfolder);
-                tClass = tClassNodeUnfolder.getTClassUnfolded();
-                
-    			System.out.println("TPRUNINNNNIIIIIINNG: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
-
-                
-                // FIN MODIFICADO
-				PruneTClassRequested pruneTClassRequested = new PruneTClassRequested(tClass, serverConfig);
-				eventAdmin.announceEvent(pruneTClassRequested);
-				int oldValue = mapRequests.get(inetAddress).intValue();
-				mapRequests.put(inetAddress,new Integer(oldValue+1));
-				}
-				else
+					inetAddress = serverConfig.getInetAddress();
+		    	    TClass tClass = tClassIt.next();
+		    		//MODIFICADO , unfoldeamo el nodo ala pasada
+		    		TClassNode tClassNode = nodeLeaves.get(tClass.getSchName());
+		    		TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
+		            tClassNode.acceptVisitor(tClassNodeUnfolder);
+		            tClass = tClassNodeUnfolder.getTClassUnfolded();
+		            
+		            // FIN MODIFICADO
+					PruneTClassRequested pruneTClassRequested = new PruneTClassRequested(tClass, serverConfig);
+					eventAdmin.announceEvent(pruneTClassRequested);
+					int oldValue = mapRequests.get(inetAddress).intValue();
+					mapRequests.put(inetAddress,new Integer(oldValue+1));
+				}else
 					blocked = true;
 			}
-		}
-		else{
+		}else{
 			mapRequests.put(inetAddress,new Integer(1));
 			TClass tClass = tClassIt.next();
-			//MODIFICADO , unfoldeamo el nodo ala pasada
-    		TClassNode tClassNode = leaves.get(tClass.getSchName());	
+			//MODIFICADO , unfoldeamo el nodo a la pasada
+    		TClassNode tClassNode = nodeLeaves.get(tClass.getSchName());	
     		TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
             tClassNode.acceptVisitor(tClassNodeUnfolder);
             tClass = tClassNodeUnfolder.getTClassUnfolded();
-            
-			System.out.println("TPRUNINNNNIIIIIINNG: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
-
             
             // FIN MODIFICADO
 			PruneTClassRequested pruneTClassRequested = new PruneTClassRequested(tClass, serverConfig);

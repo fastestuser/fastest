@@ -21,7 +21,6 @@ public class PruneTClassRequested extends Event_{
      */
 	public PruneTClassRequested(TClass tClass, ServerConfig serverConfig){
 		this.tClass = tClass;
-		System.out.println("PRUNETCLASREQÇUESTEDDDDDDDDD: \n" + SpecUtils.termToLatex(tClass.getMyAxPara())); 
 
 		this.serverConfig = serverConfig;
 		super.setEventName("pruneTClassRequested");

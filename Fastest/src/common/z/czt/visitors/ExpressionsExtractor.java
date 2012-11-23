@@ -37,7 +37,7 @@ import net.sourceforge.czt.z.ast.ZNameList;
  */
 
 public class ExpressionsExtractor
-  implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExprVisitor<Map<Expr,Type>>, NumExprVisitor<Map<Expr,Type>>, SetExprVisitor<Map<Expr,Type>>, MemPredVisitor<Map<Expr,Type>>, SetCompExprVisitor<Map<Expr,Type>>
+implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExprVisitor<Map<Expr,Type>>, NumExprVisitor<Map<Expr,Type>>, SetExprVisitor<Map<Expr,Type>>, MemPredVisitor<Map<Expr,Type>>, SetCompExprVisitor<Map<Expr,Type>>
 {
 
 	public ExpressionsExtractor(){
@@ -49,24 +49,24 @@ public class ExpressionsExtractor
 	{
 		Map<Expr,Type> mapList = new HashMap<Expr,Type>();
 		try{
-		if(term != null){
-		Object[] array = term.getChildren();
-		Boolean result = new Boolean(false);
-		Term auxTerm = null;
-		if(array!=null){
-		for (int i = 0; i < array.length; i++) {
-		final Object object = array[i];
-		if (object instanceof Term && object != null){
-			auxTerm = (Term) object;
-			if(auxTerm!=null){
-			Map<Expr,Type> auxMap = auxTerm.accept(this);
-			if(auxMap!=null)
-				mapList.putAll(auxMap);
+			if(term != null){
+				Object[] array = term.getChildren();
+				Boolean result = new Boolean(false);
+				Term auxTerm = null;
+				if(array!=null){
+					for (int i = 0; i < array.length; i++) {
+						final Object object = array[i];
+						if (object instanceof Term && object != null){
+							auxTerm = (Term) object;
+							if(auxTerm!=null){
+								Map<Expr,Type> auxMap = auxTerm.accept(this);
+								if(auxMap!=null)
+									mapList.putAll(auxMap);
+							}
+						}
+					}
+				}
 			}
-		}
-		}
-		}
-		}
 		}
 		catch(Exception e){
 			System.out.println("Exception: \n"+e.toString());
@@ -99,33 +99,33 @@ public class ExpressionsExtractor
 	{
 		Map<Expr,Type> mapList = new HashMap<Expr,Type>();
 		try{
-		String refExprName = refExpr.getZName().getWord().toString();
-		if(!refExpr.getMixfix() && !refExpr.getExplicit()){
-			boolean isReserved = false;
-			for(int i=0; i< UtilSymbols.getNumOfSymbols() && !isReserved;i++)
-				if(refExprName.equals(UtilSymbols.getSymbol(i)))
+			String refExprName = refExpr.getZName().getWord().toString();
+			if(!refExpr.getMixfix() && !refExpr.getExplicit()){
+				boolean isReserved = false;
+				for(int i=0; i< UtilSymbols.getNumOfSymbols() && !isReserved;i++)
+					if(refExprName.equals(UtilSymbols.getSymbol(i)))
 						isReserved = true;
-			if(!isReserved){
+				if(!isReserved){
 
-		boolean contains = false;
-		for(int i=0;i<boundedNames.size();i++)
-			if(refExpr.accept(new ContainsTermVerifier(boundedNames.get(i))))
-				contains = true;
-		//if(contains)
-		//	System.out.println("Contenia:\n"+SpecUtils.termToLatex(refExpr));
+					boolean contains = false;
+					for(int i=0;i<boundedNames.size();i++)
+						if(refExpr.accept(new ContainsTermVerifier(boundedNames.get(i))))
+							contains = true;
+					//if(contains)
+					//	System.out.println("Contenia:\n"+SpecUtils.termToLatex(refExpr));
 
 
 
-			TypeAnn typeAnn = refExpr.getAnn(TypeAnn.class);
-			if(typeAnn!=null){
-			Type type = typeAnn.getType();
-			if(!contains)
-				mapList.put(refExpr,type);
+					TypeAnn typeAnn = refExpr.getAnn(TypeAnn.class);
+					if(typeAnn!=null){
+						Type type = typeAnn.getType();
+						if(!contains)
+							mapList.put(refExpr,type);
+					}
+					else
+						System.out.println("Sin info de tipos: "+SpecUtils.termToLatex(refExpr));
+				}
 			}
-			else
-				System.out.println("Sin info de tipos: "+SpecUtils.termToLatex(refExpr));
-			}
-		}
 		}
 		catch(Exception e){
 			System.out.println("EXCEPTION!!!");
@@ -147,11 +147,11 @@ public class ExpressionsExtractor
 		Type type = typeAnn.getType();
 		ZExprList zExprList = setExpr.getZExprList();
 		if(zExprList.size()>0){
-		Type t = mapList.put(setExpr,type);
-		for(int i=0;i<zExprList.size();i++){
-			Expr auxExpr = zExprList.get(i);
-			mapList.putAll(auxExpr.accept(this));
-		}
+			Type t = mapList.put(setExpr,type);
+			for(int i=0;i<zExprList.size();i++){
+				Expr auxExpr = zExprList.get(i);
+				mapList.putAll(auxExpr.accept(this));
+			}
 		}
 		return mapList;
 	}
@@ -161,13 +161,13 @@ public class ExpressionsExtractor
 		Expr rightExpr = memPred.getRightExpr();
 		Expr leftExpr = memPred.getLeftExpr();
 		if(rightExpr instanceof SetExpr){
-		SetExpr auxSetExpr = (SetExpr) rightExpr;
-		ZExprList zExprList = auxSetExpr.getZExprList();
-		for(int i=0;i<zExprList.size();i++){
-			Expr auxExpr = zExprList.get(i);
-			mapList.putAll(auxExpr.accept(this));
-		}
-		mapList.putAll(leftExpr.accept(this));
+			SetExpr auxSetExpr = (SetExpr) rightExpr;
+			ZExprList zExprList = auxSetExpr.getZExprList();
+			for(int i=0;i<zExprList.size();i++){
+				Expr auxExpr = zExprList.get(i);
+				mapList.putAll(auxExpr.accept(this));
+			}
+			mapList.putAll(leftExpr.accept(this));
 		}
 		else{
 			mapList.putAll(leftExpr.accept(this));
@@ -190,10 +190,10 @@ public class ExpressionsExtractor
 				VarDecl varDecl = (VarDecl) auxDecl;
 				ZNameList zNameList = varDecl.getZNameList();
 				for(int j=0;j<zNameList.size();j++){
-				//System.out.println("Variable: "+ SpecUtils.termToLatex(zNameList.get(j)));
-				//String varName = SpecUtils.termToLatex(zNameList.get(j));
-				//boundedNames.add(varName);
-				boundedNames.add(zNameList.get(j));
+					//System.out.println("Variable: "+ SpecUtils.termToLatex(zNameList.get(j)));
+					//String varName = SpecUtils.termToLatex(zNameList.get(j));
+					//boundedNames.add(varName);
+					boundedNames.add(zNameList.get(j));
 				}
 			}
 		}

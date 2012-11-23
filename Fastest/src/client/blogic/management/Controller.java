@@ -38,6 +38,8 @@ import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.z.ast.AxPara;
 import common.fastest.FastestUtils;
 import compserver.prunning.PruneUtils;
+import common.z.czt.visitors.SchemeUnfolder;
+
 
 /**
  * Maintains references to the specification (both folded and unfolded 
@@ -697,7 +699,10 @@ public class Controller extends IIComponent {
      * @return
      */
     public Spec getUnfoldedSpec() {
-        return unfoldedSpec;
+//    	AbstractRepository<String> opNames = this.getOpsToTestRep();
+//    	AbstractRepository<String> schPredNames = this.getSchemaPredicatesRep();
+//    	unfoldedSpec = (Spec) originalSpec.accept(new SchemeUnfolder(opNames,schPredNames));
+        return originalSpec;
     }
 
     /**

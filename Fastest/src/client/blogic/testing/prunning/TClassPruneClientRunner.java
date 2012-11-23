@@ -37,10 +37,10 @@ public class TClassPruneClientRunner implements Runnable
 	private ServerConfig serverConfig;
 	private SpecInfo specInfo;
 
-    /**
-     * Creates new instances of TClassPruneClientRunner
-     * @param tClass
-     */
+	/**
+	 * Creates new instances of TClassPruneClientRunner
+	 * @param tClass
+	 */
 	public TClassPruneClientRunner(TClass tClass, SectionManager manager, String sectionName, ServerConfig serverConfig, SpecInfo specInfo){
 		this.tClass = tClass;
 		this.manager = manager;
@@ -49,11 +49,11 @@ public class TClassPruneClientRunner implements Runnable
 		this.specInfo = specInfo;
 	}
 
-    /**
-     * Requests the prune of a test class either to the client 
-     * itself or to a computation server server. After a response arrives, it
-     * announces a TClassPruned event.
-     */
+	/**
+	 * Requests the prune of a test class either to the client 
+	 * itself or to a computation server server. After a response arrives, it
+	 * announces a TClassPruned event.
+	 */
 	public void run(){
 		String serverName = serverConfig.getServerName();
 		InetAddress inetAddress = serverConfig.getInetAddress();
@@ -64,27 +64,27 @@ public class TClassPruneClientRunner implements Runnable
 
 		Pred auxPred = SpecUtils.getAxParaPred(axParaAux);
 		if(auxPred==null){
-		String tClassName = SpecUtils.getAxParaName(axParaAux);
-		PrunningResult prunningResult = new PrunningResult(tClassName, null, null, false, serverConfig);
-		try{
-		EventAdmin eventAdmin = EventAdmin.getInstance();
-		eventAdmin.announceEvent(prunningResult);
-		}
-		catch(Exception e){
-			System.out.println("ExceptioN");
-			e.printStackTrace();
-		}
+			String tClassName = SpecUtils.getAxParaName(axParaAux);
+			PrunningResult prunningResult = new PrunningResult(tClassName, null, null, false, serverConfig);
+			try{
+				EventAdmin eventAdmin = EventAdmin.getInstance();
+				eventAdmin.announceEvent(prunningResult);
+			}
+			catch(Exception e){
+				System.out.println("ExceptioN");
+				e.printStackTrace();
+			}
 		}
 		AxPara axPara = TypecheckingUtils.deleteUnnecessaryParenthesis(axParaAux, manager);
 		Pred tClassPred = null;
 		try{
-		// We force the typechecking of tClass to guarantee TypeAnns
-		//List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false, sectionName); //MODIFICADO
-		List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false);
-		if(errors.size() >0)
-			System.out.println("ErroreS: "+errors.toString());
-		tClassPred = SpecUtils.getAxParaPred(axPara);
-		SpecUtils.setAxParaPred(tClass, tClassPred);
+			// We force the typechecking of tClass to guarantee TypeAnns
+			List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false, sectionName);
+			//List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(axPara, manager, false);
+			if(errors.size() >0)
+				System.out.println("ErroreS: "+errors.toString());
+			tClassPred = SpecUtils.getAxParaPred(axPara);
+			SpecUtils.setAxParaPred(tClass, tClassPred);
 		}
 		catch(Exception e){
 			System.out.println("There was an error in the typechecking stage of the prunning!");
@@ -95,12 +95,12 @@ public class TClassPruneClientRunner implements Runnable
 		// We replace in predicate the values for axiomatic definitions
 		// Analizar la posibilidad de clonar!
 		if (axDefsValues != null) {
-	
+
 		Pred pred = SpecUtils.getAxParaPred(tClass);
 		Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
 		Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
 		CZTReplacer replaceVisitor = new CZTReplacer();
-	
+
 		while (iterator.hasNext()) {
 			Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
 			RefExpr refExpr = mapEntry.getKey();
@@ -122,7 +122,7 @@ public class TClassPruneClientRunner implements Runnable
 		}
 		else{
 			// We want ServiceMediator to do the request. The analysis of
-            		// the prunning will be realized in a computation server
+			// the prunning will be realized in a computation server
 			deleted = (new ServiceMediator(inetAddress, port)).pruneTree(tClass,specInfo);
 		}
 		String tClassName = deleted.getTClassName();
@@ -131,8 +131,8 @@ public class TClassPruneClientRunner implements Runnable
 		boolean result = deleted.getResult();
 		PrunningResult prunningResult = new PrunningResult(tClassName, theoremName, params, result, serverConfig);
 		try{
-		EventAdmin eventAdmin = EventAdmin.getInstance();
-		eventAdmin.announceEvent(prunningResult);
+			EventAdmin eventAdmin = EventAdmin.getInstance();
+			eventAdmin.announceEvent(prunningResult);
 		}
 		catch(Exception e){
 			System.out.println("ExceptioN");
