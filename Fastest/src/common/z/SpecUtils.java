@@ -95,6 +95,7 @@ public class SpecUtils {
         ConstDecl constDecl = getConstDecl(axPara);
         if (constDecl != null) {
             Expr expr = constDecl.getExpr();
+            //System.out.println("Exprrrrr " + SpecUtils.termToLatex(expr) );
             if (expr instanceof SchExpr) {
                 schExpr = (SchExpr) expr;
             }
@@ -843,10 +844,14 @@ public class SpecUtils {
      * @return true if both terms are equal and false, otherwise.
      */
     public static boolean areEqualTerms(Term term1, Term term2) {
-        if (term1 == term2) {
+    	//MODIFICADO
+    	System.out.println("Term1 " + SpecUtils.termToLatex(term1) );
+    	System.out.println("Term2 " + SpecUtils.termToLatex(term2) );
+    	if (term1 == term2) {
             return true;
         }
-
+    	//System.out.println("clase1 " + term1.getClass() );
+    	//System.out.println("clase2 " + term2.getClass() );
         if (term1.getClass() != term2.getClass()) {
             return false;
         }

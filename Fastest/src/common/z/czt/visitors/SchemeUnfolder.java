@@ -84,12 +84,24 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
             AbstractRepository<String> schPredNames) {
         this.opNames = opNames;
         this.schPredNames = schPredNames;
+        //MODIFICADO
+        // se inicializa esta variable en el constructor para poder llamar a schemeUnfolder
+        // desde visitAxPara, antes se incializaba en visitSpec.
+        unfoldedAxParas = new HashMap<String, AxPara>();
     }
 
+    // MODIFICADO
+    //se agrego este metodo para poder unfoldear en NRTactic desde directamente un axPara,
+    // zParaList se llena en visitSpec, entonces no se llenaba nunca
+    public void setZParaList(ZParaList zpl){
+    	zParaList = zpl;
+    }
+    //FINMODIFICADO
     public Spec visitSpec(Spec spec) {
         Visitor<Term> cloneVisitor = new CZTCloner();
         Spec unfoldedSpec = (Spec) spec.accept(cloneVisitor);
-        unfoldedAxParas = new HashMap<String, AxPara>();
+        //MODIFICADO
+        //unfoldedAxParas = new HashMap<String, AxPara>();
         for (Sect sect : unfoldedSpec.getSect()) {
             if (sect instanceof ZSect) {
                 ParaList paraList = ((ZSect) sect).getParaList();
@@ -113,9 +125,10 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                                         isSelOp = true;
                                     }
                                 }
-                                if (isSelOp) {
+                                //MODIFICADO
+                                //if (isSelOp) {
                                     axPara = (AxPara) axPara.accept(this);
-                                }
+                                //}
                             }
 
                         }

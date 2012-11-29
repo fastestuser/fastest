@@ -211,8 +211,10 @@ public class SPTactic extends AbstractTactic {
             System.out.println("specAux " + SpecUtils.termToLatex(specAux) );
             System.out.println("spec " + SpecUtils.termToLatex(spec) );
             */
-            
-            if (!opAxPara.accept(new ContainsTermInPredStringVerifier(termStr, spec, controller)).booleanValue()) {
+            System.out.println("termStringado " + SpecUtils.termToLatex(parsedTerm) );
+            System.out.println("termString " + termStr );
+            String termStrFromTerm = SpecUtils.termToLatex(parsedTerm); //por que es distinto
+            if (!opAxPara.accept(new ContainsTermInPredStringVerifier(termStrFromTerm, spec, controller)).booleanValue()) {
                 System.out.println("The specified term (" + SpecUtils.termToLatex(parsedTerm) + ") is "
                         + "not contained in the predicate of the operation's "
                         + "schema.");

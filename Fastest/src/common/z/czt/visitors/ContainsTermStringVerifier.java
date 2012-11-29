@@ -56,8 +56,8 @@ public class ContainsTermStringVerifier
         }*/
         
         String termStr = SpecUtils.termToLatex(term);
-//        System.out.println("theTerm " + theTerm);
-//        System.out.println("term " + termStr);
+        // System.out.println("theTerm " + theTerm);
+        // System.out.println("term " + termStr);
         
         if (areEqualTermsString(theTerm,termStr)){ 
         	return true;

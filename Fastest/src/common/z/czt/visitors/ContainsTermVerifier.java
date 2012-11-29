@@ -37,11 +37,14 @@ public class ContainsTermVerifier
         if (SpecUtils.areEqualTerms(term, theTerm)) {
             return true;
         }
-
+        //MODIFICADO
+        //System.out.println("theTerm " + SpecUtils.termToLatex(theTerm) );
         for (int i = 0; i < array.length; i++) {
             final Object object = array[i];
             if (object instanceof Term) {
                 Term auxTerm = (Term) object;
+                //MODIFICADO
+                //System.out.println("auxTerm " + SpecUtils.termToLatex(auxTerm) );
                 boolean equals = SpecUtils.areEqualTerms(auxTerm, theTerm);
                 boolean contains = auxTerm.accept(this);
                 if(equals || contains)

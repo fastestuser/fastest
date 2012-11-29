@@ -50,10 +50,12 @@ public class ContainsTermInPredVerifier implements
     // selected as operation or as predicate.     
     private Controller controller;
 
-    public ContainsTermInPredVerifier(Term termToFind, Spec spec,
-            Controller controller) {
+    public ContainsTermInPredVerifier(Term termToFind, Spec spec,Controller controller) {
         this.termToFind = termToFind;
+        
         for (Sect sect : spec.getSect()) {
+        	//MODIFICADO
+        	//System.out.println("SPECCCCC " + SpecUtils.termToLatex(sect) );
             if (sect instanceof ZSect) {
                 ParaList paraList = ((ZSect) sect).getParaList();
                 if (paraList instanceof ZParaList) {
@@ -71,10 +73,11 @@ public class ContainsTermInPredVerifier implements
         if (pred == null) {
         	return false;
         }
-        
+        // MODIFICADO
+        //System.out.println("termToFinddddddddd" + SpecUtils.termToLatex(termToFind) );
+        //System.out.println("predddd" + SpecUtils.termToLatex(pred) );
         ContainsTermVerifier containsTermVerifier = new ContainsTermVerifier(termToFind);
-        Boolean termInPred = pred.accept(containsTermVerifier).
-                booleanValue();
+        Boolean termInPred = pred.accept(containsTermVerifier).booleanValue();
         if (termInPred.booleanValue()) {
             return termInPred;
         }
@@ -108,8 +111,7 @@ public class ContainsTermInPredVerifier implements
                     // The verification will be performed only if the included 
                     //schema is not selected as operation or as predicate                    
                     if (!isSelOp && !isSelPred) {
-                        AxPara inclAxPara = SpecUtils.axParaSearch(inclName,
-                                zParaList);
+                        AxPara inclAxPara = SpecUtils.axParaSearch(inclName,zParaList);
                         termInInclSchema = inclAxPara.accept(this);
                     }
 

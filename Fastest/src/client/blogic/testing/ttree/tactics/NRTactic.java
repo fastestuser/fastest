@@ -2,10 +2,14 @@ package client.blogic.testing.ttree.tactics;
 
 import java.util.*;
 
+import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.ZFactory;
 import net.sourceforge.czt.z.ast.ZExprList;
+import net.sourceforge.czt.z.ast.ZParaList;
+import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.ast.ZStrokeList;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.VarDecl;
@@ -18,10 +22,12 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 
+import common.repository.AbstractRepository;
 import common.z.TClass;
 import common.z.TClassImpl;
 import common.z.SpecUtils;
 import common.z.czt.visitors.CZTCloner;
+import common.z.czt.visitors.SchemeUnfolder;
 import common.z.UtilSymbols;
 import net.sourceforge.czt.z.ast.TypeAnn;
 
@@ -175,7 +181,22 @@ public class NRTactic extends AbstractTactic {
             return false;
         }
         AxPara opAxPara = (AxPara) originalOp.getMyAxPara();
+        AbstractRepository<String> opNames = controller.getOpsToTestRep();
+        AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
 
+        ZParaList zParaList = null;
+        for (Sect sect : spec.getSect()) {
+            if (sect instanceof ZSect) {
+                ParaList paraList = ((ZSect) sect).getParaList();
+                if (paraList instanceof ZParaList) {
+                	zParaList = (ZParaList) paraList;
+                }
+            }
+        }
+        SchemeUnfolder su = new SchemeUnfolder(opNames , schPredNames);
+        su.setZParaList(zParaList);
+ 		opAxPara = (AxPara) opAxPara.accept(su);
+        // System.out.println("opAxPara " + SpecUtils.termToLatex(opAxPara) );
         // We check if the specified variable is declared in the scheme declaration
         // and if its type is \nat or \int
         boolean varFound = false;
@@ -201,7 +222,7 @@ public class NRTactic extends AbstractTactic {
                                 typeName = typeAnn.getType().toString();
                             }
                         }
-                        //System.out.println("El tipo es: " + typeName);
+                        System.out.println("El tipo es: " + typeName);
                         String arithmosTypeName = "POWER GIVEN " + UtilSymbols.arithmosSymbol();
                         if (typeName.equals(arithmosTypeName)) {
                             if (nameList instanceof ZNameListImpl) {

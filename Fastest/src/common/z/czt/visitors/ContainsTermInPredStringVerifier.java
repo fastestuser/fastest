@@ -55,7 +55,7 @@ public class ContainsTermInPredStringVerifier implements
         
         for (Sect sect : spec.getSect()) {
         	//MODIFICADO
-        	//System.out.println("SPECCCCC " + SpecUtils.termToLatex(sect) );
+        	// System.out.println("SPECCCCC " + SpecUtils.termToLatex(sect) );
             if (sect instanceof ZSect) {
                 ParaList paraList = ((ZSect) sect).getParaList();
                 if (paraList instanceof ZParaList) {
@@ -74,8 +74,8 @@ public class ContainsTermInPredStringVerifier implements
         	return false;
         }
         // MODIFICADO
-        //System.out.println("termToFinddddddddd" + SpecUtils.termToLatex(termToFind) );
-        //System.out.println("predddd" + SpecUtils.termToLatex(pred) );
+        //System.out.println("termToFinddddddddd " + termToFind );
+        //System.out.println("predddd " + SpecUtils.termToLatex(pred) );
         ContainsTermStringVerifier containsTermStringVerifier = new ContainsTermStringVerifier(termToFind);
         Boolean termInPred = pred.accept(containsTermStringVerifier).booleanValue();
         if (termInPred.booleanValue()) {
