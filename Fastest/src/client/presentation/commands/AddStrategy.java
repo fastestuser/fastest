@@ -41,6 +41,7 @@ public class AddStrategy implements Command{
 	public void run(ClientTextUI clientTextUI, String args) {
 
 		PrintWriter output = clientTextUI.getOutput();
+		BufferedReader input = clientTextUI.getInput();
 		// unitToTestName is the name of an operation or the name of a previously
 		// generated test class
 		String unitToTestName = "";
@@ -69,7 +70,7 @@ public class AddStrategy implements Command{
 		String opName = null;
 		if (isOp) {
 
-			System.out.println("Corriendo la estrategia: " + strategyName + " sobre: " + unitToTestName);
+			System.out.println("Corriendo la estrategia " + strategyName + " sobre " + unitToTestName);
 			// unitToTestName is an operation
 			// Now we check if this operation either have a testing tree
 			// associated or have been selected to be tested
@@ -83,8 +84,7 @@ public class AddStrategy implements Command{
 						controller, unitToTestName);
 				// If not, we finish returning an error message
 				if (!isSelOp) {
-					output.println("'" + unitToTestName + "' is not the name of "
-							+ "a selected operation.");
+					output.println("'" + unitToTestName + "' is not the name of " + "a selected operation.");
 					return;
 				}
 			}
@@ -97,12 +97,9 @@ public class AddStrategy implements Command{
 			// If unitToTest is not a test class, we finish returning
 			// an error message
 			if (opName == null) {
-				output.println("'" + unitToTestName + "' is not the name of a "
-						+ "loaded operation nor a test class.");
+				output.println("'" + unitToTestName + "' is not the name of a " + "loaded operation nor a test class.");
 				return;
 			}
-
-
 		}
 
 		// If the user try to apply DNF tactic we return because this
@@ -110,53 +107,72 @@ public class AddStrategy implements Command{
 		if (strategyName.equals("DNF")) {
 			return;
 		}
-		
-		//Corremos genalltt
-//		Command genalltt = new GenAllTTCommand();
-//		genalltt.run(clientTextUI, "");
-		
-		//Instancia de prune para cuando haga falta
-		Command prunett = new PruneTreeCommand();
-		
-		//Buscamos las apariciones de "\in" en la definiciones de la operación,
-		//la cual deberá tomarse de forma unfoldeada
-		
-		Map<Term, String> expressions;// = new ConcreteRepository<AxPara>();
-		//ExpressionsSPVisitor searcher = new ExpressionsSPVisitor();
-		
+
 		//Buscamos las expresiones que se encuentran en la operacion unfoldeada,
 		// y las almacenamos en expressions
-		
 		Spec spec = controller.getUnfoldedSpec();
 		AbstractRepository<String> opNames = controller.getOpsToTestRep();
-    	AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
-    	spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
-		
-        AxPara axPara = null;
-        for (Sect sect : spec.getSect()) {
-            if (sect instanceof ZSect) {
-                ParaList paraList = ((ZSect) sect).getParaList();
-                if (paraList instanceof ZParaList) {
-                    axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
-                }
-            }
-        }
-        
-        System.out.println("AXPARA: " + SpecUtils.termToLatex(axPara));
-        Visitor<Map<Term, String>> searcher = new AtomicPredExtractor();
+		AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+		spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
+
+		AxPara axPara = null;
+		for (Sect sect : spec.getSect()) {
+			if (sect instanceof ZSect) {
+				ParaList paraList = ((ZSect) sect).getParaList();
+				if (paraList instanceof ZParaList) {
+					axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
+				}
+			}
+		}
+
+		Visitor<Map<Term, String>> searcher = new AtomicPredExtractor();
+		Map<Term, String> expressions;
 		expressions = axPara.accept(searcher);
-		
 		Iterator<Term> expressionsIt = expressions.keySet().iterator();
+		
+		Command addtactic = new AddTacticCommand();
+		Command genalltt = new GenAllTTCommand();
+		Command prunett = new PruneTreeCommand();
+
+		String option = "";
+		boolean aplied = false;
+
+		//Structura para evitar aplicaciones repetidas
+		ArrayList<String> usedExprs = new ArrayList<String>();
 
 		while (expressionsIt.hasNext()) {
 			Term exp = expressionsIt.next();
-			
-			Command command = new AddTacticCommand();
-			System.out.println("Aplicamos: " + opName + " SP " + expressions.get(exp) + " " + SpecUtils.termToLatex(exp));
-			//command.run(clientTextUI, opName + " SP " + expressions.get(exp) + " " + SpecUtils.termToLatex(exp));
-			//genalltt.run(clientTextUI, "");
-			//pruneamos
-			//prunett.run(clientTextUI, "");
+			String expString = SpecUtils.termToLatex(exp);
+			aplied = false;
+
+			//Chequeamos si la expresion no fue utilizada, para evitar aplicaciones repetidas
+			if (!usedExprs.contains(SpecUtils.termToLatex(exp))) {
+				usedExprs.add(expString);
+
+				if (strategyName.equals("SPFull")) { //Si se desea aplicar de forma completa, no se pregunta para cada expr
+					System.out.println("Aplicamos: " + opName + " " + strategyName + " " + expressions.get(exp) + " " + expString);
+					addtactic.run(clientTextUI, opName + " SP " + expressions.get(exp) + " " + expString);
+					aplied = true;
+				} else {
+					System.out.println("Desea aplicar: " + opName + " " + strategyName + " " + expressions.get(exp) + " " + expString + "?");
+					try {
+						option = input.readLine();
+						if (option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")){
+							System.out.println("Aplicamos: " + opName + " " + strategyName + " " + expressions.get(exp) + " " + expString);
+							addtactic.run(clientTextUI, opName + " SP " + expressions.get(exp) + " " + expString);
+							aplied = true;
+						}
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+
+				if (aplied) {
+					genalltt.run(clientTextUI, "");
+					//pruneamos
+					prunett.run(clientTextUI, "");
+				}
+			}
 		}
 	}
 }

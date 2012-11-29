@@ -3,16 +3,22 @@ package common.z.czt.visitors;
 import net.sourceforge.czt.base.ast.*;
 import net.sourceforge.czt.base.visitor.*;
 import java.util.*;
+
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.visitor.ApplExprVisitor;
 import net.sourceforge.czt.z.visitor.MemPredVisitor;
+import net.sourceforge.czt.z.ast.Ann;
 import net.sourceforge.czt.z.ast.ApplExpr;
+import net.sourceforge.czt.z.ast.NumExpr;
+import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.SetExpr;
 import net.sourceforge.czt.z.ast.MemPred;
+import net.sourceforge.czt.z.ast.TypeAnn;
 import net.sourceforge.czt.z.ast.ZExprList;
 import common.z.SpecUtils;
+import common.z.UtilSymbols;
 
-/**
+/*
  * A visitor that obtains all the needed predicates to use in the SP tactic when using an strategy
  */
 
@@ -57,7 +63,7 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 
 		Expr leftExpr = applExpr.getLeftExpr();
 		Expr rightExpr = applExpr.getRightExpr();
-		
+
 		if (applExpr.getMixfix()) { //Function Operator Application
 			String operator = SpecUtils.termToLatex(leftExpr);
 			if (operator.contentEquals("( \\_ \\oplus \\_ )")) {
@@ -82,7 +88,7 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 				mapList.put(applExpr, "\\#");
 			}
 		}
-		
+
 		mapList.putAll(rightExpr.accept(this));
 		mapList.putAll(leftExpr.accept(this));
 		return mapList;
@@ -90,7 +96,7 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 
 	public Map<Term,String> visitMemPred(MemPred memPred){
 		Map<Term,String> mapList = new HashMap<Term,String>();
-		
+
 		if (!memPred.getMixfix()) { //It is a \in predicate
 			mapList.put(memPred, "\\in");
 			return mapList;
@@ -98,8 +104,42 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 			Expr rightExpr = memPred.getRightExpr();
 			Expr leftExpr = memPred.getLeftExpr();
 			if(rightExpr instanceof SetExpr){ //It is a predicate like: "n = m" has left="n" and right="{m}".
-				//Deberia chequear que tenga tipo numerico para aplicar SP en este caso?
-				//mapList.put(memPred, "=");
+
+				String typeName = "";
+				if (leftExpr instanceof ApplExpr) { //We need to check if it a numeric type expr
+					ApplExpr applExpr = (ApplExpr) leftExpr;
+
+					List<Object> anns = applExpr.getAnns();
+					for (int i = 0; i < anns.size(); i++) {
+						Object ann = anns.get(i);
+						if (ann instanceof TypeAnn) {
+							TypeAnn typeAnn = (TypeAnn) ann;
+							typeName = typeAnn.getType().toString();
+						}
+					}
+					//System.out.println("El tipo es: " + typeName);
+					String arithmosTypeName = "GIVEN " + UtilSymbols.arithmosSymbol();
+					if (typeName.equals(arithmosTypeName)) {
+						mapList.put(memPred, "=");
+					}
+				} else if (leftExpr instanceof RefExpr) {
+					RefExpr refExpr = (RefExpr) leftExpr;
+
+					List<Object> anns = refExpr.getAnns();
+					for (int i = 0; i < anns.size(); i++) {
+						Object ann = anns.get(i);
+						if (ann instanceof TypeAnn) {
+							TypeAnn typeAnn = (TypeAnn) ann;
+							typeName = typeAnn.getType().toString();
+						}
+					}
+					String arithmosTypeName = "GIVEN " + UtilSymbols.arithmosSymbol();
+					if (typeName.equals(arithmosTypeName)) {
+						mapList.put(memPred, "=");
+					}
+				} else if (leftExpr instanceof NumExpr) {
+					mapList.put(memPred, "=");
+				}
 
 				SetExpr auxSetExpr = (SetExpr) rightExpr;
 				ZExprList zExprList = auxSetExpr.getZExprList();

@@ -225,6 +225,8 @@ public class SPTactic extends AbstractTactic {
             // We get expression's real parameters
             List<Term> realParamList = null;
 
+            System.out.println("SPTactic: " + SpecUtils.termToLatex(parsedTerm));
+            
             if (parsedTerm instanceof Pred) {
                 realParamList = ((Pred) parsedTerm).accept(new ParamExtractor());
             } else {
