@@ -88,9 +88,8 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 				mapList.put(applExpr, "\\#");
 			}
 		}
-
-		mapList.putAll(rightExpr.accept(this));
 		mapList.putAll(leftExpr.accept(this));
+		mapList.putAll(rightExpr.accept(this));
 		return mapList;
 	}
 
@@ -141,13 +140,13 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 					mapList.put(memPred, "=");
 				}
 
+				mapList.putAll(leftExpr.accept(this));
 				SetExpr auxSetExpr = (SetExpr) rightExpr;
 				ZExprList zExprList = auxSetExpr.getZExprList();
 				for(int i=0;i<zExprList.size();i++){
 					Expr auxExpr = zExprList.get(i);
 					mapList.putAll(auxExpr.accept(this));
 				}
-				mapList.putAll(leftExpr.accept(this));
 			}
 			else{ //It is a predicate like: "n < m" has left="(n,m)" and right=" _ < _ "
 				String operator = SpecUtils.termToLatex(rightExpr);

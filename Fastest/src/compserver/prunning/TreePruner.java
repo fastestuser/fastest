@@ -29,69 +29,69 @@ import net.sourceforge.czt.z.ast.Type;
  * Instances of this class provide funcionality for prunning the Test Tree
  */
 public class TreePruner {
-    
-    private Controller controller;
-    private static TreePruner treePruner;
-    
-    /**
-     * Creates instaces of TreePruner.
-     * @param controller a reference to the Controller.
-     */
-    public TreePruner(Controller controller){
-        this.controller = controller;
-    }
 
-    /**
-     * Creates intances of TreePruner.
-     */
+	private Controller controller;
+	private static TreePruner treePruner;
+
+	/**
+	 * Creates instaces of TreePruner.
+	 * @param controller a reference to the Controller.
+	 */
+	public TreePruner(Controller controller){
+		this.controller = controller;
+	}
+
+	/**
+	 * Creates intances of TreePruner.
+	 */
 	public TreePruner(){
 	}
 
-    /**
-     * Prunes a Test Class from a test tree 
-     * @param tClassName The name of the test class
-     * @return A boolean value that indicates the prunning result
-     */
+	/**
+	 * Prunes a Test Class from a test tree 
+	 * @param tClassName The name of the test class
+	 * @return A boolean value that indicates the prunning result
+	 */
 	public boolean pruneFrom(String tClassName)
 	{
-            Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-            Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
-            Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-            Boolean result = new Boolean(false);
-            TTreeFromPruner tTreeFromPruner = new TTreeFromPruner(tClassName, true);
-            while(iterator.hasNext() && !result.booleanValue()){
-                Map.Entry<String, TClassNode> mapEntry = iterator.next();
-                TClassNode opTTreeRoot = mapEntry.getValue();  
-                result = opTTreeRoot.acceptVisitor(tTreeFromPruner);
-            }          
+		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+		Boolean result = new Boolean(false);
+		TTreeFromPruner tTreeFromPruner = new TTreeFromPruner(tClassName, true);
+		while(iterator.hasNext() && !result.booleanValue()){
+			Map.Entry<String, TClassNode> mapEntry = iterator.next();
+			TClassNode opTTreeRoot = mapEntry.getValue();  
+			result = opTTreeRoot.acceptVisitor(tTreeFromPruner);
+		}          
 
-	    return result.booleanValue();
+		return result.booleanValue();
 	}
-    /**
-     * Prunes a sub tree of a test tree 
-     * @param tClassName The name of the test class that is the root of the sub tree
-     * @return A boolean value that indicates the prunning result
-     */
+	/**
+	 * Prunes a sub tree of a test tree 
+	 * @param tClassName The name of the test class that is the root of the sub tree
+	 * @return A boolean value that indicates the prunning result
+	 */
 	public boolean pruneBelow(String tClassName)
 	{
-            Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-            Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
-            Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-            Boolean result = new Boolean(false);
-            TTreeBelowPruner tTreeBelowPruner = new TTreeBelowPruner(tClassName, true);
-            while(iterator.hasNext() && !result.booleanValue()){
-                Map.Entry<String, TClassNode> mapEntry = iterator.next();
-                TClassNode opTTreeRoot = mapEntry.getValue();
-                result = opTTreeRoot.acceptVisitor(tTreeBelowPruner);
-            }
-	    return result.booleanValue();
+		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+		Boolean result = new Boolean(false);
+		TTreeBelowPruner tTreeBelowPruner = new TTreeBelowPruner(tClassName, true);
+		while(iterator.hasNext() && !result.booleanValue()){
+			Map.Entry<String, TClassNode> mapEntry = iterator.next();
+			TClassNode opTTreeRoot = mapEntry.getValue();
+			result = opTTreeRoot.acceptVisitor(tTreeBelowPruner);
+		}
+		return result.booleanValue();
 	}
-    /**
-     * Analyze the prunning of a test class with the elimination theorems 
-     * @param tClassName The name of the test class
-     * @param specInfo Relevant information of the specification associated
-     * @return A boolean value that indicates the prunning result
-     */
+	/**
+	 * Analyze the prunning of a test class with the elimination theorems 
+	 * @param tClassName The name of the test class
+	 * @param specInfo Relevant information of the specification associated
+	 * @return A boolean value that indicates the prunning result
+	 */
 	public synchronized ResultPrune pruneTree(TClass tClass, SpecInfo specInfo)
 	{
 		TheoremsChecker theoremsChecker = new TheoremsChecker(tClass);
@@ -114,31 +114,31 @@ public class TreePruner {
 					result = true;
 					Map<String, String> mapFR = listMatches.get(i);
 
-				//We extract the real parameters in the correct order
-				Theorem theTheorem = PruneUtils.getTheorem(theoremName);
-				List<Variable> formalParameters = theTheorem.getFormalParamList();
-				for(int j=0;j<formalParameters.size();j++){
-					Variable formalVar = formalParameters.get(j);
-					String formalName = formalVar.getName();
-					String realName = mapFR.get(formalName);
-					//System.out.println("Formal: "+formalName);
-					//System.out.println("Real: "+realName);
-					params.add(realName);
-				}
-				TypeChecker typeChecker = new TypeChecker();
-				result = typeChecker.checkParametersTypes(theTheorem, tClass, params);
-				if(result){
-				List<SpecialLine> specialLines = theTheorem.getSpecialLines();
-				if(specialLines.size()>0){
-				Map<String,Type> mapFormalReal = typeChecker.getMapFR();
-				String pred = PruneUtils.replaceParameters(theoremName, params,"SpecialPredicates", mapFormalReal);
-				result = (new OperatorAnalizer()).analize(specialLines, pred, tClass, specInfo);
-				}
-				}
+					//We extract the real parameters in the correct order
+					Theorem theTheorem = PruneUtils.getTheorem(theoremName);
+					List<Variable> formalParameters = theTheorem.getFormalParamList();
+					for(int j=0;j<formalParameters.size();j++){
+						Variable formalVar = formalParameters.get(j);
+						String formalName = formalVar.getName();
+						String realName = mapFR.get(formalName);
+						//System.out.println("Formal: "+formalName);
+						//System.out.println("Real: "+realName);
+						params.add(realName);
+					}
+					TypeChecker typeChecker = new TypeChecker();
+					result = typeChecker.checkParametersTypes(theTheorem, tClass, params);
+					if(result){
+						List<SpecialLine> specialLines = theTheorem.getSpecialLines();
+						if(specialLines.size()>0){
+							Map<String,Type> mapFormalReal = typeChecker.getMapFR();
+							String pred = PruneUtils.replaceParameters(theoremName, params,"SpecialPredicates", mapFormalReal);
+							result = (new OperatorAnalizer()).analize(specialLines, pred, tClass, specInfo);
+						}
+					}
 				}
 			}
-		if(!result)
-			matches = theoremsChecker.findParameters();
+			if(!result)
+				matches = theoremsChecker.findParameters();
 		}
 		ResultPrune resultPrune = new ResultPrune(tClassName, theoremName, params, result);
 		return resultPrune;

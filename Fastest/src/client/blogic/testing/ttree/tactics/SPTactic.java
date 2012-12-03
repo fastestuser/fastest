@@ -211,8 +211,6 @@ public class SPTactic extends AbstractTactic {
             System.out.println("specAux " + SpecUtils.termToLatex(specAux) );
             System.out.println("spec " + SpecUtils.termToLatex(spec) );
             */
-            System.out.println("termStringado " + SpecUtils.termToLatex(parsedTerm) );
-            System.out.println("termString " + termStr );
             String termStrFromTerm = SpecUtils.termToLatex(parsedTerm); //por que es distinto
             if (!opAxPara.accept(new ContainsTermInPredStringVerifier(termStrFromTerm, spec, controller)).booleanValue()) {
                 System.out.println("The specified term (" + SpecUtils.termToLatex(parsedTerm) + ") is "
@@ -225,8 +223,6 @@ public class SPTactic extends AbstractTactic {
             // We get expression's real parameters
             List<Term> realParamList = null;
 
-            System.out.println("SPTactic: " + SpecUtils.termToLatex(parsedTerm));
-            
             if (parsedTerm instanceof Pred) {
                 realParamList = ((Pred) parsedTerm).accept(new ParamExtractor());
             } else {

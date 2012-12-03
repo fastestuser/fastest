@@ -23,11 +23,11 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 	private String schName;
 	private int unfoldOrder;
 
-    /**
-     * Creates new instances of SchemeTTreeFinder.
-     * @param schName
-     * @param unfoldOrder
-     */
+	/**
+	 * Creates new instances of SchemeTTreeFinder.
+	 * @param schName
+	 * @param unfoldOrder
+	 */
 	public SchemeTTreeFinder(String schName, int unfoldOrder){
 		this.schName = schName;
 		this.unfoldOrder = unfoldOrder;
@@ -35,16 +35,16 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 
 
 
-    /**
-     * Traverses the subtree, whose root is the specified tClassNode, until a node
-     * with a test class called, as schName indicates, is found. Returns the test 
-     * class making unfoldOrder unfoldings, if unfoldOrder is between 0 and the 
-     * length of the path from tClassNode to the test tree's root; or the test class
-     * completely unfolded, if unfoldOrder is less than 0 or greater than the
-     * length from the tClassNode to the test tree's root.
-     * @param tClassNode
-     * @return
-     */
+	/**
+	 * Traverses the subtree, whose root is the specified tClassNode, until a node
+	 * with a test class called, as schName indicates, is found. Returns the test 
+	 * class making unfoldOrder unfoldings, if unfoldOrder is between 0 and the 
+	 * length of the path from tClassNode to the test tree's root; or the test class
+	 * completely unfolded, if unfoldOrder is less than 0 or greater than the
+	 * length from the tClassNode to the test tree's root.
+	 * @param tClassNode
+	 * @return
+	 */
 	public Scheme visitTClassNode(TClassNode tClassNode){
 		//TClass tClass = (TClass) tClassNode.getValue().clone();
 		TClass tClass = (TClass) tClassNode.getValue();
@@ -56,11 +56,11 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 			for(int i=0; i< unfoldOrder; i++){
 				tClassNode = tClassNode.getDadNode();
 				if(tClassNode == null)
-                    break;
+					break;
 				axPara = tClassNode.getValue().getMyAxPara();
 				pred = SpecUtils.andPreds(SpecUtils.getAxParaPred(axPara), pred);
 			}
-                        pred = SpecUtils.simplifyAndPred(pred);
+			pred = SpecUtils.simplifyAndPred(pred);
 			AxPara tClassAxPara = tClass.getMyAxPara();
 			SpecUtils.setAxParaListOfDecl(tClassAxPara, SpecUtils.getAxParaListOfDecl(axPara));
 			SpecUtils.setAxParaPred(tClassAxPara, pred);
@@ -76,19 +76,19 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 		}
 
 	}
-    
-    
-    
-    /**
-     * Traverses the subtree, whose root is the specified tCaseNode, until a node
-     * with a test case called, as schName indicates, is found. Returns the test 
-     * class making unfoldOrder unfoldings, if unfoldOrder is between 0 and the 
-     * length of the path from tCaseNode to the test tree's root; or the test case
-     * completely unfolded, if unfoldOrder is less than 0 or greater than the
-     * length from the tCaseNode to the test tree's root.
-     * @param tClassNode
-     * @return
-     */
+
+
+
+	/**
+	 * Traverses the subtree, whose root is the specified tCaseNode, until a node
+	 * with a test case called, as schName indicates, is found. Returns the test 
+	 * class making unfoldOrder unfoldings, if unfoldOrder is between 0 and the 
+	 * length of the path from tCaseNode to the test tree's root; or the test case
+	 * completely unfolded, if unfoldOrder is less than 0 or greater than the
+	 * length from the tCaseNode to the test tree's root.
+	 * @param tClassNode
+	 * @return
+	 */
 	public Scheme visitTCaseNode(TCaseNode tCaseNOde){
 		AbstractTCase abstractTCase = (AbstractTCase) tCaseNOde.getValue().clone();
 		if(abstractTCase.getSchName().equals(schName)){
@@ -114,5 +114,5 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 	}
 
 
-	}
+}
 

@@ -1,19 +1,16 @@
 package common.z.czt.visitors;
 
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.ConstDecl;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.InclDecl;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZParaList;
-import net.sourceforge.czt.z.ast.ZSchText;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import client.blogic.management.Controller;
@@ -64,8 +61,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 			schName = tClassNode.getValue().getSchName();
 			root = tClassNode;
 			AxPara axPara = tClassNode.getValue().getMyAxPara();
-			ZSchText zSchText = axPara.getZSchText();
-	        ZDeclList zDeclList = ( (SchExpr) ((ConstDecl) zSchText.getZDeclList().get(0)).getExpr()).getZSchText().getZDeclList();
+			ZDeclList zDeclList = (ZDeclList) SpecUtils.getAxParaListOfDecl(axPara); 
 	        int declListSize = zDeclList.size();
 	        for (int j = 0; j < declListSize; j++) {
 	            Decl decl = zDeclList.get(j);
@@ -107,21 +103,11 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 		
 		//info del PADRE del nodo actual
 		AxPara axPara = tClassNodePadre.getValue().getMyAxPara();
-		ZSchText zSchText = axPara.getZSchText();
-		ZDeclList zDeclList = zSchText.getZDeclList();
-		ConstDecl decl = (ConstDecl) zDeclList.get(0);
-		SchExpr schExpr = (SchExpr) decl.getExpr();
-		Pred predPadre = schExpr.getZSchText().getPred();
-		ZDeclList zDeclListPadre = schExpr.getZSchText().getZDeclList();	
+		ZDeclList zDeclListPadre = (ZDeclList) SpecUtils.getAxParaListOfDecl(axPara);
 		
 		//info del nodo actual
-		
 		axPara = tClassNode.getValue().getMyAxPara();
-		zSchText = axPara.getZSchText();
-		zDeclList = zSchText.getZDeclList();
-		decl = (ConstDecl) zDeclList.get(0);
-		schExpr = (SchExpr) decl.getExpr();
-		Pred pred = schExpr.getZSchText().getPred();
+		Pred pred = SpecUtils.getAxParaPred(axPara);
         pred = pred.accept(new PreExprCleaner());
 		
 		//soy la Hoja si no tengo hijos, o mis hijos es un TCase o son TClass pero estan pruneados
@@ -147,58 +133,13 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 		//si padre no es el root saco el pred, SpecUils.andPreds CREA un nuevo predicado
 		if (tClassNodePadre.getDadNode() != null){
 			Pred predUnfoldedClone = (Pred) predUnfolded.accept(new CZTCloner());
+			
+			predUnfoldedClone = SpecUtils.simplifyAndPred(predUnfoldedClone);
+			pred = SpecUtils.simplifyAndPred(pred);
 			predUnfolded = SpecUtils.andPreds(predUnfoldedClone, pred);
 		}
 		// si el padre es el root saco el decl e incializo Pred.
 		else {
-//			List<TClass> tClassList = new ArrayList<TClass>();
-//
-//			AxPara visAxPara = tClassNodePadre.getValue().getMyAxPara();
-//
-//	        Pred visPred = SpecUtils.getAxParaPred(visAxPara);
-//
-//	        if (visPred == null) {
-//	            return tClassNode;
-//	        }
-//
-//	        List<Pred> conjunctsList = controller.getSchemaDNFPredList(opName);
-//	        String s = SpecUtils.termToLatex(conjunctsList.get(0));
-//	        System.out.println( "conjunctsListtttttt" +  s);
-//	        conjunctsList.add(pred);
-//	        
-//	        if (conjunctsList == null) {
-//	            return tClassNode;
-//	        }
-//
-//	        DNFIterator dnfIterator = new DNFIterator(conjunctsList);
-//	        int maxNumberOfPredsToAnalize = controller.getMaxPredsToAnalize();
-//
-//	        List<Pred> disjunctsList = new ArrayList<Pred>();
-//
-//	        int k = 0;
-//	        while (dnfIterator.hasNext() && k < maxNumberOfPredsToAnalize) {
-//
-//	            Pred disjunct = dnfIterator.next();
-//
-//	            disjunct = SpecUtils.simplifyAndPred(disjunct);
-//	            System.out.println("disjunctssssssssssssss " + SpecUtils.termToLatex(disjunct));
-//	            boolean isPredRepeated = false;
-//	            for (int j = 0; j < disjunctsList.size() && !isPredRepeated; j++) {
-//	                Pred jPred = disjunctsList.get(j);
-//	                if (SpecUtils.areEqualTerms(jPred, disjunct)) {
-//	                    isPredRepeated = true;
-//	                }
-//	            }
-//	            if (!isPredRepeated) {
-//	                disjunctsList.add(disjunct);
-//	            }
-//
-//	        }
-//
-//	        System.out.println();
-//	        
-//	        predUnfolded = SpecUtils.createAndPred(disjunctsList);
-			
 			predUnfolded = pred; //inicializo el pred TEMP hasta que ande lo anterior.
 			SpecUtils.insertZDeclList(zDeclListRoot, zDeclListPadre, 0);
 			

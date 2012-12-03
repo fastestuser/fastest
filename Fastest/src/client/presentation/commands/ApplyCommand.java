@@ -8,6 +8,7 @@ import client.presentation.ClientTextUI;
 import compserver.prunning.PruneAnalizer;
 import compserver.prunning.TreePruner;
 import compserver.prunning.PruneUtils;
+import common.z.SpecUtils;
 import common.z.TClass;
 import net.sourceforge.czt.session.SectionManager;
 import compserver.prunning.typechecking.TypecheckingUtils;
@@ -79,6 +80,7 @@ public class ApplyCommand implements Command{
 		}
 		SectionManager manager = controller.getTypeCheckerManager();
 		AxPara axPara = tClass.getMyAxPara();
+		System.out.println("axpara\n" + SpecUtils.termToLatex(axPara));
 		axPara = TypecheckingUtils.deleteUnnecessaryParenthesis(axPara, manager);
 		PruneAnalizer pruneAnalizer = new PruneAnalizer();
 		Calendar cal = Calendar.getInstance();
