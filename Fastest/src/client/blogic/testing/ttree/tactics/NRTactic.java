@@ -222,7 +222,7 @@ public class NRTactic extends AbstractTactic {
                                 typeName = typeAnn.getType().toString();
                             }
                         }
-                        System.out.println("El tipo es: " + typeName);
+                        //System.out.println("El tipo es: " + typeName);
                         String arithmosTypeName = "POWER GIVEN " + UtilSymbols.arithmosSymbol();
                         if (typeName.equals(arithmosTypeName)) {
                             if (nameList instanceof ZNameListImpl) {

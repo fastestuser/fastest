@@ -197,7 +197,7 @@ public class SPTactic extends AbstractTactic {
             }
 
             // We check if the input expression is contained in the predicate.
-
+<<<<<<< .mine
             
             //sacamos parentesis de mas en la expresion
             ZDeclList zDeclListRoot = (new ZFactoryImpl()).createZDeclList();
@@ -212,7 +212,18 @@ public class SPTactic extends AbstractTactic {
             specStr = specStr.replaceAll("\\s+","");
         
             if (!specStr.contains(termStrFromTerm)) {
-
+=======
+            AxPara opAxPara = (AxPara) originalOp.getMyAxPara();
+            //MODIFICADO
+            /*AbstractRepository<String> opNames = controller.getOpsToTestRep();
+            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+            Spec specAux = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
+            System.out.println("specAux " + SpecUtils.termToLatex(specAux) );
+            System.out.println("spec " + SpecUtils.termToLatex(spec) );
+            */
+            String termStrFromTerm = SpecUtils.termToLatex(parsedTerm); //por que es distinto
+            if (!opAxPara.accept(new ContainsTermInPredStringVerifier(termStrFromTerm, spec, controller)).booleanValue()) {
+>>>>>>> .r28
                 System.out.println("The specified term (" + SpecUtils.termToLatex(parsedTerm) + ") is "
                         + "not contained in the predicate of the operation's "
                         + "schema.");

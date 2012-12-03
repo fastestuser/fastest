@@ -98,7 +98,7 @@ public class LoadSpecCommand implements Command {
                 // texFileName may contains parts of the absolute path of the file
                 texFileToReadName = "temp/" + originalTexFile.getName() + ".tmp";
                 texFileToRead = new File(texFileToReadName);
-
+                
                 lineNumbersTable = spiveyToStandard(originalTexFile,
                         texFileToRead);
 
@@ -241,7 +241,6 @@ public class LoadSpecCommand implements Command {
             controller.setAxDefsPredVars(axDefsPredVars);
             controller.setAxDefsValues(axDefsValues);
             controller.setBasicAxDefs(basicAxDefs);
-            
            //MODIFICADO
 //            AbstractRepository<String> opNames = controller.getOpsToTestRep();
 //            opNames.addElement("KeepMaxReading");

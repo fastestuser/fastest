@@ -24,7 +24,7 @@ import common.z.TClassImpl;
 
 public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	private Pred predUnfolded; //predUnfolded es el que se envia a genalltca,
-	private ZDeclList zDeclListRoot;; // zDeclListRoot es el que se envia a genalltca, 
+	private ZDeclList zDeclListRoot; // zDeclListRoot es el que se envia a genalltca, 
 	private String schName;
 	private Controller controller;
 	private TClassNode root;
