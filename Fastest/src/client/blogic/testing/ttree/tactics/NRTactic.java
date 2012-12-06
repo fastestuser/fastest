@@ -97,6 +97,7 @@ public class NRTactic extends AbstractTactic {
             for (int i = 0; i < size; i++) {
                 Integer number = numbers.get(i);
                 Pred pred = SpecUtils.getEqualityPred(varRefExpr, number);
+                System.out.println("NRTACTIC \n" + SpecUtils.termToLatex(pred));
                 predList.add(pred);
                 if (i == 0) {
                     Pred pred1 = SpecUtils.getLessThanPred(varRefExpr, number);

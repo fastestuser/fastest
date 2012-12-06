@@ -97,8 +97,7 @@ public class TTreeGen extends IIComponent {
                 }
             }
 
-            AxPara opAxPara = SpecUtils.axParaSearch(unitToTest,
-                    (ZParaList) zParaList);
+            AxPara opAxPara = SpecUtils.axParaSearch(unitToTest, (ZParaList) zParaList);
             OpScheme opScheme = new OpSchemeImpl(opAxPara);
             // References to the SectionManager and to the SectionName are
             // obtained
@@ -108,8 +107,7 @@ public class TTreeGen extends IIComponent {
             VISGen.setController(controller);
             VISGen.setZParaList(zParaList);
 
-            tClassNode = ttreeStrategy.generateRootNode(opScheme,
-                    zParaList);
+            tClassNode = ttreeStrategy.generateRootNode(opScheme, zParaList);
         }
 
         TClassNode newNode = ttreeStrategy.generateTTree(tClassNode, tacticList);

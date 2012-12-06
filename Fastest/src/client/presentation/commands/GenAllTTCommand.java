@@ -109,8 +109,7 @@ public class GenAllTTCommand implements Command {
                             // We must generate the test tree from the beginning
                             someEventAnnounced = true;
                             opsToTestRep.addElement(opNameOrTClassName);
-                            TTreeRequested tTreeRequested = new TTreeRequested(opNameOrTClassName,
-                                    tacticList, tTreeStrategy, null);
+                            TTreeRequested tTreeRequested = new TTreeRequested(opNameOrTClassName, tacticList, tTreeStrategy, null);
                             eventAdmin.announceEvent(tTreeRequested);
                         } else {
                             // We must generate the test tree from
