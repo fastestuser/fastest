@@ -4,6 +4,7 @@
  */
 
 package client.blogic.testing.ttree.tactics;
+import java.math.BigInteger;
 import java.util.*;
 
 
@@ -15,7 +16,7 @@ public class NRTacticInfo extends TacticInfo{
 
 
     private String var;
-    private List<Integer> numbers;
+    private List<BigInteger> numbers;
 
 
 
@@ -29,11 +30,11 @@ public class NRTacticInfo extends TacticInfo{
     }
 
 
-    public void setNumbers(List<Integer> numbers){
+    public void setNumbers(List<BigInteger> numbers){
         this.numbers = numbers;
     }
 
-    public List<Integer> getNumbers(){
+    public List<BigInteger> getNumbers(){
         return numbers;
     }
 

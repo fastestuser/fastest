@@ -6,6 +6,8 @@ import java.util.*;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.*;
+import client.blogic.testing.ttree.strategies.FTStrategy;
+import client.blogic.testing.ttree.strategies.ISEStrategy;
 import client.blogic.testing.ttree.strategies.NRStrategy;
 import client.blogic.testing.ttree.strategies.SPStrategy;
 import common.fastest.FastestUtils;
@@ -15,7 +17,7 @@ import common.fastest.FastestUtils;
  * with its parameters, if neccesary) to an operation to be tested.
  * @author Joaquín Cuenca
  */
-public class AddStrategy implements Command{
+public class AddStrategyCommand implements Command{
 
 	/**
 	 * Runs this command.
@@ -36,7 +38,8 @@ public class AddStrategy implements Command{
 				return;
 			}
 
-			final String parts[] = args.split(" ", 0);
+			String parts[] = args.split(" ", 0);
+			
 			if (parts.length < 2) {
 				output.println("Invalid parameters.  Try 'help'.");
 				return;
@@ -85,7 +88,36 @@ public class AddStrategy implements Command{
 				}
 			}
 
-			int i = 1;
+			//We check if the argument is a known strategy
+			if (parts[1].equalsIgnoreCase("Estrategia1")) {
+				if (parts.length > 2)
+					parts = "SPFull".split(" ", 0);
+				else
+					parts = "SP".split(" ", 0);
+			} else if (parts[1].equalsIgnoreCase("Estrategia2")) {
+				if (parts.length > 2)
+					parts = "SPFull NRFull".split(" ", 0);
+				else
+					parts = "SP NR".split(" ", 0);
+			} else if (parts[1].equalsIgnoreCase("Estrategia3")) {
+				if (parts.length > 2)
+					parts = "SPFull FTFull".split(" ", 0);
+				else
+					parts = "SP FT".split(" ", 0);
+			} else if (parts[1].equalsIgnoreCase("Estrategia4")) {
+				if (parts.length > 2)
+					parts = "SPFull NRFull FTFull".split(" ", 0);
+				else
+					parts = "SP NR FT".split(" ", 0);
+			} else if (parts[1].equalsIgnoreCase("Estrategia5")) {
+				if (parts.length > 2)
+					parts = "SPFull NRFull ISEFull".split(" ", 0);
+				else
+					parts = "SP NR ISE".split(" ", 0);
+			}
+			
+			//We apply the strategy
+			int i = 0;
 			while (i < parts.length) { //Mientras haya estrategias por aplicar
 				strategyName = parts[i].replace("Full", "");
 				//Creamos las strategias y las aplicamos
@@ -104,10 +136,22 @@ public class AddStrategy implements Command{
 						option = "Full";
 					}
 					((NRStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
+				} else if (object instanceof FTStrategy) {
+					String option = "";
+					if (parts[i].contains("Full")){
+						option = "Full";
+					}
+					((FTStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
+				} else if (object instanceof ISEStrategy) {
+					String option = "";
+					if (parts[i].contains("Full")){
+						option = "Full";
+					}
+					((ISEStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
 				}
 				i++;
 			}
-			
+
 		} catch (ClassNotFoundException e) {
 			output.println("'" + strategyName
 					+ "' is not the name of a class which extends Strategy.");

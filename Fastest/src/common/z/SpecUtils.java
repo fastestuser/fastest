@@ -929,7 +929,7 @@ public class SpecUtils {
         return zFactory.createSetExpr();
     }
 
-    public static Pred getLessThanPred(RefExpr varNameRefExpr, Integer number) {
+    public static Pred getLessThanPred(RefExpr varNameRefExpr, BigInteger number) {
         ZFactory zFactory = new ZFactoryImpl();
         ZExprList innerZExprList = zFactory.createZExprList();
         innerZExprList.add(varNameRefExpr);
@@ -946,7 +946,7 @@ public class SpecUtils {
         return memPred;
     }
 
-    public static Pred getGreaterThanPred(RefExpr varNameRefExpr, Integer number) {
+    public static Pred getGreaterThanPred(RefExpr varNameRefExpr, BigInteger number) {
         ZFactory zFactory = new ZFactoryImpl();
         ZExprList innerZExprList = zFactory.createZExprList();
         innerZExprList.add(varNameRefExpr);
@@ -963,7 +963,7 @@ public class SpecUtils {
         return memPred;
     }
 
-    public static Pred getEqualityPred(RefExpr varNameRefExpr, Integer number) {
+    public static Pred getEqualityPred(RefExpr varNameRefExpr, BigInteger number) {
         ZFactory zFactory = new ZFactoryImpl();
         //We create the SetExpr that contains the right expr
         ZExprList setZExprList = zFactory.createZExprList();
@@ -978,13 +978,13 @@ public class SpecUtils {
         return memPred;
     }
 
-    public static Expr getNumberExpr(Integer i) {
+    public static Expr getNumberExpr(BigInteger i) {
         ZFactory zFactory = new ZFactoryImpl();
-        int value = i.intValue();
-        ZNumeral zNumeral = zFactory.createZNumeral(BigInteger.valueOf(Math.abs(value)));
+        BigInteger value = i;
+        ZNumeral zNumeral = zFactory.createZNumeral(value.abs());
         NumExpr numExpr = zFactory.createNumExpr(zNumeral);
         Expr expr = null;
-        if (value >= 0) {
+        if (value.compareTo(new BigInteger("0")) >= 0) {
             expr = numExpr;
         } else {
             ZName zName = zFactory.createZName("- _ ", zFactory.createZStrokeList(), "neg");

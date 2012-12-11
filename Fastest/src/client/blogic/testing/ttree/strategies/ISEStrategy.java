@@ -21,15 +21,15 @@ import net.sourceforge.czt.util.Visitor;
 
 import common.z.SpecUtils;
 import common.repository.AbstractRepository;
-import common.z.czt.visitors.AtomicPredExtractor;
+import common.z.czt.visitors.ISEExpresionExtractor;
 import common.z.czt.visitors.SchemeUnfolder;
 
 
 /**
- * Implementation of the strategy Standard Partitions (SP).
+ * Implementation of the strategy In Set Extention (ISE).
  * @author Joaquin Cuenca
  */
-public class SPStrategy{
+public class ISEStrategy{
 
 	protected ClientTextUI clientTextUI;
 	protected String unitToTestName;
@@ -39,8 +39,8 @@ public class SPStrategy{
 	/**
 	 * Creates instances of SPStrategy.
 	 */
-	public SPStrategy() {
-		this.strategyName = "SP";
+	public ISEStrategy() {
+		this.strategyName = "ISE";
 	}
 
 	/**
@@ -57,8 +57,13 @@ public class SPStrategy{
 		BufferedReader input = clientTextUI.getInput();
 		PrintWriter output = clientTextUI.getOutput();
 
-		//Buscamos las expresiones que se encuentran en la operacion unfoldeada,
-		// y las almacenamos en expressions
+		Command addtactic = new AddTacticCommand();
+		Command genalltt = new GenAllTTCommand();
+		Command prunett = new PruneTreeCommand();
+
+		genalltt.run(clientTextUI, "");
+
+		//Buscamos las expresiones de la forma "var \in \{...\}" que se encuentran en la definicion de la operacion,
 		Spec spec = controller.getUnfoldedSpec();
 		AbstractRepository<String> opNames = controller.getOpsToTestRep();
 		AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
@@ -74,52 +79,41 @@ public class SPStrategy{
 			}
 		}
 
-		Visitor<Map<Term, String>> searcher = new AtomicPredExtractor();
+		Visitor<Map<Term, String>> searcher = new ISEExpresionExtractor();
 		Map<Term, String> expressions;
 		expressions = axPara.accept(searcher);
 		Iterator<Term> expressionsIt = expressions.keySet().iterator();
-
-		Command addtactic = new AddTacticCommand();
-		Command genalltt = new GenAllTTCommand();
-		Command prunett = new PruneTreeCommand();
-
+		
 		boolean aplied = false;
 
-		//Structura para evitar aplicaciones repetidas
-		ArrayList<String> usedExprs = new ArrayList<String>();
-
 		while (expressionsIt.hasNext()) {
+
 			Term exp = expressionsIt.next();
 			String expString = SpecUtils.termToLatex(exp);
 			aplied = false;
-
-			//Chequeamos si la expresion no fue utilizada, para evitar aplicaciones repetidas
-			if (!usedExprs.contains(SpecUtils.termToLatex(exp))) {
-				usedExprs.add(expString);
-
-				if (option.equals("Full")) { //Si se desea aplicar de forma completa, no se pregunta para cada expr
-					output.println("Applying: " + unitToTestName + " " + strategyName + " " + expressions.get(exp) + " " + expString);
-					addtactic.run(clientTextUI, unitToTestName + " SP " + expressions.get(exp) + " " + expString);
-					aplied = true;
-				} else {
-					output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expressions.get(exp) + " " + expString + "? y/n" );
-					try {
-						option = input.readLine();
-						if (option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")){
-							output.println("Applying: " + unitToTestName + " " + strategyName + " " + expressions.get(exp) + " " + expString);
-							addtactic.run(clientTextUI, unitToTestName + " SP " + expressions.get(exp) + " " + expString);
-							aplied = true;
-						}
-					} catch (IOException e) {
-						e.printStackTrace();
+			
+			if (option.equals("Full")) { //Si se desea aplicar de forma completa, no se pregunta para cada expr
+				output.println("Applying: " + unitToTestName + " " + strategyName + " " + expString);
+				addtactic.run(clientTextUI, unitToTestName + " " + strategyName + " " + expString);
+				aplied = true;
+			} else {
+				output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expString + " ? y\n");
+				try {
+					option = input.readLine();
+					if (option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")){
+						output.println("Applying: " + unitToTestName + " " + strategyName + " " + expString);
+						addtactic.run(clientTextUI, unitToTestName + " " + strategyName + " " + expString);
+						aplied = true;
 					}
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
+			}
 
-				if (aplied) {
-					genalltt.run(clientTextUI, "");
-					//pruneamos
-					prunett.run(clientTextUI, "");
-				}
+			if (aplied) {
+				genalltt.run(clientTextUI, "");
+				//pruneamos
+				prunett.run(clientTextUI, "");
 			}
 		}
 	}

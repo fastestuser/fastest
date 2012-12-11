@@ -7,7 +7,6 @@ import java.util.*;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.visitor.ApplExprVisitor;
 import net.sourceforge.czt.z.visitor.MemPredVisitor;
-import net.sourceforge.czt.z.ast.Ann;
 import net.sourceforge.czt.z.ast.ApplExpr;
 import net.sourceforge.czt.z.ast.NumExpr;
 import net.sourceforge.czt.z.ast.RefExpr;
@@ -97,7 +96,10 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 		Map<Term,String> mapList = new HashMap<Term,String>();
 
 		if (!memPred.getMixfix()) { //It is a \in predicate
-			mapList.put(memPred, "\\in");
+			Expr rightExpr = memPred.getRightExpr();
+			if (! (rightExpr instanceof SetExpr)) {
+				mapList.put(memPred, "\\in");
+			}
 			return mapList;
 		} else {
 			Expr rightExpr = memPred.getRightExpr();
@@ -167,5 +169,4 @@ implements TermVisitor<Map<Term,String>>, ApplExprVisitor<Map<Term,String>>, Mem
 			return mapList;
 		}
 	}
-
 }

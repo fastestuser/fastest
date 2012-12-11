@@ -1,5 +1,6 @@
 package client.blogic.testing.ttree.tactics;
 
+import java.math.BigInteger;
 import java.util.*;
 
 import net.sourceforge.czt.z.ast.ParaList;
@@ -64,7 +65,7 @@ public class NRTactic extends AbstractTactic {
      */
     public List<TClass> applyTactic(TClass tClass) {
         String varName = nRTacticInfo.getVar();
-        List<Integer> numbers = nRTacticInfo.getNumbers();
+        List<BigInteger> numbers = nRTacticInfo.getNumbers();
 
         ZFactory zFactory = new ZFactoryImpl();
         ZExprList zExprList = zFactory.createZExprList();
@@ -86,7 +87,7 @@ public class NRTactic extends AbstractTactic {
         int size = numbers.size();
 
         if (size == 1) {
-            Integer number = numbers.get(0);
+            BigInteger number = numbers.get(0);
             Pred pred1 = SpecUtils.getLessThanPred(varRefExpr, number);
             predList.add(pred1);
             Pred pred2 = SpecUtils.getEqualityPred(varRefExpr, number);
@@ -95,9 +96,9 @@ public class NRTactic extends AbstractTactic {
             predList.add(pred3);
         } else {
             for (int i = 0; i < size; i++) {
-                Integer number = numbers.get(i);
+                BigInteger number = numbers.get(i);
                 Pred pred = SpecUtils.getEqualityPred(varRefExpr, number);
-                System.out.println("NRTACTIC \n" + SpecUtils.termToLatex(pred));
+                //System.out.println("NRTACTIC \n" + SpecUtils.termToLatex(pred));
                 predList.add(pred);
                 if (i == 0) {
                     Pred pred1 = SpecUtils.getLessThanPred(varRefExpr, number);
@@ -108,7 +109,7 @@ public class NRTactic extends AbstractTactic {
                     Pred pred2 = SpecUtils.getGreaterThanPred(varRefExpr, number);
                     predList.add(pred2);
                 } else {
-                    Integer numberI1 = numbers.get(i + 1);
+                    BigInteger numberI1 = numbers.get(i + 1);
                     Pred pred11 = SpecUtils.getGreaterThanPred(varRefExpr, number);
                     Pred pred12 = SpecUtils.getLessThanPred(varRefExpr, numberI1);
                     Pred pred1 = SpecUtils.andPreds(pred11, pred12);
@@ -280,7 +281,7 @@ public class NRTactic extends AbstractTactic {
         }
 
         String listOfArgsStr[] = sndArg.split(",");
-        ArrayList<Integer> listOfArgs = new ArrayList<Integer>();
+        ArrayList<BigInteger> listOfArgs = new ArrayList<BigInteger>();
 
 
         if (listOfArgsStr.length == 0) {
@@ -291,7 +292,7 @@ public class NRTactic extends AbstractTactic {
         try {
             for (int i = 0; i < listOfArgsStr.length; i++) {
                 listOfArgsStr[i] = listOfArgsStr[i].trim();
-                Integer integer = Integer.parseInt(listOfArgsStr[i]);
+                BigInteger bigInteger = new BigInteger(listOfArgsStr[i]);
                 /*              if (varType.equals("nat") && integer.intValue() <= 0) {
                 System.out.println("The last argument is not valid: one of the "
                 + "numbers is non-positive while the type of the specified "
@@ -299,7 +300,7 @@ public class NRTactic extends AbstractTactic {
                 return false;
                 }
                  */
-                listOfArgs.add(integer);
+                listOfArgs.add(bigInteger);
 
             }
 
