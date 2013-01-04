@@ -122,7 +122,7 @@ public class DNFTactic extends AbstractTactic {
             System.out.println();
         
         int numberOfDisjuncts = disjunctsList.size();
-        if (numberOfDisjuncts < 2) {
+        if (numberOfDisjuncts < 1) {
             return tClassList;
         }
 

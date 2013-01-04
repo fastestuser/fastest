@@ -66,8 +66,7 @@ public class AddStrategyCommand implements Command{
 				if (tClassRoot == null) {
 					// It does not have a testing tree associated,
 					// so it must have been selected
-					boolean isSelOp = FastestUtils.isSelectedOperation(
-							controller, unitToTestName);
+					boolean isSelOp = FastestUtils.isSelectedOperation(controller, unitToTestName);
 					// If not, we finish returning an error message
 					if (!isSelOp) {
 						output.println("'" + unitToTestName + "' is not the name of " + "a selected operation.");
