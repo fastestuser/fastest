@@ -1,9 +1,8 @@
 grammar Expr;
-options {
-	output=AST;
-	ASTLabelType=CommonTree;
-	backtrack=true;
-	memoize=true;
+
+@header {
+import java.util.HashMap;
+import java.util.ArrayList;
 }
 
 @members {
@@ -33,7 +32,7 @@ specification
 
 paragraph
 	:	'\\begin{schema}{' NAME '}'
-	schemaText '\\end{schema}' -> ^(NAME schemaText)
+	schemaText '\\end{schema}'
 	;
       
 schemaText
@@ -44,7 +43,7 @@ declPart:	declaration ((';' | NL) declaration)*
 	;
 	
 declaration
-scope{ArrayList vars;}
+locals [ArrayList vars;]
 @init{$declaration::vars = new ArrayList();}
 	:	a=declName {$declaration::vars.add($a.text);} (',' b=declName {$declaration::vars.add($b.text);})* ':' {type = "";} expression 
 	{
@@ -153,10 +152,7 @@ predicateTail
 	
 	
 expression
-scope{ArrayList setVars; String internalName; String externalName;}
-@init{$expression::setVars = new ArrayList();
-      $expression::internalName = "";
-      $expression::externalName = "";}
+locals [ArrayList setVars = new ArrayList(), String internalName = "", String externalName = "";]
 	:	NAME {lastExpr = $NAME.text;} expressionTail
 	|	NUM {lastExpr = $NUM.text; if (memory.get($NUM.text) == null) memory.put($NUM.text, $NUM.text);} expressionTail
 	|	'\\{ \\}' //empty set
@@ -174,34 +170,34 @@ scope{ArrayList setVars; String internalName; String externalName;}
 		}
 		//System.out.println("Guardo: " + e + " como: " + "(" + $a.text + ")");
 	} expressionTail {
-		String e = (String) memory.get($a.text + $expressionTail.text);
+		e = (String) memory.get($a.text + $expressionTail.text);
 		memory.put("(" + $a.text + ")" + $expressionTail.text, e);
 		lastExpr = "(" + $a.text + ")" + $expressionTail.text;
 	}
 	|	//set extention
-		SETSTART a=expression {$expression::setVars.add($a.text);} (',' b=expression {$expression::setVars.add($b.text);})* SETEND
+		SETSTART a=expression {$setVars.add($a.text);} (',' b=expression {$setVars.add($b.text);})* SETEND
 	{	
-		$expression::externalName = "\\{ ";
-		//Llenamos externalName y ponemos cada expression en la memory
-		while( !$expression::setVars.isEmpty() ){
-			String e = (String) $expression::setVars.remove(0);
-			$expression::externalName = $expression::externalName + e;
+		$externalName = "\\{ ";
+		//Llenamos $externalName y ponemos cada expression en la memory
+		while( !$setVars.isEmpty() ){
+			String e = (String) $setVars.remove(0);
+			$externalName = $externalName + e;
 			//guardamos tambien las traducciones interiores del conjunto
-			$expression::internalName = $expression::internalName + (String)memory.get(e);
+			$internalName = $internalName + (String)memory.get(e);
 			
-			if (!$expression::setVars.isEmpty()){
-				$expression::externalName = $expression::externalName + ",";
-				$expression::internalName = $expression::internalName + ",";
+			if (!$setVars.isEmpty()){
+				$externalName = $externalName + ",";
+				$internalName = $internalName + ",";
 			}
 		}
-		$expression::externalName = $expression::externalName + "\\}";
-		if (memory.get($expression::externalName) == null) {
-			memory.put($expression::externalName, "{" + $expression::internalName + "}");
+		$externalName = $externalName + "\\}";
+		if (memory.get($externalName) == null) {
+			memory.put($externalName, "{" + $internalName + "}");
 		}
-		lastExpr = $expression::externalName;
+		lastExpr = $externalName;
 	} expressionTail
-	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();} a=declPart {$expression::externalName = "\\{ " + $a.text;} ( '|'{modoSetExpression=2;} b=predicate {$expression::externalName = $expression::externalName.concat("|" + $b.text);})? ( '@' {modoSetExpression=3;} c=expression {$expression::externalName = $expression::externalName.concat("@" + $c.text);})? SETEND {modoSetExpression=0; $expression::externalName = $expression::externalName.concat("\\}");} 
-	{if (memory.get($expression::externalName)==null) {
+	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();} declPart {$externalName = "\\{ " + $declPart.text;} ( '|'{modoSetExpression=2;} predicate {$externalName = $externalName.concat("|" + $predicate.text);})? ( '@' {modoSetExpression=3;} c=expression {$externalName = $externalName.concat("@" + $c.text);})? SETEND {modoSetExpression=0; $externalName = $externalName.concat("\\}");} 
+	{if (memory.get($externalName)==null) {
 		String translatedSet = "";
 		String newVarName1 = "VAR" + varNumber;
 		varNumber++;
@@ -218,11 +214,11 @@ scope{ArrayList setVars; String internalName; String externalName;}
 		translatedSet = translatedSet.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) + ")" + setExpressionPred +
 		" & " + newVarName1 + " is " + memory.get($c.text) + " }");
 		
-		memory.put($expression::externalName, newVarName2);
-		//System.out.println("GUARDO: " + $expression::externalName);
+		memory.put($externalName, newVarName2);
+		//System.out.println("GUARDO: " + $externalName);
 		print(newVarName2 + " = " + translatedSet);
 	}	
-	lastExpr = $expression::externalName;
+	lastExpr = $externalName;
 	} expressionTail
 	
 	
@@ -250,7 +246,7 @@ scope{ArrayList setVars; String internalName; String externalName;}
 	;
 	
 expressionTail
-scope{String auxExpr;}
+locals [String auxExpr;]
 @init{$expressionTail::auxExpr = lastExpr;}
 	:	//empty rule
 	|	'~' e=expression
@@ -271,7 +267,7 @@ scope{String auxExpr;}
 	;
 
 arithmetic
-scope{String auxExpr;}
+locals[String auxExpr;]
 @init{$arithmetic::auxExpr = lastExpr;}
 	:	'+' e=expression
 	{
@@ -332,7 +328,7 @@ scope{String auxExpr;}
 	}
 	;
 relation
-scope{String auxExpr;}
+locals[String auxExpr;]
 @init{$relation::auxExpr = lastExpr;}
 	:	'\\mapsto' e=expression
 	{
