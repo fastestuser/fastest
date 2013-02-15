@@ -1,0 +1,25 @@
+\begin{axdef}
+tli, tls: REVENT \fun \nat \\
+X: REVENT \fun \nat 
+\end{axdef}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 18}\\
+tli, tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ e? = LiftOff \\
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \leq fa \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now > 1 \\
+ now < 3
+\end{schema}

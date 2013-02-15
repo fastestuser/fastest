@@ -28,12 +28,13 @@ grammar Expr;
 }
 
 specification
-	:	( paragraph NL!*)+
+	:	( paragraph NL*)+
 	;
 
 paragraph
-	:	'\\begin{schema}{' NAME '}'
-	schemaText '\\end{schema}'
+	:	'\\begin{schema}{' NAME '}' schemaText '\\end{schema}'
+	|	'\\begin{zed}' schemaText '\\end{zed}'
+	|	'\\begin{axdef}' NL declPart NL '\\end{axdef}'
 	;
       
 schemaText
@@ -125,6 +126,13 @@ predicate
 		b = (String)memory.get($e2.text);
 		print(a + " = " + b);
 	}
+	|	e1=expression '\\subset' e2=expression
+	{
+		String a, b;
+		a = (String)memory.get($e1.text);
+		b = (String)memory.get($e2.text);
+		print("dsubset(" + a + "," + b + ")");
+	}
 	|	e1=expression '\\neq' e2=expression
 	{
 		String a, b;
@@ -147,6 +155,19 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 	:	expression '\\rel' expression {type="is_rel";}   //In-Gen
 	|	expression '\\pfun' expression {type="is_pfun";}
 	|	expression '\\fun' expression {type="is_fun";}
+	|	e1=expression '~' e2=expression
+	{
+		String a, b;
+		a = (String)memory.get($e1.text);
+		b = (String)memory.get($e2.text);
+		
+		if (memory.get($e1.text + "~" + $e2.text) == null) {
+			String newVarName = "VAR" + varNumber;
+			varNumber++;
+			memory.put($e1.text + "~" + $e2.text, newVarName);
+			print("apply(" + a + "," + b + "," + newVarName + ")");
+		}
+	}
 	|	e1=expression '\\mapsto' e2=expression //In-Fun
 	{
 		String a, b;
@@ -166,12 +187,12 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			print(newVarName + " = int(" + a + "," + b + ")");
 		}
 	}
-	|	pre_gen e=expression //Pre-Gen
+	|	PRE_GEN e=expression //Pre-Gen
 	{
 		String a;
 		a = (String)memory.get($e.text);
 		
-		if ($pre_gen.text.equals("\\#")){
+		if ($PRE_GEN.text.equals("\\#")){
 			if (memory.get("\\#" + $e.text) == null) {
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
@@ -179,7 +200,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				print("prolog_call(length(" + a + "," + newVarName + "))");
 			}
 		}
-		else if ($pre_gen.text.equals("\\dom")){
+		else if ($PRE_GEN.text.equals("\\dom")){
 			if (memory.get("\\dom" + $e.text) == null) {
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
@@ -188,7 +209,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				print("dom(" + e + "," + newVarName + ")");
 			}
 		}
-		else if ($pre_gen.text.equals("\\seq")) {
+		else if ($PRE_GEN.text.equals("\\seq")) {
 			type="list";
 		}
 	}	
@@ -234,19 +255,6 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			}
 	}
 	|	'\\power' expression
-	|	e1=expression '~' e2=expression
-	{
-		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
-		
-		if (memory.get($e1.text + "~" + $e2.text) == null) {
-			String newVarName = "VAR" + varNumber;
-			varNumber++;
-			memory.put($e1.text + "~" + $e2.text, newVarName);
-			print("apply(" + a + "," + b + "," + newVarName + ")");
-		}
-	}
 	|	NAME
 	{
 		if (memory.get($NAME.text) == null)
@@ -287,7 +295,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			memory.put($externalName, "{" + $internalName + "}");
 		}
 	}
-	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();} declPart {$externalName = "\\{ " + $declPart.text;} ( '|'{modoSetExpression=2;} predicate {$externalName = $externalName.concat("|" + $predicate.text);})? ( '@' {modoSetExpression=3;} c=expression {$externalName = $externalName.concat("@" + $c.text);})? SETEND {modoSetExpression=0; $externalName = $externalName.concat("\\}");} 
+	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();} declPart {$externalName = $SETSTART.text + $declPart.text;} ( '|'{modoSetExpression=2;} predicate {$externalName = $externalName.concat("|" + $predicate.text);})? ( '@' {modoSetExpression=3;} c=expression {$externalName = $externalName.concat("@" + $c.text);})? SETEND {modoSetExpression=0; $externalName = $externalName.concat($SETEND.text);} 
 	{
 		if (memory.get($externalName)==null) {
 			$translatedSet = "";
@@ -302,13 +310,13 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				$translatedSet = $translatedSet.concat((String) setExpressionVars.remove(0));
 				if (!setExpressionVars.isEmpty()) $translatedSet = $translatedSet.concat(",");
 			}
-		}
 		
-		$translatedSet = $translatedSet.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) + ")" + setExpressionPred +
+			$translatedSet = $translatedSet.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) + ")" + setExpressionPred +
 		" & " + $newVarName1 + " is " + memory.get($c.text) + " }");
 		
-		memory.put($externalName, $newVarName2);
-		print($newVarName2 + " = " + $translatedSet);
+			memory.put($externalName, $newVarName2);
+			print($newVarName2 + " = " + $translatedSet);
+		}
 	}
 	|	'(' e=expression ')'
 	{
@@ -343,7 +351,7 @@ NUM:	'0'..'9'+ ;
 IN_FUN_P3: ('+' | '-' | '\\cup')	;
 IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap')	;
 
-pre_gen: ('\\dom' | '\\seq' | '\\#' )	;
+PRE_GEN: ( '\\dom' | '\\seq' | '\\#' )	;
 
 NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
