@@ -70,7 +70,7 @@ declName:	NAME
 	
 predicate
 	:	'\\lnot' predicate
-	|	e1=expression '\\in'  '\\dom' e2 = expression
+	|	e1=expression '\\in' '\\dom' e2 = expression
 	{	String a, b;
 		a = (String)memory.get($e1.text);
 		b = (String)memory.get($e2.text);
@@ -165,17 +165,67 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			memory.put($e1.text + "\\upto" + $e2.text, newVarName);
 			print(newVarName + " = int(" + a + "," + b + ")");
 		}
+	}
+	|	pre_gen e=expression //Pre-Gen
+	{
+		String a;
+		a = (String)memory.get($e.text);
+		
+		if ($pre_gen.text.equals("\\#")){
+			if (memory.get("\\#" + $e.text) == null) {
+				String newVarName = "VAR" + varNumber;
+				varNumber++;
+				memory.put("\\#" + $e.text, newVarName);
+				print("prolog_call(length(" + a + "," + newVarName + "))");
+			}
+		}
+		else if ($pre_gen.text.equals("\\dom")){
+			if (memory.get("\\dom" + $e.text) == null) {
+				String newVarName = "VAR" + varNumber;
+				varNumber++;
+				memory.put("\\dom" + $e.text, newVarName);
+				String e = (String) memory.get($e.text);
+				print("dom(" + e + "," + newVarName + ")");
+			}
+		}
+		else if ($pre_gen.text.equals("\\seq")) {
+			type="list";
+		}
 	}	
+	|	e1=expression IN_FUN_P4 e2=expression
+	{
+		String a, b;
+		a = (String)memory.get($e1.text);
+		b = (String)memory.get($e2.text);
+		
+		if ($IN_FUN_P4.text.equals("*")){
+			memory.put($e1.text + "*" + $e2.text, a + "*" + b);
+		}
+		else if ($IN_FUN_P4.text.equals("\\div")) {
+			memory.put($e1.text + "\\div" + $e2.text, "div(" + a + "," + b + ")");
+		}
+		else if ($IN_FUN_P4.text.equals("\\mod")){
+			memory.put($e1.text + "\\mod" + $e2.text, "mod(" + a + "," + b + ")");
+		}
+		else if ($IN_FUN_P4.text.equals("\\cap")){
+			if (memory.get($e1.text + "\\cap" + $e2.text) == null) {
+				String newVarName = "VAR" + varNumber;
+				varNumber++;
+				memory.put($e1.text + "\\cap" + $e2.text, newVarName);
+				print("dinters(" + a + "," + b + "," + newVarName + ")");
+			}
+		}
+	}
 	|	e1=expression IN_FUN_P3 e2=expression
 	{
 		String a, b;
 		a = (String)memory.get($e1.text);
 		b = (String)memory.get($e2.text);
 		
-		if (($IN_FUN_P3.text == "+") || ($IN_FUN_P3.text == "-"))
-			memory.put($e1.text + $IN_FUN_P3.text + $e2.text, a + "+" + b);
-			
-		else if ($IN_FUN_P3.text == "\\cup")
+		if (($IN_FUN_P3.text.equals("+")) || ($IN_FUN_P3.text.equals("-")))
+			memory.put($e1.text + $IN_FUN_P3.text + $e2.text, a + $IN_FUN_P3.text + b);
+		
+		else if ($IN_FUN_P3.text.equals("\\cup"))
 			if (memory.get( $e1.text + "\\cup" + $e2.text) == null) {
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
@@ -183,52 +233,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				print("dunion(" + a + "," + b + "," + newVarName + ")");
 			}
 	}
-	|	e1=expression IN_FUN_P4 e2=expression
-	{
-		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
-		
-		if ($IN_FUN_P4.text == "\\div")
-			memory.put($e1.text + "\\div" + $e2.text, "div(" + a + "," + b + ")");
-			
-		else if ($IN_FUN_P4.text == "\\mod")
-			memory.put($e1.text + "\\mod" + $e2.text, "mod(" + a + "," + b + ")");
-			
-		else if ($IN_FUN_P4.text == "\\cap")
-			if (memory.get($e1.text + "\\cap" + $e2.text) == null) {
-				String newVarName = "VAR" + varNumber;
-				varNumber++;
-				memory.put($e1.text + "\\cap" + $e2.text, newVarName);
-				print("dinters(" + a + "," + b + "," + newVarName + ")");
-			}
-	}
 	|	'\\power' expression
-	|	PRE_GEN expression //Pre-Gen
-	{
-		String a;
-		a = (String)memory.get($expression.text);
-		
-		if ($PRE_GEN.text == "\\#")
-			if (memory.get("\\#" + $expression.text) == null) {
-				String newVarName = "VAR" + varNumber;
-				varNumber++;
-				memory.put("\\#" + $expression.text, newVarName);
-				print("prolog_call(length(" + a + "," + newVarName + "))");
-			}
-			
-		else if ($PRE_GEN.text == "\\dom")
-			if (memory.get("\\dom" + $expression.text) == null) {
-				String newVarName = "VAR" + varNumber;
-				varNumber++;
-				memory.put("\\dom" + $expression.text, newVarName);
-				String e = (String) memory.get($expression.text);
-				print("dom(" + e + "," + newVarName + ")");
-			}
-		
-		else if ($PRE_GEN.text == "\\seq")
-			type="list";
-	}
 	|	e1=expression '~' e2=expression
 	{
 		String a, b;
@@ -243,21 +248,28 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		}
 	}
 	|	NAME
+	{
+		if (memory.get($NAME.text) == null)
+		{
+			String newVarName = $NAME.text.substring(0,1).toUpperCase() + $NAME.text.substring(1).replace("?","");
+		
+			if (memory.containsValue(newVarName)) { 
+				newVarName = "VAR" + varNumber;
+				varNumber++;
+			}
+			
+			memory.put($NAME.text, newVarName);
+		}
+	}
 	|	NUM
 	{
 		if (memory.get($NUM.text) == null)
 			memory.put($NUM.text, $NUM.text);
 	}
-	|	'\\{ \\}' //empty set
-	{
-		if (memory.get("\\{ \\}") == null) {
-			memory.put("\\{ \\}", "{}");
-		}	
-	}
 	|	//set extention
-		SETSTART a=expression {$setVars.add($a.text);} (',' b=expression {$setVars.add($b.text);})* SETEND
+		SETSTART (a=expression {$setVars.add($a.text);})? (',' b=expression {$setVars.add($b.text);})* SETEND
 	{	
-		$externalName = "\\{ ";
+		$externalName = $SETSTART.text;
 		//Llenamos $externalName y ponemos cada expression en la memory
 		while( !$setVars.isEmpty() ){
 			String e = (String) $setVars.remove(0);
@@ -270,7 +282,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				$internalName = $internalName + ",";
 			}
 		}
-		$externalName = $externalName + "\\}";
+		$externalName = $externalName + $SETEND.text;
 		if (memory.get($externalName) == null) {
 			memory.put($externalName, "{" + $internalName + "}");
 		}
@@ -298,21 +310,21 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		memory.put($externalName, $newVarName2);
 		print($newVarName2 + " = " + $translatedSet);
 	}
-	|	'(' expression ')'
+	|	'(' e=expression ')'
 	{
 		//Guardo la expresion con los parentesis
-		String e = (String) memory.get($expression.text);
+		String a = (String) memory.get($e.text);
 		
 		//Chequeo el nombre para ver si se trata de una sola variable, en ese caso no guardo en la memoria
 		//los parentesis, en otro caso si
 		
 		Pattern p = Pattern.compile("[^a-zA-Z0-9_]");
-		boolean hasSpecialChar = p.matcher(e).find();
+		boolean hasSpecialChar = p.matcher(a).find();
 		
 		if (hasSpecialChar)
-			memory.put("(" + $expression.text + ")", "(" + e + ")");
+			memory.put("(" + $e.text + ")", "(" + a + ")");
 		else
-			memory.put("(" + $expression.text + ")", e);
+			memory.put("(" + $e.text + ")", a);
 	}
 	|	'\\nat' 
 	{	
@@ -328,13 +340,13 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('0'..'9')*;
 NUM:	'0'..'9'+ ;
 
-IN_FUN_P3: ('+' | '-' | '\\cup') ;
-IN_FUN_P4: ('*' | '\\div' | '\\mod') ;
+IN_FUN_P3: ('+' | '-' | '\\cup')	;
+IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap')	;
 
-PRE_GEN: ('\\#' | '\\dom' | '\\seq') ;
+pre_gen: ('\\dom' | '\\seq' | '\\#' )	;
 
 NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
-SETSTART: '\\{ ';
+SETSTART: '\\{';
 SETEND: '\\}';
 SKIP:	'\\' '\\' {skip();} ;
