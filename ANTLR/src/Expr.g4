@@ -15,9 +15,14 @@ grammar Expr;
 	String setExpressionDecl, setExpressionPred, setExpressionExpr;
 	ArrayList setExpressionVars;
 
+	String salida = new String();
+	public String getSalida() {
+		return salida;
+	}
+
 	public void print(String c) {
 		if (modoSetExpression == 0) 
-			System.out.println(c + " & ");
+			salida = salida.concat(c + " & ");
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -34,15 +39,19 @@ specification
 paragraph
 	:	'\\begin{schema}{' NAME '}' schemaText '\\end{schema}'
 	|	'\\begin{axdef}' NL declPart NL '\\end{axdef}'
-	|	'\\begin{zed}' NL ((basic_type | equivalent_type) NL )+ '\\end{zed}'
+	|	'\\begin{zed}' NL ((basic_type | equivalent_type | branch_type) NL )+ '\\end{zed}'
 	;
       
 basic_type
-	:	'[' declName (',' declName)+ ']'
+	:	'[' declName (',' declName)* ']'
 	;
 	
 equivalent_type
 	:	declName '==' expression
+	;
+	
+branch_type
+	:	declName '::=' declName (expression)? ('|' declName (expression)? )*
 	;
       
 schemaText
@@ -162,6 +171,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 	String newVarName1 = "", String newVarName2 = ""]
 	:	expression '\\rel' expression {type="is_rel";}   //In-Gen
 	|	expression '\\pfun' expression {type="is_pfun";}
+	|	expression '\\ffun' expression {type="is_pfun";} //ffun is the same as pfun in set-log
 	|	expression '\\fun' expression {type="is_fun";}
 	|	e1=expression '~' e2=expression
 	{
@@ -215,6 +225,15 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				memory.put("\\dom" + $e.text, newVarName);
 				String e = (String) memory.get($e.text);
 				print("dom(" + e + "," + newVarName + ")");
+			}
+		}
+		else if ($pre_gen.text.equals("\\ran")){
+			if (memory.get("\\ran" + $e.text) == null) {
+				String newVarName = "VAR" + varNumber;
+				varNumber++;
+				memory.put("\\ran" + $e.text, newVarName);
+				String e = (String) memory.get($e.text);
+				print("ran(" + e + "," + newVarName + ")");
 			}
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
@@ -372,7 +391,7 @@ NUM:	'0'..'9'+ ;
 IN_FUN_P3: ('+' | '-' | '\\cup')	;
 IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap')	;
 
-pre_gen: ( '\\dom' | '\\seq' | '\\#' )	;
+pre_gen: ( '\\ran' | '\\dom' | '\\seq' | '\\#' )	;
 
 NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
