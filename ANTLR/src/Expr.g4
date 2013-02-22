@@ -22,7 +22,7 @@ grammar Expr;
 
 	public void print(String c) {
 		if (modoSetExpression == 0) 
-			salida = salida.concat(c + " & ");
+			salida = salida.concat(c + " & \n");
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
