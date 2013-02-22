@@ -33,8 +33,16 @@ specification
 
 paragraph
 	:	'\\begin{schema}{' NAME '}' schemaText '\\end{schema}'
-	|	'\\begin{zed}' schemaText '\\end{zed}'
 	|	'\\begin{axdef}' NL declPart NL '\\end{axdef}'
+	|	'\\begin{zed}' NL ((basic_type | equivalent_type) NL )+ '\\end{zed}'
+	;
+      
+basic_type
+	:	'[' declName (',' declName)+ ']'
+	;
+	
+equivalent_type
+	:	declName '==' expression
 	;
       
 schemaText
@@ -187,12 +195,12 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			print(newVarName + " = int(" + a + "," + b + ")");
 		}
 	}
-	|	PRE_GEN e=expression //Pre-Gen
+	|	pre_gen e=expression //Pre-Gen
 	{
 		String a;
 		a = (String)memory.get($e.text);
 		
-		if ($PRE_GEN.text.equals("\\#")){
+		if ($pre_gen.text.equals("\\#")){
 			if (memory.get("\\#" + $e.text) == null) {
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
@@ -200,7 +208,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				print("prolog_call(length(" + a + "," + newVarName + "))");
 			}
 		}
-		else if ($PRE_GEN.text.equals("\\dom")){
+		else if ($pre_gen.text.equals("\\dom")){
 			if (memory.get("\\dom" + $e.text) == null) {
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
@@ -209,7 +217,7 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				print("dom(" + e + "," + newVarName + ")");
 			}
 		}
-		else if ($PRE_GEN.text.equals("\\seq")) {
+		else if ($pre_gen.text.equals("\\seq")) {
 			type="list";
 		}
 	}	
@@ -219,21 +227,26 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		a = (String)memory.get($e1.text);
 		b = (String)memory.get($e2.text);
 		
-		if ($IN_FUN_P4.text.equals("*")){
-			memory.put($e1.text + "*" + $e2.text, a + "*" + b);
-		}
-		else if ($IN_FUN_P4.text.equals("\\div")) {
-			memory.put($e1.text + "\\div" + $e2.text, "div(" + a + "," + b + ")");
-		}
-		else if ($IN_FUN_P4.text.equals("\\mod")){
-			memory.put($e1.text + "\\mod" + $e2.text, "mod(" + a + "," + b + ")");
-		}
-		else if ($IN_FUN_P4.text.equals("\\cap")){
-			if (memory.get($e1.text + "\\cap" + $e2.text) == null) {
-				String newVarName = "VAR" + varNumber;
-				varNumber++;
-				memory.put($e1.text + "\\cap" + $e2.text, newVarName);
-				print("dinters(" + a + "," + b + "," + newVarName + ")");
+		if (memory.get($e1.text + $IN_FUN_P4.text + $e2.text) == null) {
+		
+			String newVarName = "VAR" + varNumber;
+			varNumber++;
+		
+			if ($IN_FUN_P4.text.equals("*")){
+				print( newVarName + " is " + a + "*" + b );
+				memory.put($e1.text + "*" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\div")) {
+				print( newVarName + " is div(" + a + "," + b + ")" );
+				memory.put($e1.text + "\\div" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\mod")){
+				print( newVarName + " is mod(" + a + "," + b + ")" );
+				memory.put($e1.text + "\\mod" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\cap")){
+					print("dinters(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\cap" + $e2.text, newVarName);
 			}
 		}
 	}
@@ -243,16 +256,24 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		a = (String)memory.get($e1.text);
 		b = (String)memory.get($e2.text);
 		
-		if (($IN_FUN_P3.text.equals("+")) || ($IN_FUN_P3.text.equals("-")))
-			memory.put($e1.text + $IN_FUN_P3.text + $e2.text, a + $IN_FUN_P3.text + b);
+		if (memory.get($e1.text + $IN_FUN_P3.text + $e2.text) == null) {
 		
-		else if ($IN_FUN_P3.text.equals("\\cup"))
-			if (memory.get( $e1.text + "\\cup" + $e2.text) == null) {
-				String newVarName = "VAR" + varNumber;
-				varNumber++;
-				memory.put($e1.text + "\\cup" + $e2.text, newVarName);
-				print("dunion(" + a + "," + b + "," + newVarName + ")");
+			String newVarName = "VAR" + varNumber;
+			varNumber++;
+		
+			if ($IN_FUN_P3.text.equals("+")){
+				print( newVarName + " is " + a + "+" + b );
+				memory.put($e1.text + "+" + $e2.text, newVarName);
 			}
+			else if ($IN_FUN_P3.text.equals("-")) {
+				print( newVarName + " is " + a + "-" + b );
+				memory.put($e1.text + "-" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P3.text.equals("\\cup")){
+					print("dunion(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\cup" + $e2.text, newVarName);
+			}
+		}
 	}
 	|	'\\power' expression
 	|	NAME
@@ -351,7 +372,7 @@ NUM:	'0'..'9'+ ;
 IN_FUN_P3: ('+' | '-' | '\\cup')	;
 IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap')	;
 
-PRE_GEN: ( '\\dom' | '\\seq' | '\\#' )	;
+pre_gen: ( '\\dom' | '\\seq' | '\\#' )	;
 
 NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
