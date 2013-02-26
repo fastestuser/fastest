@@ -1,0 +1,10 @@
+list(Memp) & 
+list(Memd) & 
+NAT = int(0, 10000000000) & 
+list(Data) & 
+prolog_call(length(Data,VAR0)) & 
+43 < Mep+VAR0 & 
+Memd neq {} & 
+VAR4 = { VAR3:exists([I],  VAR1 = int(1,VAR0)) & VAR3 is Mep+[I,VAR2] } & 
+VAR4 neq {} & 
+Memd = null & 
