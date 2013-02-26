@@ -13,7 +13,9 @@ import client.blogic.management.ii.events.FastestResetted;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.management.Controller;
+import common.z.SpecUtils;
 import common.z.TClass;
+import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import compserver.tcasegen.strategies.IterativeTCaseStrategy;
 import compserver.tcasegen.strategies.AtomicPredTCaseStrategy;
@@ -66,11 +68,14 @@ public class TCaseGenClient extends IIComponent {
 	    Map<String, TClassNode> mapTTree = controller.getOpTTreeMap();
 
             String tClassName = tClass.getSchName();
-
+            //MODIFICADO
+            System.out.println("LLLLL" + SpecUtils.termToLatex(tClass));
             TCaseStrategy tCaseStrategy = tCaseStrategyMap.get(tClassName);
             if(tCaseStrategy == null){
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());
-                tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
+                //MODIFICADO AtomicPredTCaseStrategy por SetLogStrategy
+            	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
+            	tCaseStrategy = new SetLogStrategy();
 		//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new ZeroIntFiniteModel(12), new ZeroNatFiniteModel(12), mapTTree);
             }
                 
