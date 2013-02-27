@@ -1,0 +1,104 @@
+\documentclass{article}
+\usepackage{czt}
+\newenvironment{machine}[1]{
+\begin{tabular}{@{\qquad}l}\textbf{\kern-1em machine}\ #1\\ }{
+\\ \textbf{\kern-1em end} \end{tabular} }
+\begin{document}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 1}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ smax~s? < r? \\
+ s? \in \dom smax
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 4}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ smax~s? < r? \\
+ s? \in \dom smax \\
+ smax~s? = 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 5}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ smax~s? < r? \\
+ s? \in \dom smax \\
+ smax~s? > 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 2}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ s? \notin \dom smax
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 3}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ s? \in \dom smax \\
+ r? \leq smax~s?
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 14}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ s? \in \dom smax \\
+ r? \leq smax~s? \\
+ smax~s? = 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 15}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( smax~s? < r? \\
+ s? \in \dom smax ) \lor s? \notin \dom smax \lor ( s? \in \dom smax \\
+ r? \leq smax~s? ) \\
+ s? \in \dom smax \\
+ r? \leq smax~s? \\
+ smax~s? > 0 \\
+ r? > 0
+\end{schema}
+
+\end{document}
+

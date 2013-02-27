@@ -68,8 +68,7 @@ public class TCaseGenClient extends IIComponent {
 	    Map<String, TClassNode> mapTTree = controller.getOpTTreeMap();
 
             String tClassName = tClass.getSchName();
-            //MODIFICADO
-            System.out.println("LLLLL" + SpecUtils.termToLatex(tClass));
+         
             TCaseStrategy tCaseStrategy = tCaseStrategyMap.get(tClassName);
             if(tCaseStrategy == null){
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());

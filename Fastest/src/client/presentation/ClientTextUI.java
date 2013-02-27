@@ -34,9 +34,10 @@ public class ClientTextUI extends ClientUI {
             EventAdmin.getInstance(this);
             (new CServersConfigLoader(currentDir + "lib/conf/cserversinfo.conf")).loadCServersInfo();
             (new RWRulesLoader(currentDir + "lib/conf/rwRules.tex")).loadRWRules();
-            (new TheoremsLoader(currentDir + "lib/conf/elimTheorems.tex",
-                    currentDir + "lib/conf/thmoperators.conf")).loadTheorems();
+            (new TheoremsLoader(currentDir + "lib/conf/elimTheorems.tex",currentDir + "lib/conf/thmoperators.conf")).loadTheorems();
 
+        
+            
             reader = new ConsoleReader();
             reader.setInput(new BufferedInputStream(System.in)); //MODIFICADO
             List completors = new LinkedList();
@@ -173,8 +174,7 @@ public class ClientTextUI extends ClientUI {
      * @param args
      * @throws java.io.IOException
      */
-    public static void main(String args[])
-            throws IOException {
+    public static void main(String args[])throws IOException {
         BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
         PrintWriter output = new PrintWriter(System.out, true); // with autoflush
         output.println(getBanner());

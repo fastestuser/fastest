@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lib/antlr-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/czt.jar"/>
 	<classpathentry kind="lib" path="lib/jline-0.9.94.jar"/>
 	<classpathentry kind="lib" path="lib/ZCharMap.jar"/>
@@ -10,5 +9,12 @@
 	<classpathentry kind="lib" path="lib/ZLivePlug2in.jar"/>
 	<classpathentry kind="lib" path="lib/ZLivePlugin.jar"/>
 	<classpathentry kind="lib" path="lib/ZSideKick.jar"/>
+	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-4.0-complete.jar"/>
+	<classpathentry kind="lib" path="lib/swipl-5.10.5/jpl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Fastest/lib/swipl-5.10.5/i686-linux"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,0 +1,130 @@
+\documentclass{article}
+\usepackage{czt}
+\newenvironment{machine}[1]{
+\begin{tabular}{@{\qquad}l}\textbf{\kern-1em machine}\ #1\\ }{
+\\ \textbf{\kern-1em end} \end{tabular} }
+\begin{document}
+
+
+\begin{zed}
+[ACCNUM, UID, NAME] \\
+MONEY == \nat \\
+BALANCE == \nat
+\end{zed}
+
+
+\begin{axdef}
+gates, obama, clinton: ACCNUM
+\end{axdef}
+
+\begin{zed}
+CheckBalance == \\
+  \t1 CheckBalanceOk \lor AccountNotExists \\
+  \t1 \lor IncorrectAmount \lor NotAnOwner
+\end{zed}
+
+
+\begin{schema}{Bank}
+clients: UID \pfun NAME \\
+balances: ACCNUM \pfun BALANCE \\
+owners: UID \rel ACCNUM
+\end{schema}
+
+
+\begin{schema}{NewClient\_ VIS}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ ( u? \notin \dom clients \\
+ n? \notin \dom balances ) \lor u? \in \dom clients \lor n? \in \dom balances
+\end{schema}
+
+\begin{schema}{NewClient\_ DNF\_ 1}\\
+ NewClient\_ VIS 
+\where
+ u? \notin \dom clients \\
+ n? \notin \dom balances
+\end{schema}
+
+\begin{schema}{NewClient\_ SP\_ 5}\\
+ NewClient\_ DNF\_ 1 
+\where
+ clients \neq \{ \} \\
+ \{ u? \mapsto name? \} \neq \{ \} \\
+ clients \subset \{ u? \mapsto name? \}
+\end{schema}
+
+\begin{schema}{NewClient\_ VIS}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ ( u? \notin \dom clients \\
+ n? \notin \dom balances ) \lor u? \in \dom clients \lor n? \in \dom balances
+\end{schema}
+
+
+\begin{schema}{NewClient\_ DNF\_ 1}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ u? \notin \dom clients \\
+ n? \notin \dom balances
+\end{schema}
+
+\begin{schema}{NewClient\_ SP\_ 5}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ u? \notin \dom clients \\
+ n? \notin \dom balances \\
+ clients \neq \{ \} \\
+ \{ u? \mapsto name? \} \neq \{ \} \\
+ clients \subset \{ u? \mapsto name? \}
+\end{schema}
+
+\begin{schema}{NewClient\_ SP\_ 5}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ u? \notin \dom clients \\
+ n? \notin \dom balances \\
+ clients \neq \{ \} \land \{ u? \mapsto name? \} \neq \{ \} \\
+ clients \subset \{ u? \mapsto name? \}
+\end{schema}
+
+\begin{schema}{NewClient\_ SP\_ 5bis}\\
+ clients : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ name? : NAME \\
+ n? : ACCNUM 
+\where
+ u? \notin \dom clients \\
+ n? \notin \dom balances \\
+ clients \neq \{ \} \land \{ u? \mapsto name? \} \neq \{ \} \\
+ clients \subset \{ u? \mapsto name? \}
+\end{schema}
+
+\end{document}
+

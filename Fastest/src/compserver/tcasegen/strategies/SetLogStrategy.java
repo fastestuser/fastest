@@ -1,5 +1,6 @@
 package compserver.tcasegen.strategies;
 
+import jpl.JPL;
 import jpl.Query;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -26,9 +27,14 @@ public class SetLogStrategy implements TCaseStrategy{
         parser.specification();
         //System.out.println(parser.getSalida());
         
-        String t1 = "consult('test.pl')";
-		Query q1 = new Query(t1);
-		System.out.println( t1 + " " + (q1.hasSolution() ? "succeesssded" : "failed") );
+        JPL.init();
+        String s = new String("use_module(library(dialect/sicstus/timeout)).\nconsult(setlog4616).\nconsult_lib.\ntime_out(setlog(\nA in int(0,5) &\nA > 3\n,_CONSTR),1000,_RET).");
+
+        //String t1 = "consult('test.pl')";
+		Query q1 = new Query(s);
+		System.out.println( s + " " + (q1.hasSolution() ? "succeesssded" : "failed") );
+		
+				
         return null;
 	}
 }

@@ -1,0 +1,64 @@
+\documentclass{article}
+\usepackage{czt}
+\newenvironment{machine}[1]{
+\begin{tabular}{@{\qquad}l}\textbf{\kern-1em machine}\ #1\\ }{
+\\ \textbf{\kern-1em end} \end{tabular} }
+\begin{document}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 1}\\
+ KeepMaxReading\_ VIS 
+\where
+ smax~s? < r? \\
+ s? \in \dom smax
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 4}\\
+ KeepMaxReading\_ DNF\_ 1 
+\where
+ smax~s? = 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 5}\\
+ KeepMaxReading\_ DNF\_ 1 
+\where
+ smax~s? > 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 2}\\
+ KeepMaxReading\_ VIS 
+\where
+ s? \notin \dom smax
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ DNF\_ 3}\\
+ KeepMaxReading\_ VIS 
+\where
+ s? \in \dom smax \\
+ r? \leq smax~s?
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 14}\\
+ KeepMaxReading\_ DNF\_ 3 
+\where
+ smax~s? = 0 \\
+ r? > 0
+\end{schema}
+
+
+\begin{schema}{KeepMaxReading\_ SP\_ 15}\\
+ KeepMaxReading\_ DNF\_ 3 
+\where
+ smax~s? > 0 \\
+ r? > 0
+\end{schema}
+
+\end{document}
+

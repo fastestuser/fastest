@@ -1,0 +1,178 @@
+\documentclass{article}
+\usepackage{czt}
+
+\begin{document}
+\begin{zed}
+[SENSOR]
+\end{zed}
+
+\begin{zed}
+MaxReadings == [smax: SENSOR \pfun \num]
+\end{zed}
+
+\begin{schema}{KeepMaxReadingOk}
+\Delta MaxReadings \\
+s?:SENSOR; r?:\num \\
+\where
+s? \in \dom smax \\
+smax~s? = r?   \\
+smax' = smax \oplus \{s? \mapsto r?\}
+%smax' = (\dom \{s? \mapsto r?\} \ndres smax) \oplus \{s? \mapsto r?\}
+\end{schema}
+
+\begin{zed}
+KeepMaxReadingE1 == \\
+  \t1 [\Xi MaxReadings; s?:SENSOR | \\
+  \t1 s? \notin \dom smax]
+\end{zed}
+
+\begin{schema}{KeepMaxReadingE2}
+\Xi MaxReadings \\
+s?:SENSOR; r?:\num
+\where
+s? \in \dom smax\\
+r? \leq smax~s? 
+\end{schema}
+
+\begin{schema}{KeepMaxReadingE25}
+\Delta MaxReadings \\ 
+x?:\num
+\where
+x? > 0  \\
+smax' = smax 
+\end{schema}
+
+\begin{schema}{KeepMaxReadingAux}
+\Delta MaxReadings \\ 
+y?:\num
+\where
+y? > 15  \\
+smax' = smax 
+\end{schema}
+
+\begin{zed}
+KeepMaxReading == \\
+  \t1 KeepMaxReadingOk \\
+  \t1 \lor KeepMaxReadingE1 \\
+  \t1 \lor KeepMaxReadingE2
+\end{zed}
+\end{document}
+
+<<<<<<< .mine
+
+
+
+\begin{zed}
+KeepMaxReading13 ==  \( KeepMaxReadingOk \land KeepMaxReadingE25 \) \lor KeepMaxReadingE1 
+\end{zed}
+
+
+\begin{zed}
+KeepMaxReading14 ==  \( \( \( KeepMaxReadingOk \land KeepMaxReadingE25 \) \lor KeepMaxReadingE1 \) \land KeepMaxReadingE2 \) \lor KeepMaxReadingAux
+\end{zed}
+
+
+\begin{zed}
+KeepMaxReading15 ==   KeepMaxReadingOk  \land KeepMaxReadingE2
+\end{zed}
+
+\begin{zed}
+KeepMaxReading16 ==   KeepMaxReadingOk  \land KeepMaxReadingE25
+\end{zed}
+
+
+
+
+\begin{schema}{KeepMaxReadingE26}
+\Delta MaxReadings \\
+s?:SENSOR; r?:\num 
+\where
+smax' = smax \oplus \{s? \mapsto r?\}
+\end{schema}
+
+\begin{zed}
+KeepMaxReading17 ==   KeepMaxReadingOk  \land KeepMaxReadingE26
+\end{zed}
+
+\begin{zed}
+KeepMaxReading2 ==  \( KeepMaxReadingOk \lor KeepMaxReadingE1 \) \land KeepMaxReadingE2
+\end{zed}
+
+
+
+\begin{zed}
+KeepMaxReading25 ==  \( KeepMaxReadingOk \lor KeepMaxReadingE1 \) \land KeepMaxReadingE25
+\end{zed}
+
+
+\begin{zed}
+KeepMaxReading3 ==   KeepMaxReadingOk 
+\end{zed}
+
+\begin{schema}{KeepMaxReading4}
+KeepMaxReadingOk \\
+x? : \num
+\where
+x? > 0
+\end{schema}
+
+\begin{schema}{KeepMaxReading5}
+KeepMaxReading \\
+x? : \num
+\where
+x? > 0
+\end{schema}
+
+
+\begin{zed}
+KeepMaxReading6 == \( \( KeepMaxReadingOk \land KeepMaxReadingE25  \lor KeepMaxReadingE1 \) \land [\Delta MaxReadings; t?:\num | t? > 2 ] \) \land KeepMaxReadingAux
+\end{zed}
+
+
+
+
+\begin{schema}{KeepMaxReading7}
+\Delta MaxReadings \\
+s?:SENSOR; r?:\num 
+\where
+smax' = smax \oplus \{s? \mapsto r?\}
+\end{schema}
+
+\begin{schema}{KeepMaxReading8}\\
+ smax,smax' : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ ( s? \in \dom smax \\
+ smax~s? = r? ) \lor ( s? \in \dom smax \\
+ smax~s? < r? ) \\
+ s? \in \dom smax \\
+ smax~s? = r? \\
+ r? = 8
+\end{schema}
+
+\begin{schema}{KeepMaxReading9}\\
+ smax,smax' : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
+\where
+ s? \in \dom smax \\
+ smax~s? = r? \\
+ r? = 8
+\end{schema}
+
+\begin{schema}{KeepMaxReading10}
+KeepMaxReadingOk \\
+x? : \num
+\where
+x? > 0
+\end{schema}
+
+
+
+\end{document}
+
+
+=======
+
+>>>>>>> .r34

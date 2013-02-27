@@ -754,7 +754,7 @@ public class SpecUtils {
             RefExpr refExpr = mapEntry.getKey();
             Expr expr = mapEntry.getValue();
 
-            //We create the SetExpr that contains the right expr
+            //We create the SetExpr that contains the right expr (esto es por que asi lo necesita createMemPred)
             ZExprList setZExprList = zFactory.createZExprList();
             setZExprList.add(0, expr);
             SetExpr setExpr = zFactory.createSetExpr(setZExprList);
@@ -764,7 +764,6 @@ public class SpecUtils {
             memPredExprList.add(0, refExpr);
             memPredExprList.add(1, setExpr);
             MemPred memPred = zFactory.createMemPred(memPredExprList, true);
-
             if (pred != null) {
                 pred = andPreds(pred, memPred);
             } else {
