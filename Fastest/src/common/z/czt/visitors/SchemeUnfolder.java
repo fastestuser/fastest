@@ -8,6 +8,8 @@ import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.DeclDecoration;
 import common.z.SpecUtils;
+import common.z.UtilSymbols;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -152,7 +154,19 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                 if (decl instanceof ConstDecl) {
                     ConstDecl constDecl = (ConstDecl) decl;
                     Expr axParaExpr = constDecl.getExpr();
-                    Expr visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    Expr visitedAxParaExpr = axParaExpr;
+                    
+                    //Visitar solo si es de alguno de estos tipos
+                    if (axParaExpr instanceof SchExpr) {
+                    	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    } else if (axParaExpr instanceof AndExpr) {
+                    	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    } else if (axParaExpr instanceof OrExpr) {
+                    	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    //} else if (axParaExpr instanceof RefExpr) { ¿Esta bien esto comentado?
+                    //	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    }
+                   
                     constDecl.setExpr(visitedAxParaExpr);
                     if (visitedAxParaExpr instanceof SchExpr) {
                         axPara.setBox(Box.SchBox);
@@ -424,6 +438,15 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         boolean isXi = false;
 
         String refExprName = refExpr.getName().toString();
+        
+        /*//Primero vemos que no sea algun symbolo matematico por ejemplo. MODIFICADO
+        if (refExprName.equals(UtilSymbols.integerSymbol())
+                || refExprName.equals(UtilSymbols.naturalSymbol())
+                || refExprName.equals("?")
+                || refExpr.getZExprList().size() != 0) {
+            return null;
+        }*/
+        
         int firstCharCode = (int) refExprName.charAt(0);
         if (firstCharCode == 916) {
             //El esquema a expandir es un delta

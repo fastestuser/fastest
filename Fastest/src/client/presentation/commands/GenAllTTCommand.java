@@ -46,8 +46,8 @@ public class GenAllTTCommand implements Command {
             // generated
 
             Spec spec = controller.getOriginalSpec();
-            AbstractRepository<String> opNames = controller.getOpsToTestRep();
-            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+            //AbstractRepository<String> opNames = controller.getOpsToTestRep();
+            //AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
             EventAdmin eventAdmin = EventAdmin.getInstance();
 
 /*            Spec unfoldedSpec = (Spec) spec.accept

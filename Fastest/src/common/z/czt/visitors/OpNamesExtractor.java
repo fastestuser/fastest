@@ -31,6 +31,7 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.SchExpr2;
 import net.sourceforge.czt.z.ast.Sect;
+import net.sourceforge.czt.z.ast.SetCompExpr;
 import net.sourceforge.czt.z.ast.SetExpr;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.Stroke;
@@ -53,6 +54,7 @@ import net.sourceforge.czt.z.visitor.NumExprVisitor;
 import net.sourceforge.czt.z.visitor.OrExprVisitor;
 import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.SchExprVisitor;
+import net.sourceforge.czt.z.visitor.SetCompExprVisitor;
 import net.sourceforge.czt.z.visitor.SetExprVisitor;
 import net.sourceforge.czt.z.visitor.SpecVisitor;
 
@@ -78,6 +80,7 @@ public class OpNamesExtractor implements SpecVisitor<SchemeType>,
         SchExprVisitor<SchemeType>,
         RefExprVisitor<SchemeType>,
         SetExprVisitor<SchemeType>,
+        SetCompExprVisitor<SchemeType>,
         NumExprVisitor<SchemeType>,
         ImpliesExprVisitor<SchemeType>,
         IffExprVisitor<SchemeType>,
@@ -367,6 +370,10 @@ public class OpNamesExtractor implements SpecVisitor<SchemeType>,
 
 
     public SchemeType visitSetExpr(SetExpr setExpr){
+        return SchemeType.WITHOUT_VARS;
+    }
+    
+    public SchemeType visitSetCompExpr(SetCompExpr setCompExpr){
         return SchemeType.WITHOUT_VARS;
     }
 

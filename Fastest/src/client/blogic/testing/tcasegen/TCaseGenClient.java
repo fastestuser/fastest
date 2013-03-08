@@ -15,7 +15,7 @@ import client.blogic.management.ii.IIComponent;
 import client.blogic.management.Controller;
 import common.z.SpecUtils;
 import common.z.TClass;
-import compserver.tcasegen.strategies.SetLogStrategy;
+//import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import compserver.tcasegen.strategies.IterativeTCaseStrategy;
 import compserver.tcasegen.strategies.AtomicPredTCaseStrategy;
@@ -73,8 +73,8 @@ public class TCaseGenClient extends IIComponent {
             if(tCaseStrategy == null){
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());
                 //MODIFICADO AtomicPredTCaseStrategy por SetLogStrategy
-            	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
-            	tCaseStrategy = new SetLogStrategy();
+            	tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
+            	//tCaseStrategy = new SetLogStrategy();
 		//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new ZeroIntFiniteModel(12), new ZeroNatFiniteModel(12), mapTTree);
             }
                 

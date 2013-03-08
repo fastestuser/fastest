@@ -30,7 +30,6 @@ import common.z.czt.visitors.EmptySetReplacer;
 import common.z.czt.visitors.FreeTypeNamesExtractor;
 import common.z.czt.visitors.OpNamesExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
-import common.z.czt.visitors.SchemeUnfolder;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import java.util.List;
@@ -241,13 +240,7 @@ public class LoadSpecCommand implements Command {
             controller.setAxDefsPredVars(axDefsPredVars);
             controller.setAxDefsValues(axDefsValues);
             controller.setBasicAxDefs(basicAxDefs);
-           //MODIFICADO
-//            AbstractRepository<String> opNames = controller.getOpsToTestRep();
-//            opNames.addElement("KeepMaxReading");
-//            opNames.addElement("KeepMaxReadingOk");
-//            AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
-//            controller.setUnfoldedSpec((Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames)));
-//            
+
             EventAdmin eventAdmin = EventAdmin.getInstance();
             SpecLoaded specLoaded = new SpecLoaded(spec);
             eventAdmin.announceEvent(specLoaded);
