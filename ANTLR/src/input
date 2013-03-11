@@ -1,25 +1,12 @@
-\begin{axdef}
-tli, tls: REVENT \fun \nat \\
-X: REVENT \fun \nat 
-\end{axdef}
+\begin{zed}
+[SENSOR]
+\end{zed}
 
-\begin{schema}{DetectReferenceEvent\_ NR\_ 18}\\
-tli, tls: REVENT \fun \nat \\
-X: REVENT \fun \nat \\
- now : \nat \\
- ot : REVENT \pfun \nat \\
- sysState : STATUS \\
- fa : \nat \\
- e? : REVENT 
+\begin{schema}{KeepMaxReadingOk\_ DNF\_ 1}\\
+ smax : SENSOR \pfun \num \\
+ s? : SENSOR \\
+ r? : \num 
 \where
- e? = LiftOff \\
- sysState = normal \\
- e? \notin \dom ot \\
- now \in tli~e? \upto tls~e? \\
- X~e? \leq fa \\
- ot \neq \{ \} \\
- \{ e? \mapsto now \} \neq \{ \} \\
- ot \cap \{ e? \mapsto now \} = \{ \} \\
- now > 1 \\
- now < 3
+ s? \in \dom smax \\
+ smax~s? < r?
 \end{schema}

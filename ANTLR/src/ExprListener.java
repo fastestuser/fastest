@@ -21,14 +21,26 @@ public interface ExprListener extends ParseTreeListener {
 	void enterParagraph(ExprParser.ParagraphContext ctx);
 	void exitParagraph(ExprParser.ParagraphContext ctx);
 
+	void enterBasic_type(ExprParser.Basic_typeContext ctx);
+	void exitBasic_type(ExprParser.Basic_typeContext ctx);
+
+	void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx);
+	void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx);
+
 	void enterPredicate(ExprParser.PredicateContext ctx);
 	void exitPredicate(ExprParser.PredicateContext ctx);
 
 	void enterDeclName(ExprParser.DeclNameContext ctx);
 	void exitDeclName(ExprParser.DeclNameContext ctx);
 
+	void enterEquivalent_type(ExprParser.Equivalent_typeContext ctx);
+	void exitEquivalent_type(ExprParser.Equivalent_typeContext ctx);
+
 	void enterSpecification(ExprParser.SpecificationContext ctx);
 	void exitSpecification(ExprParser.SpecificationContext ctx);
+
+	void enterPre_gen(ExprParser.Pre_genContext ctx);
+	void exitPre_gen(ExprParser.Pre_genContext ctx);
 
 	void enterDeclPart(ExprParser.DeclPartContext ctx);
 	void exitDeclPart(ExprParser.DeclPartContext ctx);

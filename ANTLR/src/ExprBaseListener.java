@@ -24,14 +24,26 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterParagraph(ExprParser.ParagraphContext ctx) { }
 	@Override public void exitParagraph(ExprParser.ParagraphContext ctx) { }
 
+	@Override public void enterBasic_type(ExprParser.Basic_typeContext ctx) { }
+	@Override public void exitBasic_type(ExprParser.Basic_typeContext ctx) { }
+
+	@Override public void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
+	@Override public void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
+
 	@Override public void enterPredicate(ExprParser.PredicateContext ctx) { }
 	@Override public void exitPredicate(ExprParser.PredicateContext ctx) { }
 
 	@Override public void enterDeclName(ExprParser.DeclNameContext ctx) { }
 	@Override public void exitDeclName(ExprParser.DeclNameContext ctx) { }
 
+	@Override public void enterEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
+	@Override public void exitEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
+
 	@Override public void enterSpecification(ExprParser.SpecificationContext ctx) { }
 	@Override public void exitSpecification(ExprParser.SpecificationContext ctx) { }
+
+	@Override public void enterPre_gen(ExprParser.Pre_genContext ctx) { }
+	@Override public void exitPre_gen(ExprParser.Pre_genContext ctx) { }
 
 	@Override public void enterDeclPart(ExprParser.DeclPartContext ctx) { }
 	@Override public void exitDeclPart(ExprParser.DeclPartContext ctx) { }

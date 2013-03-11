@@ -10,7 +10,8 @@ grammar Expr;
 @members {
 	String type;
 	int varNumber = 0;
-	HashMap memory = new HashMap();
+	HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
+	HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
 	int modoSetExpression = 0; //0 = false, 1 = true
 	String setExpressionDecl, setExpressionPred, setExpressionExpr;
 	ArrayList setExpressionVars;
@@ -22,7 +23,7 @@ grammar Expr;
 
 	public void print(String c) {
 		if (modoSetExpression == 0) 
-			salida = salida.concat(c + " & \n");
+			/*System.out.println(c + " &");*/salida = salida.concat(c + " &");
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -39,19 +40,56 @@ specification
 paragraph
 	:	'\\begin{schema}{' NAME '}' schemaText '\\end{schema}'
 	|	'\\begin{axdef}' NL declPart NL '\\end{axdef}'
-	|	'\\begin{zed}' NL ((basic_type | equivalent_type | branch_type) NL )+ '\\end{zed}'
+	|	'\\begin{zed}' NL ((basic_type | equivalent_type | enumeration_type) NL )+ '\\end{zed}'
 	;
       
 basic_type
-	:	'[' declName (',' declName)* ']'
+locals [ArrayList typeList;]
+@init{$basic_type::typeList = new ArrayList();}
+	:	'[' a=declName {$basic_type::typeList.add($a.text);} (',' b=declName {$basic_type::typeList.add($b.text);})* ']'
+	{
+		while( !$basic_type::typeList.isEmpty() ) {
+			String type = (String) $basic_type::typeList.remove(0);
+			types.put(type, "BasicType");
+		}
+	}	
 	;
 	
 equivalent_type
 	:	declName '==' expression
 	;
 	
-branch_type
-	:	declName '::=' declName (expression)? ('|' declName (expression)? )*
+enumeration_type
+locals [ArrayList cases;]
+@init{$enumeration_type::cases = new ArrayList();}
+	:	d=declName '::=' a=declName {$enumeration_type::cases.add($a.text);} (expression)? ('|' b=declName {$enumeration_type::cases.add($b.text);} (expression)? )* //Soporta solo constantes, falta ver que hacer si tiene expressiones
+	{	
+		String internalName = new String();
+		while( !$enumeration_type::cases.isEmpty() ){
+			String e = (String) $enumeration_type::cases.remove(0);
+			internalName = internalName.concat(e);
+			
+			memory.put(e,e); //REVISAR!!!
+			
+			if (!$enumeration_type::cases.isEmpty()){
+				internalName = internalName.concat(",");
+			}
+		}
+		if (types.get($d.text) == null) {
+			//Le asigno un nombre al conjunto
+			String newVarName = $d.text.substring(0,1).toUpperCase() + $d.text.substring(1).replace("?","");
+			if (memory.containsValue(newVarName)) { 
+				newVarName = "VAR" + varNumber;
+				varNumber++;
+			}
+		
+			memory.put($d.text, newVarName);
+			types.put($d.text, "EnumerationType:" + newVarName);
+			print(newVarName + " = {" + internalName + "}");
+		}
+	}
+	
+		
 	;
       
 schemaText
@@ -78,7 +116,17 @@ locals [ArrayList vars;]
 			if (modoSetExpression==1)
 				setExpressionVars.add(newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 			
-			if (!type.equals("")) print(type + "(" + newVarName + ")");
+			if (!type.equals(""))
+				print(type + "(" + newVarName + ")");
+			else if (($expression.text.equals("\\nat")) || ($expression.text.equals("\\num")))
+				print(newVarName + " in " + ((String) memory.get($expression.text)));
+			else if (((String) types.get($expression.text)).equals("BasicType")) {
+				print("set(" + $expression.text + ")"); //Falta poner mayusculas
+				print(newVarName + " in " + $expression.text); //Falta poner mayusculas
+			}
+			else if (((String) (types.get($expression.text))).startsWith("EnumerationType:"))
+				print(newVarName + " in " + ((String) types.get($expression.text)).substring(16));
+
 		}
 	}
 	;
@@ -382,6 +430,12 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		}	
 	}
 	|	'\\num'
+	{	
+		if (memory.get("\\num") == null) {
+			memory.put("\\num", "NUM");
+			print("NUM = int(-10000000000, 10000000000)");
+		}	
+	}
 	;
 
 
