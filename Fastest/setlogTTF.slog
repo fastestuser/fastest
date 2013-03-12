@@ -1,0 +1,305 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% Predicates for using {log} for the Test Template Framework (TTF)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%           by Gianfranco Rossi and Maximiliano Cristia'
+%                          August 2012 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+:- consult_lib.
+:- abolish.
+
+% is_rel(R): true if R is a (binary) relation, i.e. a set
+% of ordered pairs [X,Y]
+
+ is_rel(R) :- 
+    forall(P in R, pair(P)).
+
+
+% in_dom(X,Rel): true if Rel is a relation and X belongs to
+% its domain
+
+ in_dom(X,Rel) :- 
+    set(Rel) &
+    [X,_] in Rel.
+
+ nin_dom(X,R) :-
+   forall(P in R, exists([X1],fst(P,X1) & X neq X1)).
+
+
+% is_pfun(F): true if F is a partial function, i.e. a set 
+% of ordered pairs such that for each two elements [X1,Y1] and
+% [X2,Y2], X1=X2 ==> Y1=Y2
+
+ is_pfun(S) :-
+     prolog_call((nonvar(S),dom_all_known(S),!,R = scan ; R = gen)) &
+     (R == scan & prolog_call(is_pfun(S))
+      or
+      R == gen & is_pfun2(S)
+     ). 
+
+ is_pfun2(F) :- 
+    forall(P1 in F, forall(P2 in F, nofork(P1,P2))).
+
+ nofork([X1,Y1],[X2,Y2]) :-  
+    (X1 neq X2 or (X1 = X2 & Y1 = Y2)).
+
+
+% apply(F,X,Y): true if Y is the result of applying F to X
+
+ apply(F,X,Y) :-
+    [X,Y] in F.
+
+
+% dom(Rel,Dom): true if Rel is a relation and Dom is its domain (either a set
+% or an interval)
+
+ %dom0(Rel,Dom) :-   % TO BE REMOVED
+ %    set(Rel) &
+ %    Dom = {X : exists(Y,[X,Y] in Rel)}.
+
+ dom(Rel,Dom) :-
+     prolog_call((nonvar(Dom),Dom = int(A,B),!, R = int ; R = set)) &
+     (R == int & dom3(Rel,Dom) 
+      or
+      R == set & dom2(Rel,Dom)
+     ). 
+
+ % dom2(?Rel,?Dom), where Dom is either a variable or a set
+ dom2({},{}).
+ dom2({[X,Y]/Rel},Dom) :-
+     Dom = {X/D} &
+     X nin D &
+     dom2(Rel,D).    
+
+ %dom2({},{}).
+ %dom2(Rel,Dom) :-   % Alternative definition: avoids repetitions caused by 
+ %                   % element permutations in set unification
+ %    (Rel = {[X,Y]/R} & [X,Y] nin R)! & 
+ %    (Dom = {X/D} & X nin D )! &
+ %    dom2(R,D).    
+
+ % dom3(?Rel,+Dom), where Dom is an interval
+ dom3({[A,Y]},Dom) :-
+     Dom = int(A,A).  
+ dom3({[A,Y]/Rel},Dom) :-
+     Dom = int(A,B) &
+     A < B &
+     A1 is A + 1 & 
+     D = int(A1,B) &
+     dom3(Rel,D).
+
+
+% dom_list(L,Dom): true if L is a list of n elements (n >= 0)
+% and Dom is the interval 1..n or the empty set.  %% DA SISTEMARE!
+
+ dom_list0([],Dom) :- Dom = {}.  % TO BE REMOVED
+ dom_list0([X|L],Dom) :-
+    prolog_call(length([X|L],SList)) &
+    Dom = int(1,SList).
+
+ dom_list(L,Dom) :-
+     prolog_call((nonvar(Dom),!,R = int ; R = set)) &
+     (R == int & dom_list3(L,Dom)
+      or
+      R == set & dom_list2(L,Dom)
+     ). 
+
+ % dom_list2(?L,-Dom) 
+ dom_list2([],Dom) :-  
+     Dom = {}.
+ dom_list2([X|L],Dom) :-
+     length([X|L],SList) &
+     call(Dom = int(1,SList)).
+
+ % dom_list3(?L,+Dom)         
+ dom_list3(L,Dom) :-          
+ %    functor(Dom,int,2) &     
+     Dom = int(1,B) &
+     1 =< B & 
+     labeling(B) &
+     length(L,B)!.
+ %dom_list3(L,Dom) :-         % this case is useful if Dom can be also a set (?)
+ %    (functor(Dom,with,2) or functor(Dom,{},0)) &
+ %    size(Dom,B) &
+ %    length(L,B)!.
+
+
+% ran(Rel,Ran): true if Rel is a relation and Ran is its range (either a set
+% or an interval)
+
+ ran(Rel,Ran) :-
+     prolog_call((nonvar(Ran), Ran = int(A,B), !, R = int ; R = set)) &
+     (R == int & ran3(Rel,Ran) 
+      or
+      R == set & ran2(Rel,Ran)
+     ). 
+
+ % ran2(?Rel,?Ran), where Ran is either a variable or a set
+ ran2({},{}).
+ ran2({[X,Y]/Rel},Ran) :-
+     Ran = {Y/R} &
+     Y nin R &
+     ran2(Rel,R).    
+
+ % ran3(?Rel,+Ran), where Ran is an interval
+ ran3({[A,Y]},Ran) :-
+     Ran = int(A,A).  
+ ran3({[A,Y]/Rel},Ran) :-
+     Ran = int(A,B) &
+     A < B &
+     A1 is A + 1 & 
+     R = int(A1,B) &
+     ran3(Rel,R).
+
+
+%%%% Auxiliary predicates
+
+ pair([X,Y]).
+
+ fst([X,Y],X).
+
+ snd([X,Y],Y).
+
+
+%%%% Using delay
+
+ dis_rel(R) :- 
+    delay(is_rel(R), nonvar(R)).
+
+ dis_pfun(F) :- 
+    delay(is_pfun(F), nonvar(F)).
+
+ ddom(Rel,Dom) :-
+    delay(dom(Rel,Dom), nonvar(Rel) & nonvar(Dom)).
+
+ ddom_list(L,Dom) :- 
+    delay(dom_list(L,Dom), nonvar(L) & nonvar(Dom)).
+
+%%%% New definitions
+
+bun({},{}).
+bun({A/Set},S) :-  bun(Set,T) & un(A,T,S).
+
+bdinters({A},A).
+bdinters({A/Set},S) :-  bdinters(Set,T) & dinters(A,T,S).
+
+comp({},R,{}).
+comp(Q,{},{}).
+comp({[X,Y]/Qel},R,S) :- %Recursion on Q
+  ([Y,Z] in R &
+   comp0(X,Y,R,S)) or
+  ([Y,Z] nin R & 
+   comp(Qel,R,S)).
+
+comp0(X,Y,{},{}).
+comp0(X1,Y1,{[X2,Y2]/Rel},S) :- %Recursion on R
+  (Y1 = X2 &
+   S = {[X1,Y2]/S1} &
+   comp0(X1,Y1,Rel,S1)) or
+  (Y1 neq X2 &
+   comp0(X1,Y1,Rel,S)).
+
+circ(Q,R,S) :- comp(R,Q,S).
+
+dres(A,{},{}).
+dres(A,{[X,Y]/Rel},S) :-
+  (X in A & S = {[X,Y]/Q} & [X,Y] nin Q & dres(A,Rel,Q)) or
+  (X nin A & dres(A,Rel,S)).
+
+rres(A,{},{}).
+rres(A,{[X,Y]/Rel},S) :-
+  (Y in A & S = {[X,Y]/Q} & [X,Y] nin Q & rres(A,Rel,Q)) or
+  (Y nin A & rres(A,Rel,S)).
+
+ndres(A,{},{}).
+ndres(A,{[X,Y]/Rel},S) :-
+  (X nin A & S = {[X,Y]/R} & [X,Y] nin R & ndres(A,Rel,R)) or
+  (X in A & ndres(A,Rel,S)).
+
+nrres(A,{},{}).
+nrres(A,{[X,Y]/Rel},S) :-
+  (Y nin A & S = {[X,Y]/R} & [X,Y] nin R & nrres(A,Rel,R)) or
+  (Y in A & nrres(A,Rel,S)).
+
+inv({},{}).
+inv({[X,Y]/Rel},R) :- R = {[Y,X]/Q} & inv(Rel,Q) & [Y,X] nin Q.
+
+rimg({},A,{}).
+rimg({[X,Y]/Rel},A,Img) :- 
+  (X in A & Img = {Y/B} & Y nin B  & rimg(Rel,A,B)) or
+  (X nin A & rimg(Rel,A,Img)).
+
+oplus(R,G,S) :- dom(G,D) & ndres(D,R,S1) & un(S1,G,S).
+
+list_to_rel([],{}).
+list_to_rel([X|List],Rel) :- 
+  Rel = {[1,X]/R} & 
+  [1,X] nin R & 
+  list_to_rel0(List,R,2).
+
+list_to_rel0([],{},N).
+list_to_rel0([X|List],Rel,N) :-
+  Rel = {[N,X]/R} &
+  [N,X] nin R &
+  K is N + 1 &
+  list_to_rel0(List,R,K).
+
+set_to_list({},[]).
+set_to_list({X/Set},List) :- List = [X|L] & set_to_list(Set,L).
+
+extract({},List,[]).
+extract(Set,[],[]).
+extract(Set,List,NewList) :- 
+  set_to_list(Set,L) & 
+  prolog_call(sort(L,SL)) & 
+  extract0(SL,List,NewList).
+
+extract0([],List,[]).
+extract0([N | IndexList], List, NewList) :-
+  nth1(N,List,E) &
+  NewList = [E | L] &
+  extract0(IndexList,List,L).
+
+filter(List,{},[]).
+filter([],Set,[]).
+filter([X|List],Set,NewList) :-
+  (X in Set &
+   NewList = [X | L] &
+   filter(List,Set,L)) or
+  (X nin Set & filter(List,Set,NewList)).
+
+squash({},[]).
+squash(Rel,List) :- 
+  dom(Rel,D) & 
+  set_to_list(D,LD) & 
+  prolog_call(sort(LD,SLD)) & 
+  squash0(Rel,SLD,List).
+
+squash0(Rel,[],[]).
+squash0(Rel,[N|List],NewList) :-
+  [N,X] in Rel &
+  NewList = [X|L] &
+  squash0(Rel,List,L).
+
+%%%% Prolog code
+
+ setlogTTF_prolog :-
+    prolog_call(assert((user:is_pfun({}) :- !))) &
+    prolog_call(assert((user:is_pfun(S) :- S = (PFun with P), is_pfun_cont(PFun,P), is_pfun(PFun)))) &
+
+    prolog_call(assert((user:is_pfun_cont({},_P1) :- !))) &
+    prolog_call(assert((user:is_pfun_cont(S,P1) :- S = (F1 with P2), nofork(P1,P2), is_pfun_cont(F1,P1)))) &
+
+    prolog_call(assert((user:nofork([X1,_Y1],[X2,_Y2]) :- X1 \== X2,!))) &
+    prolog_call(assert((user:nofork([X1,Y1],[X2,Y2]) :- X1 = X2, Y1 = Y2))) &
+
+    prolog_call(assert((user:dom_all_known({}) :- !))) &
+    prolog_call(assert((user:dom_all_known(S) :- S = (PFun with [X,_]), nonvar(X), dom_all_known(PFun)))).
+
+:- setlogTTF_prolog.
+

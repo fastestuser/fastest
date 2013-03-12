@@ -1,6 +1,5 @@
-package compserver.tcasegen.strategies.SetLogGrammar;
-
 // Generated from Expr.g4 by ANTLR 4.0
+package compserver.tcasegen.strategies.SetLogGrammar;
 
 	import java.util.HashMap;
 	import java.util.ArrayList;
@@ -26,6 +25,9 @@ public interface ExprListener extends ParseTreeListener {
 	void enterBasic_type(ExprParser.Basic_typeContext ctx);
 	void exitBasic_type(ExprParser.Basic_typeContext ctx);
 
+	void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx);
+	void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx);
+
 	void enterPredicate(ExprParser.PredicateContext ctx);
 	void exitPredicate(ExprParser.PredicateContext ctx);
 
@@ -40,9 +42,6 @@ public interface ExprListener extends ParseTreeListener {
 
 	void enterPre_gen(ExprParser.Pre_genContext ctx);
 	void exitPre_gen(ExprParser.Pre_genContext ctx);
-
-	void enterBranch_type(ExprParser.Branch_typeContext ctx);
-	void exitBranch_type(ExprParser.Branch_typeContext ctx);
 
 	void enterDeclPart(ExprParser.DeclPartContext ctx);
 	void exitDeclPart(ExprParser.DeclPartContext ctx);

@@ -10,11 +10,6 @@
 	<classpathentry kind="lib" path="lib/ZLivePlugin.jar"/>
 	<classpathentry kind="lib" path="lib/ZSideKick.jar"/>
 	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-4.0-complete.jar"/>
-	<classpathentry kind="lib" path="lib/swipl-5.10.5/jpl.jar">
-		<attributes>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Fastest/lib/swipl-5.10.5/i686-linux"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
