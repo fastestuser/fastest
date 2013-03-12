@@ -4,6 +4,10 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 
 
@@ -11,12 +15,20 @@ import java.io.OutputStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import client.blogic.management.Controller;
 
+
+import net.sourceforge.czt.z.ast.FreePara;
+import net.sourceforge.czt.z.ast.Freetype;
+import net.sourceforge.czt.z.ast.FreetypeList;
 import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.ZFreetypeList;
+import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import common.z.TClass;
+import common.z.czt.visitors.BasicTypeNamesExtractor;
 import compserver.tcasegen.strategies.SetLogGrammar.*;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
@@ -24,10 +36,58 @@ import compserver.tcasegen.strategies.SetLogGrammar.*;
  */
 public class SetLogStrategy implements TCaseStrategy{
 
+	private Map<String, List<String>> basicAxDefs;
+	
+	public SetLogStrategy(Map<String, List<String>> basicAxDefs) {
+		this.basicAxDefs = basicAxDefs;
+	}
+
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
+		
+		String antlrInput = "";
+		//Busco los tipos basicos en spec, que se utilizan en tClass
+
+		/*Collection<List<String>> values = basicAxDefs.values();
+		Iterator<List<String>> valuesIt = values.iterator();
+		while (valuesIt.hasNext()) {
+			System.out.println(valuesIt.next());
+		}*/
+		      
+		List<String> basicTypeNames = spec.accept(new BasicTypeNamesExtractor());
+		String basicType;
+		while (!basicTypeNames.isEmpty()) {
+			basicType = basicTypeNames.remove(0);
+			if (SpecUtils.termToLatex(tClass).contains(basicType)) {
+				antlrInput = antlrInput.concat("\\begin{zed}\n" +
+						          "[" + basicType + "]\n" + 
+						          "\\end{zed}\n\n");
+			}
+		}
+        
+		//Busco los tipos libres en spec, que se utilizan en tClass
+		List<FreePara> freeParas = SpecUtils.getFreeTypes(spec);
+		Iterator<FreePara> freeParasIt = freeParas.iterator();
+		 
+		while (freeParasIt.hasNext()) {
+			FreePara freePara = freeParasIt.next();
+			FreetypeList freetypeList = freePara.getFreetypeList();
+			if (freetypeList instanceof ZFreetypeListImpl) {
+				ZFreetypeList zFreetypeList = (ZFreetypeListImpl) freetypeList;
+				for (int i = 0; i < zFreetypeList.size(); i++) {
+					Freetype freetype = zFreetypeList.get(i);
+					if (SpecUtils.termToLatex(tClass).contains(freetype.getName().toString())) {
+						antlrInput = antlrInput.concat("\\begin{zed}\n" +
+						          SpecUtils.termToLatex(freetype) + "\n" + 
+						          "\\end{zed}\n\n");
+					}
+				}	
+			}
+		}
+		
+		
 		//parseo de Z a SetLog con ANTLR
-		String tClassString = SpecUtils.termToLatex(tClass.getMyAxPara());
-		ANTLRInputStream input = new ANTLRInputStream(tClassString);
+		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
+		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
         ExprLexer lexer = new ExprLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ExprParser parser = new ExprParser(tokens);
