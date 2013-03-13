@@ -37,9 +37,13 @@ import compserver.tcasegen.strategies.SetLogGrammar.*;
 public class SetLogStrategy implements TCaseStrategy{
 
 	private Map<String, List<String>> basicAxDefs;
+	private List<FreePara> freeParas;
+    private List<String> basicTypeNames;
 	
-	public SetLogStrategy(Map<String, List<String>> basicAxDefs) {
+	public SetLogStrategy(Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
 		this.basicAxDefs = basicAxDefs;
+		this.freeParas = freeParas;
+		this.basicTypeNames = basicTypeNames;
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
@@ -53,7 +57,6 @@ public class SetLogStrategy implements TCaseStrategy{
 			System.out.println(valuesIt.next());
 		}*/
 		      
-		List<String> basicTypeNames = spec.accept(new BasicTypeNamesExtractor());
 		String basicType;
 		while (!basicTypeNames.isEmpty()) {
 			basicType = basicTypeNames.remove(0);
@@ -65,7 +68,6 @@ public class SetLogStrategy implements TCaseStrategy{
 		}
         
 		//Busco los tipos libres en spec, que se utilizan en tClass
-		List<FreePara> freeParas = SpecUtils.getFreeTypes(spec);
 		Iterator<FreePara> freeParasIt = freeParas.iterator();
 		 
 		while (freeParasIt.hasNext()) {
@@ -93,8 +95,6 @@ public class SetLogStrategy implements TCaseStrategy{
         ExprParser parser = new ExprParser(tokens);
         parser.specification();
         
-        
-        
         //Ejecucion de SetLog
 		try{
 			String[] cmd = {"prolog" , "-q"};
@@ -120,13 +120,11 @@ public class SetLogStrategy implements TCaseStrategy{
 		       System.out.println(s);
 		    }
 		}
-		catch (Exception e) 
-		{ 
+		
+		catch (Exception e){ 
           e.printStackTrace(); 
 		} 
 		
-		
-				
         return null;
 	}
 }

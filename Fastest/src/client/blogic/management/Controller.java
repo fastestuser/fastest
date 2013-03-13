@@ -5,6 +5,7 @@ import java.io.*;
 import java.util.*;
 import java.net.URL;
 
+import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Expr;
@@ -92,6 +93,10 @@ public class Controller extends IIComponent {
     private boolean refining;
     // Indicates how many abstract test cases are being refined
     private int pendingToRef;
+    // lista de tipos libres
+    private List<FreePara> freeParas;
+    // Son los nombres de los tipos basicos
+    private List<String> basicTypeNames;
     // Gives the values assigned to the variables defined in axiomatic
     // definitions
     private Map<RefExpr, Expr> axDefsValues;
@@ -1163,7 +1168,23 @@ public class Controller extends IIComponent {
     
     public int getMaxPredsToAnalize(){
         return maxPredsToAnalize;        
-    }    
+    }
+
+	public List<String> getBasicTypeNames() {
+		return basicTypeNames;
+	}
+
+	public void setBasicTypeNames(List<String> basicTypeNames) {
+		this.basicTypeNames = basicTypeNames;
+	}
+
+	public List<FreePara> getFreeParas() {
+		return freeParas;
+	}
+
+	public void setFreeParas(List<FreePara> freeParas) {
+		this.freeParas = freeParas;
+	}    
     
         
 }

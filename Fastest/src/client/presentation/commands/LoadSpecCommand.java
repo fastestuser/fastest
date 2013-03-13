@@ -21,6 +21,7 @@ import client.blogic.management.ii.events.SpecLoaded;
 import client.presentation.ClientTextUI;
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
+import common.z.SpecUtils;
 import common.z.SpiveySpecsSorter;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AxDefPredsExtractor;
@@ -141,33 +142,26 @@ public class LoadSpecCommand implements Command {
             AbstractRepository<String> opNamesRep = opNamesExtractor.getOpNames();
 
             // The specification is traverse to identify the basic types
-            List<String> basicTypeNames =
-                    spec.accept(new BasicTypeNamesExtractor());
+            List<String> basicTypeNames = spec.accept(new BasicTypeNamesExtractor());
+            List<FreePara> freeParas = SpecUtils.getFreeTypes(spec);
             
             // The specification is traverse to identify the free types
-            List<String> freeTypeNames =
-                    spec.accept(new FreeTypeNamesExtractor());
+            List<String> freeTypeNames = spec.accept(new FreeTypeNamesExtractor());
 
 
             Map<RefExpr, Expr> axDefsValues = new HashMap<RefExpr, Expr>();
             Map<String, Expr> axDefsRequired = new HashMap<String, Expr>();
-            Map<String, List<String>> basicAxDefs =
-                    new HashMap<String, List<String>>();
+            Map<String, List<String>> basicAxDefs = new HashMap<String, List<String>>();
             List<RefExpr> noBasicAxDefVars = new ArrayList<RefExpr>();
 
-            spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames,
-                    basicAxDefs, axDefsValues,
-                    axDefsRequired, noBasicAxDefVars));
+            spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames, basicAxDefs, axDefsValues, axDefsRequired, noBasicAxDefVars));
 
-            Map<String, List<Pred>> axDefsRequiredPreds =
-                    new HashMap<String, List<Pred>>();
+            Map<String, List<Pred>> axDefsRequiredPreds = new HashMap<String, List<Pred>>();
 
-            Map<Pred, List<String>> axDefsPredVars =
-                    new HashMap<Pred, List<String>>();
+            Map<Pred, List<String>> axDefsPredVars =  new HashMap<Pred, List<String>>();
 
 
-            spec.accept(new AxDefPredsExtractor(axDefsRequiredPreds,
-                    axDefsPredVars, noBasicAxDefVars));
+            spec.accept(new AxDefPredsExtractor(axDefsRequiredPreds,axDefsPredVars, noBasicAxDefVars));
 
             spec.accept(new ParenthesisRemover());
 
@@ -228,6 +222,8 @@ public class LoadSpecCommand implements Command {
              */
 
             spec = (Spec) spec.accept(new EmptySetReplacer());
+            controller.setBasicTypeNames(basicTypeNames);
+            controller.setFreeParas(freeParas);
             controller.setOriginalSpec(spec);
             controller.setUnfoldedSpec(spec);
             controller.setLoadedOpsRep(opNamesRep);
