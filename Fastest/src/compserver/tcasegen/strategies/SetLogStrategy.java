@@ -101,17 +101,16 @@ public class SetLogStrategy implements TCaseStrategy{
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
 			
-			String goal,setLogOutput;
-			setLogOutput = parser.getSalida();
+			String antlrOutput = parser.getSalida();
 			
-			goal = "consult(setlog4617)."
+			String setlogInput = "consult(setlog4617)."
 			+ "\nuse_module(library(dialect/sicstus/timeout))."
 			+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 			+ "\nsetlog( \n"
-			+ setLogOutput.substring(0,setLogOutput.lastIndexOf('&')) //quitamos el ultimo & el cual no corresponde
+			+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo & el cual no corresponde
 			+ "\n,_CONSTR).";
 			
-			out.write(goal.getBytes());
+			out.write(setlogInput.getBytes());
 			out.close();
 			
 		    BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
