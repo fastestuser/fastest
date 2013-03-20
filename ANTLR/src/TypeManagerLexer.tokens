@@ -1,9 +1,8 @@
 UNOP=6
 NAME=7
-WS=9
+WS=8
 BINOP=5
 T__1=3
-NUM=8
 T__0=4
 T__3=1
 T__2=2

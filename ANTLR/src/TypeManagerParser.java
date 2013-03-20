@@ -19,10 +19,10 @@ public class TypeManagerParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__3=1, T__2=2, T__1=3, T__0=4, BINOP=5, UNOP=6, NAME=7, NUM=8, WS=9;
+		T__3=1, T__2=2, T__1=3, T__0=4, BINOP=5, UNOP=6, NAME=7, WS=8;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'\\nat'", "')'", "'('", "'\\num'", "BINOP", "'\\power'", 
-		"NAME", "NUM", "WS"
+		"NAME", "WS"
 	};
 	public static final int
 		RULE_typeManage = 0, RULE_type = 1;
@@ -44,6 +44,14 @@ public class TypeManagerParser extends Parser {
 
 
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+		
+		//Interfaz para la determinacion del tipo de salida de una funcion.
+		//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
+		//Input: Int, con la posicion del hijo deseado (empieza en 0).
+		//Output: String, con el valor del nodo.
+		String getReturnNodeType(int posicion){
+			return (String)	((DefaultMutableTreeNode) root.getChildAt(posicion)).getUserObject();
+		}
 
 	public TypeManagerParser(TokenStream input) {
 		super(input);
@@ -75,7 +83,7 @@ public class TypeManagerParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(4); ((TypeManageContext)_localctx).type = type(0);
-			root = ((TypeManageContext)_localctx).type.node; System.out.println("Depth: " + root.getDepth());
+			root = ((TypeManageContext)_localctx).type.node; System.out.println("Depth: " + root.getDepth()); System.out.println("Node1: " + getReturnNodeType(1));
 			}
 		}
 		catch (RecognitionException re) {
@@ -223,7 +231,7 @@ public class TypeManagerParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3\13&\4\2\t\2\4\3\t\3\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\2\3\n&\4\2\t\2\4\3\t\3\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
 		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\32\n\3\3\3\3\3\3\3\3\3\3\3\7\3!\n\3"+
 		"\f\3\16\3$\13\3\3\3\2\4\2\4\2\2(\2\6\3\2\2\2\4\31\3\2\2\2\6\7\5\4\3\2"+
 		"\7\b\b\2\1\2\b\3\3\2\2\2\t\n\b\3\1\2\n\13\7\b\2\2\13\f\5\4\3\2\f\r\b\3"+

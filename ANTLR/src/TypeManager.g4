@@ -12,9 +12,17 @@ grammar TypeManager;
 
 @members {
 	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
+	
+	//Interfaz para la determinacion del tipo de salida de una funcion.
+	//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
+	//Input: Int, con la posicion del hijo deseado (empieza en 0).
+	//Output: String, con el valor del nodo.
+	String getReturnNodeType(int posicion){
+		return (String)	((DefaultMutableTreeNode) root.getChildAt(posicion)).getUserObject();
+	}
 }
 
-typeManage: type {root = $type.node; System.out.println("Depth: " + root.getDepth());};
+typeManage: type {root = $type.node; System.out.println("Depth: " + root.getDepth()); System.out.println("Node1: " + getReturnNodeType(1));};
 
 type returns [DefaultMutableTreeNode node]
 		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
@@ -35,9 +43,4 @@ UNOP	:	'\\power'
 		;
 
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('0'..'9')*;
-NUM:	'0'..'9'+ ;
-//SETSTART: '\\{';
-//SETEND: '\\}';
-
-//NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r'|'\n')+ {skip();} ;

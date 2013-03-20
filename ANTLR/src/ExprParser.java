@@ -4,6 +4,7 @@
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import TypeManagerParser;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -947,6 +948,13 @@ public class ExprParser extends Parser {
 						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
 						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " nin " + b);
+						
+						//Impresion de tipo
+						String type = (String) types.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						if (type != null)
+							if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
+								print(a + " in " + memory.get(type.substring(6)));
+						
 					
 				}
 				break;
@@ -1730,17 +1738,19 @@ public class ExprParser extends Parser {
 							_alt = getInterpreter().adaptivePredict(_input,21,_ctx);
 						} while ( _alt!=2 && _alt!=-1 );
 
+						          	
+						          		type = "";
 						          		//Para cada exp realizamos el procesamiento
 						          		while( !((ExpressionContext)getInvokingContext(10)).setVars.isEmpty() ) {
 						          			String exp = (String) ((ExpressionContext)getInvokingContext(10)).setVars.remove(0);
 						          			
 						          			((ExpressionContext)_localctx).internalName =  _localctx.internalName.concat(exp);
 						          			
-						          			String type = (String) types.get(exp);
-						          			if (type.startsWith("BasicType") || type.startsWith("EnumerationType"))
+						          			String expType = (String) types.get(exp);
+						          			if (expType.startsWith("BasicType") || expType.startsWith("EnumerationType"))
 						          				((ExpressionContext)_localctx).externalName =  _localctx.externalName.concat(exp);
 						          			else
-						          				((ExpressionContext)_localctx).externalName =  _localctx.externalName.concat(type);
+						          				((ExpressionContext)_localctx).externalName =  _localctx.externalName.concat(expType);
 						          				
 						          			if (!((ExpressionContext)getInvokingContext(10)).setVars.isEmpty()) {
 						          				((ExpressionContext)_localctx).internalName =  _localctx.internalName.concat("\\cross");

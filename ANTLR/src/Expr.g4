@@ -1,5 +1,8 @@
 grammar Expr;
 
+//Gramatica utilizada para la creacion, a partir de una clase de prueba Z, la entrada necesaria
+//para setlog. Es parte del proceso de generacion de casos de prueba.
+
 @header {
 	import java.util.HashMap;
 	import java.util.ArrayList;
