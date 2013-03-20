@@ -43,7 +43,7 @@ public class TypeManagerParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-		TreeNode root = new DefaultMutableTreeNode();
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
 	public TypeManagerParser(TokenStream input) {
 		super(input);
@@ -75,7 +75,7 @@ public class TypeManagerParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(4); ((TypeManageContext)_localctx).type = type(0);
-			root = ((TypeManageContext)_localctx).type.node;
+			root = ((TypeManageContext)_localctx).type.node; System.out.println("Depth: " + root.getDepth());
 			}
 		}
 		catch (RecognitionException re) {
@@ -91,10 +91,11 @@ public class TypeManagerParser extends Parser {
 
 	public static class TypeContext extends ParserRuleContext {
 		public int _p;
-		public TreeNode node;
+		public DefaultMutableTreeNode node;
 		public TypeContext a;
-		public TypeContext type;
+		public Token UNOP;
 		public Token NAME;
+		public Token BINOP;
 		public TypeContext b;
 		public TerminalNode UNOP() { return getToken(TypeManagerParser.UNOP, 0); }
 		public TerminalNode NAME() { return getToken(TypeManagerParser.NAME, 0); }
@@ -136,17 +137,17 @@ public class TypeManagerParser extends Parser {
 			switch (_input.LA(1)) {
 			case UNOP:
 				{
-				setState(8); match(UNOP);
-				setState(9); ((TypeContext)_localctx).type = type(6);
-				((TypeContext)_localctx).node =  new DefaultMutableTreeNode();
+				setState(8); ((TypeContext)_localctx).UNOP = match(UNOP);
+				setState(9); ((TypeContext)_localctx).a = type(6);
+				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).UNOP!=null?((TypeContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 			case 3:
 				{
 				setState(12); match(3);
-				setState(13); ((TypeContext)_localctx).type = type(0);
+				setState(13); ((TypeContext)_localctx).a = type(0);
 				setState(14); match(2);
-				((TypeContext)_localctx).node =  _localctx.node;
+				((TypeContext)_localctx).node =  ((TypeContext)_localctx).a.node;
 				}
 				break;
 			case 4:
@@ -185,9 +186,9 @@ public class TypeManagerParser extends Parser {
 					pushNewRecursionContext(_localctx, _startState, RULE_type);
 					setState(25);
 					if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
-					setState(26); match(BINOP);
-					setState(27); ((TypeContext)_localctx).b = ((TypeContext)_localctx).type = type(6);
-					((TypeContext)_localctx).node =  new DefaultMutableTreeNode();
+					setState(26); ((TypeContext)_localctx).BINOP = match(BINOP);
+					setState(27); ((TypeContext)_localctx).b = type(6);
+					((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).BINOP!=null?((TypeContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
 					}
 					} 
 				}

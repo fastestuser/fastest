@@ -34,7 +34,7 @@ public class TypeManagerLexer extends Lexer {
 	};
 
 
-		TreeNode root = new DefaultMutableTreeNode();
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
 
 	public TypeManagerLexer(CharStream input) {

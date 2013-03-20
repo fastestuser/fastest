@@ -11,15 +11,15 @@ grammar TypeManager;
 }
 
 @members {
-	TreeNode root = new DefaultMutableTreeNode();
+	DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 }
 
-typeManage: type {root = $type.node;};
+typeManage: type {root = $type.node; System.out.println("Depth: " + root.getDepth());};
 
-type returns [TreeNode node]
-		:	UNOP type {$node = new DefaultMutableTreeNode();}	
-		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode();}
-		|	'(' type ')' {$node = $type.node;}
+type returns [DefaultMutableTreeNode node]
+		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
+		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
+		|	'(' a=type ')' {$node = $a.node;}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
