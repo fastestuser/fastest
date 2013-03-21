@@ -192,11 +192,10 @@ public class ClientTextUI extends ClientUI {
      * @return
      */
     public static String getBanner() {
-        return "Fastest version " + getVersion() + ", (C) 2011, Flowgate "
-                + "Consulting";
+        return "Fastest version " + getVersion() + ", (C) 2013, Maximiliano Cristiá";
     }
 
-    /**
+     /**
      * Returns the version number as a String, or "unknown" if an error
      * occured when accessing the property containing the version
      * information.

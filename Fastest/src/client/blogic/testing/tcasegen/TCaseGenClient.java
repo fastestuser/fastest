@@ -16,6 +16,7 @@ import client.blogic.management.ii.IIComponent;
 import client.blogic.management.Controller;
 import common.z.SpecUtils;
 import common.z.TClass;
+import compserver.tcasegen.strategies.SetLogStrategy;
 //import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.TCaseStrategy;
