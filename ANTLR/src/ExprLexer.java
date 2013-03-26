@@ -4,7 +4,6 @@
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
-	import TypeManagerParser;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -57,14 +56,19 @@ public class ExprLexer extends Lexer {
 	};
 
 
-		String type;
+		
+		String setExpressionDecl, setExpressionPred, setExpressionExpr;
+		
 		int varNumber = 0;
+		int modoSetExpression = 0; //0 = false, 1 = true
+		
+		ArrayList setExpressionVars;
+		
 		HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
 		HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
-		int modoSetExpression = 0; //0 = false, 1 = true
-		String setExpressionDecl, setExpressionPred, setExpressionExpr;
-		ArrayList setExpressionVars;
-
+		HashMap zVars = new HashMap();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
+		                                //el caso de prueba) se les dara un valor.
+		
 		String salida = new String();
 		public String getSalida() {
 			return salida;
@@ -88,6 +92,34 @@ public class ExprLexer extends Lexer {
 				setExpressionPred = setExpressionPred.concat(" & " + c);
 			else if (modoSetExpression == 3)
 				setExpressionExpr = setExpressionExpr.concat(" & " + c);
+		}
+		
+		//Metodo para la determinacion del tipo.
+		//Constraits: El arbol debio ser previamente generado
+		//Input: String representando el tipo.
+		//Output: String, con el valor del root.
+		String getType(String type) {
+			//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+			ANTLRInputStream input = new ANTLRInputStream(type);
+	        TypeManagerLexer lexer = new TypeManagerLexer(input);
+	        CommonTokenStream tokens = new CommonTokenStream(lexer);
+	        TypeManagerParser parser = new TypeManagerParser(tokens);
+	        parser.typeManage();
+	        return parser.getReturnRootType();
+		}
+		
+		//Metodo para la determinacion del tipo de salida de una funcion.
+		//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
+		//Input: String representando el tipo y Int con la posicion del hijo deseado (empieza en 0).
+		//Output: String, con el valor del nodo.
+		String getChildType(String type, int pos) {
+			//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+			ANTLRInputStream input = new ANTLRInputStream(type);
+	        TypeManagerLexer lexer = new TypeManagerLexer(input);
+	        CommonTokenStream tokens = new CommonTokenStream(lexer);
+	        TypeManagerParser parser = new TypeManagerParser(tokens);
+	        parser.typeManage();
+	        return parser.printChild(pos);
 		}
 
 

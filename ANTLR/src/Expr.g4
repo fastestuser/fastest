@@ -11,14 +11,19 @@ grammar Expr;
 }
 
 @members {
-	String type;
+	
+	String setExpressionDecl, setExpressionPred, setExpressionExpr;
+	
 	int varNumber = 0;
+	int modoSetExpression = 0; //0 = false, 1 = true
+	
+	ArrayList setExpressionVars;
+	
 	HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
 	HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
-	int modoSetExpression = 0; //0 = false, 1 = true
-	String setExpressionDecl, setExpressionPred, setExpressionExpr;
-	ArrayList setExpressionVars;
-
+	HashMap zVars = new HashMap();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
+	                                //el caso de prueba) se les dara un valor.
+	
 	String salida = new String();
 	public String getSalida() {
 		return salida;
@@ -43,30 +48,64 @@ grammar Expr;
 		else if (modoSetExpression == 3)
 			setExpressionExpr = setExpressionExpr.concat(" & " + c);
 	}
+	
+	//Metodo para la determinacion del tipo.
+	//Constraits: El arbol debio ser previamente generado
+	//Input: String representando el tipo.
+	//Output: String, con el valor del root.
+	String getType(String type) {
+		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        return parser.getReturnRootType();
+	}
+	
+	//Metodo para la determinacion del tipo de salida de una funcion.
+	//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
+	//Input: String representando el tipo y Int con la posicion del hijo deseado (empieza en 0).
+	//Output: String, con el valor del nodo.
+	String getChildType(String type, int pos) {
+		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        return parser.printChild(pos);
+	}
 }
 
 specification
 	:	( paragraph NL*)+
 	{
-	
-			   System.out.println("tablita de tippos");
-               System.out.println("-------------------");
-               String key, value;
-               Iterator iterator = types.keySet().iterator();
-               while (iterator.hasNext()) {
-                       key = (String) iterator.next();
-                       value = (String) types.get(key);
-                       System.out.println(key + "\t\t| " + value);
+	   System.out.println("tablita de tippos");
+	   System.out.println("-------------------");
+	   String key, value;
+	   Iterator iterator = types.keySet().iterator();
+	   while (iterator.hasNext()) {
+	           key = (String) iterator.next();
+	           value = (String) types.get(key);
+	           System.out.println(key + "\t\t| " + value);
+	   }
+	   System.out.println("\ntablita de memory");
+	   System.out.println("-------------------");
+	   iterator = memory.keySet().iterator();
+	   while (iterator.hasNext()) {
+	           key = (String) iterator.next();
+	           value = (String) memory.get(key);
+	           System.out.println(key + "\t\t| " + value);
+	   }
+	   System.out.println("\ntablita de zVars");
+	   System.out.println("-------------------");
+	   iterator = zVars.keySet().iterator();
+	   while (iterator.hasNext()) {
+	           key = (String) iterator.next();
+	           value = (String) zVars.get(key);
+	           System.out.println(key + "\t\t| " + value);
                }
-               System.out.println("\ntablita de memory");
-               System.out.println("-------------------");
-               iterator = memory.keySet().iterator();
-               while (iterator.hasNext()) {
-                       key = (String) iterator.next();
-                       value = (String) memory.get(key);
-                       System.out.println(key + "\t\t| " + value);
-               }
-	
 	}
 	;
 
@@ -101,38 +140,29 @@ locals [ArrayList typeList;]
 equivalent_type
 	:	declName '==' expression
 	{ 
-		/* esto ya no se hace, porque simplemente declName es una etiqueta de tipos
-		String newVarName = $declName.text.substring(0,1).toUpperCase() + $declName.text.substring(1).replace("?","");
-		if (memory.containsValue(newVarName)) { 
-			newVarName = "VAR" + varNumber;
-			varNumber++;
-		}
-	
-		memory.put($declName.text, newVarName);
-		*/
-		
 		String type = (String) types.get($expression.text);
 		if (type != null) {
 			types.put($declName.text, type);
 		}
-		//print(newVarName + " = " + memory.get($expression.text)); esto ya no se hace, porque simplemente declName es una etiqueta de tipos
 	}
 	;
 	
 enumeration_type
 locals [ArrayList cases;]
 @init{$enumeration_type::cases = new ArrayList();}
-	:	d=declName '::=' a=declName {$enumeration_type::cases.add($a.text);} (expression)? ('|' b=declName {$enumeration_type::cases.add($b.text);} (expression)? )* //Soporta solo constantes, falta ver que hacer si tiene expressiones
+	:	d=declName '::=' a=declName {$enumeration_type::cases.add($a.text);} (expression)? 
+	    ('|' b=declName {$enumeration_type::cases.add($b.text);} (expression)? )* 
+	    //Soporta solo constantes, falta ver que hacer si tiene expressiones
 	{	
-		String internalName = new String();
+		String elements = new String();
 		while( !$enumeration_type::cases.isEmpty() ){
 			String e = (String) $enumeration_type::cases.remove(0);
-			internalName = internalName.concat(e);
+			elements = elements.concat(e);
 			
 			memory.put(e,e); //REVISAR!!!
 			
 			if (!$enumeration_type::cases.isEmpty()){
-				internalName = internalName.concat(",");
+				elements = elements.concat(",");
 			}
 		}
 		if (types.get($d.text) == null) {
@@ -144,12 +174,10 @@ locals [ArrayList cases;]
 			}
 		
 			memory.put($d.text, newVarName);
-			types.put($d.text, "EnumerationType:" + newVarName);
-			print(newVarName + " = {" + internalName + "}");
+			types.put($d.text, "EnumerationType:" + newVarName + ":{" + elements + "}");
+			print(newVarName + " = {" + elements + "}");
 		}
 	}
-	
-		
 	;
       
 schemaText
@@ -162,11 +190,12 @@ declPart:	declaration ((';' | NL) declaration)*
 declaration
 locals [ArrayList vars;]
 @init{$declaration::vars = new ArrayList();}
-	:	a=declName {$declaration::vars.add($a.text);} (',' b=declName {$declaration::vars.add($b.text);})* ':' {type = "";} expression 
+	:	a=declName {$declaration::vars.add($a.text);} (',' b=declName {$declaration::vars.add($b.text);})* ':' expression 
 	{
 		//Para cada variable realizamos el procesamiento
 		while( !$declaration::vars.isEmpty() ) {
 			String var = (String) $declaration::vars.remove(0);
+			zVars.put(var, null); //Marcamos la variable como variable Z, a la cual debera asignarsele un valor
 			String newVarName = var.substring(0,1).toUpperCase() + var.substring(1).replace("?","");
 			if (memory.containsValue(newVarName)) { 
 				newVarName = "VAR" + varNumber;
@@ -179,18 +208,25 @@ locals [ArrayList vars;]
 			
 			String expType = (String) types.get($expression.text);
 			types.put(var, expType);
-			
-			if (!type.equals(""))
-				print(type + "(" + newVarName + ")");
-			else if (expType != null) {	
-				if (expType.equals("\\nat") || expType.equals("\\num"))
+
+			//Imprimimos el tipo de la variable segun cual sea este			
+			if (expType != null) {
+				String type = getType(expType);
+				if (type.equals("\\seq"))
+					print("list(" + newVarName + ")");
+				else if (type.equals("\\rel"))
+					print("is_rel(" + newVarName + ")");
+				else if (type.equals("\\pfun"))
+					print("is_pfun(" + newVarName + ")");
+				else if (type.equals("\\fun"))
+					print("is_fun(" + newVarName + ")");
+				else if (expType.equals("\\nat") || expType.equals("\\num"))
 					print(newVarName + " in " + memory.get(expType));
 				else if (expType.startsWith("BasicType:"))
 					print(newVarName + " in " + expType.substring(10));
 				else if (expType.startsWith("EnumerationType:"))
 					print(newVarName + " in " + expType.substring(16));
 			}
-
 		}
 	}
 	;
@@ -218,7 +254,6 @@ predicate
 		if (type != null)
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));
-		
 	}
 	|	e1=expression '\\notin' e2=expression
 	{
@@ -232,7 +267,6 @@ predicate
 		if (type != null)
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));
-		
 	}
 	|	e1=expression '<' e2=expression
 	{
@@ -293,11 +327,10 @@ predicate
 	;
 	
 expression
-locals [ArrayList setVars = new ArrayList(), String internalName = "", String externalName = "", String translatedSet = "", String operator = "",
+locals [ArrayList elements = new ArrayList(), String setlogName = "", String zName = "", String operator = "",
 	String newVarName1 = "", String newVarName2 = ""]
 	:	a=expression '\\rel' b=expression  //In-Gen 
 	{
-		type="is_rel";
 		//Guardo el tipo
 		String aType = (String) types.get($a.text);
 		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
@@ -311,8 +344,6 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 	}
 	|	a=expression op=('\\pfun' | '\\ffun') b=expression
 	{
-		type="is_pfun";
-
 		//Guardo el tipo
 		String aType = (String) types.get($a.text);
 		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
@@ -326,12 +357,9 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 	}
 	|	a=expression '\\fun' b=expression
 	{
-		type="is_fun";
-		
 		//Guardo el tipo
 		String aType = (String) types.get($a.text);
 		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
-			System.out.println("jojo");
 			aType = $a.text;
 		}
 		String bType = (String) types.get($b.text);
@@ -340,30 +368,29 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			
 		types.put($a.text + "\\fun" + $b.text, aType + "\\fun" + bType );
 	}
-	|	e1=expression {$expression::setVars.add($e1.text);} ('\\cross' e2=expression {$expression::setVars.add($e2.text);})+
-	//uso setVars, habria que cambiar el nombre por prolijidad
+	|	e1=expression {$expression::elements.add($e1.text);} ('\\cross' e2=expression {$expression::elements.add($e2.text);})+
 	{
-	
-		type = "";
+		String unfoldedType = "";
+		
 		//Para cada exp realizamos el procesamiento
-		while( !$expression::setVars.isEmpty() ) {
-			String exp = (String) $expression::setVars.remove(0);
+		while( !$expression::elements.isEmpty() ) {
+			String exp = (String) $expression::elements.remove(0);
 			
-			$internalName = $internalName.concat(exp);
+			$zName = $zName.concat(exp);
 			
 			String expType = (String) types.get(exp);
 			if (expType.startsWith("BasicType") || expType.startsWith("EnumerationType"))
-				$externalName = $externalName.concat(exp);
+				unfoldedType = unfoldedType.concat(exp);
 			else
-				$externalName = $externalName.concat(expType);
+				unfoldedType = unfoldedType.concat(expType);
 				
-			if (!$expression::setVars.isEmpty()) {
-				$internalName = $internalName.concat("\\cross");
-				$externalName = $externalName.concat("\\cross");
+			if (!$expression::elements.isEmpty()) {
+				$zName = $zName.concat("\\cross");
+				unfoldedType = unfoldedType.concat("\\cross");
 			}
 		}
 		
-		types.put($internalName, $externalName);
+		types.put($zName, unfoldedType);
 	}
 	|	e1=expression '~' e2=expression
 	{
@@ -375,7 +402,16 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 			String newVarName = "VAR" + varNumber;
 			varNumber++;
 			memory.put($e1.text + "~" + $e2.text, newVarName);
+			types.put($e1.text + "~" + $e2.text, getChildType((String) types.get($e1.text), 1));
 			print("apply(" + a + "," + b + "," + newVarName + ")");
+			
+			//Consulto el tipo para ver si es numerico
+			String newVarType = getChildType((String) types.get($e1.text), 1);
+			
+			if (newVarType.equals("\\num"))
+				print(newVarName + " in NUM");
+			else if (newVarType.equals("\\nat"))
+				print(newVarName + " in NAT");
 		}
 	}
 	|	e1=expression '\\mapsto' e2=expression //In-Fun
@@ -408,6 +444,13 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				varNumber++;
 				memory.put("\\#" + $e.text, newVarName);
 				print("prolog_call(length(" + a + "," + newVarName + "))");
+				
+				if (memory.get("\\nat") == null) {
+					memory.put("\\nat", "NAT");
+					print("NAT = int(0, 10000000000)");
+					types.put("\\nat", "\\nat");
+				}
+				print(newVarName + " in NAT");
 			}
 		}
 		else if ($pre_gen.text.equals("\\dom")){
@@ -415,8 +458,17 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
 				memory.put("\\dom" + $e.text, newVarName);
+				types.put("\\dom" + $e.text, getChildType((String) types.get($e.text), 0));
+				
 				String e = (String) memory.get($e.text);
-				print("dom(" + e + "," + newVarName + ")");
+				
+				//Chequeamos si e es una lista, estas son tratadas de forma diferente
+				//System.out.println("ESTE ES EL TIPO: " + types.get($e.text) + " DE: " + $e.text);
+				String type = getType((String) types.get($e.text));
+				if (type.equals("\\seq"))
+					print("ddom_list(" + e + "," + newVarName + ")");
+				else
+					print("dom(" + e + "," + newVarName + ")");
 			}
 		}
 		else if ($pre_gen.text.equals("\\ran")){
@@ -424,12 +476,20 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 				String newVarName = "VAR" + varNumber;
 				varNumber++;
 				memory.put("\\ran" + $e.text, newVarName);
+				types.put("\\ran" + $e.text, getChildType((String) types.get($e.text), 0));
+				
 				String e = (String) memory.get($e.text);
-				print("ran(" + e + "," + newVarName + ")");
+				
+				//Chequeamos si e es una lista, estas son tratadas de forma diferente
+				String type = getType((String) types.get($e.text));
+				if (type.equals("\\seq"))
+					print("list_to_set(" + e + "," + newVarName + ")");
+				else
+					print("ran(" + e + "," + newVarName + ")");
 			}
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
-			type="list";
+			types.put("\\seq" + $e.text, "\\seq" + types.get($e.text));
 		}
 	}	
 	|	e1=expression IN_FUN_P4 e2=expression
@@ -442,22 +502,35 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		
 			String newVarName = "VAR" + varNumber;
 			varNumber++;
+			Boolean isNumeric = false; 
 		
 			if ($IN_FUN_P4.text.equals("*")){
 				print( newVarName + " is " + a + "*" + b );
 				memory.put($e1.text + "*" + $e2.text, newVarName);
+				isNumeric = true;
 			}
 			else if ($IN_FUN_P4.text.equals("\\div")) {
 				print( newVarName + " is div(" + a + "," + b + ")" );
 				memory.put($e1.text + "\\div" + $e2.text, newVarName);
+				isNumeric = true;
 			}
 			else if ($IN_FUN_P4.text.equals("\\mod")){
 				print( newVarName + " is mod(" + a + "," + b + ")" );
 				memory.put($e1.text + "\\mod" + $e2.text, newVarName);
+				isNumeric = true;
 			}
 			else if ($IN_FUN_P4.text.equals("\\cap")){
 					print("dinters(" + a + "," + b + "," + newVarName + ")");
 					memory.put($e1.text + "\\cap" + $e2.text, newVarName);
+			}
+			
+			if (isNumeric) {
+				if (memory.get("\\num") == null) {
+					memory.put("\\num", "NUM");
+					print("NUM = int(-10000000000, 10000000000)");
+					types.put("\\num", "\\num");
+				}
+				print(newVarName + " in NUM");
 			}
 		}
 	}
@@ -471,18 +544,31 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		
 			String newVarName = "VAR" + varNumber;
 			varNumber++;
+			Boolean isNumeric = false; 
+			
 		
 			if ($IN_FUN_P3.text.equals("+")){
 				print( newVarName + " is " + a + "+" + b );
 				memory.put($e1.text + "+" + $e2.text, newVarName);
+				isNumeric = true;
 			}
 			else if ($IN_FUN_P3.text.equals("-")) {
 				print( newVarName + " is " + a + "-" + b );
 				memory.put($e1.text + "-" + $e2.text, newVarName);
+				isNumeric = true;
 			}
 			else if ($IN_FUN_P3.text.equals("\\cup")){
 					print("dunion(" + a + "," + b + "," + newVarName + ")");
 					memory.put($e1.text + "\\cup" + $e2.text, newVarName);
+			}
+			
+			if (isNumeric) {
+				if (memory.get("\\num") == null) {
+					memory.put("\\num", "NUM");
+					print("NUM = int(-10000000000, 10000000000)");
+					types.put("\\num", "\\num");
+				}
+				print(newVarName + " in NUM");
 			}
 		}
 	}
@@ -509,48 +595,52 @@ locals [ArrayList setVars = new ArrayList(), String internalName = "", String ex
 		if (memory.get($NUM.text) == null)
 			memory.put($NUM.text, $NUM.text);
 	}
-	|	//set extention
-		SETSTART (a=expression {$setVars.add($a.text);})? (',' b=expression {$setVars.add($b.text);})* SETEND
+	|	//set extension
+		SETSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* SETEND
 	{	
-		$externalName = $SETSTART.text;
-		//Llenamos $externalName y ponemos cada expression en la memory
-		while( !$setVars.isEmpty() ){
-			String e = (String) $setVars.remove(0);
-			$externalName = $externalName + e;
-			//guardamos tambien las traducciones interiores del conjunto
-			$internalName = $internalName + (String)memory.get(e);
+		$zName = $SETSTART.text;
+		//Llenamos elements y ponemos cada expression en la memory
+		while( !$elements.isEmpty() ){
+			String e = (String) $elements.remove(0);
+			$zName = $zName.concat(e);
+			//guardamos tambien las traducciones del conjunto
+			$setlogName = $setlogName.concat((String)memory.get(e));
 			
-			if (!$setVars.isEmpty()){
-				$externalName = $externalName + ",";
-				$internalName = $internalName + ",";
+			if (!$elements.isEmpty()){
+				$zName = $zName + ",";
+				$setlogName = $setlogName + ",";
 			}
 		}
-		$externalName = $externalName + $SETEND.text;
-		if (memory.get($externalName) == null) {
-			memory.put($externalName, "{" + $internalName + "}");
+		$zName = $zName + $SETEND.text;
+		if (memory.get($zName) == null) {
+			memory.put($zName, "{" + $setlogName + "}");
 		}
 	}
-	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();} declPart {$externalName = $SETSTART.text + $declPart.text;} ( '|'{modoSetExpression=2;} predicate {$externalName = $externalName.concat("|" + $predicate.text);})? ( '@' {modoSetExpression=3;} c=expression {$externalName = $externalName.concat("@" + $c.text);})? SETEND {modoSetExpression=0; $externalName = $externalName.concat($SETEND.text);} 
+	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new ArrayList();}
+	    declPart {$zName = $SETSTART.text + $declPart.text;}
+	    ( '|'{modoSetExpression=2;} predicate {$zName = $zName.concat("|" + $predicate.text);})?
+	    ( '@' {modoSetExpression=3;} c=expression {$zName = $zName.concat("@" + $c.text);})?
+	    SETEND {modoSetExpression=0; $zName = $zName.concat($SETEND.text);} 
 	{
-		if (memory.get($externalName)==null) {
-			$translatedSet = "";
+		if (memory.get($zName)==null) {
+			$setlogName = "";
 			$newVarName1 = "VAR" + varNumber;
 			varNumber++;
 			$newVarName2 = "VAR" + varNumber;
 			varNumber++;
 			
-			$translatedSet = $translatedSet.concat("{ " + $newVarName1 + ":exists([");
+			$setlogName = $setlogName.concat("{ " + $newVarName1 + ":exists([");
 			
 			while(!setExpressionVars.isEmpty()){
-				$translatedSet = $translatedSet.concat((String) setExpressionVars.remove(0));
-				if (!setExpressionVars.isEmpty()) $translatedSet = $translatedSet.concat(",");
+				$setlogName = $setlogName.concat((String) setExpressionVars.remove(0));
+				if (!setExpressionVars.isEmpty()) $setlogName = $setlogName.concat(",");
 			}
 		
-			$translatedSet = $translatedSet.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) + ")" + setExpressionPred +
-		" & " + $newVarName1 + " is " + memory.get($c.text) + " }");
+			$setlogName = $setlogName.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) + ")" +
+			setExpressionPred + " & " + $newVarName1 + " is " + memory.get($c.text) + " }");
 		
-			memory.put($externalName, $newVarName2);
-			print($newVarName2 + " = " + $translatedSet);
+			memory.put($zName, $newVarName2);
+			print($newVarName2 + " = " + $setlogName);
 		}
 	}
 	|	'(' e=expression ')'

@@ -1,14 +1,13 @@
 \begin{zed}
 [ncta] \\
 saludos ::= hola | chau \\
-aa == \num \cross \num
 \end{zed}
 
 \begin{schema}{Extraer}\\
-a,b,c : \power \nat \\
-d,e,f : \power (\num \ffun \num) \cross \num \cross ncta \\
-g,h,i : saludos \\
+f: \nat \pfun \seq \num \\
+x, y: \seq \nat
 \where
-j \in a
+f~x = 0 \\
+\ran f~x = 0
 \end{schema}
 

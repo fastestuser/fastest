@@ -21,8 +21,8 @@ public class TypeManagerParser extends Parser {
 	public static final int
 		T__3=1, T__2=2, T__1=3, T__0=4, BINOP=5, UNOP=6, NAME=7, WS=8;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'\\nat'", "')'", "'('", "'\\num'", "BINOP", "'\\power'", 
-		"NAME", "WS"
+		"<INVALID>", "'\\nat'", "')'", "'('", "'\\num'", "BINOP", "UNOP", "NAME", 
+		"WS"
 	};
 	public static final int
 		RULE_typeManage = 0, RULE_type = 1;
@@ -45,12 +45,35 @@ public class TypeManagerParser extends Parser {
 
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 		
+		//Interfaz para la determinacion del tipo del root.
+		//Constraits: El arbol debio ser previamente generado.
+		//Output: String, con el valor del root.
+		String getReturnRootType(){
+			return (String)	((DefaultMutableTreeNode) root).getUserObject();
+		}
+		
 		//Interfaz para la determinacion del tipo de salida de una funcion.
 		//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
 		//Input: Int, con la posicion del hijo deseado (empieza en 0).
 		//Output: String, con el valor del nodo.
-		String getReturnNodeType(int posicion){
+		String getReturnChildNodeType(int posicion){
 			return (String)	((DefaultMutableTreeNode) root.getChildAt(posicion)).getUserObject();
+		}
+		
+		String printTree(DefaultMutableTreeNode tree){
+			if (tree.isLeaf()) 
+				return (String) tree.getUserObject();
+			else if (tree.getChildCount() == 1)
+				if ( ((String) tree.getUserObject()).equals("()")) //REVISAR
+					return "(" + printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+				else
+					return (String) tree.getUserObject() + printTree((DefaultMutableTreeNode) tree.getChildAt(0));
+			else //tiene dos hijos
+				return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
+		}
+		
+		String printChild(int posicion) {
+			return printTree((DefaultMutableTreeNode) root.getChildAt(posicion));
 		}
 
 	public TypeManagerParser(TokenStream input) {
@@ -83,7 +106,7 @@ public class TypeManagerParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(4); ((TypeManageContext)_localctx).type = type(0);
-			root = ((TypeManageContext)_localctx).type.node; System.out.println("Depth: " + root.getDepth()); System.out.println("Node1: " + getReturnNodeType(1));
+			root = ((TypeManageContext)_localctx).type.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/
 			}
 		}
 		catch (RecognitionException re) {
@@ -155,7 +178,7 @@ public class TypeManagerParser extends Parser {
 				setState(12); match(3);
 				setState(13); ((TypeContext)_localctx).a = type(0);
 				setState(14); match(2);
-				((TypeContext)_localctx).node =  ((TypeContext)_localctx).a.node;
+				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 			case 4:
