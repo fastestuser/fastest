@@ -63,8 +63,8 @@ public class ExprLexer extends Lexer {
 		
 		int varNumber = 0;
 		int modoSetExpression = 0; //0 = false, 1 = true
-		int tipoSchema = 0; //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
-						    //cuando trabajamos en tipos schema
+		int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
+						           //cuando trabajamos en tipos schema
 		
 		ArrayList setExpressionVars;
 		

@@ -35,6 +35,10 @@ public class TypeManagerLexer extends Lexer {
 
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 		
+		public DefaultMutableTreeNode getRoot() {
+			return root;
+		}
+		
 		//Interfaz para la determinacion del tipo del root.
 		//Constraits: El arbol debio ser previamente generado.
 		//Output: String, con el valor del root.
