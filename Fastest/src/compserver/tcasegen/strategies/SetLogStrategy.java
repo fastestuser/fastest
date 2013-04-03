@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -16,19 +18,26 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import client.blogic.management.Controller;
+import client.presentation.ClientTextUI;
 
 
+import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
+import net.sourceforge.czt.z.ast.ParaList;
+import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
+import net.sourceforge.czt.z.ast.ZParaList;
+import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.czt.visitors.BasicTypeNamesExtractor;
+import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.SetLogGrammar.*;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
@@ -48,44 +57,72 @@ public class SetLogStrategy implements TCaseStrategy{
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
 		
-		String antlrInput = "";
-		//Busco los tipos basicos en spec, que se utilizan en tClass
-
-		/*Collection<List<String>> values = basicAxDefs.values();
-		Iterator<List<String>> valuesIt = values.iterator();
-		while (valuesIt.hasNext()) {
-			System.out.println(valuesIt.next());
-		}*/
-		      
-		String basicType;
-		while (!basicTypeNames.isEmpty()) {
-			basicType = basicTypeNames.remove(0);
-			if (SpecUtils.termToLatex(tClass).contains(basicType)) {
-				antlrInput = antlrInput.concat("\\begin{zed}\n" +
-						          "[" + basicType + "]\n" + 
-						          "\\end{zed}\n\n");
-			}
-		}
-        
-		//Busco los tipos libres en spec, que se utilizan en tClass
+		String schemas = "", antlrInput = "";
+		
+		//Busco los tipos que se utilizan en tClass
+		TypesExtractor extractor = new TypesExtractor();
+		HashSet<String> types = tClass.accept(extractor);
+		HashSet<String> typesPrinted = new HashSet<String>();
+		Iterator<String> typesIt = types.iterator();
+		
+		ZParaList zParaList = null;
+		for (Sect sect : spec.getSect()) {
+            if (sect instanceof ZSect) {
+                ParaList paraList = ((ZSect) sect).getParaList();
+                if (paraList instanceof ZParaList) {
+                    zParaList = (ZParaList) paraList;
+                }
+            }
+        }
 		Iterator<FreePara> freeParasIt = freeParas.iterator();
-		 
-		while (freeParasIt.hasNext()) {
-			FreePara freePara = freeParasIt.next();
-			FreetypeList freetypeList = freePara.getFreetypeList();
-			if (freetypeList instanceof ZFreetypeListImpl) {
-				ZFreetypeList zFreetypeList = (ZFreetypeListImpl) freetypeList;
-				for (int i = 0; i < zFreetypeList.size(); i++) {
-					Freetype freetype = zFreetypeList.get(i);
-					if (SpecUtils.termToLatex(tClass).contains(freetype.getName().toString())) {
-						antlrInput = antlrInput.concat("\\begin{zed}\n" +
-						          SpecUtils.termToLatex(freetype) + "\n" + 
-						          "\\end{zed}\n\n");
+		
+		
+		while (typesIt.hasNext()){
+			
+			String schemaName = typesIt.next();
+			if (!typesPrinted.contains(schemaName)) {
+				AxPara schema = SpecUtils.axParaSearch(schemaName, zParaList);
+				String schemaString = SpecUtils.termToLatex(schema);
+				if (schemaString.equals("null")){ //No es un tipo esquema
+					if (basicTypeNames.contains(schemaName)){ //Es un tipo basico
+						schemaString = "\\begin{zed}\n" +
+						          "[" + schemaName + "]\n" + 
+						          "\\end{zed}\n\n";
+						antlrInput = schemaString + antlrInput;
+					} else { //Es un tipo libre
+						while (freeParasIt.hasNext() && schemaString.equals("null")) {
+							FreePara freePara = freeParasIt.next();
+							FreetypeList freetypeList = freePara.getFreetypeList();
+							if (freetypeList instanceof ZFreetypeListImpl) {
+								ZFreetypeList zFreetypeList = (ZFreetypeListImpl) freetypeList;
+								for (int i = 0; i < zFreetypeList.size(); i++) {
+									Freetype freetype = zFreetypeList.get(i);
+									if (schemaName.equals(freetype.getName().toString())) {
+										schemaString = "\\begin{zed}\n" +
+										          SpecUtils.termToLatex(freetype) + "\n" + 
+										          "\\end{zed}\n\n";
+										antlrInput = schemaString + antlrInput;
+										break;
+									}
+								}	
+							}
+						}
 					}
-				}	
+				} else { //Es un tipo esquema
+					schemaString = schemaString.replace("begin{schema}", "begin{schemaType}");
+					schemaString = schemaString.replace("end{schema}", "end{schemaType}");
+					//Agrego los tipos que se utilizan en este esquema
+					HashSet<String> auxTypes = schema.accept(extractor);
+					types.addAll(auxTypes);
+					typesIt = types.iterator();
+					schemas = schemaString + schemas;
+				}
+				
+				typesPrinted.add(schemaName);
 			}
 		}
 		
+		antlrInput = antlrInput.concat(schemas);
 		
 		//parseo de Z a SetLog con ANTLR
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
@@ -102,6 +139,7 @@ public class SetLogStrategy implements TCaseStrategy{
 			OutputStream out = proc.getOutputStream();
 			
 			String antlrOutput = parser.getSalida();
+			System.out.println("ANTLROUTPUT\n" + antlrOutput);
 			
 			String setlogInput = "consult(setlog4617)."
 			+ "\nuse_module(library(dialect/sicstus/timeout))."

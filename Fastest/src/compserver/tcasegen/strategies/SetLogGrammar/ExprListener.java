@@ -1,5 +1,5 @@
-// Generated from Expr.g4 by ANTLR 4.0
 package compserver.tcasegen.strategies.SetLogGrammar;
+// Generated from Expr.g4 by ANTLR 4.0
 
 	import java.util.HashMap;
 	import java.util.ArrayList;

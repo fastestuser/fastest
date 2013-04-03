@@ -60,7 +60,6 @@ implements TermVisitor<Map<Term,String>>, VarDeclVisitor<Map<Term,String>>
 		}
 	}
 
-
 	public Map<Term,String> visitTerm(Term term)
 	{
 		Map<Term,String> mapList = new HashMap<Term,String>();
@@ -122,17 +121,6 @@ implements TermVisitor<Map<Term,String>>, VarDeclVisitor<Map<Term,String>>
 				mapList.put(name, name.toString());
 			}
 		}
-
-		//		//System.out.println("El tipo es: " + typeName);
-		//		String arithmosTypeName = "POWER GIVEN " + UtilSymbols.arithmosSymbol();
-		//		if (typeName.equals(arithmosTypeName)) {
-		//			ZNameList zNameList = varDecl.getZNameList(); //Todas las variables
-		//			Iterator<Name> zNameListIt = zNameList.iterator();
-		//			while (zNameListIt.hasNext()) {
-		//				Name name = zNameListIt.next();
-		//				mapList.put(name, name.toString());
-		//			}
-		//		}
 
 		return mapList;
 	}
