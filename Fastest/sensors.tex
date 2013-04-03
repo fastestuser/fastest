@@ -5,29 +5,16 @@
 
 
 \begin{zed}
-[SENSOR, SENSOR2]\\
-Saludos ::= hola | chau
+[SENSOR]
 \end{zed}
 
 \begin{zed}
 MaxReadings == [smax: SENSOR \pfun \num]
 \end{zed}
 
-\begin{schema}{B}
-a1, a2 : SENSOR2 \\
-a3: Saludos	
-\end{schema}
-
-\begin{schema}{A}
-a1, a2 : SENSOR \\
-a3: B \\
-a4: Saludos	
-\end{schema}
-
 \begin{schema}{KeepMaxReadingOk}
 \Delta MaxReadings \\
-s?:SENSOR; r?:\num; testx:A; textf: A \pfun A \\
-test3:Saludos
+s?:SENSOR; r?:\num\\
 \where
 s? \in \dom smax \\
 smax~s? < r?\\

@@ -153,9 +153,13 @@ public class SetLogStrategy implements TCaseStrategy{
 			
 		    BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		    String s;
+		    String setlogOutput = "";
 		    while ((s = stdError.readLine()) != null) {
-		       System.out.println(s);
+		       if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("EOF"))) {
+		    	   setlogOutput = setlogOutput.concat(s + "\n");
+		       }
 		    }
+		    System.out.println("SETLOG OUT:\n" + setlogOutput);
 		}
 		
 		catch (Exception e){ 
