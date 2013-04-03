@@ -13,9 +13,12 @@ grammar Expr;
 @members {
 	
 	String setExpressionDecl, setExpressionPred, setExpressionExpr;
+	String schemaTypeVars = new String();
 	
 	int varNumber = 0;
 	int modoSetExpression = 0; //0 = false, 1 = true
+	int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
+					           /cuando trabajamos en tipos schema
 	
 	ArrayList setExpressionVars;
 	
@@ -38,7 +41,7 @@ grammar Expr;
 	}
 
 	public void print(String c) {
-		if (modoSetExpression == 0) 
+		if (modoSetExpression == 0 & tipoSchema == 0) 
 			System.out.println(c + " &");
 			//salida = salida.concat(c + " &");
 		else if (modoSetExpression == 1)
@@ -110,8 +113,23 @@ specification
 	;
 
 paragraph
-	:	'\\begin{schema}{' NAME '}' schemaText '\\end{schema}'
-	%|	'\\begin{axdef}' NL declPart NL '\\end{axdef}'
+	//Aceptamos 3 tipos de schemas: la clase de prueba (schema), los tipos esquema necesarios (schemaType) y
+	//las definiciones de tipos basicos y enumerados
+	:	'\\begin{' ('schema' | ('schemaType' {tipoSchema = 1; schemaTypeVars = "";})) '}{' NAME '}'
+		schemaText
+		{
+			if (tipoSchema == 1) {
+				String newVarName = $NAME.text.substring(0,1).toUpperCase() + $NAME.text.substring(1).replace("?","");
+				if (memory.containsValue(newVarName)) { 
+					newVarName = "VAR" + varNumber;
+					varNumber++;
+				}
+				memory.put($NAME.text, newVarName);
+				types.put($NAME.text, "SchemaType:[" + schemaTypeVars + "]");
+				schemaTypeVars = "";
+			}
+		}
+		'\\end{' ('schema' | ('schemaType' {tipoSchema = 0;})) '}'
 	|	'\\begin{zed}' NL ((basic_type | equivalent_type | enumeration_type) NL )+ '\\end{zed}'
 	;
       
@@ -132,7 +150,6 @@ locals [ArrayList typeList;]
 			print("set(" + newVarName + ")");
 			
 			types.put(type, "BasicType:" + newVarName);
-			
 		}
 	}	
 	;
@@ -195,22 +212,33 @@ locals [ArrayList vars;]
 		//Para cada variable realizamos el procesamiento
 		while( !$declaration::vars.isEmpty() ) {
 			String var = (String) $declaration::vars.remove(0);
-			zVars.put(var, null); //Marcamos la variable como variable Z, a la cual debera asignarsele un valor
+			if (tipoSchema == 0)
+				zVars.put(var, null); //Marcamos la variable como variable Z, a la cual posiblemente se le deba asignarsele un valor
 			String newVarName = var.substring(0,1).toUpperCase() + var.substring(1).replace("?","");
 			if (memory.containsValue(newVarName)) { 
 				newVarName = "VAR" + varNumber;
 				varNumber++;
 			}
-			
-			memory.put(var, newVarName);
+
+			if (tipoSchema == 0)
+				memory.put(var, newVarName);
 			if (modoSetExpression==1)
 				setExpressionVars.add(newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 			
 			String expType = (String) types.get($expression.text);
-			types.put(var, expType);
-
-			//Imprimimos el tipo de la variable segun cual sea este			
-			if (expType != null) {
+			if (expType.startsWith("BasicType") || expType.startsWith("EnumerationType") || expType.startsWith("SchemaType"))
+				expType = $expression.text;
+			
+			if (tipoSchema == 0)
+				types.put(var, expType);
+			else { //La agregamos como variable del esquema
+				if (!schemaTypeVars.equals(""))
+					schemaTypeVars = schemaTypeVars.concat(",");
+				schemaTypeVars = schemaTypeVars.concat(var + ":" + expType);
+			}
+			
+			//Imprimimos el tipo de la variable segun cual sea este	
+			if (tipoSchema == 0 & expType != null) {
 				String type = getType(expType);
 				if (type.equals("\\seq"))
 					print("list(" + newVarName + ")");
@@ -414,6 +442,37 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 				print(newVarName + " in NAT");
 		}
 	}
+	|	e1=expression '.' e2=expression
+	{
+		if (memory.get($e1.text + "." + $e2.text) == null) {
+		
+			String e1Type = (String) types.get($e1.text);
+			if (!e1Type.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
+				e1Type = (String) types.get(e1Type);
+			
+			if (e1Type.startsWith("SchemaType:")) {
+				String schemaVars = e1Type.substring("SchemaType:".length());
+				
+				//Obtengo el indice de la variable e2 dentro de la lista de variables del tipo schema
+				//Primero obtenemos la lista de variables
+				schemaVars = schemaVars.substring(1, schemaVars.length()-1);
+				String[] vars = schemaVars.split(",");
+				//Buscamos la posicion de la variable
+				int position = 1;
+				while (!vars[position-1].contains($e2.text + ":")) //Se resta 1 porque en setlog empiezan en 1, no en 0 como en java
+					position++;
+				//Creamos una nueva variable
+				String newVarName = "VAR" + varNumber;
+				varNumber++;
+				//Vemos su tipo
+				String type = vars[position-1].substring($e2.text.length()+1);
+				memory.put($e1.text + "." + $e2.text, newVarName);
+				types.put($e1.text + "." + $e2.text, type);
+				print("nth1(" + position + "," + memory.get($e1.text) + "," + newVarName + ")");
+				
+			}
+		}
+	}
 	|	e1=expression '\\mapsto' e2=expression //In-Fun
 	{
 		String a, b;
@@ -489,7 +548,11 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			}
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
-			types.put("\\seq" + $e.text, "\\seq" + types.get($e.text));
+			String eType = (String) types.get($e.text);
+			if (eType.startsWith("BasicType") || eType.startsWith("EnumerationType"))
+				eType = $e.text;
+		
+			types.put("\\seq" + $e.text, "\\seq" + eType);
 		}
 	}	
 	|	e1=expression IN_FUN_P4 e2=expression
@@ -574,7 +637,11 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	}
 	|	'\\power' e=expression
 	{
-		types.put("\\power" + $e.text, "\\power" + types.get($e.text));
+		String eType = (String) types.get($e.text);
+		if (eType.startsWith("BasicType") || eType.startsWith("EnumerationType"))
+			eType = $e.text;
+	
+		types.put("\\power" + $e.text, "\\power" + eType);
 	}
 	|	NAME
 	{

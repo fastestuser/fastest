@@ -1,13 +1,24 @@
 \begin{zed}
 [ncta] \\
-saludos ::= hola | chau \\
+saludos ::= hola | chau
 \end{zed}
 
-\begin{schema}{Extraer}\\
-f: \nat \pfun \seq \num \\
-x, y: \seq \nat
+\begin{schemaType}{A}\\
+a1, a2: ncta \\
+a3: \num
 \where
-f~x = 0 \\
-\ran f~x = 0
+\end{schemaType}
+
+\begin{schemaType}{B}\\
+a1, a2: ncta \\
+a3: A
+\where
+\end{schemaType}
+
+\begin{schema}{Extraer}\\
+f: saludos \pfun \seq saludos \\
+x, y: B
+\where
+x.a3.a1 > 0
 \end{schema}
 
