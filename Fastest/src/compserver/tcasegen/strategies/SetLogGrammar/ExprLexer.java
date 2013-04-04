@@ -86,6 +86,10 @@ public class ExprLexer extends Lexer {
 		public HashMap getTypes() {
 			return types;
 		}
+		
+		public HashMap getZVars() {
+			return zVars;
+		}
 
 		public void print(String c) {
 			if (modoSetExpression == 0 & tipoSchema == 0) 
