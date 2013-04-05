@@ -5,6 +5,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -114,7 +115,8 @@ public class ExprLexer extends Lexer {
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
-	        return parser.getReturnRootType();
+	        DefaultMutableTreeNode root = parser.getRoot();
+	        return (String) root.getUserObject();
 		}
 		
 		//Metodo para la determinacion del tipo de salida de una funcion.
@@ -128,7 +130,8 @@ public class ExprLexer extends Lexer {
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
-	        return parser.printChild(pos);
+	        DefaultMutableTreeNode root = parser.getRoot();
+	        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
 		}
 
 

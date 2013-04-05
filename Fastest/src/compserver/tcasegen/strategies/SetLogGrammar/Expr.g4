@@ -8,6 +8,7 @@ grammar Expr;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import javax.swing.tree.DefaultMutableTreeNode;
 }
 
 @members {
@@ -39,6 +40,10 @@ grammar Expr;
 	public HashMap getTypes() {
 		return types;
 	}
+	
+	public HashMap getZVars() {
+		return zVars;
+	}
 
 	public void print(String c) {
 		if (modoSetExpression == 0 & tipoSchema == 0) 
@@ -63,7 +68,8 @@ grammar Expr;
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
         parser.typeManage();
-        return parser.getReturnRootType();
+        DefaultMutableTreeNode root = parser.getRoot();
+        return (String) root.getUserObject();
 	}
 	
 	//Metodo para la determinacion del tipo de salida de una funcion.
@@ -77,7 +83,8 @@ grammar Expr;
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
         parser.typeManage();
-        return parser.printChild(pos);
+        DefaultMutableTreeNode root = parser.getRoot();
+        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
 	}
 }
 
@@ -198,7 +205,7 @@ locals [ArrayList cases;]
 	;
       
 schemaText
-	:	NL (declPart NL)? '\\where' NL (predicate NL)*
+	:	NL (declPart NL)? ('\\where' NL)? (predicate NL)*
 	;
 	
 declPart:	declaration ((';' | NL) declaration)*

@@ -34,7 +34,7 @@ import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerLexer;
 import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerParser;
 
 /*
- * A visitor that obtains all the needed types from a Z schema,
+ * A visitor that obtains all the needed types (basic, free and schema types) from a Z schema,
  * needed to create ANTLR input when parsing to setlog, in the process
  * to generate a Z test case
  */

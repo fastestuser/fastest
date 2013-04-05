@@ -5,6 +5,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -120,7 +121,8 @@ public class ExprParser extends Parser {
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
-	        return parser.getReturnRootType();
+	        DefaultMutableTreeNode root = parser.getRoot();
+	        return (String) root.getUserObject();
 		}
 		
 		//Metodo para la determinacion del tipo de salida de una funcion.
@@ -134,7 +136,8 @@ public class ExprParser extends Parser {
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
-	        return parser.printChild(pos);
+	        DefaultMutableTreeNode root = parser.getRoot();
+	        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
 		}
 
 	public ExprParser(TokenStream input) {
@@ -869,20 +872,21 @@ public class ExprParser extends Parser {
 							setExpressionVars.add(newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 						
 						String expType = (String) types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
-						if (expType.startsWith("BasicType") || expType.startsWith("EnumerationType") || expType.startsWith("SchemaType"))
-							expType = (((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null);
+						String basicType = expType;
+						if (basicType.startsWith("BasicType") || basicType.startsWith("EnumerationType") || basicType.startsWith("SchemaType"))
+							basicType = (((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null);
 						
 						if (tipoSchema == 0)
-							types.put(var, expType);
+							types.put(var, basicType);
 						else { //La agregamos como variable del esquema
 							if (!schemaTypeVars.equals(""))
 								schemaTypeVars = schemaTypeVars.concat(",");
-							schemaTypeVars = schemaTypeVars.concat(var + ":" + expType);
+							schemaTypeVars = schemaTypeVars.concat(var + ":" + basicType);
 						}
 						
 						//Imprimimos el tipo de la variable segun cual sea este	
-						if (tipoSchema == 0 & expType != null) {
-							String type = getType(expType);
+						if (tipoSchema == 0 & basicType != null) {
+							String type = getType(basicType);
 							if (type.equals("\\seq"))
 								print("list(" + newVarName + ")");
 							else if (type.equals("\\rel"))
@@ -894,9 +898,9 @@ public class ExprParser extends Parser {
 							else if (expType.equals("\\nat") || expType.equals("\\num"))
 								print(newVarName + " in " + memory.get(expType));
 							else if (expType.startsWith("BasicType:"))
-								print(newVarName + " in " + expType.substring(10));
+								print(newVarName + " in " + basicType);
 							else if (expType.startsWith("EnumerationType:"))
-								print(newVarName + " in " + expType.substring(16));
+								print(newVarName + " in " + basicType);
 						}
 					}
 				

@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 
@@ -22,10 +23,13 @@ import client.presentation.ClientTextUI;
 
 
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
 import net.sourceforge.czt.z.ast.ParaList;
+import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
@@ -36,7 +40,10 @@ import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import common.z.TClass;
+import common.z.TClassImpl;
 import common.z.czt.visitors.BasicTypeNamesExtractor;
+import common.z.czt.visitors.CZTCloner;
+import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.SetLogGrammar.*;
 
@@ -45,11 +52,13 @@ import compserver.tcasegen.strategies.SetLogGrammar.*;
  */
 public class SetLogStrategy implements TCaseStrategy{
 
+	private Map<RefExpr, Expr> axDefsValues;
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
     private List<String> basicTypeNames;
 	
-	public SetLogStrategy(Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
+	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
+		this.axDefsValues = axDefsValues;
 		this.basicAxDefs = basicAxDefs;
 		this.freeParas = freeParas;
 		this.basicTypeNames = basicTypeNames;
@@ -57,13 +66,32 @@ public class SetLogStrategy implements TCaseStrategy{
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
 		
+		//Reemplazamos las definiciones axiomaticas por sus valores
+        if (axDefsValues != null) {
+
+        	AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
+        	String tClassName = tClass.getSchName();
+            Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
+            Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+            Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+            CZTReplacer replaceVisitor = new CZTReplacer();
+
+            while (iterator.hasNext()) {
+                Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+                RefExpr refExpr = mapEntry.getKey();
+                Expr expr = mapEntry.getValue();
+                replaceVisitor.setOrigTerm(refExpr);
+                replaceVisitor.setNewTerm(expr);
+                pred = (Pred) pred.accept(replaceVisitor);
+            }
+
+            SpecUtils.setAxParaPred(tClassAxPara, pred);
+            tClass = new TClassImpl(tClassAxPara, tClassName);
+        }
+
+        //Buscamos los tipos que aparecen en tClass, para incluir
+        //su informacion en la entrada del parser
 		String schemas = "", antlrInput = "";
-		
-		//Busco los tipos que se utilizan en tClass
-		TypesExtractor extractor = new TypesExtractor();
-		HashSet<String> types = tClass.accept(extractor);
-		HashSet<String> typesPrinted = new HashSet<String>();
-		Iterator<String> typesIt = types.iterator();
 		
 		ZParaList zParaList = null;
 		for (Sect sect : spec.getSect()) {
@@ -76,6 +104,11 @@ public class SetLogStrategy implements TCaseStrategy{
         }
 		Iterator<FreePara> freeParasIt = freeParas.iterator();
 		
+		//Busco los tipos que se utilizan en tClass
+		TypesExtractor extractor = new TypesExtractor();
+		HashSet<String> types = SpecUtils.getAxParaListOfDecl(tClass).accept(extractor);
+		HashSet<String> typesPrinted = new HashSet<String>();
+		Iterator<String> typesIt = types.iterator();
 		
 		while (typesIt.hasNext()){
 			
@@ -109,6 +142,7 @@ public class SetLogStrategy implements TCaseStrategy{
 						}
 					}
 				} else { //Es un tipo esquema
+					//Reemplazo necesario en el parser de ANTLR
 					schemaString = schemaString.replace("begin{schema}", "begin{schemaType}");
 					schemaString = schemaString.replace("end{schema}", "end{schemaType}");
 					//Agrego los tipos que se utilizan en este esquema
@@ -117,15 +151,15 @@ public class SetLogStrategy implements TCaseStrategy{
 					typesIt = types.iterator();
 					schemas = schemaString + schemas;
 				}
-				
 				typesPrinted.add(schemaName);
 			}
 		}
 		
 		antlrInput = antlrInput.concat(schemas);
+		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
+		System.out.println("ANTLRINPUT\n" + antlrInput);
 		
 		//parseo de Z a SetLog con ANTLR
-		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
 		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
         ExprLexer lexer = new ExprLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
