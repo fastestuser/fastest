@@ -1,24 +1,13 @@
 \begin{zed}
-[ncta] \\
-saludos ::= hola | chau
+[SENSOR] \\
+Saludos ::= hola | chau
 \end{zed}
 
-\begin{schemaType}{A}\\
-a1, a2: ncta \\
-a3: \num
+\begin{schema}{KeepMaxReadingOk\_ DNF\_ 1}\\
+ smax : SENSOR \pfun \num \\
+ s? : Saludos \\
+ r? : \num \\
+x1, h: SENSOR
 \where
-\end{schemaType}
-
-\begin{schemaType}{B}\\
-a1, a2: ncta \\
-a3: A
-\where
-\end{schemaType}
-
-\begin{schema}{Extraer}\\
-f: saludos \pfun \seq saludos \\
-x, y: B
-\where
-x.a3.a1 > 0
+ x1 \cup h = \{ \} \\
 \end{schema}
-
