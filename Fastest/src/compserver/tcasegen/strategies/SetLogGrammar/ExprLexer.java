@@ -68,7 +68,7 @@ public class ExprLexer extends Lexer {
 		int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
 						           //cuando trabajamos en tipos schema
 		
-		ArrayList setExpressionVars;
+		HashMap<String,String> setExpressionVars;
 		
 		HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
 		HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
@@ -132,6 +132,21 @@ public class ExprLexer extends Lexer {
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
 	        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
+		}
+		
+		private String newVar() {
+			String newVarName = "VAR" + varNumber;
+			varNumber++;
+			return newVarName;
+		}
+		
+		private String newVar(String zName) {
+			String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
+			if (memory.containsValue(newVarName) || modoSetExpression==1) { 
+				newVarName = "VAR" + varNumber;
+				varNumber++;
+			}
+			return newVarName;
 		}
 
 
