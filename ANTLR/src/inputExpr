@@ -3,11 +3,15 @@
 Saludos ::= hola | chau
 \end{zed}
 
+\begin{schemaType}{A}
+ a1,a2:\num
+\end{schemaType}
+
 \begin{schema}{KeepMaxReadingOk\_ DNF\_ 1}\\
- smax : SENSOR \pfun \num \\
+ smax : SENSOR \pfun SENSOR \\
  s? : Saludos \\
  r? : \num \\
-x1, h: SENSOR
+ x1, h: A
 \where
- x1 \cup h = \{ \} \\
+ x1.a1 = 0 \\
 \end{schema}
