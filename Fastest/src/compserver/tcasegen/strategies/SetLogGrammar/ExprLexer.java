@@ -94,8 +94,8 @@ public class ExprLexer extends Lexer {
 
 		public void print(String c) {
 			if (modoSetExpression == 0 & tipoSchema == 0) 
-				System.out.println(c + " &");
-				//salida = salida.concat(c + " &");
+				//System.out.println(c + " &");
+				salida = salida.concat(c + " &");
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
 			else if (modoSetExpression == 2)
@@ -147,6 +147,44 @@ public class ExprLexer extends Lexer {
 				varNumber++;
 			}
 			return newVarName;
+		}
+		
+		private String typeInfo(String var, String type) {
+			
+			if (tipoSchema == 0 & type != null) {
+				if (isBasic(type)) {
+					type = type.split(":")[1];
+					print(var + " in " + type);
+					return type;
+				}
+			
+				String nodeType = getType(type);
+				if (nodeType.equals("\\seq"))
+					print("list(" + var + ")");
+				else if (nodeType.equals("\\rel"))
+					print("is_rel(" + var + ")");
+				else if (nodeType.equals("\\pfun"))
+					print("is_pfun(" + var + ")");
+				else if (nodeType.equals("\\fun"))
+					print("is_fun(" + var + ")");
+				else if (type.equals("\\nat") || type.equals("\\num"))
+					print(var + " in " + memory.get(type));
+				else { //double check
+					type = (String) types.get(type);
+					if (isBasic(type)) {
+						type = type.split(":")[1];
+						print(var + " in " + type);
+						return type;
+					}
+				}
+			}
+			return type;
+		}
+		
+		private boolean isBasic(String type) {
+			if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+				return true;
+			return false;
 		}
 
 

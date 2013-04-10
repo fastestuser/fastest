@@ -100,8 +100,8 @@ public class ExprParser extends Parser {
 
 		public void print(String c) {
 			if (modoSetExpression == 0 & tipoSchema == 0) 
-				System.out.println(c + " &");
-				//salida = salida.concat(c + " &");
+				//System.out.println(c + " &");
+				salida = salida.concat(c + " &");
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
 			else if (modoSetExpression == 2)
@@ -153,6 +153,44 @@ public class ExprParser extends Parser {
 				varNumber++;
 			}
 			return newVarName;
+		}
+		
+		private String typeInfo(String var, String type) {
+			
+			if (tipoSchema == 0 & type != null) {
+				if (isBasic(type)) {
+					type = type.split(":")[1];
+					print(var + " in " + type);
+					return type;
+				}
+			
+				String nodeType = getType(type);
+				if (nodeType.equals("\\seq"))
+					print("list(" + var + ")");
+				else if (nodeType.equals("\\rel"))
+					print("is_rel(" + var + ")");
+				else if (nodeType.equals("\\pfun"))
+					print("is_pfun(" + var + ")");
+				else if (nodeType.equals("\\fun"))
+					print("is_fun(" + var + ")");
+				else if (type.equals("\\nat") || type.equals("\\num"))
+					print(var + " in " + memory.get(type));
+				else { //double check
+					type = (String) types.get(type);
+					if (isBasic(type)) {
+						type = type.split(":")[1];
+						print(var + " in " + type);
+						return type;
+					}
+				}
+			}
+			return type;
+		}
+		
+		private boolean isBasic(String type) {
+			if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+				return true;
+			return false;
 		}
 
 	public ExprParser(TokenStream input) {
@@ -218,7 +256,7 @@ public class ExprParser extends Parser {
 				_la = _input.LA(1);
 			} while ( _la==38 || _la==48 );
 
-				   System.out.println("tablita de tippos");
+				  /* System.out.println("tablita de tippos");
 				   System.out.println("-------------------");
 				   String key, value;
 				   Iterator iterator = types.keySet().iterator();
@@ -242,7 +280,7 @@ public class ExprParser extends Parser {
 				           key = (String) iterator.next();
 				           value = (String) zVars.get(key);
 				           System.out.println(key + "\t\t| " + value);
-			               }
+			               }*/
 				
 			}
 		}
@@ -336,7 +374,7 @@ public class ExprParser extends Parser {
 							if (tipoSchema == 1) {
 								String newVarName = newVar((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null));
 								memory.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), newVarName);
-								types.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), "SchemaType:[" + schemaTypeVars + "]");
+								types.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), "SchemaType:" + newVarName + ":[" + schemaTypeVars + "]");
 								schemaTypeVars = "";
 							}
 						
@@ -871,35 +909,14 @@ public class ExprParser extends Parser {
 							setExpressionVars.put(var, newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 						
 						String expType = (String) types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
-						String basicType = expType;
-						if (basicType.startsWith("BasicType") || basicType.startsWith("EnumerationType") || basicType.startsWith("SchemaType"))
-							basicType = (((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null);
+						expType = typeInfo(newVarName, expType);
 						
 						if (tipoSchema == 0)
-							types.put(var, basicType);
+							types.put(var, expType);
 						else { //La agregamos como variable del esquema
 							if (!schemaTypeVars.equals(""))
 								schemaTypeVars = schemaTypeVars.concat(",");
-							schemaTypeVars = schemaTypeVars.concat(var + ":" + basicType);
-						}
-						
-						//Imprimimos el tipo de la variable segun cual sea este	
-						if (tipoSchema == 0 & basicType != null) {
-							String type = getType(basicType);
-							if (type.equals("\\seq"))
-								print("list(" + newVarName + ")");
-							else if (type.equals("\\rel"))
-								print("is_rel(" + newVarName + ")");
-							else if (type.equals("\\pfun"))
-								print("is_pfun(" + newVarName + ")");
-							else if (type.equals("\\fun"))
-								print("is_fun(" + newVarName + ")");
-							else if (expType.equals("\\nat") || expType.equals("\\num"))
-								print(newVarName + " in " + memory.get(expType));
-							else if (expType.startsWith("BasicType:"))
-								print(newVarName + " in " + basicType);
-							else if (expType.startsWith("EnumerationType:"))
-								print(newVarName + " in " + basicType);
+							schemaTypeVars = schemaTypeVars.concat(var + ":" + expType);
 						}
 					}
 				
@@ -1387,7 +1404,7 @@ public class ExprParser extends Parser {
 						}
 						else if ((((ExpressionContext)_localctx).pre_gen!=null?_input.getText(((ExpressionContext)_localctx).pre_gen.start,((ExpressionContext)_localctx).pre_gen.stop):null).equals("\\seq")) {
 							String eType = (String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
-							if (eType.startsWith("BasicType") || eType.startsWith("EnumerationType") || eType.startsWith("SchemaType"))
+							if (isBasic(eType))
 								eType = (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null);
 						
 							types.put("\\seq" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\seq" + eType);
@@ -1402,7 +1419,7 @@ public class ExprParser extends Parser {
 				setState(241); ((ExpressionContext)_localctx).e = expression(8);
 
 						String eType = (String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
-						if (eType.startsWith("BasicType") || eType.startsWith("EnumerationType") || eType.startsWith("SchemaType"))
+						if (isBasic(eType))
 							eType = (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null);
 					
 						types.put("\\power" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\power" + eType);
@@ -1632,11 +1649,11 @@ public class ExprParser extends Parser {
 
 						          		//Guardo el tipo
 						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
-						          		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
+						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
 						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
-						          		if (bType.startsWith("BasicType") || bType.startsWith("EnumerationType"))
+						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
 						          		types.put((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null) + "\\rel" + (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null), aType + "\\rel" + bType );
@@ -1662,11 +1679,11 @@ public class ExprParser extends Parser {
 
 						          		//Guardo el tipo
 						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
-						          		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
+						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
 						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
-						          		if (bType.startsWith("BasicType") || bType.startsWith("EnumerationType"))
+						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
 						          		types.put((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null) + (((ExpressionContext)_localctx).op!=null?((ExpressionContext)_localctx).op.getText():null) + (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null), aType + "\\pfun" + bType );
@@ -1686,11 +1703,11 @@ public class ExprParser extends Parser {
 
 						          		//Guardo el tipo
 						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
-						          		if (aType.startsWith("BasicType") || aType.startsWith("EnumerationType")) {
+						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
 						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
-						          		if (bType.startsWith("BasicType") || bType.startsWith("EnumerationType"))
+						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
 						          		types.put((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null) + "\\fun" + (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null), aType + "\\fun" + bType );
@@ -1715,18 +1732,16 @@ public class ExprParser extends Parser {
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          			String newVarName = newVar();
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
+						          			
 						          			if (modoSetExpression != 0 )
 						          				setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
-						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), getChildType((String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1));
+
+						          			String newVarType = getChildType((String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1);
+						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarType);
 						          			print("apply(" + a + "," + b + "," + newVarName + ")");
 						          			
-						          			//Consulto el tipo para ver si es numerico
-						          			String newVarType = getChildType((String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1);
-						          			
-						          			if (newVarType.equals("\\num"))
-						          				print(newVarName + " in NUM");
-						          			else if (newVarType.equals("\\nat"))
-						          				print(newVarName + " in NAT");
+						          			//Imprimimos la informacion del tipo de la variable
+						          			typeInfo(newVarName, newVarType);
 						          		}
 						          	
 						}
@@ -1749,8 +1764,7 @@ public class ExprParser extends Parser {
 						          				e1Type = (String) types.get(e1Type);
 						          			
 						          			if (e1Type.startsWith("SchemaType:")) {
-						          				String schemaVars = e1Type.substring("SchemaType:".length());
-						          				
+						          				String schemaVars = e1Type.split(":", 3)[2];
 						          				//Obtengo el indice de la variable e2 dentro de la lista de variables del tipo schema
 						          				//Primero obtenemos la lista de variables
 						          				schemaVars = schemaVars.substring(1, schemaVars.length()-1);
@@ -1769,11 +1783,7 @@ public class ExprParser extends Parser {
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "." + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				print("nth1(" + position + "," + memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)) + "," + newVarName + ")");
 						          				
-						          				//Consulto el tipo para ver si es numerico
-						          				if (type.equals("\\num"))
-						          					print(newVarName + " in NUM");
-						          				else if (type.equals("\\nat"))
-						          					print(newVarName + " in NAT");
+						          				typeInfo(newVarName, type);
 						          				
 						          			}
 						          		}
@@ -1866,7 +1876,9 @@ public class ExprParser extends Parser {
 						          			else if ((((ExpressionContext)_localctx).IN_FUN_P4!=null?((ExpressionContext)_localctx).IN_FUN_P4.getText():null).equals("\\cap")){
 						          					print("dinters(" + a + "," + b + "," + newVarName + ")");
 						          					memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
-						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)));
+						          					String type = (String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
+						          					typeInfo(newVarName, type);
 						          					if (modoSetExpression != 0 )
 						          						setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          			}
@@ -1921,7 +1933,9 @@ public class ExprParser extends Parser {
 						          			else if ((((ExpressionContext)_localctx).IN_FUN_P3!=null?((ExpressionContext)_localctx).IN_FUN_P3.getText():null).equals("\\cup")){
 						          					print("dunion(" + a + "," + b + "," + newVarName + ")");
 						          					memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
-						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)));
+						          					String type = (String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
+						          					typeInfo(newVarName, type);
 						          					if (modoSetExpression != 0 )
 						          						setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          			}
@@ -1978,7 +1992,7 @@ public class ExprParser extends Parser {
 						          			((ExpressionContext)_localctx).zName =  _localctx.zName.concat(exp);
 						          			
 						          			String expType = (String) types.get(exp);
-						          			if (expType.startsWith("BasicType") || expType.startsWith("EnumerationType"))
+						          			if (isBasic(expType))
 						          				unfoldedType = unfoldedType.concat(exp);
 						          			else
 						          				unfoldedType = unfoldedType.concat(expType);
