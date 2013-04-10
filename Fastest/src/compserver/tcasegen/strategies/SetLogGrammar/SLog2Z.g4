@@ -18,7 +18,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
 	
-	public HashMap getZVars(){
+	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
 	

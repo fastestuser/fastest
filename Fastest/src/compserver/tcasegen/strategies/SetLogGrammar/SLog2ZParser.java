@@ -25,12 +25,12 @@ public class SLog2ZParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__15=1, T__14=2, T__13=3, T__12=4, T__11=5, T__10=6, T__9=7, T__8=8, 
-		T__7=9, T__6=10, T__5=11, T__4=12, T__3=13, T__2=14, T__1=15, T__0=16, 
-		NAME=17, CTE=18, NUM=19, NL=20, WS=21, SKIP=22;
+		T__17=1, T__16=2, T__15=3, T__14=4, T__13=5, T__12=6, T__11=7, T__10=8, 
+		T__9=9, T__8=10, T__7=11, T__6=12, T__5=13, T__4=14, T__3=15, T__2=16, 
+		T__1=17, T__0=18, NAME=19, CTE=20, NUM=21, NL=22, WS=23, SKIP=24;
 	public static final String[] tokenNames = {
-		"<INVALID>", "']'", "')'", "'],'", "','", "'set('", "'['", "'-'", "'='", 
-		"'_CONSTR'", "'\\'", "'{'", "'neq'", "'NUM = int(-10000000000, 10000000000),'", 
+		"<INVALID>", "']'", "')'", "'],'", "','", "'list('", "'set('", "'['", 
+		"'-'", "'='", "'_CONSTR'", "'integer('", "'\\'", "'{'", "'neq'", "'NUM = int(-10000000000, 10000000000),'", 
 		"'NAT = int(0, 10000000000),'", "'}'", "'|'", "NAME", "CTE", "NUM", "'\n'", 
 		"WS", "SKIP"
 	};
@@ -58,7 +58,7 @@ public class SLog2ZParser extends Parser {
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
 		
-		public HashMap getZVars(){
+		public HashMap<String,String> getZVars(){
 			return zVars;
 		}
 		
@@ -199,7 +199,7 @@ public class SLog2ZParser extends Parser {
 				setState(17); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 13) | (1L << 14) | (1L << NAME))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 15) | (1L << 16) | (1L << NAME))) != 0) );
 
 						System.out.println("salida: \n");
 						printHashMap( salida );llenarZVars();
@@ -248,12 +248,12 @@ public class SLog2ZParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21); match(9);
-			setState(22); match(8);
-			setState(23); match(6);
+			setState(21); match(10);
+			setState(22); match(9);
+			setState(23); match(7);
 			setState(32);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 5) | (1L << 6) | (1L << 7) | (1L << 11) | (1L << NAME) | (1L << CTE))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 5) | (1L << 6) | (1L << 7) | (1L << 8) | (1L << 11) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
 				{
 				setState(24); restr();
 				setState(29);
@@ -315,27 +315,45 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 4, RULE_restr);
 		((RestrContext)getInvokingContext(2)).valor =  new StringValor();
 		try {
-			setState(45);
+			setState(55);
 			switch (_input.LA(1)) {
-			case 5:
+			case 6:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(36); match(5);
+				setState(36); match(6);
 				setState(37); ((RestrContext)_localctx).expr = expr();
 				setState(38); match(2);
 				((RestrContext)getInvokingContext(2)).valor.setValor("\\{\\}"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
-			case 6:
-			case 7:
-			case 11:
-			case NAME:
-			case CTE:
+			case 5:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(41); expr();
-				setState(42); match(12);
-				setState(43); expr();
+				setState(41); match(5);
+				setState(42); ((RestrContext)_localctx).expr = expr();
+				setState(43); match(2);
+				((RestrContext)getInvokingContext(2)).valor.setValor("\\langle\\rangle"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				}
+				break;
+			case 11:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(46); match(11);
+				setState(47); ((RestrContext)_localctx).expr = expr();
+				setState(48); match(2);
+				((RestrContext)getInvokingContext(2)).valor.setValor("666"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				}
+				break;
+			case 7:
+			case 8:
+			case 13:
+			case NAME:
+			case CTE:
+				enterOuterAlt(_localctx, 4);
+				{
+				setState(51); expr();
+				setState(52); match(14);
+				setState(53); expr();
 				}
 				break;
 			default:
@@ -387,38 +405,38 @@ public class SLog2ZParser extends Parser {
 		((SeqIgualContext)getInvokingContext(3)).valor =  new StringValor();
 		int _la;
 		try {
-			setState(62);
+			setState(72);
 			switch (_input.LA(1)) {
-			case 13:
+			case 15:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(47); match(13);
+				setState(57); match(15);
 				}
 				break;
-			case 14:
+			case 16:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(48); match(14);
+				setState(58); match(16);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(56); 
+				setState(66); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				do {
 					{
 					{
-					setState(49); ((SeqIgualContext)_localctx).a = match(NAME);
+					setState(59); ((SeqIgualContext)_localctx).a = match(NAME);
 					salida.put((((SeqIgualContext)_localctx).a!=null?((SeqIgualContext)_localctx).a.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
-					setState(51); match(8);
-					setState(52); ((SeqIgualContext)_localctx).b = expr();
+					setState(61); match(9);
+					setState(62); ((SeqIgualContext)_localctx).b = expr();
 					salida.put(((SeqIgualContext)_localctx).b.valor,((SeqIgualContext)getInvokingContext(3)).valor);
-					setState(54); match(4);
+					setState(64); match(4);
 					}
 					}
-					setState(58); 
+					setState(68); 
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				} while ( _la==NAME );
@@ -480,105 +498,105 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 8, RULE_expr);
 		int _la;
 		try {
-			setState(116);
+			setState(126);
 			switch (_input.LA(1)) {
 			case CTE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(64); ((ExprContext)_localctx).CTE = match(CTE);
+				setState(74); ((ExprContext)_localctx).CTE = match(CTE);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).CTE!=null?((ExprContext)_localctx).CTE.getText():null);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(66); ((ExprContext)_localctx).NAME = match(NAME);
+				setState(76); ((ExprContext)_localctx).NAME = match(NAME);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).NAME!=null?((ExprContext)_localctx).NAME.getText():null);
 				}
 				break;
-			case 11:
+			case 13:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(68); match(11);
-				setState(69); ((ExprContext)_localctx).a = expr();
+				setState(78); match(13);
+				setState(79); ((ExprContext)_localctx).a = expr();
 				((ExprContext)_localctx).valor =  "{" + ((ExprContext)_localctx).a.valor;
-				setState(77);
+				setState(87);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==4) {
 					{
 					{
-					setState(71); match(4);
-					setState(72); ((ExprContext)_localctx).b = expr();
+					setState(81); match(4);
+					setState(82); ((ExprContext)_localctx).b = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + "," + ((ExprContext)_localctx).b.valor;
 					}
 					}
-					setState(79);
+					setState(89);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(84);
+				setState(94);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==10) {
+				while (_la==12) {
 					{
 					{
-					setState(80); match(10);
-					setState(81); expr();
+					setState(90); match(12);
+					setState(91); expr();
 					}
 					}
-					setState(86);
+					setState(96);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(87); match(15);
+				setState(97); match(17);
 				((ExprContext)_localctx).valor =  _localctx.valor + "}";
 				}
 				break;
-			case 6:
+			case 7:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(90); match(6);
-				setState(91); ((ExprContext)_localctx).a = expr();
+				setState(100); match(7);
+				setState(101); ((ExprContext)_localctx).a = expr();
 				((ExprContext)_localctx).valor =  "[" + ((ExprContext)_localctx).a.valor;
-				setState(99);
+				setState(109);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==4) {
 					{
 					{
-					setState(93); match(4);
-					setState(94); ((ExprContext)_localctx).b = expr();
+					setState(103); match(4);
+					setState(104); ((ExprContext)_localctx).b = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + "," + ((ExprContext)_localctx).b.valor;
 					}
 					}
-					setState(101);
+					setState(111);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(106);
+				setState(116);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==16) {
+				while (_la==18) {
 					{
 					{
-					setState(102); match(16);
-					setState(103); expr();
+					setState(112); match(18);
+					setState(113); expr();
 					}
 					}
-					setState(108);
+					setState(118);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(109); match(1);
+				setState(119); match(1);
 				((ExprContext)_localctx).valor =  _localctx.valor + "]";
 				}
 				break;
-			case 7:
+			case 8:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(112); match(7);
-				setState(113); expr();
+				setState(122); match(8);
+				setState(123); expr();
 				((ExprContext)_localctx).valor =  "-" + _localctx.valor ;
 				}
 				break;
@@ -598,35 +616,38 @@ public class SLog2ZParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3\30y\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\2\3\2\6"+
-		"\2\22\n\2\r\2\16\2\23\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3\36\n\3\f\3\16"+
-		"\3!\13\3\5\3#\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\60\n"+
-		"\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\6\5;\n\5\r\5\16\5<\3\5\3\5\5\5"+
-		"A\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6N\n\6\f\6\16\6Q\13"+
-		"\6\3\6\3\6\7\6U\n\6\f\6\16\6X\13\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
-		"\3\6\7\6d\n\6\f\6\16\6g\13\6\3\6\3\6\7\6k\n\6\f\6\16\6n\13\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\3\6\5\6w\n\6\3\6\2\7\2\4\6\b\n\2\2\u0082\2\f\3\2\2\2\4"+
-		"\27\3\2\2\2\6/\3\2\2\2\b@\3\2\2\2\nv\3\2\2\2\f\r\5\4\3\2\r\21\7\26\2\2"+
-		"\16\17\5\b\5\2\17\20\7\26\2\2\20\22\3\2\2\2\21\16\3\2\2\2\22\23\3\2\2"+
-		"\2\23\21\3\2\2\2\23\24\3\2\2\2\24\25\3\2\2\2\25\26\b\2\1\2\26\3\3\2\2"+
-		"\2\27\30\7\13\2\2\30\31\7\n\2\2\31\"\7\b\2\2\32\37\5\6\4\2\33\34\7\6\2"+
-		"\2\34\36\5\6\4\2\35\33\3\2\2\2\36!\3\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 "+
-		"#\3\2\2\2!\37\3\2\2\2\"\32\3\2\2\2\"#\3\2\2\2#$\3\2\2\2$%\7\5\2\2%\5\3"+
-		"\2\2\2&\'\7\7\2\2\'(\5\n\6\2()\7\4\2\2)*\b\4\1\2*\60\3\2\2\2+,\5\n\6\2"+
-		",-\7\16\2\2-.\5\n\6\2.\60\3\2\2\2/&\3\2\2\2/+\3\2\2\2\60\7\3\2\2\2\61"+
-		"A\7\17\2\2\62A\7\20\2\2\63\64\7\23\2\2\64\65\b\5\1\2\65\66\7\n\2\2\66"+
-		"\67\5\n\6\2\678\b\5\1\289\7\6\2\29;\3\2\2\2:\63\3\2\2\2;<\3\2\2\2<:\3"+
-		"\2\2\2<=\3\2\2\2=>\3\2\2\2>?\b\5\1\2?A\3\2\2\2@\61\3\2\2\2@\62\3\2\2\2"+
-		"@:\3\2\2\2A\t\3\2\2\2BC\7\24\2\2Cw\b\6\1\2DE\7\23\2\2Ew\b\6\1\2FG\7\r"+
-		"\2\2GH\5\n\6\2HO\b\6\1\2IJ\7\6\2\2JK\5\n\6\2KL\b\6\1\2LN\3\2\2\2MI\3\2"+
-		"\2\2NQ\3\2\2\2OM\3\2\2\2OP\3\2\2\2PV\3\2\2\2QO\3\2\2\2RS\7\f\2\2SU\5\n"+
-		"\6\2TR\3\2\2\2UX\3\2\2\2VT\3\2\2\2VW\3\2\2\2WY\3\2\2\2XV\3\2\2\2YZ\7\21"+
-		"\2\2Z[\b\6\1\2[w\3\2\2\2\\]\7\b\2\2]^\5\n\6\2^e\b\6\1\2_`\7\6\2\2`a\5"+
-		"\n\6\2ab\b\6\1\2bd\3\2\2\2c_\3\2\2\2dg\3\2\2\2ec\3\2\2\2ef\3\2\2\2fl\3"+
-		"\2\2\2ge\3\2\2\2hi\7\22\2\2ik\5\n\6\2jh\3\2\2\2kn\3\2\2\2lj\3\2\2\2lm"+
-		"\3\2\2\2mo\3\2\2\2nl\3\2\2\2op\7\3\2\2pq\b\6\1\2qw\3\2\2\2rs\7\t\2\2s"+
-		"t\5\n\6\2tu\b\6\1\2uw\3\2\2\2vB\3\2\2\2vD\3\2\2\2vF\3\2\2\2v\\\3\2\2\2"+
-		"vr\3\2\2\2w\13\3\2\2\2\r\23\37\"/<@OVelv";
+		"\2\3\32\u0083\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\2"+
+		"\3\2\6\2\22\n\2\r\2\16\2\23\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3\36\n\3"+
+		"\f\3\16\3!\13\3\5\3#\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4:\n\4\3\5\3\5\3\5\3\5\3\5\3"+
+		"\5\3\5\3\5\3\5\6\5E\n\5\r\5\16\5F\3\5\3\5\5\5K\n\5\3\6\3\6\3\6\3\6\3\6"+
+		"\3\6\3\6\3\6\3\6\3\6\3\6\7\6X\n\6\f\6\16\6[\13\6\3\6\3\6\7\6_\n\6\f\6"+
+		"\16\6b\13\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6n\n\6\f\6\16\6"+
+		"q\13\6\3\6\3\6\7\6u\n\6\f\6\16\6x\13\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6"+
+		"\u0081\n\6\3\6\2\7\2\4\6\b\n\2\2\u008e\2\f\3\2\2\2\4\27\3\2\2\2\69\3\2"+
+		"\2\2\bJ\3\2\2\2\n\u0080\3\2\2\2\f\r\5\4\3\2\r\21\7\30\2\2\16\17\5\b\5"+
+		"\2\17\20\7\30\2\2\20\22\3\2\2\2\21\16\3\2\2\2\22\23\3\2\2\2\23\21\3\2"+
+		"\2\2\23\24\3\2\2\2\24\25\3\2\2\2\25\26\b\2\1\2\26\3\3\2\2\2\27\30\7\f"+
+		"\2\2\30\31\7\13\2\2\31\"\7\t\2\2\32\37\5\6\4\2\33\34\7\6\2\2\34\36\5\6"+
+		"\4\2\35\33\3\2\2\2\36!\3\2\2\2\37\35\3\2\2\2\37 \3\2\2\2 #\3\2\2\2!\37"+
+		"\3\2\2\2\"\32\3\2\2\2\"#\3\2\2\2#$\3\2\2\2$%\7\5\2\2%\5\3\2\2\2&\'\7\b"+
+		"\2\2\'(\5\n\6\2()\7\4\2\2)*\b\4\1\2*:\3\2\2\2+,\7\7\2\2,-\5\n\6\2-.\7"+
+		"\4\2\2./\b\4\1\2/:\3\2\2\2\60\61\7\r\2\2\61\62\5\n\6\2\62\63\7\4\2\2\63"+
+		"\64\b\4\1\2\64:\3\2\2\2\65\66\5\n\6\2\66\67\7\20\2\2\678\5\n\6\28:\3\2"+
+		"\2\29&\3\2\2\29+\3\2\2\29\60\3\2\2\29\65\3\2\2\2:\7\3\2\2\2;K\7\21\2\2"+
+		"<K\7\22\2\2=>\7\25\2\2>?\b\5\1\2?@\7\13\2\2@A\5\n\6\2AB\b\5\1\2BC\7\6"+
+		"\2\2CE\3\2\2\2D=\3\2\2\2EF\3\2\2\2FD\3\2\2\2FG\3\2\2\2GH\3\2\2\2HI\b\5"+
+		"\1\2IK\3\2\2\2J;\3\2\2\2J<\3\2\2\2JD\3\2\2\2K\t\3\2\2\2LM\7\26\2\2M\u0081"+
+		"\b\6\1\2NO\7\25\2\2O\u0081\b\6\1\2PQ\7\17\2\2QR\5\n\6\2RY\b\6\1\2ST\7"+
+		"\6\2\2TU\5\n\6\2UV\b\6\1\2VX\3\2\2\2WS\3\2\2\2X[\3\2\2\2YW\3\2\2\2YZ\3"+
+		"\2\2\2Z`\3\2\2\2[Y\3\2\2\2\\]\7\16\2\2]_\5\n\6\2^\\\3\2\2\2_b\3\2\2\2"+
+		"`^\3\2\2\2`a\3\2\2\2ac\3\2\2\2b`\3\2\2\2cd\7\23\2\2de\b\6\1\2e\u0081\3"+
+		"\2\2\2fg\7\t\2\2gh\5\n\6\2ho\b\6\1\2ij\7\6\2\2jk\5\n\6\2kl\b\6\1\2ln\3"+
+		"\2\2\2mi\3\2\2\2nq\3\2\2\2om\3\2\2\2op\3\2\2\2pv\3\2\2\2qo\3\2\2\2rs\7"+
+		"\24\2\2su\5\n\6\2tr\3\2\2\2ux\3\2\2\2vt\3\2\2\2vw\3\2\2\2wy\3\2\2\2xv"+
+		"\3\2\2\2yz\7\3\2\2z{\b\6\1\2{\u0081\3\2\2\2|}\7\n\2\2}~\5\n\6\2~\177\b"+
+		"\6\1\2\177\u0081\3\2\2\2\u0080L\3\2\2\2\u0080N\3\2\2\2\u0080P\3\2\2\2"+
+		"\u0080f\3\2\2\2\u0080|\3\2\2\2\u0081\13\3\2\2\2\r\23\37\"9FJY`ov\u0080";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
