@@ -242,44 +242,33 @@ public class SetLogStrategy implements TCaseStrategy{
         parser2.lineas();
         
 
-      //Creamos el caso de prueba a partir de los valores de las variables obtenidas
-      		ZFactoryImpl zFactory = new ZFactoryImpl();
-      		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
-      		Map<String, String> zVars = new HashMap<String, String>(); //Esto me deberia llegar completo de arriba
-      		zVars.put("smax", "\\{(sensors1, 4)\\}");
-      		zVars.put("r?", "4");
-      		Iterator<String> keys = zVars.keySet().iterator();
-      		ZLive zLive = UniqueZLive.getInstance();
-      		
-      		while (keys.hasNext()) {
-      			String varName = keys.next();
-      			String value = zVars.get(varName);
-      			
-      			RefExpr var = zFactory.createRefExpr(zFactory.createZName(varName, zFactory.createZStrokeList(), "0"), zFactory.createZExprList(), false, false);
-      			//Expr val = zFactory.createRefExpr(zFactory.createZName(value, zFactory.createZStrokeList(), "0"), zFactory.createZExprList(), false, false);
-      			
-      			Expr val;
-      			try {
-      				val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-      				map.put(var, val);
-      				System.out.println("VARIABLE: " + SpecUtils.termToLatex(var));
-      				System.out.println("VALUE: " + SpecUtils.termToLatex(val));
-
-      			} catch (IOException e) {
-      				// TODO Auto-generated catch block
-      				e.printStackTrace();
-      			} catch (CommandException e) {
-      				// TODO Auto-generated catch block
-      				e.printStackTrace();
-      			}
-      					//parsePred(new StringSource(predStr), zLive.getCurrentSection(),zLive.getSectionManager());
-      		}
-      		
-      		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
-      		System.out.println("SCHEMA: " + SpecUtils.termToLatex(abstractTCase));
-      		
-      		
-              return null;
+		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
+		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
+		Map<String, String> zVars = parser2.getZVars();
+		Iterator<String> keys = zVars.keySet().iterator();
+		ZLive zLive = UniqueZLive.getInstance();
+		
+		while (keys.hasNext()) {
+			String varName = keys.next();
+			String value = zVars.get(varName);
+			
+			RefExpr var;
+			Expr val;
+			try {
+				var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
+				val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
+				map.put(var, val);
+		
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (CommandException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
+		
+		  return abstractTCase;
 	}
 	
 private TClass replaceAxDefValues(TClass tClass){
