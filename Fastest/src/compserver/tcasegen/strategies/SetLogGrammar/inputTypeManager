@@ -1,0 +1,5 @@
+<<<<<<< .mine
+\power (A \pfun B)
+=======
+(\seq a \fun b)\pfun \power \seq A
+>>>>>>> .r59

@@ -1,0 +1,13 @@
+\begin{zed}
+[ncta] \\
+saludos ::= hola | chau \\
+\end{zed}
+
+\begin{schema}{Extraer}\\
+f: \nat \pfun \seq \num \\
+x, y: \seq \nat
+\where
+f~x = 0 \\
+\ran f~x = 0
+\end{schema}
+

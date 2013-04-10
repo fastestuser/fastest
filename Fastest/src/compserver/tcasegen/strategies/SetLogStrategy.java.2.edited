@@ -2,39 +2,33 @@ package compserver.tcasegen.strategies;
 
 import java.io.BufferedReader;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+<<<<<<< .mine
+import java.util.Set;
+=======
 import java.util.Set;
 
 
 
+>>>>>>> .r66
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 
 
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.FreePara;
@@ -50,21 +44,21 @@ import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
 import common.z.AbstractTCase;
-import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
 import common.z.TClass;
+<<<<<<< .mine
 import common.z.TClassImpl;
-
-import common.z.czt.UniqueZLive;
-import common.z.czt.visitors.BasicTypeNamesExtractor;
-
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
+=======
+import common.z.TClassImpl;
 import common.z.czt.visitors.BasicTypeNamesExtractor;
+>>>>>>> .r66
+import common.z.czt.visitors.CZTCloner;
+import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.SetLogGrammar.*;
 
@@ -77,6 +71,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
     private List<String> basicTypeNames;
+    private Map<RefExpr, Expr> axDefsValues;
     
     
 	
@@ -88,6 +83,11 @@ public class SetLogStrategy implements TCaseStrategy{
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
+		
+<<<<<<< .mine
+		System.out.println("clase Z: \n" + SpecUtils.termToLatex(tClass.getMyAxPara()));
+
+=======
 		//Reemplazamos las definiciones axiomaticas por sus valores
         if (axDefsValues != null) {
 
@@ -113,6 +113,7 @@ public class SetLogStrategy implements TCaseStrategy{
 
         //Buscamos los tipos que aparecen en tClass, para incluir
         //su informacion en la entrada del parser
+>>>>>>> .r66
 		String schemas = "", antlrInput = "";
 		
 		ZParaList zParaList = null;
@@ -194,7 +195,6 @@ public class SetLogStrategy implements TCaseStrategy{
         System.out.println("\n salida antlr:\n" + auxs );
         
         //Ejecucion de SetLog
-        String setlogOutput = "";
 		try{
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
@@ -207,7 +207,7 @@ public class SetLogStrategy implements TCaseStrategy{
 			+ "\nuse_module(library(dialect/sicstus/timeout))."
 			+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 			+ "\ntime_out(setlog( \n"
-			+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
+			+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo & el cual no corresponde
 			+ "\n,_CONSTR),1000,_RET).";
 			
 			out.write(setlogInput.getBytes());
@@ -215,24 +215,25 @@ public class SetLogStrategy implements TCaseStrategy{
 			
 		    BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 		    String s;
-		    System.out.println("SETLOG OUT:\n");
+<<<<<<< .mine
+		    System.out.println("\n salida setlog:");
+=======
+		    String setlogOutput = "";
+>>>>>>> .r66
 		    while ((s = stdError.readLine()) != null) {
-		    	System.out.println(s);
-		       if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
-		    	   
+		       if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("EOF"))) {
 		    	   setlogOutput = setlogOutput.concat(s + "\n");
-		       }else if(s.startsWith("_CONSTR")){
-		    	   setlogOutput = s + "\n" + setlogOutput;
-		    	   break;
 		       }
 		    }
 		    System.out.println("SETLOG OUT:\n" + setlogOutput);
 		}
-		catch (Exception e){ 
-	          e.printStackTrace(); 
-			} 
 		
-		input = new ANTLRInputStream(setlogOutput);
+		catch (Exception e){ 
+          e.printStackTrace(); 
+		} 
+		
+		String temp = "A = B, B = {4},\nC = D, D = {5},";
+		input = new ANTLRInputStream(temp);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);
         SLog2ZParser parser2 = new SLog2ZParser(tokens);
@@ -240,46 +241,8 @@ public class SetLogStrategy implements TCaseStrategy{
         
         //tambien imprime en pantalla
         parser2.lineas();
-        
-
-      //Creamos el caso de prueba a partir de los valores de las variables obtenidas
-      		ZFactoryImpl zFactory = new ZFactoryImpl();
-      		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
-      		Map<String, String> zVars = new HashMap<String, String>(); //Esto me deberia llegar completo de arriba
-      		zVars.put("smax", "\\{(sensors1, 4)\\}");
-      		zVars.put("r?", "4");
-      		Iterator<String> keys = zVars.keySet().iterator();
-      		ZLive zLive = UniqueZLive.getInstance();
-      		
-      		while (keys.hasNext()) {
-      			String varName = keys.next();
-      			String value = zVars.get(varName);
-      			
-      			RefExpr var = zFactory.createRefExpr(zFactory.createZName(varName, zFactory.createZStrokeList(), "0"), zFactory.createZExprList(), false, false);
-      			//Expr val = zFactory.createRefExpr(zFactory.createZName(value, zFactory.createZStrokeList(), "0"), zFactory.createZExprList(), false, false);
-      			
-      			Expr val;
-      			try {
-      				val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-      				map.put(var, val);
-      				System.out.println("VARIABLE: " + SpecUtils.termToLatex(var));
-      				System.out.println("VALUE: " + SpecUtils.termToLatex(val));
-
-      			} catch (IOException e) {
-      				// TODO Auto-generated catch block
-      				e.printStackTrace();
-      			} catch (CommandException e) {
-      				// TODO Auto-generated catch block
-      				e.printStackTrace();
-      			}
-      					//parsePred(new StringSource(predStr), zLive.getCurrentSection(),zLive.getSectionManager());
-      		}
-      		
-      		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
-      		System.out.println("SCHEMA: " + SpecUtils.termToLatex(abstractTCase));
-      		
-      		
-              return null;
+		
+        return null;
 	}
 	
 private TClass replaceAxDefValues(TClass tClass){
