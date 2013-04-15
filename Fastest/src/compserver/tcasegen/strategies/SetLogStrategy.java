@@ -94,7 +94,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	}
     
     private HashMap<String,String> llenarZVars(ExprParser exprP, SLog2ZParser SL2ZP){
-    	Map<String, String> zVars = exprP.getZVars();
+    	Map<String, String> zVars = SL2ZP.getZVars();
     	Map<String, String> sLogName = exprP.getMemory();
         Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
@@ -273,7 +273,9 @@ public class SetLogStrategy implements TCaseStrategy{
 	          e.printStackTrace(); 
 			} 
 		//traduccion de SLog a Z
-		input = new ANTLRInputStream(setlogOutput);
+		String sss = "UID = {U\\_G1152},\nACCNUM = {N\\_G1165},\nNAT = int(0, 10000000000),\nNUM = int(-10000000000, 10000000000),\nX = -10000000000,\nM = 0,\nBalances = {[N, 0]},\nVAR0 = 0,\nClients = Owners, Owners = {},";
+		//String sss = "UID = {U\\_G1152},";
+		input = new ANTLRInputStream(sss);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);
         SLog2ZParser parser2 = new SLog2ZParser(tokens);

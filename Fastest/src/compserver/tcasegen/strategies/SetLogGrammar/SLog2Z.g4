@@ -99,14 +99,13 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 }
 
 lineas
-	:	%constr NL 	
-		( seqIgual NL)+ 
+	:	( seqIgual NL?)+ 
 		{
 			System.out.println("salida: \n");
 			printHashMap( vars );llenarZVars();
-			System.out.println("\nzVars:");
+			System.out.println("\nzVars vacias +++++++++:");
 			printHashMap(zVars);
-			//System.out.println("const***** " + $constr.text);
+			
 		}
 	;
 
