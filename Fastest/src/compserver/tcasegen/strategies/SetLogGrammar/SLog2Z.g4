@@ -82,16 +82,16 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	
 	public void llenarZVars(){
 		Iterator iterator = vars.keySet().iterator();  
-   		String slname,zname,valor;
+		String slname,zname,valor;
 		while (iterator.hasNext()) {  
-		   slname = iterator.next().toString();
-		   valor = vars.get(slname).toString(); 
-		   if (zNames.containsKey(slname)){
-		   		zname = zNames.get(slname);
-		   		if (zVars.containsKey(zname)){
-		   			zVars.put(zname,valor);
-		   		} 	
-		   }   
+			slname = iterator.next().toString();
+			if (vars.get(slname)!=null){	
+				valor = vars.get(slname).toString();
+				zname = zNames.get(slname);
+				if (zVars.containsKey(zname)){
+					zVars.put(zname,valor);
+				} 	
+			}  
 		} 
 	}
 	

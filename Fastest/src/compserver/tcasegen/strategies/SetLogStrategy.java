@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
 
 
 
@@ -79,6 +81,33 @@ public class SetLogStrategy implements TCaseStrategy{
     private List<String> basicTypeNames;
     
     
+    private HashMap<String,String> llenarZVars(ExprParser exprP, SLog2ZParser SL2ZP){
+    	Map<String, String> zVars = exprP.getZVars();
+        Iterator<String> iterator = zVars.keySet().iterator();  
+		String key,valor;
+		ConstantCreator cc; 
+		HashMap<String,String> tipos = exprP.getTypes();
+		while (iterator.hasNext()) {  
+			key = iterator.next().toString();
+			valor = zVars.get(key);
+			if (valor == null){
+				
+				String tipo = tipos.get(key);
+				ANTLRInputStream input = new ANTLRInputStream(tipo);
+		        TypeManagerLexer lexer = new TypeManagerLexer(input);
+		        CommonTokenStream tokens = new CommonTokenStream(lexer);
+		        TypeManagerParser TMP = new TypeManagerParser(tokens);
+		        TMP.typeManage();
+		        DefaultMutableTreeNode root =  TMP.getRoot();
+		        
+		        
+		        cc = new ConstantCreator(valor,root,tipos,null,null);
+		        valor =  cc.getCte();
+				zVars.put(key, valor);
+			}  
+		}
+		return (HashMap<String, String>) zVars;
+    }
 	
 	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
 		this.axDefsValues = axDefsValues;
@@ -241,7 +270,6 @@ public class SetLogStrategy implements TCaseStrategy{
         //tambien imprime en pantalla
         parser2.lineas();
         
-
 
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas

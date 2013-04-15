@@ -47,11 +47,17 @@ public class ConstantCreator {
 				return aux[1];
 			}
 			//si es basicType
-			String zname = zName.get(var);
-			if (zname == null)
-				return ct.toLowerCase() + postfijo++;
+			//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
+			if(zName == null)
+				return ct.toLowerCase() + var;
 			else
-				return ct.toLowerCase()+zname;
+			{
+				String zname = zName.get(var);
+				if (zname == null)
+					return ct.toLowerCase() + postfijo++;
+				else
+					return ct.toLowerCase()+zname;
+			}
 		}
 	}
 
@@ -69,10 +75,14 @@ public class ConstantCreator {
 		if (Character.isUpperCase(c) || c == '_') {
 			String s = null;
 			StringPointer val;
-			val = valores.get(aux);
-			//no cambiar el orden de la conjuncion, para que pueda chequear el lado derecho, el izquierdo debe ser falso
-			if (val != null && val.toString() != null)
-				s = val.toString();
+			if (valores!=null){
+				val = valores.get(aux);
+				//no cambiar el orden de la conjuncion, para que pueda chequear el lado derecho, el izquierdo debe ser falso
+				if (val != null && val.toString() != null)
+					s = val.toString();
+				else
+					s = fullCte(nodo,aux);
+			}
 			else
 				s = fullCte(nodo,aux);
 			salida = new scte(s,iexpr + aux.length());//la longitud que va es la original, no la inventada
