@@ -78,7 +78,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	private Map<RefExpr, Expr> axDefsValues;
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
-    private List<String> basicTypeNames;
+	private List<String> basicTypeNames; 
     
     private void printHashMap(HashMap<String,String> map){
 		Iterator<String> iterator = map.keySet().iterator();  
@@ -130,52 +130,52 @@ public class SetLogStrategy implements TCaseStrategy{
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
 		//Reemplazamos las definiciones axiomaticas por sus valores
-        if (axDefsValues != null) {
+		if (axDefsValues != null) {
 
-        	AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-        	String tClassName = tClass.getSchName();
-            Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
-            Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-            Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-            CZTReplacer replaceVisitor = new CZTReplacer();
+			AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
+			String tClassName = tClass.getSchName();
+			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
+			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+			CZTReplacer replaceVisitor = new CZTReplacer();
 
-            while (iterator.hasNext()) {
-                Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-                RefExpr refExpr = mapEntry.getKey();
-                Expr expr = mapEntry.getValue();
-                replaceVisitor.setOrigTerm(refExpr);
-                replaceVisitor.setNewTerm(expr);
-                pred = (Pred) pred.accept(replaceVisitor);
-            }
+			while (iterator.hasNext()) {
+				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+				RefExpr refExpr = mapEntry.getKey();
+				Expr expr = mapEntry.getValue();
+				replaceVisitor.setOrigTerm(refExpr);
+				replaceVisitor.setNewTerm(expr);
+				pred = (Pred) pred.accept(replaceVisitor);
+			}
 
-            SpecUtils.setAxParaPred(tClassAxPara, pred);
-            tClass = new TClassImpl(tClassAxPara, tClassName);
-        }
+			SpecUtils.setAxParaPred(tClassAxPara, pred);
+			tClass = new TClassImpl(tClassAxPara, tClassName);
+		}
 
-        //Buscamos los tipos que aparecen en tClass, para incluir
-        //su informacion en la entrada del parser
+		//Buscamos los tipos que aparecen en tClass, para incluir
+		//su informacion en la entrada del parser
 		String schemas = "", antlrInput = "";
-		
+
 		ZParaList zParaList = null;
 		for (Sect sect : spec.getSect()) {
-            if (sect instanceof ZSect) {
-                ParaList paraList = ((ZSect) sect).getParaList();
-                if (paraList instanceof ZParaList) {
-                    zParaList = (ZParaList) paraList;
-                }
-            }
-        }
+			if (sect instanceof ZSect) {
+				ParaList paraList = ((ZSect) sect).getParaList();
+				if (paraList instanceof ZParaList) {
+					zParaList = (ZParaList) paraList;
+				}
+			}
+		}
 
 		Iterator<FreePara> freeParasIt = freeParas.iterator();
-		
+
 		//Busco los tipos que se utilizan en tClass
 		TypesExtractor extractor = new TypesExtractor();
 		HashSet<String> types = SpecUtils.getAxParaListOfDecl(tClass).accept(extractor);
 		HashSet<String> typesPrinted = new HashSet<String>();
 		Iterator<String> typesIt = types.iterator();
-		
+
 		while (typesIt.hasNext()){
-			
+
 			String schemaName = typesIt.next();
 			if (!typesPrinted.contains(schemaName)) {
 				AxPara schema = SpecUtils.axParaSearch(schemaName, zParaList);
@@ -183,8 +183,8 @@ public class SetLogStrategy implements TCaseStrategy{
 				if (schemaString.equals("null")){ //No es un tipo esquema
 					if (basicTypeNames.contains(schemaName)){ //Es un tipo basico
 						schemaString = "\\begin{zed}\n" +
-						          "[" + schemaName + "]\n" + 
-						          "\\end{zed}\n\n";
+								"[" + schemaName + "]\n" + 
+								"\\end{zed}\n\n";
 						antlrInput = schemaString + antlrInput;
 					} else { //Es un tipo libre
 						while (freeParasIt.hasNext() && schemaString.equals("null")) {
@@ -196,8 +196,8 @@ public class SetLogStrategy implements TCaseStrategy{
 									Freetype freetype = zFreetypeList.get(i);
 									if (schemaName.equals(freetype.getName().toString())) {
 										schemaString = "\\begin{zed}\n" +
-										          SpecUtils.termToLatex(freetype) + "\n" + 
-										          "\\end{zed}\n\n";
+												SpecUtils.termToLatex(freetype) + "\n" + 
+												"\\end{zed}\n\n";
 										antlrInput = schemaString + antlrInput;
 										break;
 									}
@@ -218,39 +218,39 @@ public class SetLogStrategy implements TCaseStrategy{
 				typesPrinted.add(schemaName);
 			}
 		}
-		
+
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
 		System.out.println("ANTLRINPUT\n" + antlrInput);
-		
+
 		//parseo de Z a SetLog con ANTLR
 		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
-        ExprLexer lexer = new ExprLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ExprParser parser = new ExprParser(tokens);
-        //tambien imprime en pantalla
-        parser.specification();
-       
-        String auxs = parser.getSalida().replaceAll("&", "\n");
-        System.out.println("\n salida antlr:\n" + auxs );
-        
-        //Ejecucion de SetLog
-        String setlogOutput = "";
+		ExprLexer lexer = new ExprLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		ExprParser parser = new ExprParser(tokens);
+		//tambien imprime en pantalla
+		parser.specification();
+
+		String auxs = parser.getSalida().replaceAll("&", "\n");
+		System.out.println("\n salida antlr:\n" + auxs );
+
+		//Ejecucion de SetLog
+		String setlogOutput = "";
 		try{
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
-			
+
 			String antlrOutput = parser.getSalida();
 			System.out.println("ANTLROUTPUT\n" + antlrOutput);
-			
+
 			String setlogInput = "consult(setlog4617)."
-			+ "\nuse_module(library(dialect/sicstus/timeout))."
-			+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
-			+ "\ntime_out(setlog( \n"
-			+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
-			+ "\n,_CONSTR),1000,_RET).";
-			
+					+ "\nuse_module(library(dialect/sicstus/timeout))."
+					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
+					+ "\ntime_out(setlog( \n"
+					+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
+					+ "\n,_CONSTR),1000,_RET).";
+
 			out.write(setlogInput.getBytes());
 			out.close();
 			
@@ -260,22 +260,19 @@ public class SetLogStrategy implements TCaseStrategy{
 		    while ((s = stdError.readLine()) != null) {
 		    	System.out.println(s);
 		       if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
-		    	   
 		    	   setlogOutput = setlogOutput.concat(s + "\n");
 		       }else if(s.startsWith("_CONSTR")){
-		    	   //setlogOutput = s + "\n" + setlogOutput;
 		    	   break;
 		       }
 		    }
 		    System.out.println("SETLOG OUT:\n" + setlogOutput);
+
 		}
 		catch (Exception e){ 
 	          e.printStackTrace(); 
 			} 
 		//traduccion de SLog a Z
-		String sss = "UID = {U\\_G1152},\nACCNUM = {N\\_G1165},\nNAT = int(0, 10000000000),\nNUM = int(-10000000000, 10000000000),\nX = -10000000000,\nM = 0,\nBalances = {[N, 0]},\nVAR0 = 0,\nClients = Owners, Owners = {},";
-		//String sss = "UID = {U\\_G1152},";
-		input = new ANTLRInputStream(sss);
+		input = new ANTLRInputStream(setlogOutput);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);
         SLog2ZParser parser2 = new SLog2ZParser(tokens);
@@ -292,59 +289,61 @@ public class SetLogStrategy implements TCaseStrategy{
 		//Map<String, String> zVars = parser2.getZVars();
 		Iterator<String> keys = zVars.keySet().iterator();
 		ZLive zLive = UniqueZLive.getInstance();
-		
+
 		while (keys.hasNext()) {
 			String varName = keys.next();
 			String value = zVars.get(varName);
 			System.out.println("------ " + varName + " = " + value);
-			RefExpr var;
-			Expr val;
-			try {
-				var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
-				System.out.println("------ " + SpecUtils.termToLatex(var));
-				val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-				System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
-				map.put(var, val);
-		
-			} catch (IOException e) {
-				e.printStackTrace();
-			} catch (CommandException e) {
-				e.printStackTrace();
+			if (value != null) {
+				RefExpr var;
+				Expr val;
+				try {
+					var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
+					System.out.println("------ " + SpecUtils.termToLatex(var));
+					val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
+					System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
+					map.put(var, val);
+
+				} catch (IOException e) {
+					e.printStackTrace();
+				} catch (CommandException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
+
 		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
-		
-		  return abstractTCase;
+
+		return abstractTCase;
 
 	}
-	
-private TClass replaceAxDefValues(TClass tClass){
-    	
-    	AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-    	String tClassName = tClass.getSchName();
-    	
-    	// We replace in predicate the values for axiomatic definitions
-        if (axDefsValues != null) {
-        	
-            Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
-            Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-            Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-            CZTReplacer replaceVisitor = new CZTReplacer();
 
-            while (iterator.hasNext()) {
-                Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-                RefExpr refExpr = mapEntry.getKey();
-                Expr expr = mapEntry.getValue();
-                replaceVisitor.setOrigTerm(refExpr);
-                replaceVisitor.setNewTerm(expr);
-                pred = (Pred) pred.accept(replaceVisitor);
-            }
+	private TClass replaceAxDefValues(TClass tClass){
 
-            SpecUtils.setAxParaPred(tClassAxPara, pred);
-        }
+		AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
+		String tClassName = tClass.getSchName();
 
-        return tClass = new TClassImpl(tClassAxPara, tClassName);
-    	
-    }
+		// We replace in predicate the values for axiomatic definitions
+		if (axDefsValues != null) {
+
+			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
+			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+			CZTReplacer replaceVisitor = new CZTReplacer();
+
+			while (iterator.hasNext()) {
+				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+				RefExpr refExpr = mapEntry.getKey();
+				Expr expr = mapEntry.getValue();
+				replaceVisitor.setOrigTerm(refExpr);
+				replaceVisitor.setNewTerm(expr);
+				pred = (Pred) pred.accept(replaceVisitor);
+			}
+
+			SpecUtils.setAxParaPred(tClassAxPara, pred);
+		}
+
+		return tClass = new TClassImpl(tClassAxPara, tClassName);
+
+	}
 }

@@ -70,32 +70,47 @@ public class ExprLexer extends Lexer {
 		
 		HashMap<String,String> setExpressionVars;
 		
-		HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
-		HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
-		HashMap zVars = new HashMap();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
+		HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
+		HashMap<String,String> types = new HashMap<String,String>();	//En types se guarda informacion sobre los tipos definidos
+		HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
 		                                //el caso de prueba) se les dara un valor.
 		
-		String salida = new String();
+		String out = new String();
+		String functionsOut = new String();
+		
 		public String getSalida() {
-			return salida;
+			return out.concat(functionsOut);
 		}
 		
-		public HashMap getMemory() {
+		public HashMap<String,String> getMemory() {
 			return memory;
 		}
 		
-		public HashMap getTypes() {
+		public HashMap<String,String> getTypes() {
 			return types;
 		}
 		
-		public HashMap getZVars() {
+		public HashMap<String,String> getZVars() {
 			return zVars;
 		}
 
 		public void print(String c) {
 			if (modoSetExpression == 0 & tipoSchema == 0) 
 				//System.out.println(c + " &");
-				salida = salida.concat(c + " &");
+				out = out.concat(c + " &");
+			else if (modoSetExpression == 1)
+				setExpressionDecl = setExpressionDecl.concat(" & " + c);
+			else if (modoSetExpression == 2)
+				setExpressionPred = setExpressionPred.concat(" & " + c);
+			else if (modoSetExpression == 3)
+				setExpressionExpr = setExpressionExpr.concat(" & " + c);
+		}
+		
+		//Este metodo se utiliza para imprimir informacion del tipo: is_pfun, is_rel, etc
+		//ya que debe ir al final de todo
+		public void printAtEnd(String c) {
+			if (modoSetExpression == 0 & tipoSchema == 0) 
+				functionsOut = functionsOut.concat(c + " &");
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
 			else if (modoSetExpression == 2)
@@ -160,17 +175,17 @@ public class ExprLexer extends Lexer {
 			
 				String nodeType = getType(type);
 				if (nodeType.equals("\\seq"))
-					print("list(" + var + ")");
+					printAtEnd("list(" + var + ")");
 				else if (nodeType.equals("\\rel"))
-					print("is_rel(" + var + ")");
+					printAtEnd("is_rel(" + var + ")");
 				else if (nodeType.equals("\\pfun"))
-					print("is_pfun(" + var + ")");
+					printAtEnd("is_pfun(" + var + ")");
 				else if (nodeType.equals("\\fun"))
-					print("is_fun(" + var + ")");
+					printAtEnd("is_fun(" + var + ")");
 				else if (type.equals("\\nat") || type.equals("\\num"))
 					print(var + " in " + memory.get(type));
 				else { //double check
-					type = (String) types.get(type);
+					type = types.get(type);
 					if (isBasic(type)) {
 						type = type.split(":")[1];
 						print(var + " in " + type);

@@ -76,32 +76,47 @@ public class ExprParser extends Parser {
 		
 		HashMap<String,String> setExpressionVars;
 		
-		HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
-		HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
-		HashMap zVars = new HashMap();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
+		HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
+		HashMap<String,String> types = new HashMap<String,String>();	//En types se guarda informacion sobre los tipos definidos
+		HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
 		                                //el caso de prueba) se les dara un valor.
 		
-		String salida = new String();
+		String out = new String();
+		String functionsOut = new String();
+		
 		public String getSalida() {
-			return salida;
+			return out.concat(functionsOut);
 		}
 		
-		public HashMap getMemory() {
+		public HashMap<String,String> getMemory() {
 			return memory;
 		}
 		
-		public HashMap getTypes() {
+		public HashMap<String,String> getTypes() {
 			return types;
 		}
 		
-		public HashMap getZVars() {
+		public HashMap<String,String> getZVars() {
 			return zVars;
 		}
 
 		public void print(String c) {
 			if (modoSetExpression == 0 & tipoSchema == 0) 
 				//System.out.println(c + " &");
-				salida = salida.concat(c + " &");
+				out = out.concat(c + " &");
+			else if (modoSetExpression == 1)
+				setExpressionDecl = setExpressionDecl.concat(" & " + c);
+			else if (modoSetExpression == 2)
+				setExpressionPred = setExpressionPred.concat(" & " + c);
+			else if (modoSetExpression == 3)
+				setExpressionExpr = setExpressionExpr.concat(" & " + c);
+		}
+		
+		//Este metodo se utiliza para imprimir informacion del tipo: is_pfun, is_rel, etc
+		//ya que debe ir al final de todo
+		public void printAtEnd(String c) {
+			if (modoSetExpression == 0 & tipoSchema == 0) 
+				functionsOut = functionsOut.concat(c + " &");
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
 			else if (modoSetExpression == 2)
@@ -166,17 +181,17 @@ public class ExprParser extends Parser {
 			
 				String nodeType = getType(type);
 				if (nodeType.equals("\\seq"))
-					print("list(" + var + ")");
+					printAtEnd("list(" + var + ")");
 				else if (nodeType.equals("\\rel"))
-					print("is_rel(" + var + ")");
+					printAtEnd("is_rel(" + var + ")");
 				else if (nodeType.equals("\\pfun"))
-					print("is_pfun(" + var + ")");
+					printAtEnd("is_pfun(" + var + ")");
 				else if (nodeType.equals("\\fun"))
-					print("is_fun(" + var + ")");
+					printAtEnd("is_fun(" + var + ")");
 				else if (type.equals("\\nat") || type.equals("\\num"))
 					print(var + " in " + memory.get(type));
 				else { //double check
-					type = (String) types.get(type);
+					type = types.get(type);
 					if (isBasic(type)) {
 						type = type.split(":")[1];
 						print(var + " in " + type);
@@ -259,26 +274,26 @@ public class ExprParser extends Parser {
 				  /* System.out.println("tablita de tippos");
 				   System.out.println("-------------------");
 				   String key, value;
-				   Iterator iterator = types.keySet().iterator();
+				   Iterator<String> iterator = types.keySet().iterator();
 				   while (iterator.hasNext()) {
-				           key = (String) iterator.next();
-				           value = (String) types.get(key);
+				           key = iterator.next();
+				           value = types.get(key);
 				           System.out.println(key + "\t\t| " + value);
 				   }
 				   System.out.println("\ntablita de memory");
 				   System.out.println("-------------------");
-				   iterator = memory.keySet().iterator();
+				   iterator<String> = memory.keySet().iterator();
 				   while (iterator.hasNext()) {
-				           key = (String) iterator.next();
-				           value = (String) memory.get(key);
+				           key = iterator.next();
+				           value = memory.get(key);
 				           System.out.println(key + "\t\t| " + value);
 				   }
 				   System.out.println("\ntablita de zVars");
 				   System.out.println("-------------------");
-				   iterator = zVars.keySet().iterator();
+				   iterator<String> = zVars.keySet().iterator();
 				   while (iterator.hasNext()) {
-				           key = (String) iterator.next();
-				           value = (String) zVars.get(key);
+				           key = iterator.next();
+				           value = zVars.get(key);
 				           System.out.println(key + "\t\t| " + value);
 			               }*/
 				
@@ -457,7 +472,7 @@ public class ExprParser extends Parser {
 	}
 
 	public static class Basic_typeContext extends ParserRuleContext {
-		public ArrayList typeList;;
+		public ArrayList<String> typeList;;
 		public DeclNameContext a;
 		public DeclNameContext declName;
 		public DeclNameContext b;
@@ -484,7 +499,7 @@ public class ExprParser extends Parser {
 	public final Basic_typeContext basic_type() throws RecognitionException {
 		Basic_typeContext _localctx = new Basic_typeContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_basic_type);
-		((Basic_typeContext)getInvokingContext(2)).typeList =  new ArrayList();
+		((Basic_typeContext)getInvokingContext(2)).typeList =  new ArrayList<String>();
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -510,7 +525,7 @@ public class ExprParser extends Parser {
 			setState(85); match(26);
 
 					while( !((Basic_typeContext)getInvokingContext(2)).typeList.isEmpty() ) {
-						String type = (String) ((Basic_typeContext)getInvokingContext(2)).typeList.remove(0);
+						String type = ((Basic_typeContext)getInvokingContext(2)).typeList.remove(0);
 						
 						String newVarName = newVar((((Basic_typeContext)_localctx).declName!=null?_input.getText(((Basic_typeContext)_localctx).declName.start,((Basic_typeContext)_localctx).declName.stop):null));
 						memory.put(type, newVarName);
@@ -564,7 +579,7 @@ public class ExprParser extends Parser {
 			setState(89); match(50);
 			setState(90); ((Equivalent_typeContext)_localctx).expression = expression(0);
 			 
-					String type = (String) types.get((((Equivalent_typeContext)_localctx).expression!=null?_input.getText(((Equivalent_typeContext)_localctx).expression.start,((Equivalent_typeContext)_localctx).expression.stop):null));
+					String type = types.get((((Equivalent_typeContext)_localctx).expression!=null?_input.getText(((Equivalent_typeContext)_localctx).expression.start,((Equivalent_typeContext)_localctx).expression.stop):null));
 					if (type != null) {
 						types.put((((Equivalent_typeContext)_localctx).declName!=null?_input.getText(((Equivalent_typeContext)_localctx).declName.start,((Equivalent_typeContext)_localctx).declName.stop):null), type);
 					}
@@ -583,7 +598,7 @@ public class ExprParser extends Parser {
 	}
 
 	public static class Enumeration_typeContext extends ParserRuleContext {
-		public ArrayList cases;;
+		public ArrayList<String> cases;;
 		public DeclNameContext d;
 		public DeclNameContext a;
 		public DeclNameContext b;
@@ -616,7 +631,7 @@ public class ExprParser extends Parser {
 	public final Enumeration_typeContext enumeration_type() throws RecognitionException {
 		Enumeration_typeContext _localctx = new Enumeration_typeContext(_ctx, getState());
 		enterRule(_localctx, 8, RULE_enumeration_type);
-		((Enumeration_typeContext)getInvokingContext(4)).cases =  new ArrayList();
+		((Enumeration_typeContext)getInvokingContext(4)).cases =  new ArrayList<String>();
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -659,7 +674,7 @@ public class ExprParser extends Parser {
 				
 					String elements = new String();
 					while( !((Enumeration_typeContext)getInvokingContext(4)).cases.isEmpty() ){
-						String e = (String) ((Enumeration_typeContext)getInvokingContext(4)).cases.remove(0);
+						String e = ((Enumeration_typeContext)getInvokingContext(4)).cases.remove(0);
 						elements = elements.concat(e);
 						
 						memory.put(e,e); //REVISAR!!!
@@ -839,7 +854,7 @@ public class ExprParser extends Parser {
 	}
 
 	public static class DeclarationContext extends ParserRuleContext {
-		public ArrayList vars;;
+		public ArrayList<String> vars;;
 		public DeclNameContext a;
 		public DeclNameContext b;
 		public ExpressionContext expression;
@@ -869,7 +884,7 @@ public class ExprParser extends Parser {
 	public final DeclarationContext declaration() throws RecognitionException {
 		DeclarationContext _localctx = new DeclarationContext(_ctx, getState());
 		enterRule(_localctx, 14, RULE_declaration);
-		((DeclarationContext)getInvokingContext(7)).vars =  new ArrayList();
+		((DeclarationContext)getInvokingContext(7)).vars =  new ArrayList<String>();
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -897,7 +912,7 @@ public class ExprParser extends Parser {
 					//Para cada variable realizamos el procesamiento
 					while( !((DeclarationContext)getInvokingContext(7)).vars.isEmpty() ) {
 
-						String var = (String) ((DeclarationContext)getInvokingContext(7)).vars.remove(0);
+						String var = ((DeclarationContext)getInvokingContext(7)).vars.remove(0);
 
 						if (tipoSchema == 0)
 							zVars.put(var, null); //Marcamos la variable como variable Z, a la cual posiblemente se le deba asignarsele un valor
@@ -908,7 +923,7 @@ public class ExprParser extends Parser {
 						if (modoSetExpression==1)
 							setExpressionVars.put(var, newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 						
-						String expType = (String) types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
+						String expType = types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
 						expType = typeInfo(newVarName, expType);
 						
 						if (tipoSchema == 0)
@@ -1028,8 +1043,8 @@ public class ExprParser extends Parser {
 				setState(161); match(8);
 				setState(162); ((PredicateContext)_localctx).e2 = expression(0);
 					String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print("in_dom(" + a + "," + b + ")");
 					
 				}
@@ -1042,12 +1057,12 @@ public class ExprParser extends Parser {
 				setState(167); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " in " + b);
 						
 						//Impresion de tipo
-						String type = (String) types.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						String type = types.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						if (type != null)
 							if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 								print(a + " in " + memory.get(type.substring(6)));
@@ -1062,12 +1077,12 @@ public class ExprParser extends Parser {
 				setState(172); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " nin " + b);
 						
 						//Impresion de tipo
-						String type = (String) types.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						String type = types.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						if (type != null)
 							if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 								print(a + " in " + memory.get(type.substring(6)));
@@ -1082,8 +1097,8 @@ public class ExprParser extends Parser {
 				setState(177); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " < " + b);
 					
 				}
@@ -1096,8 +1111,8 @@ public class ExprParser extends Parser {
 				setState(182); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " > " + b);
 					
 				}
@@ -1110,8 +1125,8 @@ public class ExprParser extends Parser {
 				setState(187); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " =< " + b);
 					
 				}
@@ -1124,8 +1139,8 @@ public class ExprParser extends Parser {
 				setState(192); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " =< " + b);
 					
 				}
@@ -1138,8 +1153,8 @@ public class ExprParser extends Parser {
 				setState(197); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " = " + b);
 					
 				}
@@ -1152,8 +1167,8 @@ public class ExprParser extends Parser {
 				setState(202); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print("dsubset(" + a + "," + b + ")");
 					
 				}
@@ -1166,8 +1181,8 @@ public class ExprParser extends Parser {
 				setState(207); ((PredicateContext)_localctx).e2 = expression(0);
 
 						String a, b;
-						a = (String)memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
-						b = (String)memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
+						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
 						print(a + " neq " + b);
 					
 				}
@@ -1269,7 +1284,7 @@ public class ExprParser extends Parser {
 
 	public static class ExpressionContext extends ParserRuleContext {
 		public int _p;
-		public ArrayList elements = new ArrayList();
+		public ArrayList<String> elements = new ArrayList<String>();
 		public String setlogName = "";
 		public String zName = "";
 		public String operator = "";
@@ -1348,7 +1363,7 @@ public class ExprParser extends Parser {
 				setState(237); ((ExpressionContext)_localctx).e = expression(11);
 
 						String a;
-						a = (String)memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+						a = memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 						
 						if ((((ExpressionContext)_localctx).pre_gen!=null?_input.getText(((ExpressionContext)_localctx).pre_gen.start,((ExpressionContext)_localctx).pre_gen.stop):null).equals("\\#")){
 							if (memory.get("\\#" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)) == null) {
@@ -1372,12 +1387,12 @@ public class ExprParser extends Parser {
 								memory.put("\\dom" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								if (modoSetExpression != 0 )
 									setExpressionVars.put("\\dom" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
-								types.put("\\dom" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\power(" + getChildType((String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 0) + ")");
+								types.put("\\dom" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\power(" + getChildType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 0) + ")");
 								
-								String e = (String) memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+								String e = memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 								
 								//Chequeamos si e es una lista, estas son tratadas de forma diferente
-								String type = getType((String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
+								String type = getType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
 								if (type.equals("\\seq"))
 									print("ddom_list(" + e + "," + newVarName + ")");
 								else
@@ -1390,12 +1405,12 @@ public class ExprParser extends Parser {
 								memory.put("\\ran" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								if (modoSetExpression != 0 )
 									setExpressionVars.put("\\ran" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
-								types.put("\\ran" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\power(" + getChildType((String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 1) + ")");
+								types.put("\\ran" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), "\\power(" + getChildType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 1) + ")");
 								
-								String e = (String) memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+								String e = memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 								
 								//Chequeamos si e es una lista, estas son tratadas de forma diferente
-								String type = getType((String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
+								String type = getType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
 								if (type.equals("\\seq"))
 									print("list_to_set(" + e + "," + newVarName + ")");
 								else
@@ -1403,7 +1418,7 @@ public class ExprParser extends Parser {
 							}
 						}
 						else if ((((ExpressionContext)_localctx).pre_gen!=null?_input.getText(((ExpressionContext)_localctx).pre_gen.start,((ExpressionContext)_localctx).pre_gen.stop):null).equals("\\seq")) {
-							String eType = (String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+							String eType = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 							if (isBasic(eType))
 								eType = (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null);
 						
@@ -1418,7 +1433,7 @@ public class ExprParser extends Parser {
 				setState(240); match(40);
 				setState(241); ((ExpressionContext)_localctx).e = expression(8);
 
-						String eType = (String) types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+						String eType = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 						if (isBasic(eType))
 							eType = (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null);
 					
@@ -1485,10 +1500,10 @@ public class ExprParser extends Parser {
 						((ExpressionContext)_localctx).zName =  (((ExpressionContext)_localctx).SETSTART!=null?((ExpressionContext)_localctx).SETSTART.getText():null);
 						//Llenamos elements y ponemos cada expression en la memory
 						while( !_localctx.elements.isEmpty() ){
-							String e = (String) _localctx.elements.remove(0);
+							String e = _localctx.elements.remove(0);
 							((ExpressionContext)_localctx).zName =  _localctx.zName.concat(e);
 							//guardamos tambien las traducciones del conjunto
-							((ExpressionContext)_localctx).setlogName =  _localctx.setlogName.concat((String)memory.get(e));
+							((ExpressionContext)_localctx).setlogName =  _localctx.setlogName.concat(memory.get(e));
 							
 							if (!_localctx.elements.isEmpty()){
 								((ExpressionContext)_localctx).zName =  _localctx.zName + ",";
@@ -1544,7 +1559,7 @@ public class ExprParser extends Parser {
 							
 							Iterator<String> keysIt = setExpressionVars.keySet().iterator();
 							while (keysIt.hasNext()){
-								((ExpressionContext)_localctx).setlogName =  _localctx.setlogName.concat((String) setExpressionVars.get(keysIt.next()));
+								((ExpressionContext)_localctx).setlogName =  _localctx.setlogName.concat(setExpressionVars.get(keysIt.next()));
 								if (keysIt.hasNext()) ((ExpressionContext)_localctx).setlogName =  _localctx.setlogName.concat(",");
 							}
 						
@@ -1572,7 +1587,7 @@ public class ExprParser extends Parser {
 				setState(288); ((ExpressionContext)_localctx).e = expression(0);
 				setState(289); match(14);
 
-						String a = (String) memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
+						String a = memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 						
 						//Chequeo el nombre para ver si se trata de una sola variable, en ese caso no guardo en la memoria
 						//los parentesis, en otro caso si
@@ -1648,11 +1663,11 @@ public class ExprParser extends Parser {
 						setState(300); ((ExpressionContext)_localctx).b = expression(20);
 
 						          		//Guardo el tipo
-						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
+						          		String aType = types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
 						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
-						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
+						          		String bType = types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
 						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
@@ -1678,11 +1693,11 @@ public class ExprParser extends Parser {
 						setState(305); ((ExpressionContext)_localctx).b = expression(19);
 
 						          		//Guardo el tipo
-						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
+						          		String aType = types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
 						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
-						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
+						          		String bType = types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
 						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
@@ -1702,11 +1717,11 @@ public class ExprParser extends Parser {
 						setState(310); ((ExpressionContext)_localctx).b = expression(18);
 
 						          		//Guardo el tipo
-						          		String aType = (String) types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
+						          		String aType = types.get((((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null));
 						          		if (isBasic(aType)) {
 						          			aType = (((ExpressionContext)_localctx).a!=null?_input.getText(((ExpressionContext)_localctx).a.start,((ExpressionContext)_localctx).a.stop):null);
 						          		}
-						          		String bType = (String) types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
+						          		String bType = types.get((((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null));
 						          		if (isBasic(bType))
 						          			bType = (((ExpressionContext)_localctx).b!=null?_input.getText(((ExpressionContext)_localctx).b.start,((ExpressionContext)_localctx).b.stop):null);
 						          			
@@ -1726,8 +1741,8 @@ public class ExprParser extends Parser {
 						setState(315); ((ExpressionContext)_localctx).e2 = expression(16);
 
 						          		String a, b;
-						          		a = (String)memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = (String)memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          			String newVarName = newVar();
@@ -1736,7 +1751,7 @@ public class ExprParser extends Parser {
 						          			if (modoSetExpression != 0 )
 						          				setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 
-						          			String newVarType = getChildType((String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1);
+						          			String newVarType = getChildType(types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1);
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarType);
 						          			print("apply(" + a + "," + b + "," + newVarName + ")");
 						          			
@@ -1759,9 +1774,9 @@ public class ExprParser extends Parser {
 
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "." + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          		
-						          			String e1Type = (String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          			String e1Type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          			if (!e1Type.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
-						          				e1Type = (String) types.get(e1Type);
+						          				e1Type = types.get(e1Type);
 						          			
 						          			if (e1Type.startsWith("SchemaType:")) {
 						          				String schemaVars = e1Type.split(":", 3)[2];
@@ -1802,8 +1817,8 @@ public class ExprParser extends Parser {
 						setState(325); ((ExpressionContext)_localctx).e2 = expression(14);
 
 						          		String a, b;
-						          		a = (String)memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = (String)memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\mapsto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "[" + a + "," + b + "]");
 						          	
 						}
@@ -1820,8 +1835,8 @@ public class ExprParser extends Parser {
 						setState(330); ((ExpressionContext)_localctx).e2 = expression(13);
 
 						          		String a, b;
-						          		a = (String)memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = (String)memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\upto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          			String newVarName = newVar();
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\upto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
@@ -1844,8 +1859,8 @@ public class ExprParser extends Parser {
 						setState(335); ((ExpressionContext)_localctx).e2 = expression(11);
 
 						          		String a, b;
-						          		a = (String)memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = (String)memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_P4!=null?((ExpressionContext)_localctx).IN_FUN_P4.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          		
@@ -1876,7 +1891,7 @@ public class ExprParser extends Parser {
 						          			else if ((((ExpressionContext)_localctx).IN_FUN_P4!=null?((ExpressionContext)_localctx).IN_FUN_P4.getText():null).equals("\\cap")){
 						          					print("dinters(" + a + "," + b + "," + newVarName + ")");
 						          					memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
-						          					String type = (String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          					String type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          					typeInfo(newVarName, type);
 						          					if (modoSetExpression != 0 )
@@ -1907,8 +1922,8 @@ public class ExprParser extends Parser {
 						setState(340); ((ExpressionContext)_localctx).e2 = expression(10);
 
 						          		String a, b;
-						          		a = (String)memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = (String)memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_P3!=null?((ExpressionContext)_localctx).IN_FUN_P3.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          		
@@ -1933,7 +1948,7 @@ public class ExprParser extends Parser {
 						          			else if ((((ExpressionContext)_localctx).IN_FUN_P3!=null?((ExpressionContext)_localctx).IN_FUN_P3.getText():null).equals("\\cup")){
 						          					print("dunion(" + a + "," + b + "," + newVarName + ")");
 						          					memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
-						          					String type = (String) types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          					String type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          					types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          					typeInfo(newVarName, type);
 						          					if (modoSetExpression != 0 )
@@ -1987,11 +2002,11 @@ public class ExprParser extends Parser {
 						          		
 						          		//Para cada exp realizamos el procesamiento
 						          		while( !((ExpressionContext)getInvokingContext(10)).elements.isEmpty() ) {
-						          			String exp = (String) ((ExpressionContext)getInvokingContext(10)).elements.remove(0);
+						          			String exp = ((ExpressionContext)getInvokingContext(10)).elements.remove(0);
 						          			
 						          			((ExpressionContext)_localctx).zName =  _localctx.zName.concat(exp);
 						          			
-						          			String expType = (String) types.get(exp);
+						          			String expType = types.get(exp);
 						          			if (isBasic(expType))
 						          				unfoldedType = unfoldedType.concat(exp);
 						          			else
