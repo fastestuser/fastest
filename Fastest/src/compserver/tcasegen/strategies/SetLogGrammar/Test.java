@@ -12,7 +12,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		ANTLRInputStream input = new ANTLRInputStream("\\num \\pfun SENSOR");
+		ANTLRInputStream input = new ANTLRInputStream("\\power ((FERNANDO \\pfun FERNANDO) \\cross \\num)");
         TypeManagerLexer lexer = new TypeManagerLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
@@ -20,9 +20,9 @@ public class Test {
         DefaultMutableTreeNode root =  parser.getRoot();
         
         
-		String s = "100";
+		String s = "{[{[fffd,fffx]},666]}";
 		
-        ConstantCreator cc = new ConstantCreator(s,root, null, null);
+        ConstantCreator cc = new ConstantCreator(s,root, null, null, null);
 		String salida = cc.getCte();
 		
 		System.out.println("ENTRADA\n" + s);

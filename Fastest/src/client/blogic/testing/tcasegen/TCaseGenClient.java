@@ -82,9 +82,7 @@ public class TCaseGenClient extends IIComponent {
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());
                 //MODIFICADO AtomicPredTCaseStrategy por SetLogStrategy
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
-
-            	tCaseStrategy = new SetLogStrategy(axDefsValues, basicAxDefs, freeParas, basicTypeNames);
-
+            	tCaseStrategy = new SetLogStrategy(axDefsValues,basicAxDefs,freeParas,basicTypeNames);
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new ZeroIntFiniteModel(12), new ZeroNatFiniteModel(12), mapTTree);
             }
                 

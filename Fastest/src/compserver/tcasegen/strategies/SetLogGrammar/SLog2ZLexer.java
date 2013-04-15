@@ -9,6 +9,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
+	import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -46,7 +47,7 @@ public class SLog2ZLexer extends Lexer {
 	};
 
 
-		HashMap<String,StringValor> salida = new HashMap();	
+		HashMap<String,StringPointer> vars = new HashMap();	
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
@@ -55,16 +56,7 @@ public class SLog2ZLexer extends Lexer {
 			return zVars;
 		}
 		
-		public class StringValor{
-			private String valor;
-			public void setValor(String s){
-				this.valor = s;		
-			}
-			public String toString(){
-				return this.valor;		
-			}
-		} 	
-
+		
 		public void print(String s){
 			System.out.println(s);
 		}
@@ -92,7 +84,7 @@ public class SLog2ZLexer extends Lexer {
 	         
 	        
 	        
-	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames);
+	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
 	        return cc.getCte();
 		}
 		
@@ -114,7 +106,7 @@ public class SLog2ZLexer extends Lexer {
 			while (iterator.hasNext()) {  
 			   key = iterator.next().toString();
 			   if (map.get(key) == null)
-				   value = "null";
+				   value = "nullc";
 			   else 
 				   value = map.get(key).toString();
 			   System.out.println(key + " = " + value);  
@@ -122,11 +114,11 @@ public class SLog2ZLexer extends Lexer {
 		}
 		
 		public void llenarZVars(){
-			Iterator iterator = salida.keySet().iterator();  
+			Iterator iterator = vars.keySet().iterator();  
 	   		String slname,zname,valor;
 			while (iterator.hasNext()) {  
 			   slname = iterator.next().toString();
-			   valor = salida.get(slname).toString(); 
+			   valor = vars.get(slname).toString(); 
 			   if (zNames.containsKey(slname)){
 			   		zname = zNames.get(slname);
 			   		if (zVars.containsKey(zname)){

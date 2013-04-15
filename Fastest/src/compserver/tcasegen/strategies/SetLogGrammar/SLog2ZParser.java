@@ -9,6 +9,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
+	import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -53,7 +54,7 @@ public class SLog2ZParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-		HashMap<String,StringValor> salida = new HashMap();	
+		HashMap<String,StringPointer> vars = new HashMap();	
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
@@ -62,16 +63,7 @@ public class SLog2ZParser extends Parser {
 			return zVars;
 		}
 		
-		public class StringValor{
-			private String valor;
-			public void setValor(String s){
-				this.valor = s;		
-			}
-			public String toString(){
-				return this.valor;		
-			}
-		} 	
-
+		
 		public void print(String s){
 			System.out.println(s);
 		}
@@ -99,7 +91,7 @@ public class SLog2ZParser extends Parser {
 	         
 	        
 	        
-	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames);
+	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
 	        return cc.getCte();
 		}
 		
@@ -121,7 +113,7 @@ public class SLog2ZParser extends Parser {
 			while (iterator.hasNext()) {  
 			   key = iterator.next().toString();
 			   if (map.get(key) == null)
-				   value = "null";
+				   value = "nullc";
 			   else 
 				   value = map.get(key).toString();
 			   System.out.println(key + " = " + value);  
@@ -129,11 +121,11 @@ public class SLog2ZParser extends Parser {
 		}
 		
 		public void llenarZVars(){
-			Iterator iterator = salida.keySet().iterator();  
+			Iterator iterator = vars.keySet().iterator();  
 	   		String slname,zname,valor;
 			while (iterator.hasNext()) {  
 			   slname = iterator.next().toString();
-			   valor = salida.get(slname).toString(); 
+			   valor = vars.get(slname).toString(); 
 			   if (zNames.containsKey(slname)){
 			   		zname = zNames.get(slname);
 			   		if (zVars.containsKey(zname)){
@@ -202,7 +194,7 @@ public class SLog2ZParser extends Parser {
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 15) | (1L << 16) | (1L << NAME))) != 0) );
 
 						System.out.println("salida: \n");
-						printHashMap( salida );llenarZVars();
+						printHashMap( vars );llenarZVars();
 						System.out.println("\nzVars:");
 						printHashMap(zVars);
 						System.out.println("const***** " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null));
@@ -288,7 +280,7 @@ public class SLog2ZParser extends Parser {
 	}
 
 	public static class RestrContext extends ParserRuleContext {
-		public StringValor valor;;
+		public StringPointer valor;;
 		public ExprContext expr;
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
@@ -313,7 +305,7 @@ public class SLog2ZParser extends Parser {
 	public final RestrContext restr() throws RecognitionException {
 		RestrContext _localctx = new RestrContext(_ctx, getState());
 		enterRule(_localctx, 4, RULE_restr);
-		((RestrContext)getInvokingContext(2)).valor =  new StringValor();
+		((RestrContext)getInvokingContext(2)).valor =  new StringPointer();
 		try {
 			setState(55);
 			switch (_input.LA(1)) {
@@ -323,7 +315,7 @@ public class SLog2ZParser extends Parser {
 				setState(36); match(6);
 				setState(37); ((RestrContext)_localctx).expr = expr();
 				setState(38); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setValor("\\{\\}"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 5:
@@ -332,7 +324,7 @@ public class SLog2ZParser extends Parser {
 				setState(41); match(5);
 				setState(42); ((RestrContext)_localctx).expr = expr();
 				setState(43); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setValor("\\langle\\rangle"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 11:
@@ -341,7 +333,7 @@ public class SLog2ZParser extends Parser {
 				setState(46); match(11);
 				setState(47); ((RestrContext)_localctx).expr = expr();
 				setState(48); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setValor("666"); salida.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("666"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 7:
@@ -372,9 +364,9 @@ public class SLog2ZParser extends Parser {
 	}
 
 	public static class SeqIgualContext extends ParserRuleContext {
-		public StringValor valor;;
-		public Token a;
-		public ExprContext b;
+		public StringPointer valor;;
+		public Token v1;
+		public ExprContext v2;
 		public List<TerminalNode> NAME() { return getTokens(SLog2ZParser.NAME); }
 		public ExprContext expr(int i) {
 			return getRuleContext(ExprContext.class,i);
@@ -402,7 +394,7 @@ public class SLog2ZParser extends Parser {
 	public final SeqIgualContext seqIgual() throws RecognitionException {
 		SeqIgualContext _localctx = new SeqIgualContext(_ctx, getState());
 		enterRule(_localctx, 6, RULE_seqIgual);
-		((SeqIgualContext)getInvokingContext(3)).valor =  new StringValor();
+		((SeqIgualContext)getInvokingContext(3)).valor =  new StringPointer();
 		int _la;
 		try {
 			setState(72);
@@ -428,11 +420,11 @@ public class SLog2ZParser extends Parser {
 				do {
 					{
 					{
-					setState(59); ((SeqIgualContext)_localctx).a = match(NAME);
-					salida.put((((SeqIgualContext)_localctx).a!=null?((SeqIgualContext)_localctx).a.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
+					setState(59); ((SeqIgualContext)_localctx).v1 = match(NAME);
+					vars.put((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
 					setState(61); match(9);
-					setState(62); ((SeqIgualContext)_localctx).b = expr();
-					salida.put(((SeqIgualContext)_localctx).b.valor,((SeqIgualContext)getInvokingContext(3)).valor);
+					setState(62); ((SeqIgualContext)_localctx).v2 = expr();
+					vars.put((((SeqIgualContext)_localctx).v2!=null?_input.getText(((SeqIgualContext)_localctx).v2.start,((SeqIgualContext)_localctx).v2.stop):null),((SeqIgualContext)getInvokingContext(3)).valor);
 					setState(64); match(4);
 					}
 					}
@@ -441,13 +433,15 @@ public class SLog2ZParser extends Parser {
 					_la = _input.LA(1);
 				} while ( _la==NAME );
 
-							String zname = zNames.get((((SeqIgualContext)_localctx).a!=null?((SeqIgualContext)_localctx).a.getText():null));
+							String zname = zNames.get((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null));
 							String tipo = tipos.get(zname);
-							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType")){
-								String var = ((SeqIgualContext)_localctx).b.valor;
-								((SeqIgualContext)getInvokingContext(3)).valor.setValor(getCte(var,tipo));
+							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
+							{
+								String var = ((SeqIgualContext)_localctx).v2.valor;
+								((SeqIgualContext)getInvokingContext(3)).valor.setString(getCte(var,tipo));
 							}
-						
+							 	
+						 
 				}
 				break;
 			default:

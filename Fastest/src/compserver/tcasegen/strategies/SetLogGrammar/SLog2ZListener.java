@@ -9,6 +9,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
+	import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;

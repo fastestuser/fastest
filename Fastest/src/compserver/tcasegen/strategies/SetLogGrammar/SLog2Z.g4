@@ -10,10 +10,11 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
+	import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 }
 
 @members {
-	HashMap<String,StringValor> salida = new HashMap();	
+	HashMap<String,StringPointer> vars = new HashMap();	
 	HashMap<String,String> zNames = new HashMap();
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
@@ -22,16 +23,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 		return zVars;
 	}
 	
-	public class StringValor{
-		private String valor;
-		public void setValor(String s){
-			this.valor = s;		
-		}
-		public String toString(){
-			return this.valor;		
-		}
-	} 	
-
+	
 	public void print(String s){
 		System.out.println(s);
 	}
@@ -59,7 +51,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
          
         
         
-        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames);
+        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
         return cc.getCte();
 	}
 	
@@ -81,7 +73,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 		while (iterator.hasNext()) {  
 		   key = iterator.next().toString();
 		   if (map.get(key) == null)
-			   value = "null";
+			   value = "nullc";
 		   else 
 			   value = map.get(key).toString();
 		   System.out.println(key + " = " + value);  
@@ -89,11 +81,11 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	}
 	
 	public void llenarZVars(){
-		Iterator iterator = salida.keySet().iterator();  
+		Iterator iterator = vars.keySet().iterator();  
    		String slname,zname,valor;
 		while (iterator.hasNext()) {  
 		   slname = iterator.next().toString();
-		   valor = salida.get(slname).toString(); 
+		   valor = vars.get(slname).toString(); 
 		   if (zNames.containsKey(slname)){
 		   		zname = zNames.get(slname);
 		   		if (zVars.containsKey(zname)){
@@ -110,7 +102,7 @@ lineas
 		( seqIgual NL)+ 
 		{
 			System.out.println("salida: \n");
-			printHashMap( salida );llenarZVars();
+			printHashMap( vars );llenarZVars();
 			System.out.println("\nzVars:");
 			printHashMap(zVars);
 			System.out.println("const***** " + $constr.text);
@@ -122,28 +114,30 @@ constr
 	;
 	
 restr
-locals [StringValor valor;]
-@init{$restr::valor = new StringValor();}
-	: 'set(' expr ')' {$restr::valor.setValor("\\{\\}"); salida.put($expr.text,$restr::valor);}
-	| 'list(' expr ')' {$restr::valor.setValor("\\langle\\rangle"); salida.put($expr.text,$restr::valor);}
-	| 'integer(' expr ')' {$restr::valor.setValor("666"); salida.put($expr.text,$restr::valor);}
+locals [StringPointer valor;]
+@init{$restr::valor = new StringPointer();}
+	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); vars.put($expr.text,$restr::valor);}
+	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); vars.put($expr.text,$restr::valor);}
+	| 'integer(' expr ')' {$restr::valor.setString("666"); vars.put($expr.text,$restr::valor);}
 	| expr 'neq' expr 
 	;
 
 seqIgual
-locals [StringValor valor;]
-@init{$seqIgual::valor = new StringValor();}
+locals [StringPointer valor;]
+@init{$seqIgual::valor = new StringPointer();}
 	:	'NUM = int(-10000000000, 10000000000),'  	 
 	|	'NAT = int(0, 10000000000),'
-	|(a = NAME {salida.put($a.text,$seqIgual::valor);} '=' b = expr {salida.put($b.valor,$seqIgual::valor);} ',')+ 
+	|	(v1=NAME {vars.put($v1.text,$seqIgual::valor);} '=' v2=expr {vars.put($v2.text,$seqIgual::valor);} ',')+
 		{
-			String zname = zNames.get($a.text);
+			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);
-			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType")){
-				String var = $b.valor;
-				$seqIgual::valor.setValor(getCte(var,tipo));
+			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
+			{
+				String var = $v2.valor;
+				$seqIgual::valor.setString(getCte(var,tipo));
 			}
-		}
+			 	
+		 }
 	;
 	
 expr

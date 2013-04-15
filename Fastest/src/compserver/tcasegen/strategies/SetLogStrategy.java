@@ -253,12 +253,14 @@ public class SetLogStrategy implements TCaseStrategy{
 		while (keys.hasNext()) {
 			String varName = keys.next();
 			String value = zVars.get(varName);
-			
+			System.out.println("------ " + varName + " = " + value);
 			RefExpr var;
 			Expr val;
 			try {
 				var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
+				System.out.println("------ " + SpecUtils.termToLatex(var));
 				val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
+				System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
 				map.put(var, val);
 		
 			} catch (IOException e) {

@@ -4,6 +4,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
+
 
 public class ConstantCreator {
 	
@@ -11,6 +13,8 @@ public class ConstantCreator {
 	private String expr;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zName;
+	private HashMap<String,StringPointer> valores;
+	
 	//estructura de datos para la recursion
 	private class scte{
 		String s;
@@ -25,8 +29,10 @@ public class ConstantCreator {
 			return "666";
 		} else if(ct == "()"){
 			return fullCte(nodo.getChildAt(0),var);
-		} else if (ct.equals("\\cross") || ct.equals("\\pfun") || ct.equals("\\fun") || ct.equals("\\rel")) {
+		} else if (ct.equals("\\pfun") || ct.equals("\\fun") || ct.equals("\\rel")) {
 			return "\\{ "+"(" + fullCte(nodo.getChildAt(0),var) + " \\mapsto " + fullCte(nodo.getChildAt(1),var) + ")" + " \\}";
+		} else if(ct.equals("\\cross")){
+			return fullCte(nodo.getChildAt(0),var) + " \\mapsto " + fullCte(nodo.getChildAt(1),var)  ;
 		} else if (ct.equals("\\power")) {
 			return "\\{ " + fullCte(nodo.getChildAt(0),var) + " \\}";
 		} else if (ct.equals("\\seq")) {
@@ -41,7 +47,7 @@ public class ConstantCreator {
 				return aux[1];
 			}
 			//si es basicType
-			return ct.toLowerCase()+var;
+			return ct.toLowerCase()+zName.get(var);
 		}
 	}
 
@@ -50,75 +56,89 @@ public class ConstantCreator {
 		Pattern patron = Pattern.compile("(\\w+)");
 		Matcher m = patron.matcher(expr);
 		m.find(iexpr);
-		//aux va a ir tomando nombre de variables o ctes del estilo:
-		//_G333 variables auxiliares de setlog
-		//444    cte
-		//XX    variables, ??que pueden ser auxiliares o no??
-		//sensor1  conte de un freeType o basicType
 		String aux = m.group();
 		
 		char c = expr.charAt(iexpr);
 		String ct = nodo.toString();
 		scte salida;
-		
-		
-		
-		
 		// si es variable auxiliar de {log} genero
 		if (Character.isUpperCase(c) || c == '_') {
-			String  s = fullCte(nodo,aux);
+			String s;
+			if (valores.get(aux).toString() != null)
+				s = valores.get(aux).toString();
+			else
+				s = fullCte(nodo,aux);
 			salida = new scte(s,iexpr + aux.length());//la longitud que va es la original, no la inventada
 													  //porque siempre me muevo en el string expr original
 			return salida;
 		}
 		// si es constante la meto
 		else if (Character.isLowerCase(c) || Character.isDigit(c) || c == '-') {
-			if (c == '-') aux = "-" + aux;
-			salida = new scte(aux,iexpr + aux.length());
+			String s;
+			if (c == '-') 
+				s = "\\neg " + aux;
+			else 
+				s = aux;
+			salida = new scte(s,iexpr + aux.length());
 			return salida;
 		} 
 		else if (ct.equals("()")){
 			salida = cte(nodo.getChildAt(0),iexpr);
 			return salida;
 		}
-		/*no se traducen los los tipos en si
-		 * else if (ct.equals("BasicType")){
-			String zname = zName.get(aux);
-			String tipo = tipos.get(zname);
-			salida = new scte("{"+ tipo.toLowerCase() + aux + "}",("{"+ tipo + aux + "}").length());
-			return salida;
-		}*/
-		else if (ct.equals("\\cross")  || ct.equals("\\fun") ||ct.equals("\\pfun")|| ct.equals("\\rel")) {
-			//caso {?} donde ?=[X,X] ó ?=X
-			if (c == '{'){
-				salida = cte(nodo,iexpr+1);
+		else if (ct.equals("\\fun") ||ct.equals("\\pfun")|| ct.equals("\\rel")) {
+			//puede venir X ó {X} ó {[X,X]}
+			//pir que c esta en "{"
+			iexpr++; 
+			c = expr.charAt(iexpr);
+			scte si1,si2;
+			if (c=='[')	{
+				si1 = cte(nodo.getChildAt(0), iexpr + 1);
+				si2 = cte(nodo.getChildAt(1), si1.i + 1); 
+				si2.i ++;
 			}
-			//caso [X,Y]
-			else {
-				scte si1 = cte(nodo.getChildAt(0), iexpr + 1);
-				scte si2 = cte(nodo.getChildAt(1), si1.i + 1); 
-				// 	s2.i+1 va a ser igual a length("[" + s1.s + "," + s2.s + "]")
-				salida = new scte("\\{ " + "(" + si1.s + " \\mapsto " + si2.s + ")"+ "}",si2.i+1);
+			else{
+				si1 = cte(nodo.getChildAt(0), iexpr );
+				si2 = cte(nodo.getChildAt(1), iexpr );
 			}
+			salida = new scte("\\{ " + "(" + si1.s + " \\mapsto " + si2.s + ")",si2.i);
+			//aca abajo, va un while y algo parecido a lo de arriba
 			//si tiene mas de un elemento
 			iexpr = salida.i;
 			c = expr.charAt(iexpr);
-			if (c==','){
-				scte si2 = cte(nodo, iexpr+1);
-				salida.s = salida.s.replace('}',',') + si2.s.substring(1);
+			while (c==','){
+				iexpr++;c = expr.charAt(iexpr);
+				if (c=='[')	{
+					si1 = cte(nodo.getChildAt(0), iexpr + 1);
+					si2 = cte(nodo.getChildAt(1), si1.i + 1);
+					si2.i++;
+				}
+				else{
+					si1 = cte(nodo.getChildAt(0), iexpr );
+					si2 = cte(nodo.getChildAt(1), iexpr );
+				}
+				salida.s = salida.s+ "," +  " ("+ si1.s + " \\mapsto " + si2.s + ")";
 				iexpr = si2.i;
 				c = expr.charAt(iexpr);
 			}
-			salida.s.replace("}"," \\}");
-			salida.i = iexpr;
+			salida.s = salida.s + " \\}";
+			salida.i = iexpr+1;
 			return salida;
+			
 		} 
-		
+		else if (ct.equals("\\cross")){
+			//caso [X,Y]
+			scte s1 = cte(nodo.getChildAt(0), iexpr + 1);
+			scte s2 = cte(nodo.getChildAt(1), s1.i + 1); 
+			salida = new scte( s1.s + " \\mapsto " + s2.s ,s2.i+1);
+			return salida;
+		}
 		else if (ct.equals("\\power") ) {
+			//pinta {X,X,X}
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\{ " + s1.s ,s1.i);
 			
-			iexpr = s1.i;
+			iexpr = salida.i;
 			c = expr.charAt(iexpr);
 			while (c == ','){
 				s1 = cte(nodo.getChildAt(0), iexpr+1);
@@ -132,10 +152,11 @@ public class ConstantCreator {
 		}
 		
 		else if (ct.equals("\\seq")) {
+			//pinta [X,X,X]
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\langle " + s1.s ,s1.i);
 			
-			iexpr = s1.i;
+			iexpr = salida.i;
 			c = expr.charAt(iexpr);
 			while (c == ','){
 				s1 = cte(nodo.getChildAt(0), iexpr+1);
@@ -147,16 +168,15 @@ public class ConstantCreator {
 			salida.i = iexpr;
 			return salida;
 		}
-		
-		
 		return new scte("errpr",0);
 	}
 
-	public ConstantCreator(String s, DefaultMutableTreeNode root,HashMap t,HashMap zn) {
+	public ConstantCreator(String s, DefaultMutableTreeNode root,HashMap<String, String> t,HashMap<String, String> zn,HashMap<String,StringPointer> vars) {
 		arbol = root;
 		expr = s;
 		tipos = t;
 		zName = zn;
+		valores = vars;
 	}
 
 	public String getCte() {

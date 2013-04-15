@@ -39,7 +39,6 @@ public class VariablesSet{
 			// We must check that the list of variables of the two instances have the same elements
 			if(otherVars.size()!=vars.size())
 				return false;
-
 			boolean match = true;
 			for(int i=0;i<vars.size() && match;i++){
 				RefExpr var = vars.get(i);
