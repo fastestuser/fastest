@@ -8,13 +8,13 @@ import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 
 public class ConstantCreator {
-	
+
 	private DefaultMutableTreeNode arbol;
 	private String expr;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zName;
 	private HashMap<String,StringPointer> valores;
-	
+	private static int postfijo;
 	//estructura de datos para la recursion
 	private class scte{
 		String s;
@@ -47,7 +47,11 @@ public class ConstantCreator {
 				return aux[1];
 			}
 			//si es basicType
-			return ct.toLowerCase()+zName.get(var);
+			String zname = zName.get(var);
+			if (zname == null)
+				return ct.toLowerCase() + postfijo++;
+			else
+				return ct.toLowerCase()+zname;
 		}
 	}
 
@@ -57,19 +61,22 @@ public class ConstantCreator {
 		Matcher m = patron.matcher(expr);
 		m.find(iexpr);
 		String aux = m.group();
-		
+
 		char c = expr.charAt(iexpr);
 		String ct = nodo.toString();
 		scte salida;
 		// si es variable auxiliar de {log} genero
 		if (Character.isUpperCase(c) || c == '_') {
-			String s;
-			if (valores.get(aux).toString() != null)
-				s = valores.get(aux).toString();
+			String s = null;
+			StringPointer val;
+			val = valores.get(aux);
+			//no cambiar el orden de la conjuncion, para que pueda chequear el lado derecho, el izquierdo debe ser falso
+			if (val != null && val.toString() != null)
+				s = val.toString();
 			else
 				s = fullCte(nodo,aux);
 			salida = new scte(s,iexpr + aux.length());//la longitud que va es la original, no la inventada
-													  //porque siempre me muevo en el string expr original
+			//porque siempre me muevo en el string expr original
 			return salida;
 		}
 		// si es constante la meto
@@ -88,7 +95,8 @@ public class ConstantCreator {
 		}
 		else if (ct.equals("\\fun") ||ct.equals("\\pfun")|| ct.equals("\\rel")) {
 			//puede venir X ó {X} ó {[X,X]}
-			//pir que c esta en "{"
+
+			//por que c esta en "{"
 			iexpr++; 
 			c = expr.charAt(iexpr);
 			scte si1,si2;
@@ -102,8 +110,6 @@ public class ConstantCreator {
 				si2 = cte(nodo.getChildAt(1), iexpr );
 			}
 			salida = new scte("\\{ " + "(" + si1.s + " \\mapsto " + si2.s + ")",si2.i);
-			//aca abajo, va un while y algo parecido a lo de arriba
-			//si tiene mas de un elemento
 			iexpr = salida.i;
 			c = expr.charAt(iexpr);
 			while (c==','){
@@ -124,7 +130,7 @@ public class ConstantCreator {
 			salida.s = salida.s + " \\}";
 			salida.i = iexpr+1;
 			return salida;
-			
+
 		} 
 		else if (ct.equals("\\cross")){
 			//caso [X,Y]
@@ -137,7 +143,7 @@ public class ConstantCreator {
 			//pinta {X,X,X}
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\{ " + s1.s ,s1.i);
-			
+
 			iexpr = salida.i;
 			c = expr.charAt(iexpr);
 			while (c == ','){
@@ -150,12 +156,12 @@ public class ConstantCreator {
 			salida.i = iexpr;
 			return salida;
 		}
-		
+
 		else if (ct.equals("\\seq")) {
 			//pinta [X,X,X]
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\langle " + s1.s ,s1.i);
-			
+
 			iexpr = salida.i;
 			c = expr.charAt(iexpr);
 			while (c == ','){
@@ -177,6 +183,7 @@ public class ConstantCreator {
 		tipos = t;
 		zName = zn;
 		valores = vars;
+		postfijo = 0;
 	}
 
 	public String getCte() {
