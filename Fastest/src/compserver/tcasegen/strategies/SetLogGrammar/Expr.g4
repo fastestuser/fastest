@@ -563,7 +563,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 				memory.put("\\ran" + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\ran" + $e.text, newVarName);
-				types.put("\\ran" + $e.text, "\\power(" + getChildType((String) types.get($e.text), 0) + ")");
+				types.put("\\ran" + $e.text, "\\power(" + getChildType((String) types.get($e.text), 1) + ")");
 				
 				String e = (String) memory.get($e.text);
 				
