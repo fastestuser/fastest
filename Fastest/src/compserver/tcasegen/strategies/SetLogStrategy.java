@@ -80,9 +80,22 @@ public class SetLogStrategy implements TCaseStrategy{
 	private List<FreePara> freeParas;
     private List<String> basicTypeNames;
     
+    private void printHashMap(HashMap<String,String> map){
+		Iterator<String> iterator = map.keySet().iterator();  
+		String key,value;
+		while (iterator.hasNext()) {  
+		   key = iterator.next().toString();
+		   if (map.get(key) == null)
+			   value = "nullc";
+		   else 
+			   value = map.get(key).toString();
+		   System.out.println(key + " = " + value);  
+		} 
+	}
     
     private HashMap<String,String> llenarZVars(ExprParser exprP, SLog2ZParser SL2ZP){
     	Map<String, String> zVars = exprP.getZVars();
+    	Map<String, String> sLogName = exprP.getMemory();
         Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
 		ConstantCreator cc; 
@@ -100,8 +113,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		        TMP.typeManage();
 		        DefaultMutableTreeNode root =  TMP.getRoot();
 		        
-		        
-		        cc = new ConstantCreator(valor,root,tipos,null,null);
+		        cc = new ConstantCreator(sLogName.get(key),root,tipos,null,null);
 		        valor =  cc.getCte();
 				zVars.put(key, valor);
 			}  
@@ -251,7 +263,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		    	   
 		    	   setlogOutput = setlogOutput.concat(s + "\n");
 		       }else if(s.startsWith("_CONSTR")){
-		    	   setlogOutput = s + "\n" + setlogOutput;
+		    	   //setlogOutput = s + "\n" + setlogOutput;
 		    	   break;
 		       }
 		    }
@@ -260,7 +272,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		catch (Exception e){ 
 	          e.printStackTrace(); 
 			} 
-		
+		//traduccion de SLog a Z
 		input = new ANTLRInputStream(setlogOutput);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);
@@ -269,12 +281,13 @@ public class SetLogStrategy implements TCaseStrategy{
         
         //tambien imprime en pantalla
         parser2.lineas();
-        
-
+        Map<String, String> zVars = llenarZVars(parser,parser2);
+        System.out.println("\nzVars llenas****************\n");
+        printHashMap((HashMap) zVars);
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
-		Map<String, String> zVars = parser2.getZVars();
+		//Map<String, String> zVars = parser2.getZVars();
 		Iterator<String> keys = zVars.keySet().iterator();
 		ZLive zLive = UniqueZLive.getInstance();
 		

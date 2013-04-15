@@ -19,6 +19,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
 	
+	
 	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
@@ -98,29 +99,29 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 }
 
 lineas
-	:	constr NL 	
+	:	%constr NL 	
 		( seqIgual NL)+ 
 		{
 			System.out.println("salida: \n");
 			printHashMap( vars );llenarZVars();
 			System.out.println("\nzVars:");
 			printHashMap(zVars);
-			System.out.println("const***** " + $constr.text);
+			//System.out.println("const***** " + $constr.text);
 		}
 	;
 
-constr
-	:	'_CONSTR' '=' '[' (restr(','restr)*)? '],'
-	;
+%constr
+%	:	'_CONSTR' '=' '[' (restr(','restr)*)? '],'
+%	;
 	
-restr
-locals [StringPointer valor;]
-@init{$restr::valor = new StringPointer();}
-	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); vars.put($expr.text,$restr::valor);}
-	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); vars.put($expr.text,$restr::valor);}
-	| 'integer(' expr ')' {$restr::valor.setString("666"); vars.put($expr.text,$restr::valor);}
-	| expr 'neq' expr 
-	;
+%restr
+%locals [StringPointer valor;]
+%@init{$restr::valor = new StringPointer();}
+%	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); vars.put($expr.text,$restr::valor);}
+%	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); vars.put($expr.text,$restr::valor);}
+%	| 'integer(' expr ')' {$restr::valor.setString("666"); vars.put($expr.text,$restr::valor);}
+%	| expr 'neq' expr 
+%	;
 
 seqIgual
 locals [StringPointer valor;]

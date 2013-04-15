@@ -59,6 +59,7 @@ public class SLog2ZParser extends Parser {
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
 		
+		
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}
@@ -197,7 +198,7 @@ public class SLog2ZParser extends Parser {
 						printHashMap( vars );llenarZVars();
 						System.out.println("\nzVars:");
 						printHashMap(zVars);
-						System.out.println("const***** " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null));
+						//System.out.println("const***** " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null));
 					
 			}
 		}

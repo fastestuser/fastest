@@ -52,6 +52,7 @@ public class SLog2ZLexer extends Lexer {
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
 		
+		
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}

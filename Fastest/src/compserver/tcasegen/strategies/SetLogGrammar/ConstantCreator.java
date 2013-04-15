@@ -14,7 +14,10 @@ public class ConstantCreator {
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zName;
 	private HashMap<String,StringPointer> valores;
-	private static int postfijo;
+	public static int postfijo;
+	private String getNumber(){
+		return String.valueOf(postfijo++);
+	}
 	//estructura de datos para la recursion
 	private class scte{
 		String s;
@@ -26,7 +29,7 @@ public class ConstantCreator {
 	public String fullCte(TreeNode nodo,String var) {
 		String ct = nodo.toString();
 		if (ct.equals("\\num") || ct.equals("\\nat") ) {
-			return "666";
+			return this.getNumber();
 		} else if(ct == "()"){
 			return fullCte(nodo.getChildAt(0),var);
 		} else if (ct.equals("\\pfun") || ct.equals("\\fun") || ct.equals("\\rel")) {
@@ -54,7 +57,7 @@ public class ConstantCreator {
 			{
 				String zname = zName.get(var);
 				if (zname == null)
-					return ct.toLowerCase() + postfijo++;
+					return ct.toLowerCase() + this.getNumber();
 				else
 					return ct.toLowerCase()+zname;
 			}
