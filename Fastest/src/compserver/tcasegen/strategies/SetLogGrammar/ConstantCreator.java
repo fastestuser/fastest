@@ -45,29 +45,32 @@ public class ConstantCreator {
 			return "\\langle " + fullCte(nodo.getChildAt(0),var) + " \\rangle";
 		}else { 
 			String nodoType = tipos.get(ct);
+			String cte;
 			//si es EnumerationType
 			if (nodoType.startsWith("EnumerationType")){
 				//si nodoType == EnumerationType:FT:{elem1,elem2}
 				// aux = EnumerationType:FT: , elem1 , elem2}
 				String[] aux = nodoType.split("[{,]");
-				return aux[1];
-			}
-			//si es basicType
-			//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
-			String cte = ct.toLowerCase();
-			if(zName == null)
-				cte = cte + var;
-			else
-			{
-				String zname = zName.get(var);
-				if (zname == null)
-					cte = cte + this.getNumber();
+				cte =  aux[1];
+			}else{
+				//si es basicType
+				//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
+				cte = ct.toLowerCase();
+				if(zName == null)
+					cte = cte + var;
 				else
-					cte = cte + zname;
-			}
-			//valores.put(var, new StringPointer(cte));
-			return cte;
+				{
+					String zname = zName.get(var);
+					if (zname == null)
+						cte = cte + this.getNumber();
+					else
+						cte = cte + zname;
+				}
+				//valores.put(var, new StringPointer(cte));
+				return cte;
+			}	
 		}
+		return ct;
 	}
 
 	public scte cte(TreeNode nodo, int iexpr) {
