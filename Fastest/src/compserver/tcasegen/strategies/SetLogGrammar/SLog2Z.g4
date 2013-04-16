@@ -14,7 +14,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 }
 
 @members {
-	HashMap<String,StringPointer> vars = new HashMap();	
+	HashMap<String,StringPointer> slvars = new HashMap();	
 	HashMap<String,String> zNames = new HashMap();
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
@@ -25,11 +25,8 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	}
 	
 	
-	public void print(String s){
-		System.out.println(s);
-	}
 	public void loadTablas(ExprParser parser){
-		zNames = invertMemory(parser.getMemory());
+		zNames = invertMap(parser.getMemory());
 		tipos = parser.getTypes();
 		zVars = parser.getZVars();
 		
@@ -52,13 +49,13 @@ package compserver.tcasegen.strategies.SetLogGrammar;
          
         
         
-        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
+        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,slvars);
         return cc.getCte();
 	}
 	
-	private HashMap invertMemory(HashMap m){
-		Iterator iterator = m.keySet().iterator();  
-   		HashMap s = new HashMap();
+	private HashMap<String,String> invertMap(HashMap<String,String> m){
+		Iterator<String> iterator = m.keySet().iterator();  
+   		HashMap<String,String> s = new HashMap<String,String>();
    		
 		while (iterator.hasNext()) {  
 		   String key = iterator.next().toString();  
@@ -82,12 +79,12 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	}
 	
 	public void llenarZVars(){
-		Iterator iterator = vars.keySet().iterator();  
+		Iterator iterator = slvars.keySet().iterator();  
 		String slname,zname,valor;
 		while (iterator.hasNext()) {  
 			slname = iterator.next().toString();
-			if (vars.get(slname)!=null){	
-				valor = vars.get(slname).toString();
+			if (slvars.get(slname)!=null){	
+				valor = slvars.get(slname).toString();
 				zname = zNames.get(slname);
 				if (zVars.containsKey(zname)){
 					zVars.put(zname,valor);
@@ -102,7 +99,7 @@ lineas
 	:	( seqIgual NL?)+ 
 		{
 			System.out.println("salida: \n");
-			printHashMap( vars );llenarZVars();
+			printHashMap( slvars );llenarZVars();
 			System.out.println("\nzVars vacias +++++++++:");
 			printHashMap(zVars);
 			
@@ -116,9 +113,9 @@ lineas
 %restr
 %locals [StringPointer valor;]
 %@init{$restr::valor = new StringPointer();}
-%	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); vars.put($expr.text,$restr::valor);}
-%	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); vars.put($expr.text,$restr::valor);}
-%	| 'integer(' expr ')' {$restr::valor.setString("666"); vars.put($expr.text,$restr::valor);}
+%	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
+%	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
+%	| 'integer(' expr ')' {$restr::valor.setString("666"); slvars.put($expr.text,$restr::valor);}
 %	| expr 'neq' expr 
 %	;
 
@@ -127,7 +124,7 @@ locals [StringPointer valor;]
 @init{$seqIgual::valor = new StringPointer();}
 	:	'NUM = int(-10000000000, 10000000000),'  	 
 	|	'NAT = int(0, 10000000000),'
-	|	(v1=NAME {vars.put($v1.text,$seqIgual::valor);} '=' v2=expr {vars.put($v2.text,$seqIgual::valor);} ',')+
+	|	(v1=NAME {slvars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slvars.put($v2.text,$seqIgual::valor);} ',')+
 		{
 			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);

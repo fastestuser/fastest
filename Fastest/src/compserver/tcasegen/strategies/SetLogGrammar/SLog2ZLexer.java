@@ -47,7 +47,7 @@ public class SLog2ZLexer extends Lexer {
 	};
 
 
-		HashMap<String,StringPointer> vars = new HashMap();	
+		HashMap<String,StringPointer> slvars = new HashMap();	
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
@@ -58,11 +58,8 @@ public class SLog2ZLexer extends Lexer {
 		}
 		
 		
-		public void print(String s){
-			System.out.println(s);
-		}
 		public void loadTablas(ExprParser parser){
-			zNames = invertMemory(parser.getMemory());
+			zNames = invertMap(parser.getMemory());
 			tipos = parser.getTypes();
 			zVars = parser.getZVars();
 			
@@ -85,13 +82,13 @@ public class SLog2ZLexer extends Lexer {
 	         
 	        
 	        
-	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
+	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,slvars);
 	        return cc.getCte();
 		}
 		
-		private HashMap invertMemory(HashMap m){
-			Iterator iterator = m.keySet().iterator();  
-	   		HashMap s = new HashMap();
+		private HashMap<String,String> invertMap(HashMap<String,String> m){
+			Iterator<String> iterator = m.keySet().iterator();  
+	   		HashMap<String,String> s = new HashMap<String,String>();
 	   		
 			while (iterator.hasNext()) {  
 			   String key = iterator.next().toString();  
@@ -115,12 +112,12 @@ public class SLog2ZLexer extends Lexer {
 		}
 		
 		public void llenarZVars(){
-			Iterator iterator = vars.keySet().iterator();  
+			Iterator iterator = slvars.keySet().iterator();  
 			String slname,zname,valor;
 			while (iterator.hasNext()) {  
 				slname = iterator.next().toString();
-				if (vars.get(slname)!=null){	
-					valor = vars.get(slname).toString();
+				if (slvars.get(slname)!=null){	
+					valor = slvars.get(slname).toString();
 					zname = zNames.get(slname);
 					if (zVars.containsKey(zname)){
 						zVars.put(zname,valor);

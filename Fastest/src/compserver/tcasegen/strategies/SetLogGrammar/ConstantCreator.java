@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.antlr.v4.runtime.RecognitionException;
-
 import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 
@@ -15,8 +13,8 @@ public class ConstantCreator {
 	private DefaultMutableTreeNode arbol;
 	private String expr;
 	private HashMap<String,String> tipos;
-	private HashMap<String,String> zName;
-	private HashMap<String,StringPointer> valores;
+	private HashMap<String,String> zNames;
+	private HashMap<String,StringPointer> slVars;
 	public static int postfijo;
 	private String getNumber(){
 		return String.valueOf(postfijo++);
@@ -56,21 +54,22 @@ public class ConstantCreator {
 				//si es basicType
 				//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
 				cte = ct.toLowerCase();
-				if(zName == null)
+				if(zNames == null)
 					cte = cte + var;
 				else
 				{
-					String zname = zName.get(var);
+					String zname = zNames.get(var);
 					if (zname == null)
 						cte = cte + this.getNumber();
 					else
-						cte = cte + zname;
+						cte = cte + zname.replace("?","");
 				}
-				//valores.put(var, new StringPointer(cte));
-				return cte;
-			}	
+				
+				
+			}
+			return cte;
 		}
-		return ct;
+		
 	}
 
 	public scte cte(TreeNode nodo, int iexpr) {
@@ -90,19 +89,23 @@ public class ConstantCreator {
 		scte salida;
 		// si es variable auxiliar de {log} genero
 		if (Character.isUpperCase(c) || c == '_') {
-			String s = null;
-			StringPointer val;
-			if (valores!=null){
-				val = valores.get(aux);
+			String cte = null;
+			StringPointer sp;
+			
+			if (slVars!=null){
+				sp = slVars.get(aux);
 				//no cambiar el orden de la conjuncion, para que pueda chequear el lado derecho, el izquierdo debe ser falso
-				if (val != null && val.toString() != null)
-					s = val.toString();
+				if (sp != null && sp.toString() != null)
+					cte = sp.toString();
 				else
-					s = fullCte(nodo,aux);
+					cte = fullCte(nodo,aux);
 			}
 			else
-				s = fullCte(nodo,aux);
-			salida = new scte(s,iexpr + aux.length());//la longitud que va es la original, no la inventada
+				cte = fullCte(nodo,aux);
+			
+			if (slVars!=null)
+				slVars.put(aux, new StringPointer(cte));
+			salida = new scte(cte,iexpr + aux.length());//la longitud que va es la original, no la inventada
 			//porque siempre me muevo en el string expr original
 			return salida;
 		}
@@ -213,13 +216,13 @@ public class ConstantCreator {
 		return new scte("errpr",0);
 	}
 
-	public ConstantCreator(String s, DefaultMutableTreeNode root,HashMap<String, String> t,HashMap<String, String> zn,HashMap<String,StringPointer> vars) {
-		arbol = root;
-		expr = s;
-		tipos = t;
-		zName = zn;
-		valores = vars;
-		postfijo = 1;
+	public ConstantCreator(String expr, DefaultMutableTreeNode root,HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars) {
+		this.arbol = root;
+		this.expr = expr;
+		this.tipos = tipos;
+		this.zNames = znames;
+		this.slVars = slvars;
+		ConstantCreator.postfijo = 1;
 	}
 
 	public String getCte() {

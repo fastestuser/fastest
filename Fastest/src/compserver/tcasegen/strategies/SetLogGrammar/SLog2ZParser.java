@@ -54,7 +54,7 @@ public class SLog2ZParser extends Parser {
 	public ATN getATN() { return _ATN; }
 
 
-		HashMap<String,StringPointer> vars = new HashMap();	
+		HashMap<String,StringPointer> slvars = new HashMap();	
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
@@ -65,11 +65,8 @@ public class SLog2ZParser extends Parser {
 		}
 		
 		
-		public void print(String s){
-			System.out.println(s);
-		}
 		public void loadTablas(ExprParser parser){
-			zNames = invertMemory(parser.getMemory());
+			zNames = invertMap(parser.getMemory());
 			tipos = parser.getTypes();
 			zVars = parser.getZVars();
 			
@@ -92,13 +89,13 @@ public class SLog2ZParser extends Parser {
 	         
 	        
 	        
-	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,vars);
+	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,slvars);
 	        return cc.getCte();
 		}
 		
-		private HashMap invertMemory(HashMap m){
-			Iterator iterator = m.keySet().iterator();  
-	   		HashMap s = new HashMap();
+		private HashMap<String,String> invertMap(HashMap<String,String> m){
+			Iterator<String> iterator = m.keySet().iterator();  
+	   		HashMap<String,String> s = new HashMap<String,String>();
 	   		
 			while (iterator.hasNext()) {  
 			   String key = iterator.next().toString();  
@@ -122,12 +119,12 @@ public class SLog2ZParser extends Parser {
 		}
 		
 		public void llenarZVars(){
-			Iterator iterator = vars.keySet().iterator();  
+			Iterator iterator = slvars.keySet().iterator();  
 			String slname,zname,valor;
 			while (iterator.hasNext()) {  
 				slname = iterator.next().toString();
-				if (vars.get(slname)!=null){	
-					valor = vars.get(slname).toString();
+				if (slvars.get(slname)!=null){	
+					valor = slvars.get(slname).toString();
 					zname = zNames.get(slname);
 					if (zVars.containsKey(zname)){
 						zVars.put(zname,valor);
@@ -196,7 +193,7 @@ public class SLog2ZParser extends Parser {
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 15) | (1L << 16) | (1L << NAME))) != 0) );
 
 						System.out.println("salida: \n");
-						printHashMap( vars );llenarZVars();
+						printHashMap( slvars );llenarZVars();
 						System.out.println("\nzVars vacias +++++++++:");
 						printHashMap(zVars);
 						
@@ -317,7 +314,7 @@ public class SLog2ZParser extends Parser {
 				setState(35); match(6);
 				setState(36); ((RestrContext)_localctx).expr = expr();
 				setState(37); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 5:
@@ -326,7 +323,7 @@ public class SLog2ZParser extends Parser {
 				setState(40); match(5);
 				setState(41); ((RestrContext)_localctx).expr = expr();
 				setState(42); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 11:
@@ -335,7 +332,7 @@ public class SLog2ZParser extends Parser {
 				setState(45); match(11);
 				setState(46); ((RestrContext)_localctx).expr = expr();
 				setState(47); match(2);
-				((RestrContext)getInvokingContext(2)).valor.setString("666"); vars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("666"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 7:
@@ -425,10 +422,10 @@ public class SLog2ZParser extends Parser {
 						{
 						{
 						setState(58); ((SeqIgualContext)_localctx).v1 = match(NAME);
-						vars.put((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
+						slvars.put((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
 						setState(60); match(9);
 						setState(61); ((SeqIgualContext)_localctx).v2 = expr();
-						vars.put((((SeqIgualContext)_localctx).v2!=null?_input.getText(((SeqIgualContext)_localctx).v2.start,((SeqIgualContext)_localctx).v2.stop):null),((SeqIgualContext)getInvokingContext(3)).valor);
+						slvars.put((((SeqIgualContext)_localctx).v2!=null?_input.getText(((SeqIgualContext)_localctx).v2.start,((SeqIgualContext)_localctx).v2.stop):null),((SeqIgualContext)getInvokingContext(3)).valor);
 						setState(63); match(4);
 						}
 						}
