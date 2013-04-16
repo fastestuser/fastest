@@ -4,6 +4,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import org.antlr.v4.runtime.RecognitionException;
+
 import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 
@@ -51,16 +54,19 @@ public class ConstantCreator {
 			}
 			//si es basicType
 			//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
+			String cte = ct.toLowerCase();
 			if(zName == null)
-				return ct.toLowerCase() + var;
+				cte = cte + var;
 			else
 			{
 				String zname = zName.get(var);
 				if (zname == null)
-					return ct.toLowerCase() + this.getNumber();
+					cte = cte + this.getNumber();
 				else
-					return ct.toLowerCase()+zname;
+					cte = cte + zname;
 			}
+			//valores.put(var, new StringPointer(cte));
+			return cte;
 		}
 	}
 
@@ -69,8 +75,13 @@ public class ConstantCreator {
 		Pattern patron = Pattern.compile("(\\w+)");
 		Matcher m = patron.matcher(expr);
 		m.find(iexpr);
-		String aux = m.group();
-
+		String aux;
+		try{
+			aux = m.group();
+		}
+		catch (Exception e) {
+			aux = "";
+		}
 		char c = expr.charAt(iexpr);
 		String ct = nodo.toString();
 		scte salida;
@@ -111,6 +122,9 @@ public class ConstantCreator {
 
 			//por que c esta en "{"
 			iexpr++; 
+			if(	expr.charAt(iexpr)=='}'){
+				return new scte("\\{\\}",iexpr+2);
+			}
 			c = expr.charAt(iexpr);
 			scte si1,si2;
 			if (c=='[')	{
@@ -154,6 +168,9 @@ public class ConstantCreator {
 		}
 		else if (ct.equals("\\power") ) {
 			//pinta {X,X,X}
+			if(	expr.charAt(iexpr+1)=='}'){
+				return new scte("\\{\\}",iexpr+2);
+			}
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\{ " + s1.s ,s1.i);
 
@@ -166,12 +183,15 @@ public class ConstantCreator {
 				c = expr.charAt(iexpr);
 			}
 			salida.s = salida.s + " \\}";
-			salida.i = iexpr;
+			salida.i = iexpr+1;
 			return salida;
 		}
 
 		else if (ct.equals("\\seq")) {
 			//pinta [X,X,X]
+			if(	expr.charAt(iexpr+1)==']'){
+				return new scte("\\langle \\rangle",iexpr+2);
+			}
 			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
 			salida = new scte("\\langle " + s1.s ,s1.i);
 
@@ -184,7 +204,7 @@ public class ConstantCreator {
 				c = expr.charAt(iexpr);
 			}
 			salida.s = salida.s + " \\rangle";
-			salida.i = iexpr;
+			salida.i = iexpr+1;
 			return salida;
 		}
 		return new scte("errpr",0);
@@ -196,7 +216,7 @@ public class ConstantCreator {
 		tipos = t;
 		zName = zn;
 		valores = vars;
-		postfijo = 0;
+		postfijo = 1;
 	}
 
 	public String getCte() {

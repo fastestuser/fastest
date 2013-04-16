@@ -144,8 +144,8 @@ expr
 returns [String valor]
 	:	CTE {$valor = $CTE.text;}
 	|   NAME {$valor = $NAME.text;} 
-	|	'{' a=expr {$valor = "{" + $a.valor;} (','  b=expr {$valor = $valor + "," + $b.valor;})* ('\\' expr)* '}' {$valor = $valor + "}";} 
-	|	'[' a=expr {$valor = "[" + $a.valor;} (','  b=expr {$valor = $valor + "," + $b.valor;})* ('|' expr)* ']' {$valor = $valor + "]";}
+	|	'{'{$valor = "{";} ((','{$valor = $valor + ",";})?  e=expr {$valor = $valor + $e.valor;})* ('\\' expr)* '}' {$valor = $valor + "}";}
+	|   '['{$valor = "[";} ((','{$valor = $valor + ",";})?  e=expr {$valor = $valor + $e.valor;})* ('|' expr)* ']' {$valor = $valor + "]";}  
 	|	'-' expr {$valor = "-" + $valor ;}
 	;
       
