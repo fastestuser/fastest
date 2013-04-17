@@ -23,32 +23,47 @@ grammar Expr;
 	
 	HashMap<String,String> setExpressionVars;
 	
-	HashMap memory = new HashMap(); //En memory se guardan las variables y expressiones leidas
-	HashMap types = new HashMap();	//En types se guarda informacion sobre los tipos definidos
-	HashMap zVars = new HashMap();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
+	HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
+	HashMap<String,String> types = new HashMap<String,String>();	//En types se guarda informacion sobre los tipos definidos
+	HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
 	                                //el caso de prueba) se les dara un valor.
 	
-	String salida = new String();
+	String out = new String();
+	String functionsOut = new String();
+	
 	public String getSalida() {
-		return salida;
+		return out.concat(functionsOut);
 	}
 	
-	public HashMap getMemory() {
+	public HashMap<String,String> getMemory() {
 		return memory;
 	}
 	
-	public HashMap getTypes() {
+	public HashMap<String,String> getTypes() {
 		return types;
 	}
 	
-	public HashMap getZVars() {
+	public HashMap<String,String> getZVars() {
 		return zVars;
 	}
 
 	public void print(String c) {
-		if (modoSetExpression == 0 & tipoSchema == 0) 
+		if (modoSetExpression == 0 && tipoSchema == 0) 
 			//System.out.println(c + " &");
-			salida = salida.concat(c + " &");
+			out = out.concat(c + " &");
+		else if (modoSetExpression == 1)
+			setExpressionDecl = setExpressionDecl.concat(" & " + c);
+		else if (modoSetExpression == 2)
+			setExpressionPred = setExpressionPred.concat(" & " + c);
+		else if (modoSetExpression == 3)
+			setExpressionExpr = setExpressionExpr.concat(" & " + c);
+	}
+	
+	//Este metodo se utiliza para imprimir informacion del tipo: is_pfun, is_rel, etc
+	//ya que debe ir al final de todo
+	public void printAtEnd(String c) {
+		if (modoSetExpression == 0 && tipoSchema == 0) 
+			functionsOut = functionsOut.concat(c + " &");
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -113,17 +128,17 @@ grammar Expr;
 		
 			String nodeType = getType(type);
 			if (nodeType.equals("\\seq"))
-				print("list(" + var + ")");
+				printAtEnd("list(" + var + ")");
 			else if (nodeType.equals("\\rel"))
-				print("is_rel(" + var + ")");
+				printAtEnd("is_rel(" + var + ")");
 			else if (nodeType.equals("\\pfun"))
-				print("is_pfun(" + var + ")");
+				printAtEnd("is_pfun(" + var + ")");
 			else if (nodeType.equals("\\fun"))
-				print("is_fun(" + var + ")");
+				printAtEnd("is_fun(" + var + ")");
 			else if (type.equals("\\nat") || type.equals("\\num"))
 				print(var + " in " + memory.get(type));
 			else { //double check
-				type = (String) types.get(type);
+				type = types.get(type);
 				if (isBasic(type)) {
 					type = type.split(":")[1];
 					print(var + " in " + type);
@@ -143,32 +158,33 @@ grammar Expr;
 
 specification
 	:	( paragraph NL*)+
-	{
-	  /* System.out.println("tablita de tippos");
+	{/*
+	   System.out.println("tablita de tippos");
 	   System.out.println("-------------------");
 	   String key, value;
-	   Iterator iterator = types.keySet().iterator();
+	   Iterator<String> iterator = types.keySet().iterator();
 	   while (iterator.hasNext()) {
-	           key = (String) iterator.next();
-	           value = (String) types.get(key);
+	           key = iterator.next();
+	           value = types.get(key);
 	           System.out.println(key + "\t\t| " + value);
 	   }
 	   System.out.println("\ntablita de memory");
 	   System.out.println("-------------------");
 	   iterator = memory.keySet().iterator();
 	   while (iterator.hasNext()) {
-	           key = (String) iterator.next();
-	           value = (String) memory.get(key);
+	           key = iterator.next();
+	           value = memory.get(key);
 	           System.out.println(key + "\t\t| " + value);
 	   }
 	   System.out.println("\ntablita de zVars");
 	   System.out.println("-------------------");
 	   iterator = zVars.keySet().iterator();
 	   while (iterator.hasNext()) {
-	           key = (String) iterator.next();
-	           value = (String) zVars.get(key);
-	           System.out.println(key + "\t\t| " + value);
-               }*/
+           key = iterator.next();
+           value = zVars.get(key);
+           System.out.println(key + "\t\t| " + value);
+  	   }
+     */
 	}
 	;
 
@@ -186,16 +202,16 @@ paragraph
 			}
 		}
 		'\\end{' ('schema' | ('schemaType' {tipoSchema = 0;})) '}'
-	|	'\\begin{zed}' NL ((basic_type | equivalent_type | enumeration_type) NL )+ '\\end{zed}'
+	|	'\\begin{zed}' NL? ((basic_type | equivalent_type | enumeration_type) NL )+ '\\end{zed}'
 	;
       
 basic_type
-locals [ArrayList typeList;]
-@init{$basic_type::typeList = new ArrayList();}
+locals [ArrayList<String> typeList;]
+@init{$basic_type::typeList = new ArrayList<String>();}
 	:	'[' a=declName {$basic_type::typeList.add($a.text);} (',' b=declName {$basic_type::typeList.add($b.text);})* ']'
 	{
 		while( !$basic_type::typeList.isEmpty() ) {
-			String type = (String) $basic_type::typeList.remove(0);
+			String type = $basic_type::typeList.remove(0);
 			
 			String newVarName = newVar($declName.text);
 			memory.put(type, newVarName);
@@ -208,7 +224,7 @@ locals [ArrayList typeList;]
 equivalent_type
 	:	declName '==' expression
 	{ 
-		String type = (String) types.get($expression.text);
+		String type = types.get($expression.text);
 		if (type != null) {
 			types.put($declName.text, type);
 		}
@@ -216,15 +232,15 @@ equivalent_type
 	;
 	
 enumeration_type
-locals [ArrayList cases;]
-@init{$enumeration_type::cases = new ArrayList();}
+locals [ArrayList<String> cases;]
+@init{$enumeration_type::cases = new ArrayList<String>();}
 	:	d=declName '::=' a=declName {$enumeration_type::cases.add($a.text);} (expression)? 
 	    ('|' b=declName {$enumeration_type::cases.add($b.text);} (expression)? )* 
 	    //Soporta solo constantes, falta ver que hacer si tiene expressiones
 	{	
 		String elements = new String();
 		while( !$enumeration_type::cases.isEmpty() ){
-			String e = (String) $enumeration_type::cases.remove(0);
+			String e = $enumeration_type::cases.remove(0);
 			elements = elements.concat(e);
 			
 			memory.put(e,e); //REVISAR!!!
@@ -251,14 +267,14 @@ declPart:	declaration ((';' | NL) declaration)*
 	;
 	
 declaration
-locals [ArrayList vars;]
-@init{$declaration::vars = new ArrayList();}
+locals [ArrayList<String> vars;]
+@init{$declaration::vars = new ArrayList<String>();}
 	:	a=declName {$declaration::vars.add($a.text);} (',' b=declName {$declaration::vars.add($b.text);})* ':' expression 
 	{
 		//Para cada variable realizamos el procesamiento
 		while( !$declaration::vars.isEmpty() ) {
 
-			String var = (String) $declaration::vars.remove(0);
+			String var = $declaration::vars.remove(0);
 
 			if (tipoSchema == 0)
 				zVars.put(var, null); //Marcamos la variable como variable Z, a la cual posiblemente se le deba asignarsele un valor
@@ -269,7 +285,7 @@ locals [ArrayList vars;]
 			if (modoSetExpression==1)
 				setExpressionVars.put(var, newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
 			
-			String expType = (String) types.get($expression.text);
+			String expType = types.get($expression.text);
 			expType = typeInfo(newVarName, expType);
 			
 			if (tipoSchema == 0)
@@ -290,19 +306,19 @@ predicate
 	:	'\\lnot' predicate
 	|	e1=expression '\\in' '\\dom' e2 = expression
 	{	String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print("in_dom(" + a + "," + b + ")");
 	} 
 	|	e1=expression '\\in' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " in " + b);
 		
 		//Impresion de tipo
-		String type = (String) types.get($e2.text);
+		String type = types.get($e2.text);
 		if (type != null)
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));
@@ -310,12 +326,12 @@ predicate
 	|	e1=expression '\\notin' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " nin " + b);
 		
 		//Impresion de tipo
-		String type = (String) types.get($e2.text);
+		String type = types.get($e2.text);
 		if (type != null)
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));
@@ -323,50 +339,50 @@ predicate
 	|	e1=expression '<' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " < " + b);
 	}
 	|	e1=expression '>' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " > " + b);
 	}
 	|	e1=expression '\\leq' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " =< " + b);
 	}
 	|	e1=expression '\\geq' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " =< " + b);
 	}
 	|	e1=expression '=' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " = " + b);
 	}
 	|	e1=expression '\\subset' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
-		print("dsubset(" + a + "," + b + ")");
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		print("dssubset(" + a + "," + b + ")");
 	}
 	|	e1=expression '\\neq' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		print(a + " neq " + b);
 	}
 	|	'(' predicate ')'
@@ -379,16 +395,16 @@ predicate
 	;
 	
 expression
-locals [ArrayList elements = new ArrayList(), String setlogName = "", String zName = "", String operator = "",
+locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
 	String newVarName1 = "", String newVarName2 = ""]
 	:	a=expression '\\rel' b=expression  //In-Gen 
 	{
 		//Guardo el tipo
-		String aType = (String) types.get($a.text);
+		String aType = types.get($a.text);
 		if (isBasic(aType)) {
 			aType = $a.text;
 		}
-		String bType = (String) types.get($b.text);
+		String bType = types.get($b.text);
 		if (isBasic(bType))
 			bType = $b.text;
 			
@@ -397,11 +413,11 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	a=expression op=('\\pfun' | '\\ffun') b=expression
 	{
 		//Guardo el tipo
-		String aType = (String) types.get($a.text);
+		String aType = types.get($a.text);
 		if (isBasic(aType)) {
 			aType = $a.text;
 		}
-		String bType = (String) types.get($b.text);
+		String bType = types.get($b.text);
 		if (isBasic(bType))
 			bType = $b.text;
 			
@@ -410,11 +426,11 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	a=expression '\\fun' b=expression
 	{
 		//Guardo el tipo
-		String aType = (String) types.get($a.text);
+		String aType = types.get($a.text);
 		if (isBasic(aType)) {
 			aType = $a.text;
 		}
-		String bType = (String) types.get($b.text);
+		String bType = types.get($b.text);
 		if (isBasic(bType))
 			bType = $b.text;
 			
@@ -426,11 +442,11 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 		
 		//Para cada exp realizamos el procesamiento
 		while( !$expression::elements.isEmpty() ) {
-			String exp = (String) $expression::elements.remove(0);
+			String exp = $expression::elements.remove(0);
 			
 			$zName = $zName.concat(exp);
 			
-			String expType = (String) types.get(exp);
+			String expType = types.get(exp);
 			if (isBasic(expType))
 				unfoldedType = unfoldedType.concat(exp);
 			else
@@ -447,8 +463,8 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	e1=expression '~' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		
 		if (memory.get($e1.text + "~" + $e2.text) == null) {
 			String newVarName = newVar();
@@ -457,7 +473,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			if (modoSetExpression != 0 )
 				setExpressionVars.put($e1.text + "~" + $e2.text, newVarName);
 
-			String newVarType = getChildType((String) types.get($e1.text), 1);
+			String newVarType = getChildType(types.get($e1.text), 1);
 			types.put($e1.text + "~" + $e2.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");
 			
@@ -469,9 +485,9 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	{
 		if (memory.get($e1.text + "." + $e2.text) == null) {
 		
-			String e1Type = (String) types.get($e1.text);
+			String e1Type = types.get($e1.text);
 			if (!e1Type.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
-				e1Type = (String) types.get(e1Type);
+				e1Type = types.get(e1Type);
 			
 			if (e1Type.startsWith("SchemaType:")) {
 				String schemaVars = e1Type.split(":", 3)[2];
@@ -501,15 +517,16 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	e1=expression '\\mapsto' e2=expression //In-Fun
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		memory.put($e1.text + "\\mapsto" + $e2.text, "[" + a + "," + b + "]");
+		types.put($e1.text + "\\mapsto" + $e2.text, types.get($e1.text) + "\\cross" + types.get($e2.text));
 	}
 	|	e1=expression '\\upto' e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		if (memory.get($e1.text + "\\upto" + $e2.text) == null) {
 			String newVarName = newVar();
 			memory.put($e1.text + "\\upto" + $e2.text, newVarName);
@@ -521,12 +538,13 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	pre_gen e=expression //Pre-Gen
 	{
 		String a;
-		a = (String)memory.get($e.text);
+		a = memory.get($e.text);
 		
 		if ($pre_gen.text.equals("\\#")){
 			if (memory.get("\\#" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\#" + $e.text, newVarName);
+				types.put("\\#" + $e.text, "\\nat");
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\#" + $e.text, newVarName);
 				print("prolog_call(length(" + a + "," + newVarName + "))");
@@ -545,12 +563,12 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 				memory.put("\\dom" + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\dom" + $e.text, newVarName);
-				types.put("\\dom" + $e.text, "\\power(" + getChildType((String) types.get($e.text), 0) + ")");
+				types.put("\\dom" + $e.text, "\\power(" + getChildType(types.get($e.text), 0) + ")");
 				
-				String e = (String) memory.get($e.text);
+				String e = memory.get($e.text);
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
-				String type = getType((String) types.get($e.text));
+				String type = getType(types.get($e.text));
 				if (type.equals("\\seq"))
 					print("ddom_list(" + e + "," + newVarName + ")");
 				else
@@ -563,12 +581,12 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 				memory.put("\\ran" + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\ran" + $e.text, newVarName);
-				types.put("\\ran" + $e.text, "\\power(" + getChildType((String) types.get($e.text), 0) + ")");
+				types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 1) + ")");
 				
-				String e = (String) memory.get($e.text);
+				String e = memory.get($e.text);
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
-				String type = getType((String) types.get($e.text));
+				String type = getType(types.get($e.text));
 				if (type.equals("\\seq"))
 					print("list_to_set(" + e + "," + newVarName + ")");
 				else
@@ -576,7 +594,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			}
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
-			String eType = (String) types.get($e.text);
+			String eType = types.get($e.text);
 			if (isBasic(eType))
 				eType = $e.text;
 		
@@ -586,8 +604,8 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	|	e1=expression IN_FUN_P4 e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		
 		if (memory.get($e1.text + $IN_FUN_P4.text + $e2.text) == null) {
 		
@@ -618,7 +636,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			else if ($IN_FUN_P4.text.equals("\\cap")){
 					print("dinters(" + a + "," + b + "," + newVarName + ")");
 					memory.put($e1.text + "\\cap" + $e2.text, newVarName);
-					String type = (String) types.get($e1.text);
+					String type = types.get($e1.text);
 					types.put($e1.text + "\\cap" + $e2.text, type);
 					typeInfo(newVarName, type);
 					if (modoSetExpression != 0 )
@@ -632,14 +650,15 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 					types.put("\\num", "\\num");
 				}
 				print(newVarName + " in NUM");
+				types.put($e1.text + $IN_FUN_P4.text + $e2.text, "\\num");
 			}
 		}
 	}
 	|	e1=expression IN_FUN_P3 e2=expression
 	{
 		String a, b;
-		a = (String)memory.get($e1.text);
-		b = (String)memory.get($e2.text);
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
 		
 		if (memory.get($e1.text + $IN_FUN_P3.text + $e2.text) == null) {
 		
@@ -664,7 +683,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			else if ($IN_FUN_P3.text.equals("\\cup")){
 					print("dunion(" + a + "," + b + "," + newVarName + ")");
 					memory.put($e1.text + "\\cup" + $e2.text, newVarName);
-					String type = (String) types.get($e1.text);
+					String type = types.get($e1.text);
 					types.put($e1.text + "\\cup" + $e2.text, type);
 					typeInfo(newVarName, type);
 					if (modoSetExpression != 0 )
@@ -678,12 +697,13 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 					types.put("\\num", "\\num");
 				}
 				print(newVarName + " in NUM");
+				types.put($e1.text + $IN_FUN_P3.text + $e2.text, "\\num");
 			}
 		}
 	}
 	|	'\\power' e=expression
 	{
-		String eType = (String) types.get($e.text);
+		String eType = types.get($e.text);
 		if (isBasic(eType))
 			eType = $e.text;
 	
@@ -702,19 +722,25 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	}
 	|	NUM
 	{
-		if (memory.get($NUM.text) == null)
+		if (memory.get($NUM.text) == null) {
 			memory.put($NUM.text, $NUM.text);
+			types.put($NUM.text, "\\num");
+		}
 	}
 	|	//set extension
 		SETSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* SETEND
 	{	
 		$zName = $SETSTART.text;
+		String type = new String();
 		//Llenamos elements y ponemos cada expression en la memory
 		while( !$elements.isEmpty() ){
-			String e = (String) $elements.remove(0);
+			String e = $elements.remove(0);
+			if (type.equals("")) {
+				type = types.get(e);
+			}
 			$zName = $zName.concat(e);
 			//guardamos tambien las traducciones del conjunto
-			$setlogName = $setlogName.concat((String)memory.get(e));
+			$setlogName = $setlogName.concat(memory.get(e));
 			
 			if (!$elements.isEmpty()){
 				$zName = $zName + ",";
@@ -724,6 +750,10 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 		$zName = $zName + $SETEND.text;
 		if (memory.get($zName) == null) {
 			memory.put($zName, "{" + $setlogName + "}");
+			if ($setlogName.equals(""))
+				types.put($zName, "\\power(" + "generic" + ")");
+			else
+				types.put($zName, "\\power(" + type + ")");
 		}
 	}
 	|	SETSTART {modoSetExpression=1; setExpressionDecl = ""; setExpressionPred = ""; setExpressionExpr = ""; setExpressionVars = new HashMap();}
@@ -744,7 +774,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			
 			Iterator<String> keysIt = setExpressionVars.keySet().iterator();
 			while (keysIt.hasNext()){
-				$setlogName = $setlogName.concat((String) setExpressionVars.get(keysIt.next()));
+				$setlogName = $setlogName.concat(setExpressionVars.get(keysIt.next()));
 				if (keysIt.hasNext()) $setlogName = $setlogName.concat(",");
 			}
 		
@@ -752,6 +782,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 			setExpressionPred + setExpressionExpr + " & " + $newVarName1 + " is " + memory.get($c.text) + ")" + " }");
 		
 			memory.put($zName, $newVarName2);
+			types.put($zName, "\\power(" + types.get($c.text) + ")"); //REVISAR!!!
 			print($newVarName2 + " = " + $setlogName);
 			
 			keysIt = setExpressionVars.keySet().iterator();
@@ -765,7 +796,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	}
 	|	'(' e=expression ')'
 	{
-		String a = (String) memory.get($e.text);
+		String a = memory.get($e.text);
 		
 		//Chequeo el nombre para ver si se trata de una sola variable, en ese caso no guardo en la memoria
 		//los parentesis, en otro caso si
@@ -809,7 +840,7 @@ locals [ArrayList elements = new ArrayList(), String setlogName = "", String zNa
 	;
 
 
-NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('0'..'9')*;
+NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('a'..'z' | 'A'..'Z' | '\\_ ' | '?' | '0'..'9')*;
 NUM:	'0'..'9'+ ;
 
 IN_FUN_P3: ('+' | '-' | '\\cup')	;
