@@ -9,7 +9,7 @@
 	<classpathentry kind="lib" path="lib/ZLivePlug2in.jar"/>
 	<classpathentry kind="lib" path="lib/ZLivePlugin.jar"/>
 	<classpathentry kind="lib" path="lib/ZSideKick.jar"/>
-	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-4.0-complete.jar"/>
-	<classpathentry kind="lib" path="/home/joaquin/workspace/Fastest/lib/antlr-3.2.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-4.0-complete.jar"/>
+	<classpathentry kind="lib" path="lib/antlr-3.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
