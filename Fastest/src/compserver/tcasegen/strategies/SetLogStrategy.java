@@ -93,9 +93,23 @@ public class SetLogStrategy implements TCaseStrategy{
 		} 
 	}
     
+    private HashMap<String,String> invertMap(HashMap<String,String> m){
+		Iterator<String> iterator = m.keySet().iterator();  
+   		HashMap<String,String> s = new HashMap<String,String>();
+   		
+		while (iterator.hasNext()) {  
+		   String key = iterator.next().toString();  
+		   String value = m.get(key).toString();  
+		   s.put(value,key);
+		} 	
+		return s;
+	}
+    
     private HashMap<String,String> llenarZVars(ExprParser exprP, SLog2ZParser SL2ZP){
-    	Map<String, String> zVars = SL2ZP.getZVars();
-    	Map<String, String> sLogName = exprP.getMemory();
+    	HashMap<String, String> zVars = SL2ZP.getZVars();
+    	HashMap<String, String> sLogName = exprP.getMemory();
+    	HashMap<String,String> zNames = invertMap(exprP.getMemory());
+    	
         Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
 		ConstantCreator cc; 
@@ -113,7 +127,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		        TMP.typeManage();
 		        DefaultMutableTreeNode root =  TMP.getRoot();
 		        
-		        cc = new ConstantCreator(sLogName.get(key),root,tipos,null,null);
+		        cc = new ConstantCreator(sLogName.get(key),root,tipos,zNames,null);
 		        valor =  cc.getCte();
 				zVars.put(key, valor);
 			}  
@@ -262,6 +276,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		       if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 		    	   setlogOutput = setlogOutput.concat(s + "\n");
 		       }else if(s.startsWith("_CONSTR")){
+		    	   setlogOutput = s +"\n"+ setlogOutput;
 		    	   break;
 		       }
 		    }
@@ -272,6 +287,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	          e.printStackTrace(); 
 			} 
 		//traduccion de SLog a Z
+		//setlogOutput = "Balances = {[N, 0]},\nVAR0 = 0,\nClients = Owners, Owners = {},";
 		input = new ANTLRInputStream(setlogOutput);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);

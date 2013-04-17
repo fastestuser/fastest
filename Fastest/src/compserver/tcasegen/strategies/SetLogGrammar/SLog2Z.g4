@@ -96,28 +96,31 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 }
 
 lineas
-	:	( seqIgual NL?)+ 
+	:	constr NL
+		( seqIgual NL?)+ 
 		{
 			System.out.println("salida: \n");
-			printHashMap( slvars );llenarZVars();
+			printHashMap( slvars );
+			System.out.println("constrains: \n" + constr.text);			
+			llenarZVars();
 			System.out.println("\nzVars vacias +++++++++:");
 			printHashMap(zVars);
 			
 		}
 	;
 
-%constr
-%	:	'_CONSTR' '=' '[' (restr(','restr)*)? '],'
-%	;
+constr
+	:	'_CONSTR' '=' '[' (restr(','restr)*)? '],'
+	;
 	
-%restr
-%locals [StringPointer valor;]
-%@init{$restr::valor = new StringPointer();}
-%	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
-%	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
-%	| 'integer(' expr ')' {$restr::valor.setString("666"); slvars.put($expr.text,$restr::valor);}
-%	| expr 'neq' expr 
-%	;
+restr
+locals [StringPointer valor;]
+@init{$restr::valor = new StringPointer();}
+	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
+	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
+	| 'integer(' expr ')' {$restr::valor.setString("666"); slvars.put($expr.text,$restr::valor);}
+	| expr 'neq' expr 
+	;
 
 seqIgual
 locals [StringPointer valor;]

@@ -139,12 +139,16 @@ public class SLog2ZParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 	public static class LineasContext extends ParserRuleContext {
+		public ConstrContext constr;
 		public List<SeqIgualContext> seqIgual() {
 			return getRuleContexts(SeqIgualContext.class);
 		}
 		public List<TerminalNode> NL() { return getTokens(SLog2ZParser.NL); }
 		public SeqIgualContext seqIgual(int i) {
 			return getRuleContext(SeqIgualContext.class,i);
+		}
+		public ConstrContext constr() {
+			return getRuleContext(ConstrContext.class,0);
 		}
 		public TerminalNode NL(int i) {
 			return getToken(SLog2ZParser.NL, i);
@@ -170,30 +174,34 @@ public class SLog2ZParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(14); 
+			setState(10); ((LineasContext)_localctx).constr = constr();
+			setState(11); match(NL);
+			setState(16); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(10); seqIgual();
-				setState(12);
+				setState(12); seqIgual();
+				setState(14);
 				_la = _input.LA(1);
 				if (_la==NL) {
 					{
-					setState(11); match(NL);
+					setState(13); match(NL);
 					}
 				}
 
 				}
 				}
-				setState(16); 
+				setState(18); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 15) | (1L << 16) | (1L << NAME))) != 0) );
 
 						System.out.println("salida: \n");
-						printHashMap( slvars );llenarZVars();
+						printHashMap( slvars );
+						System.out.println("constrains: \n" + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null));			
+						llenarZVars();
 						System.out.println("\nzVars vacias +++++++++:");
 						printHashMap(zVars);
 						
@@ -239,32 +247,32 @@ public class SLog2ZParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(20); match(10);
-			setState(21); match(9);
-			setState(22); match(7);
-			setState(31);
+			setState(22); match(10);
+			setState(23); match(9);
+			setState(24); match(7);
+			setState(33);
 			_la = _input.LA(1);
 			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 5) | (1L << 6) | (1L << 7) | (1L << 8) | (1L << 11) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
 				{
-				setState(23); restr();
-				setState(28);
+				setState(25); restr();
+				setState(30);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==4) {
 					{
 					{
-					setState(24); match(4);
-					setState(25); restr();
+					setState(26); match(4);
+					setState(27); restr();
 					}
 					}
-					setState(30);
+					setState(32);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
 			}
 
-			setState(33); match(3);
+			setState(35); match(3);
 			}
 		}
 		catch (RecognitionException re) {
@@ -306,32 +314,32 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 4, RULE_restr);
 		((RestrContext)getInvokingContext(2)).valor =  new StringPointer();
 		try {
-			setState(54);
+			setState(56);
 			switch (_input.LA(1)) {
 			case 6:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(35); match(6);
-				setState(36); ((RestrContext)_localctx).expr = expr();
-				setState(37); match(2);
+				setState(37); match(6);
+				setState(38); ((RestrContext)_localctx).expr = expr();
+				setState(39); match(2);
 				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 5:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(40); match(5);
-				setState(41); ((RestrContext)_localctx).expr = expr();
-				setState(42); match(2);
+				setState(42); match(5);
+				setState(43); ((RestrContext)_localctx).expr = expr();
+				setState(44); match(2);
 				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 11:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(45); match(11);
-				setState(46); ((RestrContext)_localctx).expr = expr();
-				setState(47); match(2);
+				setState(47); match(11);
+				setState(48); ((RestrContext)_localctx).expr = expr();
+				setState(49); match(2);
 				((RestrContext)getInvokingContext(2)).valor.setString("666"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
@@ -342,9 +350,9 @@ public class SLog2ZParser extends Parser {
 			case CTE:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(50); expr();
-				setState(51); match(14);
 				setState(52); expr();
+				setState(53); match(14);
+				setState(54); expr();
 				}
 				break;
 			default:
@@ -396,24 +404,24 @@ public class SLog2ZParser extends Parser {
 		((SeqIgualContext)getInvokingContext(3)).valor =  new StringPointer();
 		try {
 			int _alt;
-			setState(71);
+			setState(73);
 			switch (_input.LA(1)) {
 			case 15:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(56); match(15);
+				setState(58); match(15);
 				}
 				break;
 			case 16:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(57); match(16);
+				setState(59); match(16);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(65); 
+				setState(67); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 				do {
@@ -421,19 +429,19 @@ public class SLog2ZParser extends Parser {
 					case 1:
 						{
 						{
-						setState(58); ((SeqIgualContext)_localctx).v1 = match(NAME);
+						setState(60); ((SeqIgualContext)_localctx).v1 = match(NAME);
 						slvars.put((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
-						setState(60); match(9);
-						setState(61); ((SeqIgualContext)_localctx).v2 = expr();
+						setState(62); match(9);
+						setState(63); ((SeqIgualContext)_localctx).v2 = expr();
 						slvars.put((((SeqIgualContext)_localctx).v2!=null?_input.getText(((SeqIgualContext)_localctx).v2.start,((SeqIgualContext)_localctx).v2.stop):null),((SeqIgualContext)getInvokingContext(3)).valor);
-						setState(63); match(4);
+						setState(65); match(4);
 						}
 						}
 						break;
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(67); 
+					setState(69); 
 					_errHandler.sync(this);
 					_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
 				} while ( _alt!=2 && _alt!=-1 );
@@ -496,119 +504,119 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 8, RULE_expr);
 		int _la;
 		try {
-			setState(127);
+			setState(129);
 			switch (_input.LA(1)) {
 			case CTE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(73); ((ExprContext)_localctx).CTE = match(CTE);
+				setState(75); ((ExprContext)_localctx).CTE = match(CTE);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).CTE!=null?((ExprContext)_localctx).CTE.getText():null);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(75); ((ExprContext)_localctx).NAME = match(NAME);
+				setState(77); ((ExprContext)_localctx).NAME = match(NAME);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).NAME!=null?((ExprContext)_localctx).NAME.getText():null);
 				}
 				break;
 			case 13:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(77); match(13);
+				setState(79); match(13);
 				((ExprContext)_localctx).valor =  "{";
-				setState(88);
+				setState(90);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 7) | (1L << 8) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
 					{
 					{
-					setState(81);
+					setState(83);
 					_la = _input.LA(1);
 					if (_la==4) {
 						{
-						setState(79); match(4);
+						setState(81); match(4);
 						((ExprContext)_localctx).valor =  _localctx.valor + ",";
 						}
 					}
 
-					setState(83); ((ExprContext)_localctx).e = expr();
+					setState(85); ((ExprContext)_localctx).e = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + ((ExprContext)_localctx).e.valor;
 					}
 					}
-					setState(90);
+					setState(92);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(95);
+				setState(97);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==12) {
 					{
 					{
-					setState(91); match(12);
-					setState(92); expr();
+					setState(93); match(12);
+					setState(94); expr();
 					}
 					}
-					setState(97);
+					setState(99);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(98); match(17);
+				setState(100); match(17);
 				((ExprContext)_localctx).valor =  _localctx.valor + "}";
 				}
 				break;
 			case 7:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(100); match(7);
+				setState(102); match(7);
 				((ExprContext)_localctx).valor =  "[";
-				setState(111);
+				setState(113);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 7) | (1L << 8) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
 					{
 					{
-					setState(104);
+					setState(106);
 					_la = _input.LA(1);
 					if (_la==4) {
 						{
-						setState(102); match(4);
+						setState(104); match(4);
 						((ExprContext)_localctx).valor =  _localctx.valor + ",";
 						}
 					}
 
-					setState(106); ((ExprContext)_localctx).e = expr();
+					setState(108); ((ExprContext)_localctx).e = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + ((ExprContext)_localctx).e.valor;
 					}
 					}
-					setState(113);
+					setState(115);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(118);
+				setState(120);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 				while (_la==18) {
 					{
 					{
-					setState(114); match(18);
-					setState(115); expr();
+					setState(116); match(18);
+					setState(117); expr();
 					}
 					}
-					setState(120);
+					setState(122);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(121); match(1);
+				setState(123); match(1);
 				((ExprContext)_localctx).valor =  _localctx.valor + "]";
 				}
 				break;
 			case 8:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(123); match(8);
-				setState(124); expr();
+				setState(125); match(8);
+				setState(126); expr();
 				((ExprContext)_localctx).valor =  "-" + _localctx.valor ;
 				}
 				break;
@@ -628,40 +636,40 @@ public class SLog2ZParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3\32\u0084\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\5\2\17\n"+
-		"\2\6\2\21\n\2\r\2\16\2\22\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3\35\n\3\f"+
-		"\3\16\3 \13\3\5\3\"\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\49\n\4\3\5\3\5\3\5\3\5\3\5\3"+
-		"\5\3\5\3\5\3\5\6\5D\n\5\r\5\16\5E\3\5\3\5\5\5J\n\5\3\6\3\6\3\6\3\6\3\6"+
-		"\3\6\3\6\3\6\5\6T\n\6\3\6\3\6\3\6\7\6Y\n\6\f\6\16\6\\\13\6\3\6\3\6\7\6"+
-		"`\n\6\f\6\16\6c\13\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6k\n\6\3\6\3\6\3\6\7\6"+
-		"p\n\6\f\6\16\6s\13\6\3\6\3\6\7\6w\n\6\f\6\16\6z\13\6\3\6\3\6\3\6\3\6\3"+
-		"\6\3\6\5\6\u0082\n\6\3\6\2\7\2\4\6\b\n\2\2\u0092\2\20\3\2\2\2\4\26\3\2"+
-		"\2\2\68\3\2\2\2\bI\3\2\2\2\n\u0081\3\2\2\2\f\16\5\b\5\2\r\17\7\30\2\2"+
-		"\16\r\3\2\2\2\16\17\3\2\2\2\17\21\3\2\2\2\20\f\3\2\2\2\21\22\3\2\2\2\22"+
-		"\20\3\2\2\2\22\23\3\2\2\2\23\24\3\2\2\2\24\25\b\2\1\2\25\3\3\2\2\2\26"+
-		"\27\7\f\2\2\27\30\7\13\2\2\30!\7\t\2\2\31\36\5\6\4\2\32\33\7\6\2\2\33"+
-		"\35\5\6\4\2\34\32\3\2\2\2\35 \3\2\2\2\36\34\3\2\2\2\36\37\3\2\2\2\37\""+
-		"\3\2\2\2 \36\3\2\2\2!\31\3\2\2\2!\"\3\2\2\2\"#\3\2\2\2#$\7\5\2\2$\5\3"+
-		"\2\2\2%&\7\b\2\2&\'\5\n\6\2\'(\7\4\2\2()\b\4\1\2)9\3\2\2\2*+\7\7\2\2+"+
-		",\5\n\6\2,-\7\4\2\2-.\b\4\1\2.9\3\2\2\2/\60\7\r\2\2\60\61\5\n\6\2\61\62"+
-		"\7\4\2\2\62\63\b\4\1\2\639\3\2\2\2\64\65\5\n\6\2\65\66\7\20\2\2\66\67"+
-		"\5\n\6\2\679\3\2\2\28%\3\2\2\28*\3\2\2\28/\3\2\2\28\64\3\2\2\29\7\3\2"+
-		"\2\2:J\7\21\2\2;J\7\22\2\2<=\7\25\2\2=>\b\5\1\2>?\7\13\2\2?@\5\n\6\2@"+
-		"A\b\5\1\2AB\7\6\2\2BD\3\2\2\2C<\3\2\2\2DE\3\2\2\2EC\3\2\2\2EF\3\2\2\2"+
-		"FG\3\2\2\2GH\b\5\1\2HJ\3\2\2\2I:\3\2\2\2I;\3\2\2\2IC\3\2\2\2J\t\3\2\2"+
-		"\2KL\7\26\2\2L\u0082\b\6\1\2MN\7\25\2\2N\u0082\b\6\1\2OP\7\17\2\2PZ\b"+
-		"\6\1\2QR\7\6\2\2RT\b\6\1\2SQ\3\2\2\2ST\3\2\2\2TU\3\2\2\2UV\5\n\6\2VW\b"+
-		"\6\1\2WY\3\2\2\2XS\3\2\2\2Y\\\3\2\2\2ZX\3\2\2\2Z[\3\2\2\2[a\3\2\2\2\\"+
-		"Z\3\2\2\2]^\7\16\2\2^`\5\n\6\2_]\3\2\2\2`c\3\2\2\2a_\3\2\2\2ab\3\2\2\2"+
-		"bd\3\2\2\2ca\3\2\2\2de\7\23\2\2e\u0082\b\6\1\2fg\7\t\2\2gq\b\6\1\2hi\7"+
-		"\6\2\2ik\b\6\1\2jh\3\2\2\2jk\3\2\2\2kl\3\2\2\2lm\5\n\6\2mn\b\6\1\2np\3"+
-		"\2\2\2oj\3\2\2\2ps\3\2\2\2qo\3\2\2\2qr\3\2\2\2rx\3\2\2\2sq\3\2\2\2tu\7"+
-		"\24\2\2uw\5\n\6\2vt\3\2\2\2wz\3\2\2\2xv\3\2\2\2xy\3\2\2\2y{\3\2\2\2zx"+
-		"\3\2\2\2{|\7\3\2\2|\u0082\b\6\1\2}~\7\n\2\2~\177\5\n\6\2\177\u0080\b\6"+
-		"\1\2\u0080\u0082\3\2\2\2\u0081K\3\2\2\2\u0081M\3\2\2\2\u0081O\3\2\2\2"+
-		"\u0081f\3\2\2\2\u0081}\3\2\2\2\u0082\13\3\2\2\2\20\16\22\36!8EISZajqx"+
-		"\u0081";
+		"\2\3\32\u0086\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\2"+
+		"\5\2\21\n\2\6\2\23\n\2\r\2\16\2\24\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3"+
+		"\37\n\3\f\3\16\3\"\13\3\5\3$\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4;\n\4\3\5\3\5\3\5\3"+
+		"\5\3\5\3\5\3\5\3\5\3\5\6\5F\n\5\r\5\16\5G\3\5\3\5\5\5L\n\5\3\6\3\6\3\6"+
+		"\3\6\3\6\3\6\3\6\3\6\5\6V\n\6\3\6\3\6\3\6\7\6[\n\6\f\6\16\6^\13\6\3\6"+
+		"\3\6\7\6b\n\6\f\6\16\6e\13\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6m\n\6\3\6\3\6"+
+		"\3\6\7\6r\n\6\f\6\16\6u\13\6\3\6\3\6\7\6y\n\6\f\6\16\6|\13\6\3\6\3\6\3"+
+		"\6\3\6\3\6\3\6\5\6\u0084\n\6\3\6\2\7\2\4\6\b\n\2\2\u0094\2\f\3\2\2\2\4"+
+		"\30\3\2\2\2\6:\3\2\2\2\bK\3\2\2\2\n\u0083\3\2\2\2\f\r\5\4\3\2\r\22\7\30"+
+		"\2\2\16\20\5\b\5\2\17\21\7\30\2\2\20\17\3\2\2\2\20\21\3\2\2\2\21\23\3"+
+		"\2\2\2\22\16\3\2\2\2\23\24\3\2\2\2\24\22\3\2\2\2\24\25\3\2\2\2\25\26\3"+
+		"\2\2\2\26\27\b\2\1\2\27\3\3\2\2\2\30\31\7\f\2\2\31\32\7\13\2\2\32#\7\t"+
+		"\2\2\33 \5\6\4\2\34\35\7\6\2\2\35\37\5\6\4\2\36\34\3\2\2\2\37\"\3\2\2"+
+		"\2 \36\3\2\2\2 !\3\2\2\2!$\3\2\2\2\" \3\2\2\2#\33\3\2\2\2#$\3\2\2\2$%"+
+		"\3\2\2\2%&\7\5\2\2&\5\3\2\2\2\'(\7\b\2\2()\5\n\6\2)*\7\4\2\2*+\b\4\1\2"+
+		"+;\3\2\2\2,-\7\7\2\2-.\5\n\6\2./\7\4\2\2/\60\b\4\1\2\60;\3\2\2\2\61\62"+
+		"\7\r\2\2\62\63\5\n\6\2\63\64\7\4\2\2\64\65\b\4\1\2\65;\3\2\2\2\66\67\5"+
+		"\n\6\2\678\7\20\2\289\5\n\6\29;\3\2\2\2:\'\3\2\2\2:,\3\2\2\2:\61\3\2\2"+
+		"\2:\66\3\2\2\2;\7\3\2\2\2<L\7\21\2\2=L\7\22\2\2>?\7\25\2\2?@\b\5\1\2@"+
+		"A\7\13\2\2AB\5\n\6\2BC\b\5\1\2CD\7\6\2\2DF\3\2\2\2E>\3\2\2\2FG\3\2\2\2"+
+		"GE\3\2\2\2GH\3\2\2\2HI\3\2\2\2IJ\b\5\1\2JL\3\2\2\2K<\3\2\2\2K=\3\2\2\2"+
+		"KE\3\2\2\2L\t\3\2\2\2MN\7\26\2\2N\u0084\b\6\1\2OP\7\25\2\2P\u0084\b\6"+
+		"\1\2QR\7\17\2\2R\\\b\6\1\2ST\7\6\2\2TV\b\6\1\2US\3\2\2\2UV\3\2\2\2VW\3"+
+		"\2\2\2WX\5\n\6\2XY\b\6\1\2Y[\3\2\2\2ZU\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\"+
+		"]\3\2\2\2]c\3\2\2\2^\\\3\2\2\2_`\7\16\2\2`b\5\n\6\2a_\3\2\2\2be\3\2\2"+
+		"\2ca\3\2\2\2cd\3\2\2\2df\3\2\2\2ec\3\2\2\2fg\7\23\2\2g\u0084\b\6\1\2h"+
+		"i\7\t\2\2is\b\6\1\2jk\7\6\2\2km\b\6\1\2lj\3\2\2\2lm\3\2\2\2mn\3\2\2\2"+
+		"no\5\n\6\2op\b\6\1\2pr\3\2\2\2ql\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2"+
+		"tz\3\2\2\2us\3\2\2\2vw\7\24\2\2wy\5\n\6\2xv\3\2\2\2y|\3\2\2\2zx\3\2\2"+
+		"\2z{\3\2\2\2{}\3\2\2\2|z\3\2\2\2}~\7\3\2\2~\u0084\b\6\1\2\177\u0080\7"+
+		"\n\2\2\u0080\u0081\5\n\6\2\u0081\u0082\b\6\1\2\u0082\u0084\3\2\2\2\u0083"+
+		"M\3\2\2\2\u0083O\3\2\2\2\u0083Q\3\2\2\2\u0083h\3\2\2\2\u0083\177\3\2\2"+
+		"\2\u0084\13\3\2\2\2\20\20\24 #:GKU\\clsz\u0083";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
