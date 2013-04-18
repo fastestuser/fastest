@@ -140,7 +140,7 @@ grammar Expr;
 				print(var + " in " + memory.get(type));
 			else { //double check
 				type = types.get(type);
-				if (isBasic(type)) {
+				if (type != null && isBasic(type)) {
 					type = type.split(":")[1];
 					print(var + " in " + type);
 					return type;
@@ -655,7 +655,29 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 		
-	}	
+	}
+	|	e1=expression IN_FUN_P5 e2=expression
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		
+		if (memory.get($e1.text + $IN_FUN_P5.text + $e2.text) == null) {
+		
+			String newVarName = newVar();
+		
+			if ($IN_FUN_P5.text.equals("\\oplus")){
+					print("oplus(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\oplus" + $e2.text, newVarName);
+					String type1 = types.get($e1.text);
+					String type = "\\power(" + getChildType(type1, 0) + "\\cross" + getChildType(type1, 1) + ")";
+					types.put($e1.text + "\\oplus" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\oplus" + $e2.text, newVarName);
+			}
+		}
+	}
 	|	e1=expression IN_FUN_P4 e2=expression
 	{
 		String a, b;
@@ -696,6 +718,27 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					typeInfo(newVarName, type);
 					if (modoSetExpression != 0 )
 						setExpressionVars.put($e1.text + "\\cap" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\comp")){
+					print("comp(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\comp" + $e2.text, newVarName);
+					String type1 = types.get($e1.text);
+					String type2 = types.get($e2.text);
+					String type = "\\power(" + getChildType(type1, 0) + "\\cross" + getChildType(type2, 1) + ")";
+					types.put($e1.text + "\\comp" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\comp" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\circ")){
+					print("comp(" + b + "," + a + "," + newVarName + ")");
+					memory.put($e1.text + "\\circ" + $e2.text, newVarName);
+					String type1 = getChildType(types.get($e1.text), 1);
+					String type = "\\power(" + type1 + "\\cross" + type1 + ")";
+					types.put($e1.text + "\\circ" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\circ" + $e2.text, newVarName);
 			}
 			
 			if (isNumeric) {
@@ -789,6 +832,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (memory.get($NUM.text) == null) {
 			memory.put($NUM.text, $NUM.text);
 			types.put($NUM.text, "\\num");
+		}
+	}
+	|	'\\emptyset'
+	{
+		if (memory.get("\\emptyset") == null) {
+			memory.put("\\emptyset", "{}");
+			types.put("\\emptyset", "\\power(" + "generic" + ")");
 		}
 	}
 	|	//set extension
@@ -937,7 +987,8 @@ NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('a'..'z' | 'A'..'Z' | '\\_ ' | '?'
 NUM:	'0'..'9'+ ;
 
 IN_FUN_P3: ('+' | '-' | '\\cup' | '\\setminus')	;
-IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap')	;
+IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ')	;
+IN_FUN_P5: ('\\oplus')	;
 
 pre_gen: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup')	;
 
