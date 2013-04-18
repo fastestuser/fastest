@@ -656,6 +656,76 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		}
 		
 	}
+	|	e1=expression IMGSTART e2=expression IMGEND    //FALTA VER QUE PRECEDENCIA TIENE
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		
+		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text) == null) {
+			String newVarName = newVar();
+			print("rimg(" + a + "," + b + "," + newVarName + ")");
+			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
+			String type1 = types.get($e1.text);
+			String type = "\\power(" + getChildType(type1, 1) + ")";
+			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, type);
+			typeInfo(newVarName, type);
+			if (modoSetExpression != 0 )
+				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
+		}
+	}
+	|	e1=expression IN_FUN_P6 e2=expression
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		
+		if (memory.get($e1.text + $IN_FUN_P6.text + $e2.text) == null) {
+		
+			String newVarName = newVar();
+		
+			if ($IN_FUN_P6.text.equals("\\dres")){
+					print("dres(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\dres" + $e2.text, newVarName);
+					String type2 = types.get($e2.text);
+					String type = "\\power(" + getChildType(type2, 0) + "\\cross" + getChildType(type2, 1) + ")";
+					types.put($e1.text + "\\dres" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\dres" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P6.text.equals("\\ndres")){
+					print("ndres(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\ndres" + $e2.text, newVarName);
+					String type2 = types.get($e2.text);
+					String type = "\\power(" + getChildType(type2, 0) + "\\cross" + getChildType(type2, 1) + ")";
+					types.put($e1.text + "\\ndres" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\ndres" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P6.text.equals("\\rres")){
+					print("rres(" + b + "," + a + "," + newVarName + ")");
+					memory.put($e1.text + "\\rres" + $e2.text, newVarName);
+					String type1 = types.get($e1.text);
+					String type = "\\power(" + getChildType(type1, 0) + "\\cross" + getChildType(type1, 1) + ")";
+					types.put($e1.text + "\\rres" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\rres" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P6.text.equals("\\nrres")){
+					print("nrres(" + b + "," + a + "," + newVarName + ")");
+					memory.put($e1.text + "\\nrres" + $e2.text, newVarName);
+					String type1 = types.get($e1.text);
+					String type = "\\power(" + getChildType(type1, 0) + "\\cross" + getChildType(type1, 1) + ")";
+					types.put($e1.text + "\\nrres" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\nrres" + $e2.text, newVarName);
+			}
+		}
+	}
 	|	e1=expression IN_FUN_P5 e2=expression
 	{
 		String a, b;
@@ -989,6 +1059,7 @@ NUM:	'0'..'9'+ ;
 IN_FUN_P3: ('+' | '-' | '\\cup' | '\\setminus')	;
 IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ')	;
 IN_FUN_P5: ('\\oplus')	;
+IN_FUN_P6: ('\\dres' | '\\rres' | '\\ndres' | '\\nrres')	;
 
 pre_gen: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup')	;
 
@@ -998,4 +1069,6 @@ SETSTART: '\\{';
 SETEND: '\\}';
 LISTSTART: ('\\langle'|'~\\langle');
 LISTEND: '\\rangle';
+IMGSTART: '\\limg';
+IMGEND: ('\\rimg'|'\\rimg~');
 SKIP:	'\\' '\\' {skip();} ;
