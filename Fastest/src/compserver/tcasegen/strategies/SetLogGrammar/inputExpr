@@ -1,13 +1,19 @@
 \begin{zed}
-[ncta] \\
-saludos ::= hola | chau \\
+[NCTA]
 \end{zed}
 
-\begin{schema}{Extraer}\\
-f: \nat \pfun \seq \num \\
-x, y: \seq \nat
+\begin{zed}SALDO == \nat
+\end{zed}
+\begin{schema}{Extraer\_ SP\_ 29\_ DNF\_ 1}\\
+ x : \nat \\
+ cajas : NCTA \pfun SALDO \\
+ num? : NCTA \\
+ m? : SALDO 
 \where
-f~x = 0 \\
-\ran f~x = 0
+ m? > cajas~num? \\
+ num? \in \dom cajas \\
+ cajas \neq \{ \} \\
+ \{ num? \mapsto ( cajas~num? - m? ) \} \neq \{ \} \\
+ \dom \{ num? \mapsto ( cajas~num? - m? ) \} \subset \dom cajas \\
+ \{x1 : NCTA @ x1 \mapsto 1\} = \{ \}
 \end{schema}
-

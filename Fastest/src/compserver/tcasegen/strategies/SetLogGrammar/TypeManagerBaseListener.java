@@ -1,6 +1,6 @@
-package compserver.tcasegen.strategies.SetLogGrammar;
 // Generated from TypeManager.g4 by ANTLR 4.0
 
+	package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;

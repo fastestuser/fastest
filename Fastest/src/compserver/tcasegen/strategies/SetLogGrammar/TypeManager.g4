@@ -5,6 +5,7 @@ grammar TypeManager;
 //el cual puede ser accedido o consultado mediante la interfaz.
 
 @header {
+	package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
@@ -17,21 +18,6 @@ grammar TypeManager;
 		return root;
 	}
 	
-	//Interfaz para la determinacion del tipo del root.
-	//Constraits: El arbol debio ser previamente generado.
-	//Output: String, con el valor del root.
-	String getReturnRootType(){
-		return (String)	((DefaultMutableTreeNode) root).getUserObject();
-	}
-	
-	//Interfaz para la determinacion del tipo de salida de una funcion.
-	//Constraits: El arbol debio ser previamente generado, para un tipo "funcion"
-	//Input: Int, con la posicion del hijo deseado (empieza en 0).
-	//Output: String, con el valor del nodo.
-	String getReturnChildNodeType(int posicion){
-		return (String)	((DefaultMutableTreeNode) root.getChildAt(posicion)).getUserObject();
-	}
-	
 	String printTree(DefaultMutableTreeNode tree){
 		if (tree.isLeaf()) 
 			return (String) tree.getUserObject();
@@ -42,10 +28,6 @@ grammar TypeManager;
 				return (String) tree.getUserObject() + printTree((DefaultMutableTreeNode) tree.getChildAt(0));
 		else //tiene dos hijos
 			return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
-	}
-	
-	String printChild(int posicion) {
-		return printTree((DefaultMutableTreeNode) root.getChildAt(posicion));
 	}
 }
 
