@@ -103,6 +103,46 @@ grammar Expr;
         return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
 	}
 	
+	//Metodo para realizar la inversion de un tipo en Z
+	//Constraits: Debe ser una funcion o un \power de \cross
+	String invertType(String type) {
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root = parser.getRoot();
+        
+		String invertedType = new String();
+		String rootType = (String) root.getUserObject();
+		if (rootType.equals("\\power")) {
+			invertedType = invertedType.concat("\\power(");
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+			String childType = (String) child.getUserObject();
+			
+			if (childType.equals("()")) {
+				child = (DefaultMutableTreeNode) child.getChildAt(0);
+				childType = (String) child.getUserObject();
+			}
+			
+			if (childType.equals("\\cross")) {
+				invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+				invertedType = invertedType.concat("\\cross");
+				invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
+			}
+			invertedType = invertedType.concat(")");
+		
+		} else { //Entonces empieza con pfun, rel etc
+		
+			invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
+			invertedType = invertedType.concat(rootType);
+			invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+		
+		}
+		
+		return invertedType;
+	}
+	
 	private String newVar() {
 		String newVarName = "VAR" + varNumber;
 		varNumber++;
@@ -304,17 +344,12 @@ declName:	NAME
 	;
 	
 predicate
-	:	e1=expression '\\in' '\\dom' e2 = expression
-	{	String a, b;
-		a = memory.get($e1.text);
-		b = memory.get($e2.text);
-		print("in_dom(" + a + "," + b + ")");
-	} 
-	|	e1=expression '\\in' e2=expression
+	:	e1=expression '\\in' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
 		print(a + " in " + b);
 	/*	//Impresion de tipo
 		String type = types.get($e2.text);
@@ -490,7 +525,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		
 		types.put($zName, unfoldedType);
 	}
-	|	e1=expression '~' e2=expression
+	|	e1=expression DECORATION e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -565,19 +600,24 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			print(newVarName + " = int(" + a + "," + b + ")");
 		}
 	}
-	|	pre_gen e=expression //Pre-Gen
+	|	PRE_GEN e=expression //Pre-Gen
 	{
 		String a;
 		a = memory.get($e.text);
 		
-		if ($pre_gen.text.equals("\\#")){
+		if ($PRE_GEN.text.equals("\\#")){
 			if (memory.get("\\#" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\#" + $e.text, newVarName);
 				types.put("\\#" + $e.text, "\\nat");
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\#" + $e.text, newVarName);
-				print("prolog_call(length(" + a + "," + newVarName + "))");
+					
+				String type = getType(types.get($e.text));
+				if (type.equals("\\seq"))
+					print("size(" + ")"); //TERMINAR!!!
+				else
+					print("prolog_call(length(" + a + "," + newVarName + "))");
 				
 				if (memory.get("\\nat") == null) {
 					memory.put("\\nat", "NAT");
@@ -587,7 +627,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print(newVarName + " in NAT");
 			}
 		}
-		else if ($pre_gen.text.equals("\\dom")){
+		else if ($PRE_GEN.text.equals("\\dom")){
 			if (memory.get("\\dom" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\dom" + $e.text, newVarName);
@@ -605,7 +645,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					print("dom(" + e + "," + newVarName + ")");
 			}
 		}
-		else if ($pre_gen.text.equals("\\ran")){
+		else if ($PRE_GEN.text.equals("\\ran")){
 			if (memory.get("\\ran" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\ran" + $e.text, newVarName);
@@ -623,14 +663,14 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					print("ran(" + e + "," + newVarName + ")");
 			}
 		}
-		else if ($pre_gen.text.equals("\\seq")) {
+		else if ($PRE_GEN.text.equals("\\seq")) {
 			String eType = types.get($e.text);
 			if (isBasic(eType))
 				eType = $e.text;
 		
 			types.put("\\seq" + $e.text, "\\seq" + eType);
 		}
-		else if ($pre_gen.text.equals("\\bigcup")){
+		else if ($PRE_GEN.text.equals("\\bigcup")){
 			if (memory.get("\\bigcup" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\bigcup" + $e.text, newVarName);
@@ -642,7 +682,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("bun(" + e + "," + newVarName + ")");
 			}
 		}
-		else if ($pre_gen.text.equals("\\bigcap")){
+		else if ($PRE_GEN.text.equals("\\bigcap")){
 			if (memory.get("\\bigcap" + $e.text) == null) {
 				String newVarName = newVar();
 				memory.put("\\bigcap" + $e.text, newVarName);
@@ -656,22 +696,22 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		}
 		
 	}
-	|	e1=expression IMGSTART e2=expression IMGEND    //FALTA VER QUE PRECEDENCIA TIENE
+	|	e1=expression IMGSTART e2=expression IMGEND (DECORATION)?    //FALTA VER QUE PRECEDENCIA TIENE
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
-		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text) == null) {
+		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text) == null) {
 			String newVarName = newVar();
 			print("rimg(" + a + "," + b + "," + newVarName + ")");
-			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
+			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
 			String type1 = types.get($e1.text);
 			String type = "\\power(" + getChildType(type1, 1) + ")";
-			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, type);
+			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, type);
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
+				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
 		}
 	}
 	|	e1=expression IN_FUN_P6 e2=expression
@@ -801,7 +841,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 						setExpressionVars.put($e1.text + "\\comp" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P4.text.equals("\\circ")){
-					print("comp(" + b + "," + a + "," + newVarName + ")");
+					print("circ(" + a + "," + b + "," + newVarName + ")");
 					memory.put($e1.text + "\\circ" + $e2.text, newVarName);
 					String type1 = getChildType(types.get($e1.text), 1);
 					String type = "\\power(" + type1 + "\\cross" + type1 + ")";
@@ -866,6 +906,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					if (modoSetExpression != 0 )
 						setExpressionVars.put($e1.text + "\\setminus" + $e2.text, newVarName);
 			}
+			else if ($IN_FUN_P3.text.equals("\\cat")){
+					print("prolog_call(append(" + a + "," + b + "," + newVarName + "))");
+					memory.put($e1.text + "\\cat" + $e2.text, newVarName);
+					String type = types.get($e1.text);
+					types.put($e1.text + "\\cat" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\cat" + $e2.text, newVarName);
+			}
 			
 			if (isNumeric) {
 				if (memory.get("\\num") == null) {
@@ -875,6 +924,57 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				}
 				print(newVarName + " in NUM");
 				types.put($e1.text + $IN_FUN_P3.text + $e2.text, "\\num");
+			}
+		}
+	}
+	|	e=expression POST_FUN (DECORATION)?
+	{
+		String a;
+		a = memory.get($e.text);
+		String op = $POST_FUN.text + $DECORATION.text;
+		
+		if (memory.get($e.text + op) == null) {
+		
+			String newVarName = newVar();
+		
+			if (op.startsWith("\\inv")){
+				print("inv(" + newVarName + "," + a + ")");
+				memory.put($e.text + op, newVarName);
+				String type1 = types.get($e.text);
+				String type = invertType(type1); 
+				types.put($e.text + op, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e.text + op, newVarName);
+			}
+		}
+	}
+	|	seq_op e=expression
+	{
+		String a;
+		a = memory.get($e.text);
+		
+		if (memory.get( $seq_op.text + $e.text) == null) {
+		
+			String newVarName = newVar();
+		
+			if ($seq_op.text.startsWith("rev")){
+				print("prolog_call(reverse(" + a + "," + newVarName + "))");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = types.get($e.text);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
+			}
+			else if ($seq_op.text.startsWith("head")){
+				print("nth1(1," + a + "," + newVarName + ")");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = getChildType(types.get($e.text), 0);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
 			}
 		}
 	}
@@ -979,9 +1079,9 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		}
 	}
 	|	//list extension
-		LISTSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* LISTEND
+		(DECORATION)? LISTSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* LISTEND
 	{	
-		$zName = $LISTSTART.text;
+		$zName = $DECORATION.text + $LISTSTART.text;
 		String type = new String();
 		//Llenamos elements y ponemos cada expression en la memory
 		while( !$elements.isEmpty() ){
@@ -1056,19 +1156,25 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('a'..'z' | 'A'..'Z' | '\\_ ' | '?' | '0'..'9')*;
 NUM:	'0'..'9'+ ;
 
-IN_FUN_P3: ('+' | '-' | '\\cup' | '\\setminus')	;
+IN_FUN_P3: ('+' | '-' | '\\cup' | '\\setminus' | '\\cat')	;
 IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ')	;
 IN_FUN_P5: ('\\oplus')	;
 IN_FUN_P6: ('\\dres' | '\\rres' | '\\ndres' | '\\nrres')	;
 
-pre_gen: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup')	;
+POST_FUN: '\\inv'	;
+
+PRE_GEN: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup')	;
+
+seq_op: ('rev' | 'head' | 'last' | 'tail' | 'front') DECORATION ;
+
+DECORATION: '~' ;
 
 NL:	'\r'? '\n' ;
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
 SETSTART: '\\{';
 SETEND: '\\}';
-LISTSTART: ('\\langle'|'~\\langle');
+LISTSTART: '\\langle';
 LISTEND: '\\rangle';
 IMGSTART: '\\limg';
-IMGEND: ('\\rimg'|'\\rimg~');
+IMGEND: '\\rimg';
 SKIP:	'\\' '\\' {skip();} ;
