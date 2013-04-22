@@ -79,8 +79,9 @@ public class SetLogStrategy implements TCaseStrategy{
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
 	private List<String> basicTypeNames; 
-    
-    private void printHashMap(HashMap<String,String> map){
+	
+	
+    private void printHashMap(HashMap map){
 		Iterator<String> iterator = map.keySet().iterator();  
 		String key,value;
 		while (iterator.hasNext()) {  
@@ -92,6 +93,40 @@ public class SetLogStrategy implements TCaseStrategy{
 		   System.out.println(key + " = " + value);  
 		} 
 	}
+    private void printHashMap2(HashMap<String,String[]> map){
+		Iterator<String> iterator = map.keySet().iterator();  
+		String key;	String[] value;
+		while (iterator.hasNext()) {  
+		   key = iterator.next().toString();
+		   if (map.get(key) == null){
+			   System.out.println(key + " = " + "nullc");
+			   continue;
+		   }
+		   else{ 
+			   
+			   value = map.get(key);
+			   System.out.print(key + " = "); 
+			   for (int i = 0; i<value.length;i++) 
+				   System.out.print(value[i] + ",");
+			   System.out.println(); 
+		   }
+		} 
+	}
+    
+    private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
+    	Iterator<String> iterator = tiposLibres.keySet().iterator();  
+		String key;	String value;
+		while (iterator.hasNext()) { 
+			key = iterator.next().toString();
+			value = tiposLibres.get(key);
+			if(value !=null){
+				if (value.contains(elem))
+					return key;
+			}
+		}
+    	
+    	return "null";
+    }
     
     private HashMap<String,String> invertMap(HashMap<String,String> m){
 		Iterator<String> iterator = m.keySet().iterator();  
@@ -135,6 +170,25 @@ public class SetLogStrategy implements TCaseStrategy{
 		return (HashMap<String, String>) zVars;
     }
 	
+    private HashMap<String,String> llenarFreeTypes(HashMap<String,String> m){
+    	HashMap<String,String> s = new HashMap<String,String>();
+    	Iterator<String> iterator = m.keySet().iterator();
+    	String key,valor,nomtipo;
+    	while (iterator.hasNext()) { 
+    		key = iterator.next().toString();
+			valor = m.get(key);
+			//EnumerationType:FT:{elem1,elem2}
+			if (valor.startsWith("EnumerationType")){
+				String[] aux = valor.split(":");
+				nomtipo =  aux[1];
+				//aux = ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)).split(",");
+				s.put(nomtipo, ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)));
+			}
+    	}
+    	
+    	return s;
+    }
+    
 	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
 		this.axDefsValues = axDefsValues;
 		this.basicAxDefs = basicAxDefs;
@@ -257,6 +311,7 @@ public class SetLogStrategy implements TCaseStrategy{
 			OutputStream out = proc.getOutputStream();
 
 			String antlrOutput = parser.getSalida();
+			//antlrOutput = "NAT = int(0,1000000000) &REVENT = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} &Y1 in NAT &Y2 in NAT &Y3 in NAT &Now in NAT &Fa in NAT &E in REVENT &EE in REVENT &EE neq E &E = liftOff &nin_dom(E,Ot) &apply(Tli,E,Y1) &apply(Tls,E,Y2) &Y1 =< Now &Now =< Y2 &apply(X,E,Y3) &Y3 >= 0 &Y3 =< Fa &Ot neq {} &S1 = {[E,Now],[EE,2]} &S1 neq {} &dinters(Ot,S1,{}) &is_pfun(Ot)";
 			System.out.println("ANTLROUTPUT\n" + antlrOutput);
 
 			String setlogInput = "consult(setlog4617)."
@@ -288,7 +343,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	          e.printStackTrace(); 
 			} 
 		//traduccion de SLog a Z
-		//setlogOutput = "Balances = {[N, 0]},\nVAR0 = 0,\nClients = Owners, Owners = {},";
+		//setlogOutput = "CONSTR = [set(_G1810), set(_G1824), set(_G1837), _G1080 neq liftOff, _G1080 neq thrustDrop1E],\nNAT = int(0, 1000000000),\nREVENT = {liftOff, thrustDrop1E, thrustDrop2E, thrustDrop3E},\nY1 = Y2, Y2 = Y3, Y3 = Now, Now = Fa, Fa = 0,\\nE = liftOff,\\nEE = thrustDrop1E,\nOt = {[_G1080, _G1106]},\nTli = {[liftOff, 0]\\_G1810},\\nTls = {[liftOff, 0]\\_G1824},\nX = {[liftOff, 0]\\_G1837},\nS1 = {[liftOff, 0], [thrustDrop1E, 2]},";
 		input = new ANTLRInputStream(setlogOutput);
         SLog2ZLexer lexer2 = new SLog2ZLexer(input);
         tokens = new CommonTokenStream(lexer2);
@@ -300,7 +355,14 @@ public class SetLogStrategy implements TCaseStrategy{
         Map<String, String> zVars = llenarZVars(parser,parser2);
         System.out.println("\nzVars llenas****************\n");
         printHashMap((HashMap) zVars);
-
+        
+        System.out.println("\n FreeTipos ****************\n");
+        HashMap mapaux = llenarFreeTypes(parser.getTypes());
+        printHashMap(mapaux);
+        
+        String ssss = getTipoLibre("xxx1",mapaux);
+        System.out.println("tipo de xxx1++++++++" + ssss);
+        
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
 		//Map<String, String> zVars = parser2.getZVars();

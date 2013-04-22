@@ -193,7 +193,7 @@ public class ConstantCreator {
 			return salida;
 		}
 
-		else if (ct.equals("\\seq")) {
+		else if (ct.equals("\\seq") ) {
 			//pinta [X,X,X]
 			if(	expr.charAt(iexpr+1)==']'){
 				return new scte("\\langle \\rangle",iexpr+2);

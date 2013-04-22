@@ -26,14 +26,14 @@ public class SLog2ZParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__17=1, T__16=2, T__15=3, T__14=4, T__13=5, T__12=6, T__11=7, T__10=8, 
-		T__9=9, T__8=10, T__7=11, T__6=12, T__5=13, T__4=14, T__3=15, T__2=16, 
-		T__1=17, T__0=18, NAME=19, CTE=20, NUM=21, NL=22, WS=23, SKIP=24;
+		T__14=1, T__13=2, T__12=3, T__11=4, T__10=5, T__9=6, T__8=7, T__7=8, T__6=9, 
+		T__5=10, T__4=11, T__3=12, T__2=13, T__1=14, T__0=15, NAME=16, CTE=17, 
+		NUM=18, CORCHETESTART=19, CORCHETEEND=20, NL=21, WS=22, SKIP=23;
 	public static final String[] tokenNames = {
-		"<INVALID>", "']'", "')'", "'],'", "','", "'list('", "'set('", "'['", 
-		"'-'", "'='", "'_CONSTR'", "'integer('", "'\\'", "'{'", "'neq'", "'NUM = int(-10000000000, 10000000000),'", 
-		"'NAT = int(0, 10000000000),'", "'}'", "'|'", "NAME", "CTE", "NUM", "'\n'", 
-		"WS", "SKIP"
+		"<INVALID>", "')'", "','", "'list('", "'set('", "'-'", "'='", "'_CONSTR'", 
+		"'integer('", "'\\'", "'{'", "'neq'", "'NUM = int(-10000000000, 10000000000),'", 
+		"'NAT = int(0, 10000000000),'", "'}'", "'|'", "NAME", "CTE", "NUM", "'['", 
+		"']'", "'\n'", "WS", "SKIP"
 	};
 	public static final int
 		RULE_lineas = 0, RULE_constr = 1, RULE_restr = 2, RULE_seqIgual = 3, RULE_expr = 4;
@@ -58,20 +58,72 @@ public class SLog2ZParser extends Parser {
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
-		
+		HashMap<String,String> freeTypes = new HashMap();
+		HashMap<String,String> notEqual = new HashMap();
 		
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}
-		
-		
+		private static String getNotEqType(String e, String ne){
+			String[] aux1 = e.split(",");
+			int m = aux1.length;
+			int i;
+			String s; 
+			for (i = 0; i < m; i++){
+				s = aux1[i];
+				if(!ne.contains(s))
+					return s;
+			
+			}	
+			
+			return null;
+		}
+		private void putNotEqinSlvars(){
+			Iterator<String> iterator = notEqual.keySet().iterator();  
+			String key,value,e,cte;String[] aux;
+			while (iterator.hasNext()) {  
+			   key = iterator.next().toString();
+			   e = tipos.get(key);
+			   e = e.substring(1,e.length()-1);
+			   cte = getNotEqType(e,notEqual.get(key));
+			   slvars.put(key, new StringPointer(cte));
+			} 
+		}
+		private HashMap<String,String> llenarFreeTypes(HashMap<String,String> m){
+	    	HashMap<String,String> s = new HashMap<String,String>();
+	    	Iterator<String> iterator = m.keySet().iterator();
+	    	String key,valor,nomtipo;
+	    	while (iterator.hasNext()) { 
+	    		key = iterator.next().toString();
+				valor = m.get(key);
+				//EnumerationType:FT:{elem1,elem2}
+				if (valor.startsWith("EnumerationType")){
+					String[] aux = valor.split(":");
+					nomtipo =  aux[1];
+					//aux = ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)).split(",");
+					s.put(nomtipo, ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)));
+				}
+	    	}
+	    	
+	    	return s;
+	    }
+	    
 		public void loadTablas(ExprParser parser){
 			zNames = invertMap(parser.getMemory());
 			tipos = parser.getTypes();
 			zVars = parser.getZVars();
 			
-			System.out.println("\n");System.out.println("memory: "); printHashMap(zNames);
-			System.out.println("\n tipos: "); printHashMap(tipos);System.out.println("\n");
+			
+			System.out.println("\n");
+			System.out.println("memory: "); 
+			printHashMap(zNames);
+			System.out.println("\n tipos: "); 
+			printHashMap(tipos);
+			System.out.println("\n");
+			freeTypes = llenarFreeTypes(tipos);
+			System.out.println("\n tipos Libres: "); 
+			printHashMap(freeTypes);
+			System.out.println("\n");
 			
 		}
 		private String getCte(String cte, String tipo) {
@@ -92,6 +144,21 @@ public class SLog2ZParser extends Parser {
 	        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,slvars);
 	        return cc.getCte();
 		}
+		
+		private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
+	    	Iterator<String> iterator = tiposLibres.keySet().iterator();  
+			String key;	String value;
+			while (iterator.hasNext()) { 
+				key = iterator.next().toString();
+				value = tiposLibres.get(key);
+				if(value !=null){
+					if (value.contains(elem))
+						return value;
+				}
+			}
+	    	
+	    	return "null";
+	    }
 		
 		private HashMap<String,String> invertMap(HashMap<String,String> m){
 			Iterator<String> iterator = m.keySet().iterator();  
@@ -115,6 +182,26 @@ public class SLog2ZParser extends Parser {
 			   else 
 				   value = map.get(key).toString();
 			   System.out.println(key + " = " + value);  
+			} 
+		}
+		
+		private void printHashMap2(HashMap<String,String[]> map){
+			Iterator<String> iterator = map.keySet().iterator();  
+			String key;	String[] value;
+			while (iterator.hasNext()) {  
+			   key = iterator.next().toString();
+			   if (map.get(key) == null){
+				   System.out.println(key + " = " + "nullc");
+				   continue;
+			   }
+			   else{ 
+				   
+				   value = map.get(key);
+				   System.out.print(key + " = "); 
+				   for (int i = 0; i<value.length;i++) 
+					   System.out.print(value[i] + ",");
+				   System.out.println(); 
+			   }
 			} 
 		}
 		
@@ -176,34 +263,48 @@ public class SLog2ZParser extends Parser {
 			{
 			setState(10); ((LineasContext)_localctx).constr = constr();
 			setState(11); match(NL);
-			setState(16); 
+
+						System.out.println("\n notEqual desigualdades: ");
+						printHashMap(notEqual);
+						System.out.println("\n");
+						System.out.println("\n tipos: "); 
+						printHashMap(tipos);
+						System.out.println("\n");
+						putNotEqinSlvars();
+						System.out.println("\n.................slvars:");
+						printHashMap( slvars );
+						
+					
+			setState(17); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(12); seqIgual();
-				setState(14);
+				setState(13); seqIgual();
+				setState(15);
 				_la = _input.LA(1);
 				if (_la==NL) {
 					{
-					setState(13); match(NL);
+					setState(14); match(NL);
 					}
 				}
 
 				}
 				}
-				setState(18); 
+				setState(19); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 15) | (1L << 16) | (1L << NAME))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 12) | (1L << 13) | (1L << NAME))) != 0) );
 
-						System.out.println("salida: \n");
+						System.out.println("\n**salida SLog2Z**: \n");
+						System.out.println("constraint: " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null) );
+						System.out.println("\nslvars:");
 						printHashMap( slvars );
-						System.out.println("constrains: \n" + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null));			
 						llenarZVars();
 						System.out.println("\nzVars vacias +++++++++:");
 						printHashMap(zVars);
+						System.out.println("\n**fin SLog2Z**");
 						
 					
 			}
@@ -247,32 +348,34 @@ public class SLog2ZParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(22); match(10);
-			setState(23); match(9);
-			setState(24); match(7);
-			setState(33);
+			setState(23); match(7);
+			System.out.println("CONTATNANTOANTs");
+			setState(25); match(6);
+			setState(26); match(CORCHETESTART);
+			setState(35);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 5) | (1L << 6) | (1L << 7) | (1L << 8) | (1L << 11) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 8) | (1L << 10) | (1L << NAME) | (1L << CTE) | (1L << CORCHETESTART))) != 0)) {
 				{
-				setState(25); restr();
-				setState(30);
+				setState(27); restr();
+				setState(32);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==4) {
+				while (_la==2) {
 					{
 					{
-					setState(26); match(4);
-					setState(27); restr();
+					setState(28); match(2);
+					setState(29); restr();
 					}
 					}
-					setState(32);
+					setState(34);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
 				}
 			}
 
-			setState(35); match(3);
+			setState(37); match(CORCHETEEND);
+			setState(38); match(2);
 			}
 		}
 		catch (RecognitionException re) {
@@ -289,11 +392,10 @@ public class SLog2ZParser extends Parser {
 	public static class RestrContext extends ParserRuleContext {
 		public StringPointer valor;;
 		public ExprContext expr;
-		public ExprContext expr(int i) {
-			return getRuleContext(ExprContext.class,i);
-		}
-		public List<ExprContext> expr() {
-			return getRuleContexts(ExprContext.class);
+		public Token CTE;
+		public TerminalNode CTE() { return getToken(SLog2ZParser.CTE, 0); }
+		public ExprContext expr() {
+			return getRuleContext(ExprContext.class,0);
 		}
 		public RestrContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -314,45 +416,88 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 4, RULE_restr);
 		((RestrContext)getInvokingContext(2)).valor =  new StringPointer();
 		try {
-			setState(56);
+			setState(66);
 			switch (_input.LA(1)) {
-			case 6:
+			case 4:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(37); match(6);
-				setState(38); ((RestrContext)_localctx).expr = expr();
-				setState(39); match(2);
+				setState(40); match(4);
+				setState(41); ((RestrContext)_localctx).expr = expr();
+				setState(42); match(1);
 				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
-			case 5:
+			case 3:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(42); match(5);
-				setState(43); ((RestrContext)_localctx).expr = expr();
-				setState(44); match(2);
+				setState(45); match(3);
+				setState(46); ((RestrContext)_localctx).expr = expr();
+				setState(47); match(1);
 				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
-			case 11:
+			case 8:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(47); match(11);
-				setState(48); ((RestrContext)_localctx).expr = expr();
-				setState(49); match(2);
+				setState(50); match(8);
+				setState(51); ((RestrContext)_localctx).expr = expr();
+				setState(52); match(1);
 				((RestrContext)getInvokingContext(2)).valor.setString("666"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
-			case 7:
-			case 8:
-			case 13:
+			case 5:
+			case 10:
 			case NAME:
 			case CTE:
+			case CORCHETESTART:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(52); expr();
-				setState(53); match(14);
-				setState(54); expr();
+				setState(62);
+				switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
+				case 1:
+					{
+					setState(55); ((RestrContext)_localctx).expr = expr();
+					setState(56); match(11);
+					setState(57); ((RestrContext)_localctx).CTE = match(CTE);
+					}
+					break;
+
+				case 2:
+					{
+					setState(59); ((RestrContext)_localctx).CTE = match(CTE);
+					setState(60); match(11);
+					setState(61); ((RestrContext)_localctx).expr = expr();
+					}
+					break;
+				}
+
+							String var = (((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null);
+							String tipoLibre = null;
+							String zname = zNames.get(var);
+							String cte = (((RestrContext)_localctx).CTE!=null?((RestrContext)_localctx).CTE.getText():null);
+							if(zname==null){
+								tipoLibre = getTipoLibre(cte,freeTypes);
+							}
+							else{
+								String tipo = tipos.get(zname);
+								if(tipo.startsWith("EnumerationType")){
+									String[] aux = tipo.split(":");
+									tipoLibre = aux[2];
+								}
+							}
+							
+							if (tipoLibre != null){
+								tipos.put(var,tipoLibre);
+								String s = notEqual.get(var); 
+								if (s!=null && !s.contains(cte)) 
+									notEqual.put(var,s.concat("," + cte));
+								else{
+									s = new String(cte);
+									notEqual.put(var, s);
+									}
+							}
+							
+						
 				}
 				break;
 			default:
@@ -404,46 +549,46 @@ public class SLog2ZParser extends Parser {
 		((SeqIgualContext)getInvokingContext(3)).valor =  new StringPointer();
 		try {
 			int _alt;
-			setState(73);
+			setState(83);
 			switch (_input.LA(1)) {
-			case 15:
+			case 12:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(58); match(15);
+				setState(68); match(12);
 				}
 				break;
-			case 16:
+			case 13:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(59); match(16);
+				setState(69); match(13);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(67); 
+				setState(77); 
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
 				do {
 					switch (_alt) {
 					case 1:
 						{
 						{
-						setState(60); ((SeqIgualContext)_localctx).v1 = match(NAME);
+						setState(70); ((SeqIgualContext)_localctx).v1 = match(NAME);
 						slvars.put((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null),((SeqIgualContext)getInvokingContext(3)).valor);
-						setState(62); match(9);
-						setState(63); ((SeqIgualContext)_localctx).v2 = expr();
+						setState(72); match(6);
+						setState(73); ((SeqIgualContext)_localctx).v2 = expr();
 						slvars.put((((SeqIgualContext)_localctx).v2!=null?_input.getText(((SeqIgualContext)_localctx).v2.start,((SeqIgualContext)_localctx).v2.stop):null),((SeqIgualContext)getInvokingContext(3)).valor);
-						setState(65); match(4);
+						setState(75); match(2);
 						}
 						}
 						break;
 					default:
 						throw new NoViableAltException(this);
 					}
-					setState(69); 
+					setState(79); 
 					_errHandler.sync(this);
-					_alt = getInterpreter().adaptivePredict(_input,5,_ctx);
+					_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
 				} while ( _alt!=2 && _alt!=-1 );
 
 							String zname = zNames.get((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null));
@@ -504,119 +649,119 @@ public class SLog2ZParser extends Parser {
 		enterRule(_localctx, 8, RULE_expr);
 		int _la;
 		try {
-			setState(129);
+			setState(139);
 			switch (_input.LA(1)) {
 			case CTE:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(75); ((ExprContext)_localctx).CTE = match(CTE);
+				setState(85); ((ExprContext)_localctx).CTE = match(CTE);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).CTE!=null?((ExprContext)_localctx).CTE.getText():null);
 				}
 				break;
 			case NAME:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(77); ((ExprContext)_localctx).NAME = match(NAME);
+				setState(87); ((ExprContext)_localctx).NAME = match(NAME);
 				((ExprContext)_localctx).valor =  (((ExprContext)_localctx).NAME!=null?((ExprContext)_localctx).NAME.getText():null);
 				}
 				break;
-			case 13:
+			case 10:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(79); match(13);
+				setState(89); match(10);
 				((ExprContext)_localctx).valor =  "{";
-				setState(90);
+				setState(100);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 7) | (1L << 8) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 5) | (1L << 10) | (1L << NAME) | (1L << CTE) | (1L << CORCHETESTART))) != 0)) {
 					{
 					{
-					setState(83);
+					setState(93);
 					_la = _input.LA(1);
-					if (_la==4) {
+					if (_la==2) {
 						{
-						setState(81); match(4);
+						setState(91); match(2);
 						((ExprContext)_localctx).valor =  _localctx.valor + ",";
 						}
 					}
 
-					setState(85); ((ExprContext)_localctx).e = expr();
+					setState(95); ((ExprContext)_localctx).e = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + ((ExprContext)_localctx).e.valor;
 					}
 					}
-					setState(92);
+					setState(102);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(97);
+				setState(107);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==12) {
+				while (_la==9) {
 					{
 					{
-					setState(93); match(12);
-					setState(94); expr();
+					setState(103); match(9);
+					setState(104); expr();
 					}
 					}
-					setState(99);
+					setState(109);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(100); match(17);
+				setState(110); match(14);
 				((ExprContext)_localctx).valor =  _localctx.valor + "}";
 				}
 				break;
-			case 7:
+			case CORCHETESTART:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(102); match(7);
+				setState(112); match(CORCHETESTART);
 				((ExprContext)_localctx).valor =  "[";
-				setState(113);
+				setState(123);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 4) | (1L << 7) | (1L << 8) | (1L << 13) | (1L << NAME) | (1L << CTE))) != 0)) {
+				while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 5) | (1L << 10) | (1L << NAME) | (1L << CTE) | (1L << CORCHETESTART))) != 0)) {
 					{
 					{
-					setState(106);
+					setState(116);
 					_la = _input.LA(1);
-					if (_la==4) {
+					if (_la==2) {
 						{
-						setState(104); match(4);
+						setState(114); match(2);
 						((ExprContext)_localctx).valor =  _localctx.valor + ",";
 						}
 					}
 
-					setState(108); ((ExprContext)_localctx).e = expr();
+					setState(118); ((ExprContext)_localctx).e = expr();
 					((ExprContext)_localctx).valor =  _localctx.valor + ((ExprContext)_localctx).e.valor;
 					}
 					}
-					setState(115);
+					setState(125);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(120);
+				setState(130);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-				while (_la==18) {
+				while (_la==15) {
 					{
 					{
-					setState(116); match(18);
-					setState(117); expr();
+					setState(126); match(15);
+					setState(127); expr();
 					}
 					}
-					setState(122);
+					setState(132);
 					_errHandler.sync(this);
 					_la = _input.LA(1);
 				}
-				setState(123); match(1);
+				setState(133); match(CORCHETEEND);
 				((ExprContext)_localctx).valor =  _localctx.valor + "]";
 				}
 				break;
-			case 8:
+			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(125); match(8);
-				setState(126); expr();
+				setState(135); match(5);
+				setState(136); expr();
 				((ExprContext)_localctx).valor =  "-" + _localctx.valor ;
 				}
 				break;
@@ -636,40 +781,44 @@ public class SLog2ZParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3\32\u0086\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\2"+
-		"\5\2\21\n\2\6\2\23\n\2\r\2\16\2\24\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\7\3"+
-		"\37\n\3\f\3\16\3\"\13\3\5\3$\n\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4;\n\4\3\5\3\5\3\5\3"+
-		"\5\3\5\3\5\3\5\3\5\3\5\6\5F\n\5\r\5\16\5G\3\5\3\5\5\5L\n\5\3\6\3\6\3\6"+
-		"\3\6\3\6\3\6\3\6\3\6\5\6V\n\6\3\6\3\6\3\6\7\6[\n\6\f\6\16\6^\13\6\3\6"+
-		"\3\6\7\6b\n\6\f\6\16\6e\13\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6m\n\6\3\6\3\6"+
-		"\3\6\7\6r\n\6\f\6\16\6u\13\6\3\6\3\6\7\6y\n\6\f\6\16\6|\13\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\5\6\u0084\n\6\3\6\2\7\2\4\6\b\n\2\2\u0094\2\f\3\2\2\2\4"+
-		"\30\3\2\2\2\6:\3\2\2\2\bK\3\2\2\2\n\u0083\3\2\2\2\f\r\5\4\3\2\r\22\7\30"+
-		"\2\2\16\20\5\b\5\2\17\21\7\30\2\2\20\17\3\2\2\2\20\21\3\2\2\2\21\23\3"+
-		"\2\2\2\22\16\3\2\2\2\23\24\3\2\2\2\24\22\3\2\2\2\24\25\3\2\2\2\25\26\3"+
-		"\2\2\2\26\27\b\2\1\2\27\3\3\2\2\2\30\31\7\f\2\2\31\32\7\13\2\2\32#\7\t"+
-		"\2\2\33 \5\6\4\2\34\35\7\6\2\2\35\37\5\6\4\2\36\34\3\2\2\2\37\"\3\2\2"+
-		"\2 \36\3\2\2\2 !\3\2\2\2!$\3\2\2\2\" \3\2\2\2#\33\3\2\2\2#$\3\2\2\2$%"+
-		"\3\2\2\2%&\7\5\2\2&\5\3\2\2\2\'(\7\b\2\2()\5\n\6\2)*\7\4\2\2*+\b\4\1\2"+
-		"+;\3\2\2\2,-\7\7\2\2-.\5\n\6\2./\7\4\2\2/\60\b\4\1\2\60;\3\2\2\2\61\62"+
-		"\7\r\2\2\62\63\5\n\6\2\63\64\7\4\2\2\64\65\b\4\1\2\65;\3\2\2\2\66\67\5"+
-		"\n\6\2\678\7\20\2\289\5\n\6\29;\3\2\2\2:\'\3\2\2\2:,\3\2\2\2:\61\3\2\2"+
-		"\2:\66\3\2\2\2;\7\3\2\2\2<L\7\21\2\2=L\7\22\2\2>?\7\25\2\2?@\b\5\1\2@"+
-		"A\7\13\2\2AB\5\n\6\2BC\b\5\1\2CD\7\6\2\2DF\3\2\2\2E>\3\2\2\2FG\3\2\2\2"+
-		"GE\3\2\2\2GH\3\2\2\2HI\3\2\2\2IJ\b\5\1\2JL\3\2\2\2K<\3\2\2\2K=\3\2\2\2"+
-		"KE\3\2\2\2L\t\3\2\2\2MN\7\26\2\2N\u0084\b\6\1\2OP\7\25\2\2P\u0084\b\6"+
-		"\1\2QR\7\17\2\2R\\\b\6\1\2ST\7\6\2\2TV\b\6\1\2US\3\2\2\2UV\3\2\2\2VW\3"+
-		"\2\2\2WX\5\n\6\2XY\b\6\1\2Y[\3\2\2\2ZU\3\2\2\2[^\3\2\2\2\\Z\3\2\2\2\\"+
-		"]\3\2\2\2]c\3\2\2\2^\\\3\2\2\2_`\7\16\2\2`b\5\n\6\2a_\3\2\2\2be\3\2\2"+
-		"\2ca\3\2\2\2cd\3\2\2\2df\3\2\2\2ec\3\2\2\2fg\7\23\2\2g\u0084\b\6\1\2h"+
-		"i\7\t\2\2is\b\6\1\2jk\7\6\2\2km\b\6\1\2lj\3\2\2\2lm\3\2\2\2mn\3\2\2\2"+
-		"no\5\n\6\2op\b\6\1\2pr\3\2\2\2ql\3\2\2\2ru\3\2\2\2sq\3\2\2\2st\3\2\2\2"+
-		"tz\3\2\2\2us\3\2\2\2vw\7\24\2\2wy\5\n\6\2xv\3\2\2\2y|\3\2\2\2zx\3\2\2"+
-		"\2z{\3\2\2\2{}\3\2\2\2|z\3\2\2\2}~\7\3\2\2~\u0084\b\6\1\2\177\u0080\7"+
-		"\n\2\2\u0080\u0081\5\n\6\2\u0081\u0082\b\6\1\2\u0082\u0084\3\2\2\2\u0083"+
-		"M\3\2\2\2\u0083O\3\2\2\2\u0083Q\3\2\2\2\u0083h\3\2\2\2\u0083\177\3\2\2"+
-		"\2\u0084\13\3\2\2\2\20\20\24 #:GKU\\clsz\u0083";
+		"\2\3\31\u0090\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\2"+
+		"\3\2\5\2\22\n\2\6\2\24\n\2\r\2\16\2\25\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\3\3\7\3!\n\3\f\3\16\3$\13\3\5\3&\n\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4"+
+		"\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5"+
+		"\4A\n\4\3\4\3\4\5\4E\n\4\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\6\5P\n\5"+
+		"\r\5\16\5Q\3\5\3\5\5\5V\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6`\n\6\3"+
+		"\6\3\6\3\6\7\6e\n\6\f\6\16\6h\13\6\3\6\3\6\7\6l\n\6\f\6\16\6o\13\6\3\6"+
+		"\3\6\3\6\3\6\3\6\3\6\5\6w\n\6\3\6\3\6\3\6\7\6|\n\6\f\6\16\6\177\13\6\3"+
+		"\6\3\6\7\6\u0083\n\6\f\6\16\6\u0086\13\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6\u008e"+
+		"\n\6\3\6\2\7\2\4\6\b\n\2\2\u009f\2\f\3\2\2\2\4\31\3\2\2\2\6D\3\2\2\2\b"+
+		"U\3\2\2\2\n\u008d\3\2\2\2\f\r\5\4\3\2\r\16\7\27\2\2\16\23\b\2\1\2\17\21"+
+		"\5\b\5\2\20\22\7\27\2\2\21\20\3\2\2\2\21\22\3\2\2\2\22\24\3\2\2\2\23\17"+
+		"\3\2\2\2\24\25\3\2\2\2\25\23\3\2\2\2\25\26\3\2\2\2\26\27\3\2\2\2\27\30"+
+		"\b\2\1\2\30\3\3\2\2\2\31\32\7\t\2\2\32\33\b\3\1\2\33\34\7\b\2\2\34%\7"+
+		"\25\2\2\35\"\5\6\4\2\36\37\7\4\2\2\37!\5\6\4\2 \36\3\2\2\2!$\3\2\2\2\""+
+		" \3\2\2\2\"#\3\2\2\2#&\3\2\2\2$\"\3\2\2\2%\35\3\2\2\2%&\3\2\2\2&\'\3\2"+
+		"\2\2\'(\7\26\2\2()\7\4\2\2)\5\3\2\2\2*+\7\6\2\2+,\5\n\6\2,-\7\3\2\2-."+
+		"\b\4\1\2.E\3\2\2\2/\60\7\5\2\2\60\61\5\n\6\2\61\62\7\3\2\2\62\63\b\4\1"+
+		"\2\63E\3\2\2\2\64\65\7\n\2\2\65\66\5\n\6\2\66\67\7\3\2\2\678\b\4\1\28"+
+		"E\3\2\2\29:\5\n\6\2:;\7\r\2\2;<\7\23\2\2<A\3\2\2\2=>\7\23\2\2>?\7\r\2"+
+		"\2?A\5\n\6\2@9\3\2\2\2@=\3\2\2\2AB\3\2\2\2BC\b\4\1\2CE\3\2\2\2D*\3\2\2"+
+		"\2D/\3\2\2\2D\64\3\2\2\2D@\3\2\2\2E\7\3\2\2\2FV\7\16\2\2GV\7\17\2\2HI"+
+		"\7\22\2\2IJ\b\5\1\2JK\7\b\2\2KL\5\n\6\2LM\b\5\1\2MN\7\4\2\2NP\3\2\2\2"+
+		"OH\3\2\2\2PQ\3\2\2\2QO\3\2\2\2QR\3\2\2\2RS\3\2\2\2ST\b\5\1\2TV\3\2\2\2"+
+		"UF\3\2\2\2UG\3\2\2\2UO\3\2\2\2V\t\3\2\2\2WX\7\23\2\2X\u008e\b\6\1\2YZ"+
+		"\7\22\2\2Z\u008e\b\6\1\2[\\\7\f\2\2\\f\b\6\1\2]^\7\4\2\2^`\b\6\1\2_]\3"+
+		"\2\2\2_`\3\2\2\2`a\3\2\2\2ab\5\n\6\2bc\b\6\1\2ce\3\2\2\2d_\3\2\2\2eh\3"+
+		"\2\2\2fd\3\2\2\2fg\3\2\2\2gm\3\2\2\2hf\3\2\2\2ij\7\13\2\2jl\5\n\6\2ki"+
+		"\3\2\2\2lo\3\2\2\2mk\3\2\2\2mn\3\2\2\2np\3\2\2\2om\3\2\2\2pq\7\20\2\2"+
+		"q\u008e\b\6\1\2rs\7\25\2\2s}\b\6\1\2tu\7\4\2\2uw\b\6\1\2vt\3\2\2\2vw\3"+
+		"\2\2\2wx\3\2\2\2xy\5\n\6\2yz\b\6\1\2z|\3\2\2\2{v\3\2\2\2|\177\3\2\2\2"+
+		"}{\3\2\2\2}~\3\2\2\2~\u0084\3\2\2\2\177}\3\2\2\2\u0080\u0081\7\21\2\2"+
+		"\u0081\u0083\5\n\6\2\u0082\u0080\3\2\2\2\u0083\u0086\3\2\2\2\u0084\u0082"+
+		"\3\2\2\2\u0084\u0085\3\2\2\2\u0085\u0087\3\2\2\2\u0086\u0084\3\2\2\2\u0087"+
+		"\u0088\7\26\2\2\u0088\u008e\b\6\1\2\u0089\u008a\7\7\2\2\u008a\u008b\5"+
+		"\n\6\2\u008b\u008c\b\6\1\2\u008c\u008e\3\2\2\2\u008dW\3\2\2\2\u008dY\3"+
+		"\2\2\2\u008d[\3\2\2\2\u008dr\3\2\2\2\u008d\u0089\3\2\2\2\u008e\13\3\2"+
+		"\2\2\21\21\25\"%@DQU_fmv}\u0084\u008d";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
