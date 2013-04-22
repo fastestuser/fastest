@@ -1116,7 +1116,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put($seq_op.text + $e.text, newVarName);
 				String type = types.get($e.text);
 				ArrayList<String> leftAndRight = leftAndRightTypes(type);
-				type = "\\power(" + leftAndRight.get(0) + "\\cross" + leftAndRight.get(1) + ")";
+				type = "\\seq(" + leftAndRight.get(1) + ")";
 				types.put($seq_op.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1130,7 +1130,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (isBasic(eType))
 			eType = $e.text;
 	
-		types.put("\\power" + $e.text, "\\power" + eType);
+		types.put("\\power" + $e.text, "\\power" + eType );
 	}
 	|	NAME
 	{
@@ -1155,6 +1155,34 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (memory.get("\\emptyset") == null) {
 			memory.put("\\emptyset", "{}");
 			types.put("\\emptyset", "\\power(" + "generic" + ")");
+		}
+	}
+	|	//tuple
+		'(' a=expression {$elements.add($a.text);} (',' b=expression {$elements.add($b.text);})+ ')'
+	{	
+		$zName = "(";
+		String type = new String();
+		//Llenamos elements y ponemos cada expression en la memory
+		while( !$elements.isEmpty() ){
+			String e = $elements.remove(0);
+			if (type.equals(""))
+				type = "(" + types.get(e) + ")";
+			else
+				type = type.concat("\\cross(" + types.get(e) + ")");
+				 
+			$zName = $zName.concat(e);
+			//guardamos tambien las traducciones del conjunto
+			$setlogName = $setlogName.concat(memory.get(e));
+			
+			if (!$elements.isEmpty()){
+				$zName = $zName + ",";
+				$setlogName = $setlogName + ",";
+			}
+		}
+		$zName = $zName + ")";
+		if (memory.get($zName) == null) {
+			memory.put($zName, "[" + $setlogName + "]");
+			types.put($zName, type);
 		}
 	}
 	|	//set extension

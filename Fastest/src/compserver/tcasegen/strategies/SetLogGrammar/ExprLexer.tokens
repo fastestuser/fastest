@@ -109,8 +109,8 @@ IN_FUN_P5=62
 '\\subseteq'=27
 '|'=28
 '::='=26
-'\\geq'=25
 '\\where'=24
+'\\geq'=25
 '\\nat'=23
 '\\neq'=22
 'squash'=21
