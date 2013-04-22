@@ -135,6 +135,11 @@ public class ExprLexer extends Lexer {
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
+	        
+	        while (((String) root.getUserObject()).equals("()")) {
+	        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+	        }
+	        
 	        return (String) root.getUserObject();
 		}
 		
@@ -150,7 +155,18 @@ public class ExprLexer extends Lexer {
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
-	        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
+	        
+	        while (((String) root.getUserObject()).equals("()")) {
+	        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+	        }
+	        
+	        DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
+	        
+	        while (((String) child.getUserObject()).equals("()")) {
+	        	child = (DefaultMutableTreeNode) child.getChildAt(0);
+	        }
+	        
+	        return parser.printTree(child);
 		}
 		
 		//Metodo para realizar la inversion de un tipo en Z
@@ -218,6 +234,7 @@ public class ExprLexer extends Lexer {
 				}
 			
 				String nodeType = getType(type);
+				
 				if (nodeType.equals("\\seq"))
 					printAtEnd("list(" + var + ")");
 				else if (nodeType.equals("\\rel"))
@@ -228,6 +245,13 @@ public class ExprLexer extends Lexer {
 					printAtEnd("is_fun(" + var + ")");
 				else if (type.equals("\\nat") || type.equals("\\num"))
 					print(var + " in " + memory.get(type));
+				else if (nodeType.equals("\\power")) {
+					//Veo si lo que sigue es un tipo enumerado
+					String childType = getChildType(type,0);
+					childType = types.get(childType);
+					if (childType != null && childType.startsWith("EnumerationType"))
+						print("subset(" + var + "," + childType.split(":")[1] + ")");
+				}
 				else { //double check
 					type = types.get(type);
 					if (type != null && isBasic(type)) {

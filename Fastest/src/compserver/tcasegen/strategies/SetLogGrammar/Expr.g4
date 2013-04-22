@@ -85,6 +85,11 @@ grammar Expr;
         TypeManagerParser parser = new TypeManagerParser(tokens);
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
+        
+        while (((String) root.getUserObject()).equals("()")) {
+        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+        }
+        
         return (String) root.getUserObject();
 	}
 	
@@ -100,7 +105,18 @@ grammar Expr;
         TypeManagerParser parser = new TypeManagerParser(tokens);
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
-        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
+        
+        while (((String) root.getUserObject()).equals("()")) {
+        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+        }
+        
+        DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
+        
+        while (((String) child.getUserObject()).equals("()")) {
+        	child = (DefaultMutableTreeNode) child.getChildAt(0);
+        }
+        
+        return parser.printTree(child);
 	}
 	
 	//Metodo para realizar la inversion de un tipo en Z
@@ -168,6 +184,7 @@ grammar Expr;
 			}
 		
 			String nodeType = getType(type);
+			
 			if (nodeType.equals("\\seq"))
 				printAtEnd("list(" + var + ")");
 			else if (nodeType.equals("\\rel"))
@@ -178,6 +195,13 @@ grammar Expr;
 				printAtEnd("is_fun(" + var + ")");
 			else if (type.equals("\\nat") || type.equals("\\num"))
 				print(var + " in " + memory.get(type));
+			else if (nodeType.equals("\\power")) {
+				//Veo si lo que sigue es un tipo enumerado
+				String childType = getChildType(type,0);
+				childType = types.get(childType);
+				if (childType != null && childType.startsWith("EnumerationType"))
+					print("subset(" + var + "," + childType.split(":")[1] + ")");
+			}
 			else { //double check
 				type = types.get(type);
 				if (type != null && isBasic(type)) {
@@ -614,8 +638,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					setExpressionVars.put("\\#" + $e.text, newVarName);
 					
 				String type = getType(types.get($e.text));
-				if (type.equals("\\seq"))
-					print("size(" + ")"); //TERMINAR!!!
+				if (!type.equals("\\seq"))
+					print("size(" + a + "," + newVarName + ")");
 				else
 					print("prolog_call(length(" + a + "," + newVarName + "))");
 				
@@ -971,6 +995,24 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("nth1(1," + a + "," + newVarName + ")");
 				memory.put($seq_op.text + $e.text, newVarName);
 				String type = getChildType(types.get($e.text), 0);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
+			}
+			else if ($seq_op.text.startsWith("last")){
+				print("prolog_call(last(" + a + "," + newVarName + "))");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = getChildType(types.get($e.text), 0);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
+			}
+			else if ($seq_op.text.startsWith("tail")){
+				print("prolog_call(drop(1," + a + "," + newVarName + "))");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = types.get($e.text);
 				types.put($seq_op.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )

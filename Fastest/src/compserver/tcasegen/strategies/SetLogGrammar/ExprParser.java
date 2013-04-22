@@ -140,6 +140,11 @@ public class ExprParser extends Parser {
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
+	        
+	        while (((String) root.getUserObject()).equals("()")) {
+	        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+	        }
+	        
 	        return (String) root.getUserObject();
 		}
 		
@@ -155,7 +160,18 @@ public class ExprParser extends Parser {
 	        TypeManagerParser parser = new TypeManagerParser(tokens);
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
-	        return parser.printTree((DefaultMutableTreeNode) root.getChildAt(pos));
+	        
+	        while (((String) root.getUserObject()).equals("()")) {
+	        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+	        }
+	        
+	        DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
+	        
+	        while (((String) child.getUserObject()).equals("()")) {
+	        	child = (DefaultMutableTreeNode) child.getChildAt(0);
+	        }
+	        
+	        return parser.printTree(child);
 		}
 		
 		//Metodo para realizar la inversion de un tipo en Z
@@ -223,6 +239,7 @@ public class ExprParser extends Parser {
 				}
 			
 				String nodeType = getType(type);
+				
 				if (nodeType.equals("\\seq"))
 					printAtEnd("list(" + var + ")");
 				else if (nodeType.equals("\\rel"))
@@ -233,6 +250,13 @@ public class ExprParser extends Parser {
 					printAtEnd("is_fun(" + var + ")");
 				else if (type.equals("\\nat") || type.equals("\\num"))
 					print(var + " in " + memory.get(type));
+				else if (nodeType.equals("\\power")) {
+					//Veo si lo que sigue es un tipo enumerado
+					String childType = getChildType(type,0);
+					childType = types.get(childType);
+					if (childType != null && childType.startsWith("EnumerationType"))
+						print("subset(" + var + "," + childType.split(":")[1] + ")");
+				}
 				else { //double check
 					type = types.get(type);
 					if (type != null && isBasic(type)) {
@@ -1508,8 +1532,8 @@ public class ExprParser extends Parser {
 									setExpressionVars.put("\\#" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 									
 								String type = getType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
-								if (type.equals("\\seq"))
-									print("size(" + ")");
+								if (!type.equals("\\seq"))
+									print("size(" + a + "," + newVarName + ")");
 								else
 									print("prolog_call(length(" + a + "," + newVarName + "))");
 								
@@ -1618,6 +1642,24 @@ public class ExprParser extends Parser {
 								print("nth1(1," + a + "," + newVarName + ")");
 								memory.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								String type = getChildType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 0);
+								types.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), type);
+								typeInfo(newVarName, type);
+								if (modoSetExpression != 0 )
+									setExpressionVars.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
+							}
+							else if ((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null).startsWith("last")){
+								print("prolog_call(last(" + a + "," + newVarName + "))");
+								memory.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
+								String type = getChildType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)), 0);
+								types.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), type);
+								typeInfo(newVarName, type);
+								if (modoSetExpression != 0 )
+									setExpressionVars.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
+							}
+							else if ((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null).startsWith("tail")){
+								print("prolog_call(drop(1," + a + "," + newVarName + "))");
+								memory.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
+								String type = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
 								types.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )

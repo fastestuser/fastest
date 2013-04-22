@@ -27,7 +27,7 @@ public class Test {
 		
 		System.out.println("ENTRADA\n" + s);
 		System.out.println("SALIDA\n" + salida);
-		System.out.println("\nasdssssssss\n" + getNotEqType("aaa,bbb,ccc,ddd","bbb,aaa,ddd"));
+		//System.out.println("\nasdssssssss\n" + getNotEqType("aaa,bbb,ccc,ddd","bbb,aaa,ddd"));
 	}
 
 }
