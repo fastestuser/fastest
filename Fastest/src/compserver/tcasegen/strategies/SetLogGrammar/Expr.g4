@@ -159,6 +159,50 @@ grammar Expr;
 		return invertedType;
 	}
 	
+	//Metodo para obtener los tipos izquierdo y derecho
+	//Constraits: Debe ser una funcion o un \power de \cross
+	//EJ: A \pfun B devuelve A y B
+	ArrayList<String> leftAndRightTypes(String type) {
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root = parser.getRoot();
+        
+		ArrayList<String> leftAndRight = new ArrayList<String>();
+		String rootType = (String) root.getUserObject();
+		if (rootType.equals("\\power")) {
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+			String childType = (String) child.getUserObject();
+			
+			if (childType.equals("()")) {
+				child = (DefaultMutableTreeNode) child.getChildAt(0);
+				childType = (String) child.getUserObject();
+			}
+			
+			if (childType.equals("\\cross")) {
+				leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
+				leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+			}
+		
+		}
+		else if (rootType.equals("\\seq")) { //Entonces empieza con pfun, rel etc
+
+			leftAndRight.add("\\nat");
+			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+
+		}
+		else { //Entonces empieza con pfun, rel etc
+
+			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
+
+		}
+		
+		return leftAndRight;
+	}
+	
 	private String newVar() {
 		String newVarName = "VAR" + varNumber;
 		varNumber++;
@@ -473,6 +517,20 @@ predicate
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " neq " + b);
+	}
+	|	e1=expression '\\prefix' e2=expression
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		print("prolog_call(append(" + a + ",_," + b + "))");
+	}
+	|	e1=expression '\\suffix' e2=expression
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		print("prolog_call(append(_," + a + "," + b + "))");
 	}
 	|	'(' predicate ')'
 	|	'true'
@@ -874,6 +932,24 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					if (modoSetExpression != 0 )
 						setExpressionVars.put($e1.text + "\\circ" + $e2.text, newVarName);
 			}
+			else if ($IN_FUN_P4.text.equals("\\extract")){
+					print("extract(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\extract" + $e2.text, newVarName);
+					String type = types.get($e2.text);
+					types.put($e1.text + "\\extract" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\extract" + $e2.text, newVarName);
+			}
+			else if ($IN_FUN_P4.text.equals("\\filter")){
+					print("filter(" + a + "," + b + "," + newVarName + ")");
+					memory.put($e1.text + "\\filter" + $e2.text, newVarName);
+					String type = types.get($e1.text);
+					types.put($e1.text + "\\filter" + $e2.text, type);
+					typeInfo(newVarName, type);
+					if (modoSetExpression != 0 )
+						setExpressionVars.put($e1.text + "\\filter" + $e2.text, newVarName);
+			}
 			
 			if (isNumeric) {
 				if (memory.get("\\num") == null) {
@@ -1013,6 +1089,34 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("prolog_call(drop(1," + a + "," + newVarName + "))");
 				memory.put($seq_op.text + $e.text, newVarName);
 				String type = types.get($e.text);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
+			}
+			else if ($seq_op.text.startsWith("front")){
+				String n = newVar();
+				print("prolog_call(length(" + a + "," + n + "))");
+				if (memory.get("\\nat") == null) {
+					memory.put("\\nat", "NAT");
+					print("NAT = int(0, 10000000000)");
+					types.put("\\nat", "\\nat");
+				}
+				print(n + " in NAT");
+				print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = types.get($e.text);
+				types.put($seq_op.text + $e.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($seq_op.text + $e.text, newVarName);
+			}
+			else if ($seq_op.text.startsWith("squash")){
+				print("squash(" + a + "," + newVarName + ")");
+				memory.put($seq_op.text + $e.text, newVarName);
+				String type = types.get($e.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type);
+				type = "\\power(" + leftAndRight.get(0) + "\\cross" + leftAndRight.get(1) + ")";
 				types.put($seq_op.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1199,7 +1303,7 @@ NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('a'..'z' | 'A'..'Z' | '\\_ ' | '?'
 NUM:	'0'..'9'+ ;
 
 IN_FUN_P3: ('+' | '-' | '\\cup' | '\\setminus' | '\\cat')	;
-IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ')	;
+IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ' | '\\extract' | '\\filter')	;
 IN_FUN_P5: ('\\oplus')	;
 IN_FUN_P6: ('\\dres' | '\\rres' | '\\ndres' | '\\nrres')	;
 
@@ -1207,7 +1311,7 @@ POST_FUN: '\\inv'	;
 
 PRE_GEN: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup')	;
 
-seq_op: ('rev' | 'head' | 'last' | 'tail' | 'front') DECORATION ;
+seq_op: ('rev' | 'head' | 'last' | 'tail' | 'front' | 'squash') DECORATION ;
 
 DECORATION: '~' ;
 
