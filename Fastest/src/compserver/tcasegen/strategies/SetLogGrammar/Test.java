@@ -12,7 +12,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		ANTLRInputStream input = new ANTLRInputStream("\\seq \\num");
+		ANTLRInputStream input = new ANTLRInputStream("\\power (\\num \\pfun (\\power A))");
         TypeManagerLexer lexer = new TypeManagerLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
@@ -20,7 +20,7 @@ public class Test {
         DefaultMutableTreeNode root =  parser.getRoot();
         
         
-		String s = "[1,2,3]";
+		String s = "[{A},{},X]";
 		
         ConstantCreator cc = new ConstantCreator(s,root, null, null, null);
 		String salida = cc.getCte();

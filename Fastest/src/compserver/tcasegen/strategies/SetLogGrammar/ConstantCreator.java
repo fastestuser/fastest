@@ -173,24 +173,36 @@ public class ConstantCreator {
 			return salida;
 		}
 		else if (ct.equals("\\power") ) {
-			//pinta {X,X,X}
-			if(	expr.charAt(iexpr+1)=='}'){
-				return new scte("\\{\\}",iexpr+2);
+			//es por que el tipo \\powe(\\num\\pfun\\A) es equivalente a \\seq A
+			if(c == '['){
+				DefaultMutableTreeNode naux = new DefaultMutableTreeNode("\\seq");
+				// powe->()->x->A        (der)
+				//			  ->NUM|NAT  (izq)
+				DefaultMutableTreeNode nauxHijo = (DefaultMutableTreeNode) ((nodo.getChildAt(0)).getChildAt(0)).getChildAt(1);
+				naux.add(nauxHijo);
+				salida = cte(naux,iexpr);
 			}
-			scte s1 = cte(nodo.getChildAt(0), iexpr+1);
-			salida = new scte("\\{ " + s1.s ,s1.i);
-
-			iexpr = salida.i;
-			c = expr.charAt(iexpr);
-			while (c == ','){
-				s1 = cte(nodo.getChildAt(0), iexpr+1);
-				salida.s = salida.s + "," + s1.s;
-				iexpr = s1.i;
-				c = expr.charAt(iexpr);
-			}
-			salida.s = salida.s + " \\}";
-			salida.i = iexpr+1;
+			else{
+					//pinta {X,X,X}
+					if(	expr.charAt(iexpr+1)=='}'){
+						return new scte("\\{\\}",iexpr+2);
+					}
+					scte s1 = cte(nodo.getChildAt(0), iexpr+1);
+					salida = new scte("\\{ " + s1.s ,s1.i);
+	
+					iexpr = salida.i;
+					c = expr.charAt(iexpr);
+					while (c == ','){
+						s1 = cte(nodo.getChildAt(0), iexpr+1);
+						salida.s = salida.s + "," + s1.s;
+						iexpr = s1.i;
+						c = expr.charAt(iexpr);
+					}
+					salida.s = salida.s + " \\}";
+					salida.i = iexpr+1;
+				}
 			return salida;
+			
 		}
 
 		else if (ct.equals("\\seq") ) {

@@ -56,6 +56,8 @@ public class SLog2ZLexer extends Lexer {
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}
+		//devuelve un elemento que pertenece a la resta de dos conjuntos de String
+		// e = "aaa,bbb,ccc,ddd", ne = "bbb,aaa,ddd" , devuelve ccc
 		private static String getNotEqType(String e, String ne){
 			String[] aux1 = e.split(",");
 			int m = aux1.length;
@@ -70,7 +72,9 @@ public class SLog2ZLexer extends Lexer {
 			
 			return null;
 		}
-		private void putNotEqinSlvars(){
+		//usa la estructura tipos, conjunto de valores posible de las variables enumeradas
+		//y los valores prohibidos de la estructura notEqual, y pone un valor por variable en slvars
+		private void putNotEqInSlvars(){
 			Iterator<String> iterator = notEqual.keySet().iterator();  
 			String key,value,e,cte;String[] aux;
 			while (iterator.hasNext()) {  
@@ -81,13 +85,15 @@ public class SLog2ZLexer extends Lexer {
 			   slvars.put(key, new StringPointer(cte));
 			} 
 		}
-		private HashMap<String,String> llenarFreeTypes(HashMap<String,String> m){
+		//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
+		//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
+		private HashMap<String,String> llenarFreeTypes(){
 	    	HashMap<String,String> s = new HashMap<String,String>();
-	    	Iterator<String> iterator = m.keySet().iterator();
+	    	Iterator<String> iterator = tipos.keySet().iterator();
 	    	String key,valor,nomtipo;
 	    	while (iterator.hasNext()) { 
 	    		key = iterator.next().toString();
-				valor = m.get(key);
+				valor = tipos.get(key);
 				//EnumerationType:FT:{elem1,elem2}
 				if (valor.startsWith("EnumerationType")){
 					String[] aux = valor.split(":");
@@ -112,7 +118,7 @@ public class SLog2ZLexer extends Lexer {
 			System.out.println("\n tipos: "); 
 			printHashMap(tipos);
 			System.out.println("\n");
-			freeTypes = llenarFreeTypes(tipos);
+			freeTypes = llenarFreeTypes();
 			System.out.println("\n tipos Libres: "); 
 			printHashMap(freeTypes);
 			System.out.println("\n");
@@ -137,12 +143,12 @@ public class SLog2ZLexer extends Lexer {
 	        return cc.getCte();
 		}
 		
-		private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
-	    	Iterator<String> iterator = tiposLibres.keySet().iterator();  
+		private String getTipoLibre(String elem){
+	    	Iterator<String> iterator = freeTypes.keySet().iterator();  
 			String key;	String value;
 			while (iterator.hasNext()) { 
 				key = iterator.next().toString();
-				value = tiposLibres.get(key);
+				value = freeTypes.get(key);
 				if(value !=null){
 					if (value.contains(elem))
 						return value;
