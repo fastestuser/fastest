@@ -147,8 +147,8 @@ public class SetLogStrategy implements TCaseStrategy{
 
 		Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
-		ConstantCreator cc; 
 		HashMap<String,String> tipos = exprP.getTypes();
+		ConstantCreator cc = new ConstantCreator(tipos,zNames,null,null); 
 		while (iterator.hasNext()) {  
 			key = iterator.next().toString();
 			valor = zVars.get(key);
@@ -162,8 +162,7 @@ public class SetLogStrategy implements TCaseStrategy{
 				TMP.typeManage();
 				DefaultMutableTreeNode root =  TMP.getRoot();
 
-				cc = new ConstantCreator(sLogName.get(key),root,tipos,zNames,null);
-				valor =  cc.getCte();
+				valor =  cc.getCte(sLogName.get(key),root);
 				zVars.put(key, valor);
 			}  
 		}

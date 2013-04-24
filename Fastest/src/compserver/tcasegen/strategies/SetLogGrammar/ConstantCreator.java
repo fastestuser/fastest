@@ -1,5 +1,8 @@
 package compserver.tcasegen.strategies.SetLogGrammar;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -14,8 +17,11 @@ public class ConstantCreator {
 	private String expr;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zNames;
+	private HashMap<String,String> notEquals;
 	private HashMap<String,StringPointer> slVars;
-	public static int postfijo;
+	private List<String> basicTypes;
+	
+	private static int postfijo;
 	private String getNumber(){
 		return String.valueOf(postfijo++);
 	}
@@ -27,20 +33,84 @@ public class ConstantCreator {
 			this.s = s; this.i = i;
 		}
 	}
-	public String fullCte(TreeNode nodo,String var) {
+	
+	private String printTree(DefaultMutableTreeNode tree){
+		if (tree.isLeaf()) 
+			return (String) tree.getUserObject();
+		else if (tree.getChildCount() == 1)
+			if ( ((String) tree.getUserObject()).equals("()")) //REVISAR
+				return "(" + printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+			else
+				return (String) tree.getUserObject() + printTree((DefaultMutableTreeNode) tree.getChildAt(0));
+		else //tiene dos hijos
+			return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
+	}
+	
+	//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
+	//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
+	private List<String> llenarBasicTypes(){
+    	List<String> s = new LinkedList();
+    	Iterator<String> iterator = tipos.keySet().iterator();
+    	String key,valor,nomtipo;
+    	while (iterator.hasNext()) { 
+    		key = iterator.next().toString();
+			valor = tipos.get(key);
+			//EnumerationType:FT:{elem1,elem2}
+			if (valor.startsWith("BasicType")){
+				String[] aux = valor.split(":");
+				nomtipo =  aux[1];
+				s.add(nomtipo);
+			}
+    	}
+    	
+    	return s;
+    }
+	
+	
+	
+	private String fullCte(DefaultMutableTreeNode nodo, String var){
+		String salida = null;
+		String tipo;
+		
+		//si no tiene desigualdades
+		if(notEquals ==null)
+			return  cteCanonica(nodo,var);
+		
+		if( notEquals.get(var)==null)
+			return  cteCanonica(nodo,var);
+		
+		tipo = printTree(nodo);
+		//si tiene tipo num o nat, entonces seguro genero distinto
+		if(tipo.contains("num") || tipo.contains("nat"))
+			return cteCanonica(nodo,var);
+		
+		// si tiene tipo basico, entonces sseguro genero distinto
+		if (this.basicTypes == null)
+			llenarBasicTypes();
+		if (basicTypes!=null){
+		Iterator<String> it = basicTypes.iterator();
+			while(it.hasNext()){
+				if (tipo.contains(it.next()))
+					return cteCanonica(nodo,var);
+			}
+		}
+		return salida = "ssss";
+	}
+	
+	private String cteCanonica(TreeNode nodo,String var) {
 		String ct = nodo.toString();
 		if (ct.equals("\\num") || ct.equals("\\nat") ) {
 			return this.getNumber();
 		} else if(ct == "()"){
-			return fullCte(nodo.getChildAt(0),var);
+			return cteCanonica(nodo.getChildAt(0),var);
 		} else if (ct.equals("\\pfun") || ct.equals("\\fun") || ct.equals("\\rel")) {
-			return "\\{ "+"(" + fullCte(nodo.getChildAt(0),var) + " \\mapsto " + fullCte(nodo.getChildAt(1),var) + ")" + " \\}";
+			return "\\{ "+"(" + cteCanonica(nodo.getChildAt(0),var) + " \\mapsto " + cteCanonica(nodo.getChildAt(1),var) + ")" + " \\}";
 		} else if(ct.equals("\\cross")){
-			return fullCte(nodo.getChildAt(0),var) + " \\mapsto " + fullCte(nodo.getChildAt(1),var)  ;
+			return cteCanonica(nodo.getChildAt(0),var) + " \\mapsto " + cteCanonica(nodo.getChildAt(1),var)  ;
 		} else if (ct.equals("\\power")) {
-			return "\\{ " + fullCte(nodo.getChildAt(0),var) + " \\}";
+			return "\\{ " + cteCanonica(nodo.getChildAt(0),var) + " \\}";
 		} else if (ct.equals("\\seq")) {
-			return "\\langle " + fullCte(nodo.getChildAt(0),var) + " \\rangle";
+			return "\\langle " + cteCanonica(nodo.getChildAt(0),var) + " \\rangle";
 		}else { 
 			String nodoType = tipos.get(ct);
 			String cte;
@@ -98,10 +168,10 @@ public class ConstantCreator {
 				if (sp != null && sp.toString() != null)
 					cte = sp.toString();
 				else
-					cte = fullCte(nodo,aux);
+					cte = fullCte((DefaultMutableTreeNode) nodo,aux);
 			}
 			else
-				cte = fullCte(nodo,aux);
+				cte = fullCte((DefaultMutableTreeNode) nodo,aux);
 			
 			if (slVars!=null)
 				slVars.put(aux, new StringPointer(cte));
@@ -228,16 +298,19 @@ public class ConstantCreator {
 		return new scte("errpr",0);
 	}
 
-	public ConstantCreator(String expr, DefaultMutableTreeNode root,HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars) {
-		this.arbol = root;
-		this.expr = expr;
+	public ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> notEquals) {
 		this.tipos = tipos;
 		this.zNames = znames;
 		this.slVars = slvars;
+		this.notEquals = notEquals;
+		this.basicTypes = null;
 		ConstantCreator.postfijo = 1;
 	}
 
-	public String getCte() {
+	public String getCte(String expr, DefaultMutableTreeNode root){
+		this.arbol = root;
+		this.expr = expr;
 		return cte(arbol, 0).s;
 	}
+	
 }

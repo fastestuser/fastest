@@ -20,7 +20,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	HashMap<String,String> zVars = new HashMap();
 	HashMap<String,String> freeTypes = new HashMap();
 	HashMap<String,String> notEqual = new HashMap();
-	
+	ConstantCreator cc;
 	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
@@ -90,6 +90,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 		System.out.println("\n tipos Libres: "); 
 		printHashMap(freeTypes);
 		System.out.println("\n");
+		cc = new ConstantCreator(tipos,zNames,slvars,notEqual);
 		
 	}
 	private String getCte(String cte, String tipo) {
@@ -105,10 +106,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
         System.out.println("tipo " + tipo);
         System.out.println("root " + root.toString());
          
-        
-        
-        ConstantCreator cc = new ConstantCreator(cte,root,tipos,zNames,slvars);
-        return cc.getCte();
+        return cc.getCte(cte,root);
 	}
 	
 	private String getTipoLibre(String elem){
@@ -193,13 +191,6 @@ lineas
 			System.out.println("\n notEqual desigualdades: ");
 			printHashMap(notEqual);
 			System.out.println("\n");
-			System.out.println("\n tipos: "); 
-			printHashMap(tipos);
-			System.out.println("\n");
-			putNotEqInSlvars();
-			System.out.println("\n.................slvars:");
-			printHashMap( slvars );
-			
 		}
 		(seqIgual NL?)+ 
 		{
@@ -225,37 +216,34 @@ locals [StringPointer valor;]
 	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
 	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
 	| 'integer(' expr ')' {$restr::valor.setString("666"); slvars.put($expr.text,$restr::valor);}
-	| (expr 'neq' CTE | CTE 'neq' expr)
+	| (NAME 'neq' expr | expr 'neq' NAME) 
 		{
-			String var = $expr.text;
-			String tipoLibre = null;
-			String zname = zNames.get(var);
-			String cte = $CTE.text;
-			//si es una variable generada por {log} entonces no tiene tipo
-			if(zname==null){
-				tipoLibre = getTipoLibre(cte);
-			}
-			//si no entonces obtengo el tipo normalmente
+			String var = $NAME.text;
+			String cte = $expr.text;
+			String s = notEqual.get(var);
+			 
+			if (s!=null && !s.contains(cte)) 
+				notEqual.put(var,s.concat("," + cte));
 			else{
-				String tipo = tipos.get(zname);
-				if(tipo.startsWith("EnumerationType")){
-					String[] aux = tipo.split(":");
-					tipoLibre = aux[2];
+				s = new String(cte);
+				notEqual.put(var, s);
 				}
-			}
-			//si era de tipoLibre, pongo la variable en noEquals y entipos.
-			if (tipoLibre != null){
-				tipos.put(var,tipoLibre);
-				String s = notEqual.get(var); 
-				if (s!=null && !s.contains(cte)) 
-					notEqual.put(var,s.concat("," + cte));
+				
+			char c = cte.charAt(0);
+			s = notEqual.get(cte);
+			if (Character.isUpperCase(c) || c == '_') {
+				
+				if (s!=null && !s.contains(var)) 
+					notEqual.put(cte,s.concat("," + var));
 				else{
-					s = new String(cte);
-					notEqual.put(var, s);
-					}
+					s = new String(var);
+					notEqual.put(cte, s);
+				}
 			}
 			
 		}
+		
+	
 	;
 
 seqIgual
@@ -294,9 +282,6 @@ returns [String valor]
 NAME:	('_'|'A'..'Z' ) ('a'..'z' | 'A'..'Z' |'0'..'9')*;
 CTE:    ('-'|'a'..'z' |'0'..'9') ('a'..'z' | 'A'..'Z' |'0'..'9')*;
 NUM:	'0'..'9'+ ;
-
-CORCHETESTART: '[' ; 
-CORCHETEEND: ']' ;
 
 NL:	'\n';
 WS: 	(' '|'\t'|'\r')+ {skip();} ;
