@@ -227,33 +227,50 @@ public class ExprParser extends Parser {
 	        DefaultMutableTreeNode root = parser.getRoot();
 	        
 			ArrayList<String> leftAndRight = new ArrayList<String>();
+			DefaultMutableTreeNode left, right;
 			String rootType = (String) root.getUserObject();
 			if (rootType.equals("\\power")) {
 				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
 				String childType = (String) child.getUserObject();
 				
-				if (childType.equals("()")) {
+				while (childType.equals("()")) {
 					child = (DefaultMutableTreeNode) child.getChildAt(0);
 					childType = (String) child.getUserObject();
 				}
 				
 				if (childType.equals("\\cross")) {
-					leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
-					leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+					left = (DefaultMutableTreeNode) child.getChildAt(0);
+					while (((String) left.getUserObject()).equals("()"))
+						left = (DefaultMutableTreeNode) left.getChildAt(0);
+					right = (DefaultMutableTreeNode) child.getChildAt(1);
+					while (((String) right.getUserObject()).equals("()"))
+						right = (DefaultMutableTreeNode) right.getChildAt(0);
+					
+					leftAndRight.add((String) left.getUserObject());
+					leftAndRight.add((String) right.getUserObject());
 				}
 			
 			}
 			else if (rootType.equals("\\seq")) { //Entonces empieza con pfun, rel etc
 
 				leftAndRight.add("\\nat");
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+				right = (DefaultMutableTreeNode) root.getChildAt(0);
+				while (((String) right.getUserObject()).equals("()"))
+					right = (DefaultMutableTreeNode) right.getChildAt(0);
+				leftAndRight.add((String) right.getUserObject());
 
 			}
 			else { //Entonces empieza con pfun, rel etc
 
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
-
+			left = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) left.getUserObject()).equals("()"))
+				left = (DefaultMutableTreeNode) left.getChildAt(0);
+			right = (DefaultMutableTreeNode) root.getChildAt(1);
+			while (((String) right.getUserObject()).equals("()"))
+				right = (DefaultMutableTreeNode) right.getChildAt(0);
+				
+			leftAndRight.add((String) left.getUserObject());
+			leftAndRight.add((String) right.getUserObject());
 			}
 			
 			return leftAndRight;
@@ -1592,7 +1609,7 @@ public class ExprParser extends Parser {
 			case 1:
 				{
 				setState(265); ((ExpressionContext)_localctx).PRE_GEN = match(PRE_GEN);
-				setState(266); ((ExpressionContext)_localctx).e = expression(19);
+				setState(266); ((ExpressionContext)_localctx).e = expression(20);
 
 						String a;
 						a = memory.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
@@ -2035,7 +2052,9 @@ public class ExprParser extends Parser {
 				}
 				setState(354); ((ExpressionContext)_localctx).LISTEND = match(LISTEND);
 					
-						((ExpressionContext)_localctx).zName =  (((ExpressionContext)_localctx).DECORATION!=null?((ExpressionContext)_localctx).DECORATION.getText():null) + (((ExpressionContext)_localctx).LISTSTART!=null?((ExpressionContext)_localctx).LISTSTART.getText():null);
+						if ((((ExpressionContext)_localctx).DECORATION!=null?((ExpressionContext)_localctx).DECORATION.getText():null) != null)
+							((ExpressionContext)_localctx).zName =  (((ExpressionContext)_localctx).DECORATION!=null?((ExpressionContext)_localctx).DECORATION.getText():null);
+						((ExpressionContext)_localctx).zName =  _localctx.zName.concat((((ExpressionContext)_localctx).LISTSTART!=null?((ExpressionContext)_localctx).LISTSTART.getText():null));
 						String type = new String();
 						//Llenamos elements y ponemos cada expression en la memory
 						while( !_localctx.elements.isEmpty() ){
@@ -2234,7 +2253,15 @@ public class ExprParser extends Parser {
 						          			if (modoSetExpression != 0 )
 						          				setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 
-						          			String newVarType = getChildType(types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)), 1);
+						          			//Si es una lista debo transformarla
+						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          			if (getType(type1).equals("\\seq")) {
+						          				String newVarName2 = newVar();
+						          				print("list_to_rel(" + a + "," + newVarName2 +  ")");
+						          				a = newVarName2;
+						          			}
+
+						          			String newVarType = leftAndRightTypes(type1).get(1);
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarType);
 						          			print("apply(" + a + "," + b + "," + newVarName + ")");
 						          			
@@ -2296,27 +2323,8 @@ public class ExprParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(392);
 						if (!(21 >= _localctx._p)) throw new FailedPredicateException(this, "21 >= $_p");
-						setState(393); match(57);
+						setState(393); match(9);
 						setState(394); ((ExpressionContext)_localctx).e2 = expression(22);
-
-						          		String a, b;
-						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          		memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\mapsto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "[" + a + "," + b + "]");
-						          		types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\mapsto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)) + "\\cross" + types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)));
-						          	
-						}
-						break;
-
-					case 7:
-						{
-						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(397);
-						if (!(20 >= _localctx._p)) throw new FailedPredicateException(this, "20 >= $_p");
-						setState(398); match(9);
-						setState(399); ((ExpressionContext)_localctx).e2 = expression(21);
 
 						          		String a, b;
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
@@ -2332,15 +2340,15 @@ public class ExprParser extends Parser {
 						}
 						break;
 
-					case 8:
+					case 7:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
 						_localctx.e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(402);
-						if (!(17 >= _localctx._p)) throw new FailedPredicateException(this, "17 >= $_p");
-						setState(403); ((ExpressionContext)_localctx).IN_FUN_P6 = match(IN_FUN_P6);
-						setState(404); ((ExpressionContext)_localctx).e2 = expression(18);
+						setState(397);
+						if (!(18 >= _localctx._p)) throw new FailedPredicateException(this, "18 >= $_p");
+						setState(398); ((ExpressionContext)_localctx).IN_FUN_P6 = match(IN_FUN_P6);
+						setState(399); ((ExpressionContext)_localctx).e2 = expression(19);
 
 						          		String a, b;
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
@@ -2395,15 +2403,15 @@ public class ExprParser extends Parser {
 						}
 						break;
 
-					case 9:
+					case 8:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
 						_localctx.e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(407);
-						if (!(16 >= _localctx._p)) throw new FailedPredicateException(this, "16 >= $_p");
-						setState(408); ((ExpressionContext)_localctx).IN_FUN_P5 = match(IN_FUN_P5);
-						setState(409); ((ExpressionContext)_localctx).e2 = expression(17);
+						setState(402);
+						if (!(17 >= _localctx._p)) throw new FailedPredicateException(this, "17 >= $_p");
+						setState(403); ((ExpressionContext)_localctx).IN_FUN_P5 = match(IN_FUN_P5);
+						setState(404); ((ExpressionContext)_localctx).e2 = expression(18);
 
 						          		String a, b;
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
@@ -2428,15 +2436,15 @@ public class ExprParser extends Parser {
 						}
 						break;
 
-					case 10:
+					case 9:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
 						_localctx.e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(412);
-						if (!(15 >= _localctx._p)) throw new FailedPredicateException(this, "15 >= $_p");
-						setState(413); ((ExpressionContext)_localctx).IN_FUN_P4 = match(IN_FUN_P4);
-						setState(414); ((ExpressionContext)_localctx).e2 = expression(16);
+						setState(407);
+						if (!(16 >= _localctx._p)) throw new FailedPredicateException(this, "16 >= $_p");
+						setState(408); ((ExpressionContext)_localctx).IN_FUN_P4 = match(IN_FUN_P4);
+						setState(409); ((ExpressionContext)_localctx).e2 = expression(17);
 
 						          		String a, b;
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
@@ -2531,15 +2539,15 @@ public class ExprParser extends Parser {
 						}
 						break;
 
-					case 11:
+					case 10:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
 						_localctx.e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
-						setState(417);
-						if (!(14 >= _localctx._p)) throw new FailedPredicateException(this, "14 >= $_p");
-						setState(418); ((ExpressionContext)_localctx).IN_FUN_P3 = match(IN_FUN_P3);
-						setState(419); ((ExpressionContext)_localctx).e2 = expression(15);
+						setState(412);
+						if (!(15 >= _localctx._p)) throw new FailedPredicateException(this, "15 >= $_p");
+						setState(413); ((ExpressionContext)_localctx).IN_FUN_P3 = match(IN_FUN_P3);
+						setState(414); ((ExpressionContext)_localctx).e2 = expression(16);
 
 						          		String a, b;
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
@@ -2607,6 +2615,25 @@ public class ExprParser extends Parser {
 						}
 						break;
 
+					case 11:
+						{
+						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
+						_localctx.e1 = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_expression);
+						setState(417);
+						if (!(14 >= _localctx._p)) throw new FailedPredicateException(this, "14 >= $_p");
+						setState(418); match(57);
+						setState(419); ((ExpressionContext)_localctx).e2 = expression(15);
+
+						          		String a, b;
+						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
+						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
+						          		memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\mapsto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "[" + a + "," + b + "]");
+						          		types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\mapsto" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)) + "\\cross" + types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)));
+						          	
+						}
+						break;
+
 					case 12:
 						{
 						_localctx = new ExpressionContext(_parentctx, _parentState, _p);
@@ -2668,7 +2695,7 @@ public class ExprParser extends Parser {
 						_localctx.e1 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression);
 						setState(434);
-						if (!(18 >= _localctx._p)) throw new FailedPredicateException(this, "18 >= $_p");
+						if (!(19 >= _localctx._p)) throw new FailedPredicateException(this, "19 >= $_p");
 						setState(435); ((ExpressionContext)_localctx).IMGSTART = match(IMGSTART);
 						setState(436); ((ExpressionContext)_localctx).e2 = expression(0);
 						setState(437); ((ExpressionContext)_localctx).IMGEND = match(IMGEND);
@@ -2814,7 +2841,7 @@ public class ExprParser extends Parser {
 		switch (predIndex) {
 		case 17: return 13 >= _localctx._p;
 
-		case 16: return 18 >= _localctx._p;
+		case 16: return 19 >= _localctx._p;
 
 		case 4: return 27 >= _localctx._p;
 
@@ -2828,7 +2855,7 @@ public class ExprParser extends Parser {
 
 		case 9: return 21 >= _localctx._p;
 
-		case 10: return 20 >= _localctx._p;
+		case 10: return 18 >= _localctx._p;
 
 		case 11: return 17 >= _localctx._p;
 
@@ -2998,14 +3025,14 @@ public class ExprParser extends Parser {
 		"\f\t\3\u0181\u0182\7D\2\2\u0182\u0183\5\26\f\2\u0183\u0184\b\f\1\2\u0184"+
 		"\u01c4\3\2\2\2\u0185\u0186\6\f\n\3\u0186\u0187\7\60\2\2\u0187\u0188\5"+
 		"\26\f\2\u0188\u0189\b\f\1\2\u0189\u01c4\3\2\2\2\u018a\u018b\6\f\13\3\u018b"+
-		"\u018c\7;\2\2\u018c\u018d\5\26\f\2\u018d\u018e\b\f\1\2\u018e\u01c4\3\2"+
-		"\2\2\u018f\u0190\6\f\f\3\u0190\u0191\7\13\2\2\u0191\u0192\5\26\f\2\u0192"+
-		"\u0193\b\f\1\2\u0193\u01c4\3\2\2\2\u0194\u0195\6\f\r\3\u0195\u0196\7A"+
+		"\u018c\7\13\2\2\u018c\u018d\5\26\f\2\u018d\u018e\b\f\1\2\u018e\u01c4\3"+
+		"\2\2\2\u018f\u0190\6\f\f\3\u0190\u0191\7A\2\2\u0191\u0192\5\26\f\2\u0192"+
+		"\u0193\b\f\1\2\u0193\u01c4\3\2\2\2\u0194\u0195\6\f\r\3\u0195\u0196\7@"+
 		"\2\2\u0196\u0197\5\26\f\2\u0197\u0198\b\f\1\2\u0198\u01c4\3\2\2\2\u0199"+
-		"\u019a\6\f\16\3\u019a\u019b\7@\2\2\u019b\u019c\5\26\f\2\u019c\u019d\b"+
-		"\f\1\2\u019d\u01c4\3\2\2\2\u019e\u019f\6\f\17\3\u019f\u01a0\7?\2\2\u01a0"+
+		"\u019a\6\f\16\3\u019a\u019b\7?\2\2\u019b\u019c\5\26\f\2\u019c\u019d\b"+
+		"\f\1\2\u019d\u01c4\3\2\2\2\u019e\u019f\6\f\17\3\u019f\u01a0\7>\2\2\u01a0"+
 		"\u01a1\5\26\f\2\u01a1\u01a2\b\f\1\2\u01a2\u01c4\3\2\2\2\u01a3\u01a4\6"+
-		"\f\20\3\u01a4\u01a5\7>\2\2\u01a5\u01a6\5\26\f\2\u01a6\u01a7\b\f\1\2\u01a7"+
+		"\f\20\3\u01a4\u01a5\7;\2\2\u01a5\u01a6\5\26\f\2\u01a6\u01a7\b\f\1\2\u01a7"+
 		"\u01c4\3\2\2\2\u01a8\u01a9\6\f\21\3\u01a9\u01ae\b\f\1\2\u01aa\u01ab\7"+
 		"+\2\2\u01ab\u01ac\5\26\f\2\u01ac\u01ad\b\f\1\2\u01ad\u01af\3\2\2\2\u01ae"+
 		"\u01aa\3\2\2\2\u01af\u01b0\3\2\2\2\u01b0\u01ae\3\2\2\2\u01b0\u01b1\3\2"+

@@ -328,7 +328,7 @@ public class SetLogStrategy implements TCaseStrategy{
 			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				System.out.println(s);
-				if (s.equals("false."))
+				if (s.equals("false.") || s.equals("_RET = time_out.")) //No encontro solucion
 					return null;
 				if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");

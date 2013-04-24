@@ -171,33 +171,50 @@ grammar Expr;
         DefaultMutableTreeNode root = parser.getRoot();
         
 		ArrayList<String> leftAndRight = new ArrayList<String>();
+		DefaultMutableTreeNode left, right;
 		String rootType = (String) root.getUserObject();
 		if (rootType.equals("\\power")) {
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
 			String childType = (String) child.getUserObject();
 			
-			if (childType.equals("()")) {
+			while (childType.equals("()")) {
 				child = (DefaultMutableTreeNode) child.getChildAt(0);
 				childType = (String) child.getUserObject();
 			}
 			
 			if (childType.equals("\\cross")) {
-				leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
-				leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+				left = (DefaultMutableTreeNode) child.getChildAt(0);
+				while (((String) left.getUserObject()).equals("()"))
+					left = (DefaultMutableTreeNode) left.getChildAt(0);
+				right = (DefaultMutableTreeNode) child.getChildAt(1);
+				while (((String) right.getUserObject()).equals("()"))
+					right = (DefaultMutableTreeNode) right.getChildAt(0);
+				
+				leftAndRight.add((String) left.getUserObject());
+				leftAndRight.add((String) right.getUserObject());
 			}
 		
 		}
 		else if (rootType.equals("\\seq")) { //Entonces empieza con pfun, rel etc
 
 			leftAndRight.add("\\nat");
-			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+			right = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) right.getUserObject()).equals("()"))
+				right = (DefaultMutableTreeNode) right.getChildAt(0);
+			leftAndRight.add((String) right.getUserObject());
 
 		}
 		else { //Entonces empieza con pfun, rel etc
 
-			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
-			leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
-
+		left = (DefaultMutableTreeNode) root.getChildAt(0);
+		while (((String) left.getUserObject()).equals("()"))
+			left = (DefaultMutableTreeNode) left.getChildAt(0);
+		right = (DefaultMutableTreeNode) root.getChildAt(1);
+		while (((String) right.getUserObject()).equals("()"))
+			right = (DefaultMutableTreeNode) right.getChildAt(0);
+			
+		leftAndRight.add((String) left.getUserObject());
+		leftAndRight.add((String) right.getUserObject());
 		}
 		
 		return leftAndRight;
@@ -620,7 +637,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			if (modoSetExpression != 0 )
 				setExpressionVars.put($e1.text + "~" + $e2.text, newVarName);
 
-			String newVarType = getChildType(types.get($e1.text), 1);
+			//Si es una lista debo transformarla
+			String type1 = types.get($e1.text);
+			if (getType(type1).equals("\\seq")) {
+				String newVarName2 = newVar();
+				print("list_to_rel(" + a + "," + newVarName2 +  ")");
+				a = newVarName2;
+			}
+
+			String newVarType = leftAndRightTypes(type1).get(1);
 			types.put($e1.text + "~" + $e2.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");
 			
@@ -660,14 +685,6 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				
 			}
 		}
-	}
-	|	e1=expression '\\mapsto' e2=expression //In-Fun
-	{
-		String a, b;
-		a = memory.get($e1.text);
-		b = memory.get($e2.text);
-		memory.put($e1.text + "\\mapsto" + $e2.text, "[" + a + "," + b + "]");
-		types.put($e1.text + "\\mapsto" + $e2.text, types.get($e1.text) + "\\cross" + types.get($e2.text));
 	}
 	|	e1=expression '\\upto' e2=expression
 	{
@@ -1027,6 +1044,14 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
+	|	e1=expression '\\mapsto' e2=expression //IN_FUN_1
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		memory.put($e1.text + "\\mapsto" + $e2.text, "[" + a + "," + b + "]");
+		types.put($e1.text + "\\mapsto" + $e2.text, types.get($e1.text) + "\\cross" + types.get($e2.text));
+	}
 	|	e=expression POST_FUN (DECORATION)?
 	{
 		String a;
@@ -1255,7 +1280,9 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	|	//list extension
 		(DECORATION)? LISTSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* LISTEND
 	{	
-		$zName = $DECORATION.text + $LISTSTART.text;
+		if ($DECORATION.text != null)
+			$zName = $DECORATION.text;
+		$zName = $zName.concat($LISTSTART.text);
 		String type = new String();
 		//Llenamos elements y ponemos cada expression en la memory
 		while( !$elements.isEmpty() ){

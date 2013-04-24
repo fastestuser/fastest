@@ -223,33 +223,50 @@ public class ExprLexer extends Lexer {
 	        DefaultMutableTreeNode root = parser.getRoot();
 	        
 			ArrayList<String> leftAndRight = new ArrayList<String>();
+			DefaultMutableTreeNode left, right;
 			String rootType = (String) root.getUserObject();
 			if (rootType.equals("\\power")) {
 				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
 				String childType = (String) child.getUserObject();
 				
-				if (childType.equals("()")) {
+				while (childType.equals("()")) {
 					child = (DefaultMutableTreeNode) child.getChildAt(0);
 					childType = (String) child.getUserObject();
 				}
 				
 				if (childType.equals("\\cross")) {
-					leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
-					leftAndRight.add((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+					left = (DefaultMutableTreeNode) child.getChildAt(0);
+					while (((String) left.getUserObject()).equals("()"))
+						left = (DefaultMutableTreeNode) left.getChildAt(0);
+					right = (DefaultMutableTreeNode) child.getChildAt(1);
+					while (((String) right.getUserObject()).equals("()"))
+						right = (DefaultMutableTreeNode) right.getChildAt(0);
+					
+					leftAndRight.add((String) left.getUserObject());
+					leftAndRight.add((String) right.getUserObject());
 				}
 			
 			}
 			else if (rootType.equals("\\seq")) { //Entonces empieza con pfun, rel etc
 
 				leftAndRight.add("\\nat");
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+				right = (DefaultMutableTreeNode) root.getChildAt(0);
+				while (((String) right.getUserObject()).equals("()"))
+					right = (DefaultMutableTreeNode) right.getChildAt(0);
+				leftAndRight.add((String) right.getUserObject());
 
 			}
 			else { //Entonces empieza con pfun, rel etc
 
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
-				leftAndRight.add((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
-
+			left = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) left.getUserObject()).equals("()"))
+				left = (DefaultMutableTreeNode) left.getChildAt(0);
+			right = (DefaultMutableTreeNode) root.getChildAt(1);
+			while (((String) right.getUserObject()).equals("()"))
+				right = (DefaultMutableTreeNode) right.getChildAt(0);
+				
+			leftAndRight.add((String) left.getUserObject());
+			leftAndRight.add((String) right.getUserObject());
 			}
 			
 			return leftAndRight;
