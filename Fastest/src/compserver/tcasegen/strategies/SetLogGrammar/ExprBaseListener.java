@@ -17,12 +17,6 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterExpression(ExprParser.ExpressionContext ctx) { }
 	@Override public void exitExpression(ExprParser.ExpressionContext ctx) { }
 
-	@Override public void enterSchemaText(ExprParser.SchemaTextContext ctx) { }
-	@Override public void exitSchemaText(ExprParser.SchemaTextContext ctx) { }
-
-	@Override public void enterSeq_op(ExprParser.Seq_opContext ctx) { }
-	@Override public void exitSeq_op(ExprParser.Seq_opContext ctx) { }
-
 	@Override public void enterDeclaration(ExprParser.DeclarationContext ctx) { }
 	@Override public void exitDeclaration(ExprParser.DeclarationContext ctx) { }
 
@@ -38,17 +32,26 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterPredicate(ExprParser.PredicateContext ctx) { }
 	@Override public void exitPredicate(ExprParser.PredicateContext ctx) { }
 
-	@Override public void enterDeclName(ExprParser.DeclNameContext ctx) { }
-	@Override public void exitDeclName(ExprParser.DeclNameContext ctx) { }
-
 	@Override public void enterEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
 	@Override public void exitEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
+
+	@Override public void enterDeclPart(ExprParser.DeclPartContext ctx) { }
+	@Override public void exitDeclPart(ExprParser.DeclPartContext ctx) { }
+
+	@Override public void enterSchemaText(ExprParser.SchemaTextContext ctx) { }
+	@Override public void exitSchemaText(ExprParser.SchemaTextContext ctx) { }
+
+	@Override public void enterSeq_op(ExprParser.Seq_opContext ctx) { }
+	@Override public void exitSeq_op(ExprParser.Seq_opContext ctx) { }
+
+	@Override public void enterDeclName(ExprParser.DeclNameContext ctx) { }
+	@Override public void exitDeclName(ExprParser.DeclNameContext ctx) { }
 
 	@Override public void enterSpecification(ExprParser.SpecificationContext ctx) { }
 	@Override public void exitSpecification(ExprParser.SpecificationContext ctx) { }
 
-	@Override public void enterDeclPart(ExprParser.DeclPartContext ctx) { }
-	@Override public void exitDeclPart(ExprParser.DeclPartContext ctx) { }
+	@Override public void enterPre_gen(ExprParser.Pre_genContext ctx) { }
+	@Override public void exitPre_gen(ExprParser.Pre_genContext ctx) { }
 
 	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	@Override public void exitEveryRule(ParserRuleContext ctx) { }
