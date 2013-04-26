@@ -189,7 +189,7 @@ grammar Expr;
 			}
 		
 		}
-		else if (rootType.equals("\\seq")) { //Entonces empieza con pfun, rel etc
+		else if (isSequence(rootType)) { //Entonces empieza con pfun, rel etc
 
 			leftAndRight.add("\\nat");
 			right = (DefaultMutableTreeNode) root.getChildAt(0);
@@ -233,15 +233,21 @@ grammar Expr;
 		
 		if (tipoSchema == 0 & type != null) {
 			if (isBasic(type)) {
-				type = type.split(":")[1];
-				print(var + " in " + type);
+				if(!type.startsWith("BasicType")) {
+					type = type.split(":")[1];
+					print(var + " in " + type);
+				} else
+					type = type.split(":")[1];
 				return type;
 			}
 		
 			String nodeType = getType(type);
 			
-			if (nodeType.equals("\\seq"))
+			if (isSequence(nodeType)){
+				if (nodeType.equals("\\seq_{1}"))
+					print(var + " neq []");
 				printAtEnd("list(" + var + ")");
+			}
 			else if (nodeType.equals("\\rel"))
 				printAtEnd("is_rel(" + var + ")");
 			else if (nodeType.equals("\\pfun"))
@@ -260,8 +266,11 @@ grammar Expr;
 			else { //double check
 				type = types.get(type);
 				if (type != null && isBasic(type)) {
-					type = type.split(":")[1];
-					print(var + " in " + type);
+					if(!type.startsWith("BasicType")) {
+						type = type.split(":")[1];
+						print(var + " in " + type);
+					} else
+						type = type.split(":")[1];
 					return type;
 				}
 			}
@@ -271,6 +280,12 @@ grammar Expr;
 	
 	private boolean isBasic(String type) {
 		if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+			return true;
+		return false;
+	}
+	
+	private boolean isSequence(String type) {
+		if (type.startsWith("\\seq"))
 			return true;
 		return false;
 	}
@@ -361,9 +376,10 @@ locals [ArrayList<String> cases;]
 		String elements = new String();
 		while( !$enumeration_type::cases.isEmpty() ){
 			String e = $enumeration_type::cases.remove(0);
-			elements = elements.concat(e);
+			String eMinus = e.substring(0,1).toLowerCase() + e.substring(1); //Pasamos la primer mayuscula a minuscula ya que setlog asi lo precisa
+			elements = elements.concat(eMinus);
 			
-			memory.put(e,e); //REVISAR!!!
+			memory.put(e,eMinus);
 			
 			if (!$enumeration_type::cases.isEmpty()){
 				elements = elements.concat(",");
@@ -407,6 +423,10 @@ locals [ArrayList<String> vars;]
 			
 			String expType = types.get($expression.text);
 			expType = typeInfo(newVarName, expType);
+			//Chequeo si es un tipo basico, ej [ACCNUM], ya que estos no se imprimen en typeInfo
+			String t = types.get(expType);
+			if (t != null && t.startsWith("BasicType"))
+				print(newVarName + " in " + expType);
 			
 			if (tipoSchema == 0)
 				types.put(var, expType);
@@ -436,7 +456,7 @@ predicate
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));*/
 	}
-	|	(e1=expression '\\notin' e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
+	|	(e1=expression '\\notin' (DECORATION)? e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -449,28 +469,28 @@ predicate
 			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
 				print(a + " in " + memory.get(type.substring(6)));*/
 	}
-	|	e1=expression '<' e2=expression
+	|	e1=expression '<' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " < " + b);
 	}
-	|	e1=expression '>' e2=expression
+	|	e1=expression '>' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " > " + b);
 	}
-	|	e1=expression '\\leq' e2=expression
+	|	e1=expression '\\leq' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " =< " + b);
 	}
-	|	e1=expression '\\geq' e2=expression
+	|	e1=expression '\\geq' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -484,28 +504,28 @@ predicate
 		b = memory.get($e2.text);
 		print(a + " = " + b);
 	}
-	|	e1=expression '\\subseteq' e2=expression
+	|	e1=expression '\\subseteq' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print("dsubset(" + a + "," + b + ")");
 	}
-	|	'\\lnot' e1=expression '\\subseteq' e2=expression
+	|	'\\lnot' e1=expression '\\subseteq' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print("dnsubset(" + a + "," + b + ")");
 	}
-	|	e1=expression '\\subset' e2=expression
+	|	e1=expression '\\subset' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print("dssubset(" + a + "," + b + ")");
 	}
-	|	'\\lnot' e1=expression '\\subset' e2=expression
+	|	'\\lnot' e1=expression '\\subset' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -522,21 +542,21 @@ predicate
 		
 		print(c + " neq " + a);
 	}
-	|	e1=expression '\\neq' e2=expression
+	|	e1=expression '\\neq' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " neq " + b);
 	}
-	|	e1=expression '\\prefix' e2=expression
+	|	e1=expression '\\prefix' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print("prolog_call(append(" + a + ",_," + b + "))");
 	}
-	|	e1=expression '\\suffix' e2=expression
+	|	e1=expression '\\suffix' (DECORATION)? e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -646,8 +666,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				String natName = memory.get("\\nat");
 				if (natName == null) {
 				    natName = newVar("NAT");
-					memory.put("\\nat", newVarName);
-					print(newVarName + " = int(0, 10000000000)");
+					memory.put("\\nat", natName);
+					print(natName + " = int(0, 10000000000)");
 					types.put("\\nat", "\\nat");
 				}
 				print(n + " in " + natName);
@@ -836,8 +856,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				String numName = memory.get("\\num");
 				if (numName == null) {
 				    numName = newVar("INT");
-					memory.put("\\num", newVarName);
-					print(newVarName + " = int(-10000000000, 10000000000)");
+					memory.put("\\num", numName);
+					print(numName + " = int(-10000000000, 10000000000)");
 					types.put("\\num", "\\num");
 				}
 				print(newVarName + " in " + numName);
@@ -903,8 +923,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				String numName = memory.get("\\num");
 				if (numName == null) {
 				    numName = newVar("INT");
-					memory.put("\\num", newVarName);
-					print(newVarName + " = int(-10000000000, 10000000000)");
+					memory.put("\\num", numName);
+					print(numName + " = int(-10000000000, 10000000000)");
 					types.put("\\num", "\\num");
 				}
 				print(newVarName + " in " + numName);
@@ -955,7 +975,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					setExpressionVars.put("\\#" + $e.text, newVarName);
 					
 				String type = getType(types.get($e.text));
-				if (type.equals("\\seq"))
+				if (isSequence(type))
 					print("prolog_call(length(" + a + "," + newVarName + "))");
 				else
 					print("size(" + a + "," + newVarName + ")");					
@@ -963,8 +983,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				String natName = memory.get("\\nat");
 				if (natName == null) {
 				    natName = newVar("NAT");
-					memory.put("\\nat", newVarName);
-					print(newVarName + " = int(0, 10000000000)");
+					memory.put("\\nat", natName);
+					print(natName + " = int(0, 10000000000)");
 					types.put("\\nat", "\\nat");
 				}
 				print(newVarName + " in " + natName);
@@ -982,7 +1002,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
 				String type = getType(types.get($e.text));
-				if (type.equals("\\seq"))
+				if (isSequence(type))
 					print("ddom_list(" + e + "," + newVarName + ")");
 				else
 					print("dom(" + e + "," + newVarName + ")");
@@ -1000,11 +1020,18 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
 				String type = getType(types.get($e.text));
-				if (type.equals("\\seq"))
+				if (isSequence(type))
 					print("list_to_set(" + e + "," + newVarName + ")");
 				else
 					print("ran(" + e + "," + newVarName + ")");
 			}
+		}
+		else if ($pre_gen.text.startsWith("seq_{1}")) {
+			String eType = types.get($e.text);
+			if (isBasic(eType))
+				eType = $e.text;
+		
+			types.put($pre_gen.text + $e.text, "\\seq_{1}" + eType);
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
 			String eType = types.get($e.text);
@@ -1095,7 +1122,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 
 			//Si es una lista debo transformarla
 			String type1 = types.get($e1.text);
-			if (getType(type1).equals("\\seq")) {
+			if (isSequence(getType(type1))) {
 				String newVarName2 = newVar();
 				print("list_to_rel(" + a + "," + newVarName2 +  ")");
 				a = newVarName2;
@@ -1386,7 +1413,7 @@ IN_FUN_P6: ('\\dres' | '\\rres' | '\\ndres' | '\\nrres')	;
 POST_FUN: '\\inv'	;
 
 IN_GEN: ('\\rel' | '\\pfun' | '\\fun' | '\\ffun') ;
-pre_gen: ( '\\ran' | '\\dom' | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup' | 'max' DECORATION | 'min' DECORATION)	;
+pre_gen: ( '\\ran' | '\\dom' | 'seq_{1}' DECORATION | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup' | 'max' DECORATION | 'min' DECORATION)	;
 
 seq_op: ('rev' | 'head' | 'last' | 'tail' | 'front' | 'squash') DECORATION ;
 

@@ -38,6 +38,7 @@ type returns [DefaultMutableTreeNode node]
 		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
 		|	'(' a=type ')' {$node = new DefaultMutableTreeNode("()"); $node.add($a.node);}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
+		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
 		;
@@ -49,6 +50,7 @@ BINOP	:	'\\rel'
 		;
 		
 UNOP	:	'\\power'
+		|	'\\seq_{1}'
 		|	'\\seq'
 		;
 

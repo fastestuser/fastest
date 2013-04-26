@@ -266,12 +266,12 @@ public class SetLogStrategy implements TCaseStrategy{
 												SpecUtils.termToLatex(freetype) + "\n" + 
 												"\\end{zed}\n\n";
 										antlrInput = schemaString + antlrInput;
-										freeParasIt = freeParas.iterator();
 										break;
 									}
-								}	
+								}
 							}
 						}
+						freeParasIt = freeParas.iterator();
 					}
 				} else { //Es un tipo esquema
 					//Reemplazo necesario en el parser de ANTLR
