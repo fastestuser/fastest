@@ -29,6 +29,9 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
 	@Override public void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
 
+	@Override public void enterPost_fun(ExprParser.Post_funContext ctx) { }
+	@Override public void exitPost_fun(ExprParser.Post_funContext ctx) { }
+
 	@Override public void enterPredicate(ExprParser.PredicateContext ctx) { }
 	@Override public void exitPredicate(ExprParser.PredicateContext ctx) { }
 

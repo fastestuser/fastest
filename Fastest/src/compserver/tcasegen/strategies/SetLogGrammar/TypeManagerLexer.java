@@ -41,7 +41,7 @@ public class TypeManagerLexer extends Lexer {
 			return root;
 		}
 		
-		String printTree(DefaultMutableTreeNode tree){
+		public String printTree(DefaultMutableTreeNode tree){
 			if (tree.isLeaf()) 
 				return (String) tree.getUserObject();
 			else if (tree.getChildCount() == 1)

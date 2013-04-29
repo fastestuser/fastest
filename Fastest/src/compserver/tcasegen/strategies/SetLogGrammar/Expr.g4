@@ -136,17 +136,17 @@ grammar Expr;
 			}
 			
 			if (childType.equals("\\cross")) {
-				invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) child.getChildAt(1)).getUserObject());
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(1)));
 				invertedType = invertedType.concat("\\cross");
-				invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) child.getChildAt(0)).getUserObject());
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(0)));
 			}
 			invertedType = invertedType.concat(")");
 		
 		} else { //Entonces empieza con pfun, rel etc
 		
-			invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) root.getChildAt(1)).getUserObject());
+			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
 			invertedType = invertedType.concat(rootType);
-			invertedType = invertedType.concat((String) ((DefaultMutableTreeNode) root.getChildAt(0)).getUserObject());
+			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
 		
 		}
 		
@@ -289,11 +289,30 @@ grammar Expr;
 			return true;
 		return false;
 	}
+	
+	String convertToSet(String zVar, String setlogVar) { //si es una lista, debemos aplicar list_to_rel
+		
+		String type = types.get(zVar);
+		if (isSequence(getType(type))) 
+			if (memory.get("list_to_rel(" + zVar + ")") == null) {
+				String newVarName = newVar();
+				print("list_to_rel(" + setlogVar + "," + newVarName + ")");
+				//Hace falta ver el tipo?
+				//String seqType = leftAndRightTypes(type).get(1);
+				//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
+				memory.put("list_to_rel(" + zVar + ")", newVarName);
+				return newVarName;
+			} else {
+				return memory.get("list_to_rel(" + zVar + ")");
+			}
+		else
+			return setlogVar;
+	}
 }
 
 specification
 	:	( paragraph NL*)+
-	{/*
+	{
 	   System.out.println("tablita de tippos");
 	   System.out.println("-------------------");
 	   String key, value;
@@ -319,7 +338,7 @@ specification
            value = zVars.get(key);
            System.out.println(key + "\t\t| " + value);
   	   }
-     */
+     
 	}
 	;
 
@@ -449,25 +468,21 @@ predicate
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		print(a + " in " + b);
-	/*	//Impresion de tipo
-		String type = types.get($e2.text);
-		if (type != null)
-			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
-				print(a + " in " + memory.get(type.substring(6)));*/
 	}
 	|	(e1=expression '\\notin' (DECORATION)? e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		print(a + " nin " + b);
-		/*
-		//Impresion de tipo
-		String type = types.get($e2.text);
-		if (type != null)
-			if (type.equals("\\power\\num") || type.equals("\\power\\nat"))
-				print(a + " in " + memory.get(type.substring(6)));*/
 	}
 	|	e1=expression '<' (DECORATION)? e2=expression
 	{
@@ -509,6 +524,12 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		print("dsubset(" + a + "," + b + ")");
 	}
 	|	'\\lnot' e1=expression '\\subseteq' (DECORATION)? e2=expression
@@ -516,6 +537,12 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		print("dnsubset(" + a + "," + b + ")");
 	}
 	|	e1=expression '\\subset' (DECORATION)? e2=expression
@@ -523,6 +550,12 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		print("dssubset(" + a + "," + b + ")");
 	}
 	|	'\\lnot' e1=expression '\\subset' (DECORATION)? e2=expression
@@ -530,12 +563,20 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		String c = memory.get( $e1.text + "\\cap" + $e2.text);
 		if (c == null) {
 			c = newVar();
 			memory.put( $e1.text + "\\cap" + $e2.text, c);
 			print("dinters(" + a + "," + b + "," + c + ")");
 			String type = types.get($e1.text);
+			if (isSequence(getType(type)))
+				type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 			types.put($e1.text + "\\cap" + $e2.text, type);
 			typeInfo(c, type);
 		}
@@ -547,6 +588,15 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
+		
+		if (!getType(types.get($e1.text)).equals(getType(types.get($e2.text)))) {
+			//Si a es una lista, debo convertirla
+			a = convertToSet($e1.text, a);
+			//Si b es una lista, debo convertirla
+			b = convertToSet($e2.text, b);
+		}
+			
+		
 		print(a + " neq " + b);
 	}
 	|	e1=expression '\\prefix' (DECORATION)? e2=expression
@@ -698,53 +748,58 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		if (memory.get($e1.text + $IN_FUN_P6.text + $e2.text) == null) {
 		
 			String newVarName = newVar();
 		
 			if ($IN_FUN_P6.text.equals("\\dres")){
-					print("dres(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\dres" + $e2.text, newVarName);
-					String type2 = types.get($e2.text);
-					ArrayList<String> leftAndRight = leftAndRightTypes(type2);
-					String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-					types.put($e1.text + "\\dres" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\dres" + $e2.text, newVarName);
+				print("dres(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\dres" + $e2.text, newVarName);
+				String type2 = types.get($e2.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
+				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				types.put($e1.text + "\\dres" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\dres" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P6.text.equals("\\ndres")){
-					print("ndres(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\ndres" + $e2.text, newVarName);
-					String type2 = types.get($e2.text);
-					ArrayList<String> leftAndRight = leftAndRightTypes(type2);
-					String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-					types.put($e1.text + "\\ndres" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\ndres" + $e2.text, newVarName);
+				print("ndres(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\ndres" + $e2.text, newVarName);
+				String type2 = types.get($e2.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
+				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				types.put($e1.text + "\\ndres" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\ndres" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P6.text.equals("\\rres")){
-					print("rres(" + b + "," + a + "," + newVarName + ")");
-					memory.put($e1.text + "\\rres" + $e2.text, newVarName);
-					String type1 = types.get($e1.text);
-					ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-					String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-					types.put($e1.text + "\\rres" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\rres" + $e2.text, newVarName);
+				print("rres(" + b + "," + a + "," + newVarName + ")");
+				memory.put($e1.text + "\\rres" + $e2.text, newVarName);
+				String type1 = types.get($e1.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				types.put($e1.text + "\\rres" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\rres" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P6.text.equals("\\nrres")){
-					print("nrres(" + b + "," + a + "," + newVarName + ")");
-					memory.put($e1.text + "\\nrres" + $e2.text, newVarName);
-					String type1 = types.get($e1.text);
-					ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-					String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-					types.put($e1.text + "\\nrres" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\nrres" + $e2.text, newVarName);
+				print("nrres(" + b + "," + a + "," + newVarName + ")");
+				memory.put($e1.text + "\\nrres" + $e2.text, newVarName);
+				String type1 = types.get($e1.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				types.put($e1.text + "\\nrres" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\nrres" + $e2.text, newVarName);
 			}
 		}
 	}
@@ -754,20 +809,25 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		//Si b es una lista, debo convertirla
+		b = convertToSet($e2.text, b);
+		
 		if (memory.get($e1.text + $IN_FUN_P5.text + $e2.text) == null) {
 		
 			String newVarName = newVar();
 		
 			if ($IN_FUN_P5.text.equals("\\oplus")){
-					print("oplus(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\oplus" + $e2.text, newVarName);
-					String type1 = types.get($e1.text);
-					ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-					String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-					types.put($e1.text + "\\oplus" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\oplus" + $e2.text, newVarName);
+				print("oplus(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\oplus" + $e2.text, newVarName);
+				String type1 = types.get($e1.text);
+				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				types.put($e1.text + "\\oplus" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\oplus" + $e2.text, newVarName);
 			}
 		}
 	}
@@ -804,52 +864,70 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				isNumeric = true;
 			}
 			else if ($IN_FUN_P4.text.equals("\\cap")){
-					print("dinters(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\cap" + $e2.text, newVarName);
-					String type = types.get($e1.text);
-					types.put($e1.text + "\\cap" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\cap" + $e2.text, newVarName);
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e1.text, a);
+				//Si b es una lista, debo convertirla
+				b = convertToSet($e2.text, b);
+								
+				print("dinters(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\cap" + $e2.text, newVarName);
+				String type = types.get($e1.text);
+				if (isSequence(getType(type)))
+					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				types.put($e1.text + "\\cap" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\cap" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P4.text.equals("\\comp")){
-					print("comp(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\comp" + $e2.text, newVarName);
-					String type1 = types.get($e1.text);
-					String type2 = types.get($e2.text);
-					String type = "\\power((" + getChildType(type1, 0) + ")\\cross(" + getChildType(type2, 1) + "))";
-					types.put($e1.text + "\\comp" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\comp" + $e2.text, newVarName);
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e1.text, a);
+				//Si b es una lista, debo convertirla
+				b = convertToSet($e2.text, b);
+						
+				print("comp(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\comp" + $e2.text, newVarName);
+				String type1 = types.get($e1.text);
+				String type2 = types.get($e2.text);
+				String type = "\\power((" + leftAndRightTypes(type1).get(0) + ")\\cross(" + leftAndRightTypes(type2).get(1) + "))";
+				types.put($e1.text + "\\comp" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\comp" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P4.text.equals("\\circ")){
-					print("circ(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\circ" + $e2.text, newVarName);
-					String type1 = getChildType(types.get($e1.text), 1);
-					String type = "\\power((" + type1 + ")\\cross(" + type1 + "))";
-					types.put($e1.text + "\\circ" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\circ" + $e2.text, newVarName);
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e1.text, a);
+				//Si b es una lista, debo convertirla
+				b = convertToSet($e2.text, b);
+				
+				print("circ(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\circ" + $e2.text, newVarName);
+				String type1 = types.get($e1.text);
+				type1 = leftAndRightTypes(type1).get(1);
+				String type = "\\power((" + type1 + ")\\cross(" + type1 + "))";
+				types.put($e1.text + "\\circ" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\circ" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P4.text.equals("\\extract")){
-					print("extract(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\extract" + $e2.text, newVarName);
-					String type = types.get($e2.text);
-					types.put($e1.text + "\\extract" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\extract" + $e2.text, newVarName);
+				print("extract(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\extract" + $e2.text, newVarName);
+				String type = types.get($e2.text);
+				types.put($e1.text + "\\extract" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\extract" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P4.text.equals("\\filter")){
-					print("filter(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\filter" + $e2.text, newVarName);
-					String type = types.get($e1.text);
-					types.put($e1.text + "\\filter" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\filter" + $e2.text, newVarName);
+				print("filter(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\filter" + $e2.text, newVarName);
+				String type = types.get($e1.text);
+				types.put($e1.text + "\\filter" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\filter" + $e2.text, newVarName);
 			}
 			
 			if (isNumeric) {
@@ -892,31 +970,46 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				isNumeric = true;
 			}
 			else if ($IN_FUN_P3.text.equals("\\cup")){
-					print("dun(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\cup" + $e2.text, newVarName);
-					String type = types.get($e1.text);
-					types.put($e1.text + "\\cup" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\cup" + $e2.text, newVarName);
+			
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e1.text, a);
+				//Si b es una lista, debo convertirla
+				b = convertToSet($e2.text, b);
+				
+				print("dun(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\cup" + $e2.text, newVarName);
+				String type = types.get($e1.text);
+				if (isSequence(getType(type)))
+					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				types.put($e1.text + "\\cup" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\cup" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P3.text.equals("\\setminus")){
-					print("diff(" + a + "," + b + "," + newVarName + ")");
-					memory.put($e1.text + "\\setminus" + $e2.text, newVarName);
-					String type = types.get($e1.text);
-					types.put($e1.text + "\\setminus" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\setminus" + $e2.text, newVarName);
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e1.text, a);
+				//Si b es una lista, debo convertirla
+				b = convertToSet($e2.text, b);
+		
+				print("diff(" + a + "," + b + "," + newVarName + ")");
+				memory.put($e1.text + "\\setminus" + $e2.text, newVarName);
+				String type = types.get($e1.text);
+				if (isSequence(getType(type)))
+					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				types.put($e1.text + "\\setminus" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\setminus" + $e2.text, newVarName);
 			}
 			else if ($IN_FUN_P3.text.equals("\\cat")){
-					print("prolog_call(append(" + a + "," + b + "," + newVarName + "))");
-					memory.put($e1.text + "\\cat" + $e2.text, newVarName);
-					String type = types.get($e1.text);
-					types.put($e1.text + "\\cat" + $e2.text, type);
-					typeInfo(newVarName, type);
-					if (modoSetExpression != 0 )
-						setExpressionVars.put($e1.text + "\\cat" + $e2.text, newVarName);
+				print("prolog_call(append(" + a + "," + b + "," + newVarName + "))");
+				memory.put($e1.text + "\\cat" + $e2.text, newVarName);
+				String type = types.get($e1.text);
+				types.put($e1.text + "\\cat" + $e2.text, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($e1.text + "\\cat" + $e2.text, newVarName);
 			}
 			
 			if (isNumeric) {
@@ -1320,23 +1413,26 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e=expression POST_FUN (DECORATION)?
+	|	e=expression post_fun
 	{
 		String a;
 		a = memory.get($e.text);
-		String op = $POST_FUN.text;
-		if ($DECORATION.text != null)
-			op = op.concat($DECORATION.text);
+		String op = $post_fun.text;
 		
 		if (memory.get($e.text + op) == null) {
 		
 			String newVarName = newVar();
 		
 			if (op.startsWith("\\inv")){
+				//Si a es una lista, debo convertirla
+				a = convertToSet($e.text, a);
+			
 				print("inv(" + newVarName + "," + a + ")");
 				memory.put($e.text + op, newVarName);
-				String type1 = types.get($e.text);
-				String type = invertType(type1); 
+				String type = types.get($e.text);
+				if (isSequence(getType(type)))
+					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				type = invertType(type); 
 				types.put($e.text + op, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1410,7 +1506,7 @@ IN_FUN_P4: ('*' | '\\div' | '\\mod' | '\\cap' | '\\comp' | '\\circ' | '\\extract
 IN_FUN_P5: ('\\oplus')	;
 IN_FUN_P6: ('\\dres' | '\\rres' | '\\ndres' | '\\nrres')	;
 
-POST_FUN: '\\inv'	;
+post_fun: '\\inv' (DECORATION)?	;
 
 IN_GEN: ('\\rel' | '\\pfun' | '\\fun' | '\\ffun') ;
 pre_gen: ( '\\ran' | '\\dom' | 'seq_{1}' DECORATION | '\\seq' | '\\#' | '\\bigcup' | '\\bigcup' | 'max' DECORATION | 'min' DECORATION)	;

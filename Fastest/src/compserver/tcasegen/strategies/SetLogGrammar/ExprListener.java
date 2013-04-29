@@ -26,6 +26,9 @@ public interface ExprListener extends ParseTreeListener {
 	void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx);
 	void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx);
 
+	void enterPost_fun(ExprParser.Post_funContext ctx);
+	void exitPost_fun(ExprParser.Post_funContext ctx);
+
 	void enterPredicate(ExprParser.PredicateContext ctx);
 	void exitPredicate(ExprParser.PredicateContext ctx);
 
