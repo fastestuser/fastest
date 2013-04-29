@@ -21,7 +21,8 @@ public class ConstantCreator {
 	private HashMap<String,StringPointer> slVars;
 	private List<String> basicTypes;
 	
-	private static int postfijo;
+	//static al pedo???
+	private int postfijo;
 	private String getNumber(){
 		return String.valueOf(postfijo++);
 	}
@@ -304,7 +305,7 @@ public class ConstantCreator {
 		this.slVars = slvars;
 		this.notEquals = notEquals;
 		this.basicTypes = null;
-		ConstantCreator.postfijo = 1;
+		this.postfijo = 1;
 	}
 
 	public String getCte(String expr, DefaultMutableTreeNode root){
