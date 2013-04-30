@@ -140,6 +140,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 		}
 		// si el padre es el root saco el decl e incializo Pred.
 		else {
+			pred = SpecUtils.simplifyAndPred(pred);
 			predUnfolded = pred; //inicializo el pred TEMP hasta que ande lo anterior.
 			SpecUtils.insertZDeclList(zDeclListRoot, zDeclListPadre, 0);
 			
