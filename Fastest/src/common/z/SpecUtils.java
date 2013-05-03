@@ -1143,8 +1143,8 @@ public class SpecUtils {
      * @return
      */
     public static Pred simplifyAndPred(Pred pred){
-        List<Pred> predList =
-                pred.accept(new AndPredClausesExtractor2());
+        
+    	List<Pred> predList = pred.accept(new AndPredClausesExtractor2());
 
         for(int i=0; i<predList.size(); i++){
             Pred iPred = predList.get(i);
