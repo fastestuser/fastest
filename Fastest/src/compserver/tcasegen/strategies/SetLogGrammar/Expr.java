@@ -4,24 +4,30 @@ import java.util.Iterator;
 
 public class Expr {
 	private ItertortorExpr it;
-	static int posActual;
-	static String tipo;
-	static String expr;
+	
 
 	public Expr(String tipo, String expr){
-		this.tipo = tipo;
-		this.expr = expr;
-		this.posActual = 0;
-		it = new ItertortorExpr();
+		it = new ItertortorExpr(tipo,expr);
 	}
 	public Iterator<String> iterator(){
 		return this.it;
 	}
 	private static class ItertortorExpr implements Iterator<String>{
+		private int posActual;
+		private String tipo;
+		private String expr;
+		private char cierre;
+		
+		public ItertortorExpr(String tipo, String expr){
+			this.posActual = 0;
+			this.tipo = tipo;
+			this.expr = expr;
+			// va a ser igual a '}' ó ']' ó ')'
+			this.cierre = expr.charAt(expr.length()-1);
+		}
 		
 		public boolean hasNext() {
-			char c = expr.charAt(posActual);
-			if ( c == '}' || c ==']' || c == ')')
+			if ( expr.charAt(posActual)== cierre || expr.charAt(posActual+1) == cierre)
 				return false;
 			return true;
 		}
@@ -38,7 +44,7 @@ public class Expr {
 					abiertos++;
 				if (c == '}' || c == ')' || c == ']')
 					abiertos--;
-				if(( c == ',' && abiertos == 0 ) ||(c == '}' && abiertos == -1)){
+				if(( c == ',' && abiertos == 0 ) ||(c == cierre && abiertos == -1)){
 					elem = expr.substring(posActual+1,i);
 					break;
 				}

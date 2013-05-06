@@ -46,18 +46,16 @@ public class Test {
 	}	
 	//devuelve el bit que corresponde a la posicion, ej bitFromFreeType(FT::=a|b|c , a)
 	// = 100 en binario = 4 en decimal
-	private static int bitFromFreeType(String tipo,String elem){
+	private static int numFromFreeType(String tipo,String elem){
 		String s;
 		String aux[] = tipo.split(":");
 		s = aux[2].substring(1, aux[2].length()-1);
 		aux = s.split(",");
-		int bit = 1;
 		for(int i=0;i<aux.length;i++){
 			if (aux[i].equals(elem))
-				return bit;
-			bit = bit<<1;
+				return i+1;
 		}
-		return bit;
+		return 0;
 	}
 	private static String[] elemsFromExpr(String tipo, String expr){
 		String[] elems = new String[10];
@@ -83,12 +81,23 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		ANTLRInputStream input = new ANTLRInputStream("\\power FT");
+		String tipo = "(\\power FT) \\pfun FT";
+		
+		ANTLRInputStream input = new ANTLRInputStream(tipo);
+		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
         TypeManagerLexer lexer = new TypeManagerLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
         parser.typeManage();
         DefaultMutableTreeNode root =  parser.getRoot();
+        
+        input = new ANTLRInputStream(tipo);
+		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+        lexer = new TypeManagerLexer(input);
+        tokens = new CommonTokenStream(lexer);
+        parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root2 =  parser.getRoot();
 //        
 //        
 //		String s = "[{X}]";
@@ -113,16 +122,25 @@ public class Test {
         
 		HashMap<String,String> tipos = new HashMap<String, String>();
 		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
-		IntExprMap tmp = new IntExprMap(root,7,tipos);
-		System.out.println("\naaaaaaaaaa " + tmp.toExpr() + " " + tmp.cardinalidad());
-	
-		String tipo =  "EnumerationType:FT:{a,b,c}";
-		System.out.println("posicion: " + bitFromFreeType(tipo,"c"));
+		IntExprMap tmp = new IntExprMap(tipos);
+		int num = 100;
+		String expr = tmp.toExpr(root,num);
 		
-		Expr e = new Expr("","{{aaa},(bbb),{(ccwde)}}");
+		
+		System.out.println( num + " to expr = " + expr);
+		int num2 = tmp.toNum(root2,expr);
+		System.out.println( expr + " to num = " + num2);
+		
+	
+		/*String tipo =  "EnumerationType:FT:{a,b,c,d}";
+		System.out.println("posicion: " + numFromFreeType(tipo,""));
+		*/
+		/*Expr e = new Expr("","[a,a]");
 		Iterator<String> it = e.iterator();
 		while (it.hasNext())
 			System.out.println(it.next());
+		String s = "aaa}";
+		System.out.println(s.charAt(s.length()-1));*/
 		
 	}
 
