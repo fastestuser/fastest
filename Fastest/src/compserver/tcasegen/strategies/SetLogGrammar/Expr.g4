@@ -741,7 +741,36 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 					setExpressionVars.put($seq_op.text + $e.text, newVarName);
 			}
 		}
-	}	
+	}
+	|	e1=expression DECORATION e2=expression
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($e2.text);
+		
+		if (memory.get($e1.text + "~" + $e2.text) == null) {
+			String newVarName = newVar();
+			memory.put($e1.text + "~" + $e2.text, newVarName);
+			
+			if (modoSetExpression != 0 )
+				setExpressionVars.put($e1.text + "~" + $e2.text, newVarName);
+
+			//Si es una lista debo transformarla
+			String type1 = types.get($e1.text);
+			if (isSequence(getType(type1))) {
+				String newVarName2 = newVar();
+				print("list_to_rel(" + a + "," + newVarName2 +  ")");
+				a = newVarName2;
+			}
+
+			String newVarType = leftAndRightTypes(type1).get(1);
+			types.put($e1.text + "~" + $e2.text, newVarType);
+			print("apply(" + a + "," + b + "," + newVarName + ")");
+			
+			//Imprimimos la informacion del tipo de la variable
+			typeInfo(newVarName, newVarType);
+		}
+	}
 	|	e1=expression IN_FUN_P6 e2=expression
 	{
 		String a, b;
@@ -1033,6 +1062,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (memory.get($e1.text + "\\upto" + $e2.text) == null) {
 			String newVarName = newVar();
 			memory.put($e1.text + "\\upto" + $e2.text, newVarName);
+			types.put($e1.text + "\\upto" + $e2.text, "\\power\\num");
 			if (modoSetExpression != 0 )
 				setExpressionVars.put($e1.text + "\\upto" + $e2.text, newVarName);
 			print(newVarName + " = int(" + a + "," + b + ")");
@@ -1198,35 +1228,6 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
 				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
-		}
-	}
-	|	e1=expression DECORATION e2=expression
-	{
-		String a, b;
-		a = memory.get($e1.text);
-		b = memory.get($e2.text);
-		
-		if (memory.get($e1.text + "~" + $e2.text) == null) {
-			String newVarName = newVar();
-			memory.put($e1.text + "~" + $e2.text, newVarName);
-			
-			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + "~" + $e2.text, newVarName);
-
-			//Si es una lista debo transformarla
-			String type1 = types.get($e1.text);
-			if (isSequence(getType(type1))) {
-				String newVarName2 = newVar();
-				print("list_to_rel(" + a + "," + newVarName2 +  ")");
-				a = newVarName2;
-			}
-
-			String newVarType = leftAndRightTypes(type1).get(1);
-			types.put($e1.text + "~" + $e2.text, newVarType);
-			print("apply(" + a + "," + b + "," + newVarName + ")");
-			
-			//Imprimimos la informacion del tipo de la variable
-			typeInfo(newVarName, newVarType);
 		}
 	}
 	|	NAME
