@@ -1,4 +1,7 @@
-
+%%% version 4.6.12-2
+% corretto un bug nella int_to_bag
+% int_to_bag(int(A,A),*{A}) invece di
+% int_to_bag(int(A,A),{A}).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -20,6 +23,11 @@
 % give to this file).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% General operations dealing with sets
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 powerset(S,PS) :-               % powerset(+S,?PS) is true if PS is the powerset 
      PS = {SS : subset(SS,S)}.  % of S (i.e., PS = 2^S)
 
@@ -31,52 +39,33 @@ list_to_set([],{}).             % list_to_set(+L,?S) is true if S denotes the se
 list_to_set([X|L],{X\S}) :-     % of all elements of the list L
      list_to_set(L,S).
 
-bag_to_set({},{}).              % bag_to_set(+M,?S) is true if S denotes the set
-bag_to_set(M,{X\S}) :-          % of all elements of the multiset M
-     (M = *{X\R})! &
-     bag_to_set(R,S).
-
 int_to_set(int(A,A),{A}).       % int_to_set(+I,?S) is true if S denotes the set
 int_to_set(int(A,B),{A\S}) :-   % of all elements of the interval I  
      A < B &
      A1 is A + 1 &
      int_to_set(int(A1,B),S).
 
-int_to_bag(int(A,A),{A}).       % int_to_bag(+I,?M) is true if M denotes the multiset
-int_to_bag(int(A,B),*{A\M}) :-  % of all elements of the interval I   
-     A < B &
-     A1 is A + 1 &
-     int_to_bag(int(A1,B),M).
-
 diff1({X\S},X,S) :-             % diff1(?S,?X,?R) equivalent to diff(S,{X},R)
      X nin S.                   % but more efficient
 diff1(S,X,S) :- 
      X nin S.
 
-msize(S,N) :- in_msize(S,0,N).  % msize(?S,?N) is true if N is the cardinality 
-in_msize({},N,N).               % of the multiset S (i.e., N = |S|)
-in_msize(*{_\SS},N,M) :-
-    N neq M &
-    NN is N + 1 &
-    in_msize(SS,NN,M).
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% The following predicates provide
-% an improved implementation of the basic set-theoretic operations
-% that reduces the number of repeated equivalent solutions  
+% Improved implementations of primitive set constraints:
+% ìreduce the number of repeated equivalent solutions  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-xless(S,X,SS) :-              % remove the element X from S, if S is ground
-     test(ground(S),R) &      % otherwise, remove any element X from S
+xless(S,X,SS) :-               % remove the element X from S, if S is ground
+     test(ground(S),R) &       % otherwise, remove any element X from S
     (R=true  & less(S,X,SS)! or
      R=false & less(S,X,SS)). 
 
-xun(R,S,U) :-                 % union  (T = R \cup S)
+xun(R,S,U) :-                  % union  (T = R \cup S)
      test(ground(R),H) &
     (H=true  & xxun(R,S,U) or
      H=false & un(R,S,U)). 
-xxun('{}',X,X).                   
+xxun('{}',X,X).                % T = R \cup S, with R ground    
 xxun(R,S,{X\U}) :-
     less(R,X,RR)! &
     X nin S &
@@ -90,7 +79,7 @@ xdiff(R,S,U) :-                % difference (T = R \setminus S)
      test(ground(R),H) &
     (H=true  & xxdiff(R,S,U) or
      H=false & diff(R,S,U)). 
-xxdiff({},_,{}).              
+xxdiff({},_,{}).               % T = R \setminus S, with R ground  
 xxdiff(R,S,T) :- 
     less(R,X,RR)! & 
     call(X in S) &
@@ -109,86 +98,17 @@ xsdiff(R,S,T) :-               % symmetric difference (T = R \triangle S)
     xdiff(S,R,B) & 
     xun(A,B,T). 
 
-
 xsize(S,N) :-                  % cardinality (N = |S|)
     size(S,N).                 % for compatibility with previous releases
 
 xsubset(S1,S2) :-              % subset (S1 \subseteq S2)
     subset(S1,S2).             % for compatibility with previous releases
 
-
-xint(R,S,U) :-                 % intersection  (T = R \cap S)
-     inters(R,S,U).           % for compatibility with previous releases
+xinters(R,S,U) :-              % intersection  (T = R \cap S)
+     inters(R,S,U).            % for compatibility with previous releases
                   
-
 test(Pred,Res) :-
    prolog_call((call(Pred),!,Res=true ; Res=false)).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Interactive help predicates
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-setlog_lib_help :-
-   nl &
-   write('Available {log} library predicates:') &
-   nl & nl &
-   write('powerset(+S,?PS): powerset (PS = 2^S)') & nl &
-   write('cross_product(+A,+B,?CP): the Cartesian product of sets A and B') & nl &
-   write('list_to_set(+L,?S): S is the set of all elements of the list L') & nl &
-   write('bag_to_set(+M,?S): S is the set of all elements of the bag M') & nl &
-   write('int_to_set(+I,?S): S is the set of all elements of the interval I') & nl &
-   write('int_to_bag(+I,?M): M is the multiset of all elements of the interval I') & nl &
-   write('diff1(?S,?X,?R): equivalent to diff(S,{X},R) but more efficient') & nl &
-   write('msize(?S,?N): multiset cardinality (N = |S|)') & nl &
-   setlog_lib_help2.
-
-setlog_lib_help2 :-
-   nl & 
-   write('The {log} library provides also alternative definitions for some ') & nl & 
-   write('set predicates ... and much more ....') & nl.
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Redefining Prolog built-ins (for the user convenience)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
- length(L,N) :-
-    prolog_call(length(L,N)).
-
- nth1(X,L,Y) :-
-    prolog_call(nth1(X,L,Y)).
-
- % TO BE CONTINUED ...
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Redefining {log} constraints as user-defined predicates
-%%%% (allows constraints to be considered as they occur in the 
-%%%% goal - not before all other literals in the goal)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
- in_int(X,A,B) :-
-    X in int(A,B).
-
- % TO BE CONTINUED ...
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Delayed set operations 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
- dint_to_set(A,B,S) :-
-    delay(int_to_set(int(A,B),S),nonvar(A) & nonvar(B)).
-
- dsubset(S1,S2) :-     
-    delay(isubset(S1,S2), nonvar(S1)).
-
- dssubset(S1,S2) :-     
-    delay(issubset(S1,S2), nonvar(S1)).
-
- dinters(S1,S2,S3) :-  
-    delay(iinters(S1,S2,S3), nonvar(S1) & nonvar(S2)).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -236,7 +156,6 @@ setlog_lib_help2 :-
     A1=<B1 & A2=<B2 &
     (A1<A2 or B2<B1).
 
-  
 % improved inters/3
  iinters(S1,S2,S3) :-   
     prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
@@ -265,4 +184,109 @@ setlog_lib_help2 :-
     A > B.
 
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Delayed set operations 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ dint_to_set(A,B,S) :-
+    delay(int_to_set(int(A,B),S),nonvar(A) & nonvar(B)).
+%     int_to_set(int(A,B),S).
+
+ dsubset(S1,S2) :-     
+    delay(isubset(S1,S2), nonvar(S1)).
+%     isubset(S1,S2).
+
+ dnsubset(S1,S2) :-     
+%    delay(insubset(S1,S2), nonvar(S1)).
+     insubset(S1,S2).
+
+ dssubset(S1,S2) :-     
+    delay(issubset(S1,S2), nonvar(S1)).
+%     issubset(S1,S2)
+
+ dinters(S1,S2,S3) :-  
+%    delay(iinters(S1,S2,S3), nonvar(S1) & nonvar(S2)).
+     iinters(S1,S2,S3).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Dealing with multisets 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+bag_to_set({},{}).              % bag_to_set(+M,?S) is true if S denotes the set
+bag_to_set(M,{X\S}) :-          % of all elements of the multiset M
+     (M = *{X\R})! &
+     bag_to_set(R,S).
+
+int_to_bag(int(A,A),*{A}).       % int_to_bag(+I,?M) is true if M denotes the multiset
+int_to_bag(int(A,B),*{A\M}) :-  % of all elements of the interval I   
+     A < B &
+     A1 is A + 1 &
+     int_to_bag(int(A1,B),M).
+
+msize(S,N) :- in_msize(S,0,N).  % msize(?S,?N) is true if N is the cardinality 
+in_msize({},N,N).               % of the multiset S (i.e., N = |S|)
+in_msize(*{_\SS},N,M) :-
+    N neq M &
+    NN is N + 1 &
+    in_msize(SS,NN,M).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Dealing with lists 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%prefix(P,L) true if list P is a prefix of list L
+ prefix(P,L) :-
+    append(P,_,L).
+
+%sublist(Sb,L) true if list Sb is a sublist of list L
+ sublist(Sb,L) :- 
+    prefix(Sb,L).
+ sublist(Sb,[H|T]) :- 
+    Sb neq [] &
+    sublist(Sb,T).
+
+%take(N,L,NewL) true if list NewL consists of the
+%first N elements of list L
+ take(0,L,[ ]).
+ take(N,[H|T],[H|R]) :- 
+    N>0 & M is N-1 &
+    take(M,T,R).
+
+%drop(N,L,NewL) true if list NewL is L with its 
+%first N elements removed
+ drop(0,L,L).
+ drop(N,[H|T],R) :- 
+    N >0 & M is N-1 &
+    drop(M,T,R).
+
+
+% Redefining Prolog built-ins (for the user convenience)
+ 
+ member(X,L) :- prolog_call(member(X,L)).
+
+ append(L1,L2,L3) :- prolog_call(append(L1,L2,L3)).
+
+ nth1(X,L,Y) :- prolog_call(nth1(X,L,Y)).
+
+ length(L,N) :- prolog_call(length(L,N)).
+
+ reverse(L,R) :- prolog_call(reverse(L,R)).
+
+ last(L,X) :- prolog_call(last(L,X)).
+
     
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Interactive help predicates
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+setlog_lib_help :-
+   nl & 
+   write('The {log} library provides a number of predicates ') & nl & 
+   write('dealing with sets and bags which are not provided ') & nl &
+   write('as primitive in {log}.') & nl & nl &
+   write('It can be loaded into the {log} environment by issuing the ') & nl & 
+   write('goal consult_lib (provided ''setloglib.slog'' is the name you ') & nl &
+   write('give to the library file).') & nl.
+
