@@ -1,8 +1,6 @@
 package compserver.tcasegen.strategies.SetLogGrammar;
 
-import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
@@ -115,55 +113,37 @@ public class IntExprMap {
 			hijoIzq = (DefaultMutableTreeNode) nodo.getChildAt(0);
 		
 		if(ct.equals("\\pfun")||ct.equals("\\fun")||ct.equals("\\rel")){
+			//se hace de esta manera por que add saca el nodo del arbol original
 			DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
 			cross.add((MutableTreeNode) nodo.getChildAt(0));
 			cross.add((MutableTreeNode) nodo.getChildAt(0));
 			nodo.setUserObject("\\power");
 			nodo.add(cross);
 			salida = f(nodo,num);
-		}else if (ct.equals("\\power")){
-			String ctHijo;
-			int n[]=posEncendidas(num);
-			int card=0;
-			int numi,i;
-			i=0;
-			numi= n[i];
-			salida = "{";
-			int aux;
-			while(numi!=0){
-				ctHijo = tipoProximoHijo(hijoIzq);
-				//numi - 1 es el numero decimal que representa la constante
-				//el cual es la posicion del bit encendido - 1
-				aux = ctHijo.equals("\\power")? numi-1 : numi;
-				salida = salida  + f(hijoIzq,aux) + ",";
-				i++;
-				numi = n[i];
-			}
-			if(salida.charAt(salida.length()-1)==',')
-				salida = salida.substring(0, salida.length()-1) + "}";
-			else
-				salida = salida + "}";
-		}else if (ct.equals("\\seq")){
+		}else if ( ct.equals("\\power") || ct.equals("\\seq")){
+			String p1,p2;
+			p1 = ct.charAt(1) == 'p'?"{":"[";
+			p2 = ct.charAt(1) == 'p'?"}":"]";
 			String ctHijo;
 			int n[]=posEncendidas(num);
 			int numi,i;
 			i=0;
 			numi= n[i];
-			salida = "[";
+			salida = p1;
 			int aux;
 			while(numi!=0){
 				ctHijo = tipoProximoHijo(hijoIzq);
 				//numi - 1 es el numero decimal que representa la constante
 				//el cual es la posicion del bit encendido - 1
-				aux = ctHijo.equals("\\power")? numi-1 : numi;
+				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? numi-1 : numi;
 				salida = salida  + f(hijoIzq,aux) + ",";
 				i++;
 				numi = n[i];
 			}
 			if(salida.charAt(salida.length()-1)==',')
-				salida = salida.substring(0, salida.length()-1) + "]";
+				salida = salida.substring(0, salida.length()-1) + p2;
 			else
-				salida = salida + "]";
+				salida = salida + p2;
 		}else if(ct.equals("()")){
 			salida = f(hijoIzq,num);
 		}else if(ct.equals("\\cross")){
@@ -177,13 +157,13 @@ public class IntExprMap {
 				Par p = parFromInt(c,num);
 				
 				String ctaux = tipoProximoHijo(hijoIzq);
-				p.x = ctaux.equals("\\power")? p.x-1 : p.x;
+				p.x = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.x-1 : p.x;
 				ctaux = tipoProximoHijo(hijoDer);
-				p.y = ctaux.equals("\\power")? p.y-1 : p.y;
+				p.y = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.y-1 : p.y;
 				
 				salida = "["+f(hijoIzq,p.x) + " , " + f(hijoDer,p.y) +"]";
 			}
-		}else {
+		}else /*si es tipo libre*/{
 			String tipo = tipos.get(ct);
 			if (num<1){
 				salida ="{}";
@@ -199,7 +179,9 @@ public class IntExprMap {
 		DefaultMutableTreeNode hijoIzq = null;
 		if(!nodo.isLeaf())
 			hijoIzq = (DefaultMutableTreeNode) nodo.getChildAt(0);
+		
 		if(ct.equals("\\pfun")||ct.equals("\\fun")||ct.equals("\\rel")){
+			//se hace de esta manera por que add saca el nodo del arbol original
 			DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
 			cross.add((MutableTreeNode) nodo.getChildAt(0));
 			cross.add((MutableTreeNode) nodo.getChildAt(0));
@@ -208,19 +190,18 @@ public class IntExprMap {
 			salida = f(nodo,expr);
 		}else if(ct.equals("\\power")||ct.equals("\\seq")){
 			String ctHijo;
-			Expr elems = new Expr(ct,expr);
+			ExprIterator elems = new ExprIterator(expr);
 			String elem;
-			Iterator<String> it = elems.iterator();
 			int posbit;
 			int ac = 0;
 			int aux;
-			while(it.hasNext()){
-				elem = it.next();
+			while(elems.hasNext()){
+				elem = elems.next();
 				posbit = f((DefaultMutableTreeNode)nodo.getChildAt(0),elem);
 				//crea el numero a partir de las posiciones de los bit encendidos los cuales
 				//pertenecen a cada elemento del conjunto
 				ctHijo = tipoProximoHijo(hijoIzq);
-				aux = ctHijo.equals("\\power")? posbit : posbit-1;
+				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? posbit : posbit-1;
 				ac |= 1<<aux;
 			}
 			salida = ac;
@@ -228,18 +209,17 @@ public class IntExprMap {
 			return f(hijoIzq,expr);
 		}else if(ct.equals("\\cross")){
 			DefaultMutableTreeNode hijoDer = (DefaultMutableTreeNode) nodo.getChildAt(1);
-			Expr elems = new Expr(ct,expr);
-			Iterator<String> it = elems.iterator();
-			String s1 = it.next();
-			String s2 = it.next();
+			ExprIterator elems = new ExprIterator(expr);
+			String s1 = elems.next();
+			String s2 = elems.next();
 			
 			int f1 = f(hijoIzq,s1);
 			int f2 = f(hijoDer,s2);
 			
 			String ctaux = tipoProximoHijo(hijoIzq);
-			f1 = ctaux.equals("\\power")? f1+1 : f1;
+			f1 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f1+1 : f1;
 			ctaux = tipoProximoHijo(hijoDer);
-			f2 = ctaux.equals("\\power")? f2+1 : f2;
+			f2 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f2+1 : f2;
 			
 			return intFromPar( f1 , f2, cardinalidad(hijoDer));
 		}

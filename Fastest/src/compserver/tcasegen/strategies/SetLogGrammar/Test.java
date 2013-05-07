@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -81,7 +82,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		String tipo = "(\\power FT) \\pfun FT";
+		String tipo = "\\power (\\power FT)";
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
 		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
@@ -98,32 +99,27 @@ public class Test {
         parser = new TypeManagerParser(tokens);
         parser.typeManage();
         DefaultMutableTreeNode root2 =  parser.getRoot();
-//        
-//        
-//		String s = "[{X}]";
+      
+        
+//        HashMap<String,String> tipos = new HashMap<String, String>();
+//		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
+//		String s = "{[1,{a,X}]}";
 //		
-//       ConstantCreator cc = new ConstantCreator(null, null, null, null);
+//       ConstantCreator cc = new ConstantCreator(tipos, null, null, null);
 //		 String salida = cc.getCte(s,root);
 //		
 //		 System.out.println("ENTRADA\n" + s);
 //		 System.out.println("SALIDA\n" + salida);
-        
-//        Par p;Par p1; Par p2;Par p11;Par p12; Par p21;Par p22;
-//        p11 = new Par(1);
-//        p12 = new Par(2);
-//        p21 = new Par(3);
-//        p22 = new Par(4);
-//        p1 = new Par(p11,p12);
-//        p2 = new Par(p21,p22);
-//        p = new Par(p1,p2);
 //        
+        
+        
         
         
         
 		HashMap<String,String> tipos = new HashMap<String, String>();
 		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
 		IntExprMap tmp = new IntExprMap(tipos);
-		int num = 100;
+		int num = 7;
 		String expr = tmp.toExpr(root,num);
 		
 		
@@ -141,6 +137,9 @@ public class Test {
 			System.out.println(it.next());
 		String s = "aaa}";
 		System.out.println(s.charAt(s.length()-1));*/
+		 
+		 
+		 
 		
 	}
 
