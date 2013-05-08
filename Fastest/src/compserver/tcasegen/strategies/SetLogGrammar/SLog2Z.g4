@@ -19,7 +19,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
 	HashMap<String,String> freeTypes = new HashMap();
-	HashMap<String,String> notEqual = new HashMap();
+	HashMap<String,String> valoresProhibidos = new HashMap();
 	ConstantCreator cc;
 	public HashMap<String,String> getZVars(){
 		return zVars;
@@ -41,15 +41,15 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 		return null;
 	}
 	//usa la estructura tipos, conjunto de valores posible de las variables enumeradas
-	//y los valores prohibidos de la estructura notEqual, y pone un valor por variable en slvars
+	//y los valores prohibidos de la estructura valoresProhibidos, y pone un valor por variable en slvars
 	private void putNotEqInSlvars(){
-		Iterator<String> iterator = notEqual.keySet().iterator();  
+		Iterator<String> iterator = valoresProhibidos.keySet().iterator();  
 		String key,value,e,cte;String[] aux;
 		while (iterator.hasNext()) {  
 		   key = iterator.next().toString();
 		   e = tipos.get(key);
 		   e = e.substring(1,e.length()-1);
-		   cte = getNotEqType(e,notEqual.get(key));
+		   cte = getNotEqType(e,valoresProhibidos.get(key));
 		   slvars.put(key, new StringPointer(cte));
 		} 
 	}
@@ -90,7 +90,7 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 		System.out.println("\n tipos Libres: "); 
 		printHashMap(freeTypes);
 		System.out.println("\n");
-		cc = new ConstantCreator(tipos,zNames,slvars,notEqual);
+		cc = new ConstantCreator(tipos,zNames,slvars,valoresProhibidos);
 		
 	}
 	private String getCte(String cte, String tipo) {
@@ -188,8 +188,8 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 
 lineas
 	:	constr NL {
-			System.out.println("\n notEqual desigualdades: ");
-			printHashMap(notEqual);
+			System.out.println("\n valoresProhibidos desigualdades: ");
+			printHashMap(valoresProhibidos);
 			System.out.println("\n");
 		}
 		(seqIgual NL?)+ 
@@ -215,29 +215,29 @@ locals [StringPointer valor;]
 @init{$restr::valor = new StringPointer();}
 	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
 	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
-	| 'integer(' expr ')' {$restr::valor.setString("666"); slvars.put($expr.text,$restr::valor);}
+	| 'integer(' expr ')' {$restr::valor.setString(cc.getNumber()); slvars.put($expr.text,$restr::valor);}
 	| (NAME 'neq' expr | expr 'neq' NAME) 
 		{
 			String var = $NAME.text;
 			String cte = $expr.text;
-			String s = notEqual.get(var);
+			String s = valoresProhibidos.get(var);
 			 
 			if (s!=null && !s.contains(cte)) 
-				notEqual.put(var,s.concat("," + cte));
+				valoresProhibidos.put(var,s.concat("," + cte));
 			else{
 				s = new String(cte);
-				notEqual.put(var, s);
+				valoresProhibidos.put(var, s);
 				}
 				
 			char c = cte.charAt(0);
-			s = notEqual.get(cte);
+			s = valoresProhibidos.get(cte);
 			if (Character.isUpperCase(c) || c == '_') {
 				
 				if (s!=null && !s.contains(var)) 
-					notEqual.put(cte,s.concat("," + var));
+					valoresProhibidos.put(cte,s.concat("," + var));
 				else{
 					s = new String(var);
-					notEqual.put(cte, s);
+					valoresProhibidos.put(cte, s);
 				}
 			}
 			
@@ -249,8 +249,8 @@ locals [StringPointer valor;]
 seqIgual
 locals [StringPointer valor;]
 @init{$seqIgual::valor = new StringPointer();}
-	:	'NUM = int(-10000000000, 10000000000),'  	 
-	|	'NAT = int(0, 10000000000),'
+	:	NAME '=' 'int(-10000000000, 10000000000),'  	 
+	|	NAME '=' 'int(0, 10000000000),'
 	|	(v1=NAME {slvars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slvars.put($v2.text,$seqIgual::valor);} ',')+
 		{
 			String zname = zNames.get($v1.text);

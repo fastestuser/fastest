@@ -2,6 +2,8 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 
 import java.util.Iterator;
 
+/*Dada una expresion permite iterar sobre sus elementos
+ * ej: expr = {ccc,[XXX],dsad3,{{}{}},dsda} entonces cada elemento es ccc, [XXX], etc....*/
 public class ExprIterator implements Iterator<String>{
 	private int posActual;
 	private String expr;

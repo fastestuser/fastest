@@ -16,13 +16,13 @@ public class ConstantCreator {
 	private DefaultMutableTreeNode arbol;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zNames;
-	private HashMap<String,String> notEquals;
+	private HashMap<String,String> valoresProhibidos;
 	private HashMap<String,StringPointer> slVars;
 	private List<String> basicTypes;
 	
 	//static al pedo???
 	private int postfijo;
-	private String getNumber(){
+	public String getNumber(){
 		return String.valueOf(postfijo++);
 	}
 
@@ -70,32 +70,36 @@ public class ConstantCreator {
 		return true;
 	}
 	
-	private void refrescarNotEquals(String var, String expr){
-		Iterator<String> it = notEquals.keySet().iterator();
+	private void refrescarValoresProhibidos(String var, String expr){
+		Iterator<String> it = valoresProhibidos.keySet().iterator();
 		String key,value;
 		while (it.hasNext()) {  
 			key = it.next().toString();
-			value = notEquals.get(key);
+			value = valoresProhibidos.get(key);
 			value = value.replace(var, expr);
-			notEquals.put(key, value);
+			valoresProhibidos.put(key, value);
 		}
 	}
-	
-	private String fullCte(DefaultMutableTreeNode nodo, String var){
+	/* Dado un tipo y una variable, crea un terminal del tipo y se lo asigna a la variable
+	 * Refresca valoresProhibidos, reemplaza el nombre de la variable por el valor cte generado*/
+	private String cteRestringuida(DefaultMutableTreeNode nodo, String var){
 		String salida = null;
 		
 		//si no tiene desigualdades
-		if(notEquals == null)
+		if(valoresProhibidos == null)
+			return  cteCanonica(nodo,var);
+		if(valoresProhibidos.get(var) == null)
 			return  cteCanonica(nodo,var);
 		
-		if(notEquals.get(var) == null)
-			return  cteCanonica(nodo,var);
-		
-		if(!soloTipoFinito(nodo))
-			return cteCanonica(nodo,var);
+		//si esta formados por al menos un tipo no finito
+		if(!soloTipoFinito(nodo)){
+			salida = cteCanonica(nodo,var);
+			refrescarValoresProhibidos(var,salida);
+			return salida;
+		}
 		
 		//si esta solo formado por tipos finitos
-		ExprIterator exprs = new ExprIterator("{"+notEquals.get(var)+"}");
+		ExprIterator exprs = new ExprIterator("{"+valoresProhibidos.get(var)+"}");
 		String expresion = null;
 		int varNat = 1;
 		int nats[] = new int[MAXDESIGUALDADES];
@@ -109,12 +113,8 @@ public class ConstantCreator {
 				i++;
 			}
 		}
-		
-		//si no tiene expresiones en desigualdad constantes, solo variables.
-		if (i == 0)
-			return varMap.toExpr(nodo, varNat);
-		
-		//m es la cantidad de constantes que fueron mapeadas a nat.
+			
+		//m es la cantidad de constantes que fueron mapeadas a nat, y  a las cuales var debe ser distinta.
 		int m = i;
 		i = 0;
 		while (i<m){
@@ -127,11 +127,11 @@ public class ConstantCreator {
 		}
 		
 		salida = varMap.toExpr(nodo, varNat);
-		refrescarNotEquals(var,salida);
+		refrescarValoresProhibidos(var,salida);
 		
 		return salida;
 	}
-	
+	/*Dado un tipo y una variable, genera un terminal canonico para el tipo*/
 	private String cteCanonica(TreeNode nodo,String var) {
 		String ct = nodo.toString();
 		if (ct.equals("\\num") || ct.equals("\\nat") ) {
@@ -176,7 +176,10 @@ public class ConstantCreator {
 		}
 		
 	}
-
+	
+	/* Dada una expresion y un tipo, genera un terminal cte para el tipo respetando la estructura de la expresion
+	 * ej. expr = {[a,X]} y tipo = FT \pfun \num    genera     {[a,1]}	
+	 * las variables dentro de la expresion pueden tener valores prohibidos, o valores ya calculados */
 	public String cte(DefaultMutableTreeNode nodo, String exprS) {
 		
 		ExprIterator expr = new ExprIterator(exprS);
@@ -196,10 +199,10 @@ public class ConstantCreator {
 				if (sp != null && sp.toString() != null)
 					cte = sp.toString();
 				else
-					cte = fullCte(nodo,exprS);
+					cte = cteRestringuida(nodo,exprS);
 			}
 			else
-				cte = fullCte(nodo,exprS);
+				cte = cteRestringuida(nodo,exprS);
 			
 			if (slVars!=null)
 				slVars.put(exprS, new StringPointer(cte));
@@ -279,11 +282,11 @@ public class ConstantCreator {
 		return salida;
 	}
 
-	public ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> notEquals) {
+	public ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.zNames = znames;
 		this.slVars = slvars;
-		this.notEquals = notEquals;
+		this.valoresProhibidos = valoresProhibidos;
 		this.basicTypes = null;
 		this.postfijo = 1;
 	}

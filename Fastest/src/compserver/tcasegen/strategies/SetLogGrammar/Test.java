@@ -127,7 +127,7 @@ public class Test {
 		int num2 = tmp.toNum(root2,expr);
 		System.out.println( expr + " to num = " + num2);
 		
-	
+		System.out.println("tamaño integer  " + Integer.SIZE);
 		/*String tipo =  "EnumerationType:FT:{a,b,c,d}";
 		System.out.println("posicion: " + numFromFreeType(tipo,""));
 		*/

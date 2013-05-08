@@ -61,7 +61,7 @@ public class IntExprMap {
 	
 	//devuelve la posicion de los bits encendidos de la representacion binaria del entero,
 	private  int[] posEncendidas(int n){
-		int[] palabra = new int[100];
+		int[] palabra = new int[Integer.SIZE];
 		int res,resto,i,ni;
 		res = n>>1;
 		resto = n&1;
@@ -104,7 +104,7 @@ public class IntExprMap {
 			nodo = nodo.getChildAt(0);
 		return nodo.toString();
 	}
-	
+	/* Dado un numero natural y un tipo devuelve una expresion terminal del tipo */
 	private  String f(DefaultMutableTreeNode nodo, int num){
 		String salida = null;
 		String ct = nodo.toString();
@@ -172,7 +172,18 @@ public class IntExprMap {
 		}
 		return salida;
 	}
-	
+	/* Dado un tipo y una expresion terminal, devuelve un numero natural
+	 * Ej.{a,b,c}  
+	 * 	   0 0 0  | 0 1 0 1 ... 1   
+	 *     0 0 1  | 0 0 1 1 ... 1
+	 *     0 1 0  | 0 0 0 0 ... 1
+	 *     0 1 1  | 0 0 0 0 ... 1 
+	 *     1 0 0  | 0 0 0 0 ... 1
+	 *     1 0 1  | 0 0 0 0 ... 1
+	 *     1 1 0  | 0 0 0 0 ... 1
+	 *     1 1 1  | 0 0 0 0 ....1 
+	 *     los valores del lado izquiero del "|" son todos los valores posibles para una variable del tipo {a,b,c}
+	 *     los del lado derecho para \power {a,b,c} y asi */
 	private  int f(DefaultMutableTreeNode nodo, String expr){
 		int salida = -1;
 		String ct = nodo.toString();
@@ -202,7 +213,7 @@ public class IntExprMap {
 				//pertenecen a cada elemento del conjunto
 				ctHijo = tipoProximoHijo(hijoIzq);
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? posbit : posbit-1;
-				ac |= 1<<aux;
+				ac |= 1<<aux; //acumula bits, cad auno corresponde a un elemento presente.
 			}
 			salida = ac;
 		}else if(ct.equals("()")){
@@ -229,17 +240,20 @@ public class IntExprMap {
 		return salida;
 	}
 	
+	//Devuelve una expresion termino cte del tipo
 	//modifica el nodo, lo normaliza ej: si es A \pfun B -> \power (A \cross B)
 	public String toExpr(DefaultMutableTreeNode nodo,int num){
 		return f(nodo,num);
 	}
 	
+	//Devuelve un numero natural que corresponde a un valor terminal del tipo 
 	//modifica el nodo, lo normaliza ej: si es A \pfun B -> \power (A \cross B)
 	public int toNum(DefaultMutableTreeNode nodo,String expr){
 		expr = expr.replaceAll("\\s+",""); 
 		return f(nodo,expr);
 	}
 	
+	//es una biyeccion entre naturales y expresiones terminales ctes dado un tipo.
 	public IntExprMap(HashMap<String,String> tipos){
 		this.tipos = tipos;
 	}

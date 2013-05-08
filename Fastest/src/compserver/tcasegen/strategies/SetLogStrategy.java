@@ -310,7 +310,6 @@ public class SetLogStrategy implements TCaseStrategy{
 			OutputStream out = proc.getOutputStream();
 
 			String antlrOutput = parser.getSalida();
-			System.out.println("ANTLROUTPUT\n" + antlrOutput);
 
 			String setlogInput = "consult(setlog4617)."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
