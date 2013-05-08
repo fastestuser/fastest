@@ -20,10 +20,11 @@ public class TypeManagerParser extends Parser {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		T__4=1, T__3=2, T__2=3, T__1=4, T__0=5, BINOP=6, UNOP=7, NAME=8, WS=9;
+		T__5=1, T__4=2, T__3=3, T__2=4, T__1=5, T__0=6, BINOP=7, UNOP=8, NAME=9, 
+		NUM=10, WS=11;
 	public static final String[] tokenNames = {
-		"<INVALID>", "'\\nat'", "')'", "'('", "'\\num'", "'\\nat_{1}'", "BINOP", 
-		"UNOP", "NAME", "WS"
+		"<INVALID>", "'\\nat'", "'\\upto'", "')'", "'('", "'\\num'", "'\\nat_{1}'", 
+		"BINOP", "UNOP", "NAME", "NUM", "WS"
 	};
 	public static final int
 		RULE_typeManage = 0, RULE_type = 1;
@@ -112,8 +113,13 @@ public class TypeManagerParser extends Parser {
 		public TypeContext a;
 		public Token UNOP;
 		public Token NAME;
+		public Token e1;
+		public Token e2;
 		public Token BINOP;
 		public TypeContext b;
+		public TerminalNode NUM(int i) {
+			return getToken(TypeManagerParser.NUM, i);
+		}
 		public TerminalNode UNOP() { return getToken(TypeManagerParser.UNOP, 0); }
 		public TerminalNode NAME() { return getToken(TypeManagerParser.NAME, 0); }
 		public TerminalNode BINOP() { return getToken(TypeManagerParser.BINOP, 0); }
@@ -123,6 +129,7 @@ public class TypeManagerParser extends Parser {
 		public List<TypeContext> type() {
 			return getRuleContexts(TypeContext.class);
 		}
+		public List<TerminalNode> NUM() { return getTokens(TypeManagerParser.NUM); }
 		public TypeContext(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public TypeContext(ParserRuleContext parent, int invokingState, int _p) {
 			super(parent, invokingState);
@@ -150,32 +157,32 @@ public class TypeManagerParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(25);
+			setState(29);
 			switch (_input.LA(1)) {
 			case UNOP:
 				{
 				setState(8); ((TypeContext)_localctx).UNOP = match(UNOP);
-				setState(9); ((TypeContext)_localctx).a = type(7);
+				setState(9); ((TypeContext)_localctx).a = type(8);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).UNOP!=null?((TypeContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node);
-				}
-				break;
-			case 3:
-				{
-				setState(12); match(3);
-				setState(13); ((TypeContext)_localctx).a = type(0);
-				setState(14); match(2);
-				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 			case 4:
 				{
-				setState(17); match(4);
-				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
+				setState(12); match(4);
+				setState(13); ((TypeContext)_localctx).a = type(0);
+				setState(14); match(3);
+				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 			case 5:
 				{
-				setState(19); match(5);
+				setState(17); match(5);
+				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
+				}
+				break;
+			case 6:
+				{
+				setState(19); match(6);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\nat_{1}");
 				}
 				break;
@@ -191,11 +198,19 @@ public class TypeManagerParser extends Parser {
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null));
 				}
 				break;
+			case NUM:
+				{
+				setState(25); ((TypeContext)_localctx).e1 = match(NUM);
+				setState(26); match(2);
+				setState(27); ((TypeContext)_localctx).e2 = match(NUM);
+				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).e1!=null?((TypeContext)_localctx).e1.getText():null) + "\\upto" + (((TypeContext)_localctx).e2!=null?((TypeContext)_localctx).e2.getText():null));
+				}
+				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(34);
+			setState(38);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
@@ -207,15 +222,15 @@ public class TypeManagerParser extends Parser {
 					_localctx = new TypeContext(_parentctx, _parentState, _p);
 					_localctx.a = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_type);
-					setState(27);
-					if (!(6 >= _localctx._p)) throw new FailedPredicateException(this, "6 >= $_p");
-					setState(28); ((TypeContext)_localctx).BINOP = match(BINOP);
-					setState(29); ((TypeContext)_localctx).b = type(7);
+					setState(31);
+					if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
+					setState(32); ((TypeContext)_localctx).BINOP = match(BINOP);
+					setState(33); ((TypeContext)_localctx).b = type(8);
 					((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).BINOP!=null?((TypeContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
 					}
 					} 
 				}
-				setState(36);
+				setState(40);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 			}
@@ -240,23 +255,24 @@ public class TypeManagerParser extends Parser {
 	}
 	private boolean type_sempred(TypeContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return 6 >= _localctx._p;
+		case 0: return 7 >= _localctx._p;
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\2\3\13(\4\2\t\2\4\3\t\3\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
-		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3\34\n\3\3\3\3\3\3\3\3\3\3\3"+
-		"\7\3#\n\3\f\3\16\3&\13\3\3\3\2\4\2\4\2\2+\2\6\3\2\2\2\4\33\3\2\2\2\6\7"+
-		"\5\4\3\2\7\b\b\2\1\2\b\3\3\2\2\2\t\n\b\3\1\2\n\13\7\t\2\2\13\f\5\4\3\2"+
-		"\f\r\b\3\1\2\r\34\3\2\2\2\16\17\7\5\2\2\17\20\5\4\3\2\20\21\7\4\2\2\21"+
-		"\22\b\3\1\2\22\34\3\2\2\2\23\24\7\6\2\2\24\34\b\3\1\2\25\26\7\7\2\2\26"+
-		"\34\b\3\1\2\27\30\7\3\2\2\30\34\b\3\1\2\31\32\7\n\2\2\32\34\b\3\1\2\33"+
-		"\t\3\2\2\2\33\16\3\2\2\2\33\23\3\2\2\2\33\25\3\2\2\2\33\27\3\2\2\2\33"+
-		"\31\3\2\2\2\34$\3\2\2\2\35\36\6\3\2\3\36\37\7\b\2\2\37 \5\4\3\2 !\b\3"+
-		"\1\2!#\3\2\2\2\"\35\3\2\2\2#&\3\2\2\2$\"\3\2\2\2$%\3\2\2\2%\5\3\2\2\2"+
-		"&$\3\2\2\2\4\33$";
+		"\2\3\r,\4\2\t\2\4\3\t\3\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3"+
+		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\5\3 \n\3\3\3\3"+
+		"\3\3\3\3\3\3\3\7\3\'\n\3\f\3\16\3*\13\3\3\3\2\4\2\4\2\2\60\2\6\3\2\2\2"+
+		"\4\37\3\2\2\2\6\7\5\4\3\2\7\b\b\2\1\2\b\3\3\2\2\2\t\n\b\3\1\2\n\13\7\n"+
+		"\2\2\13\f\5\4\3\2\f\r\b\3\1\2\r \3\2\2\2\16\17\7\6\2\2\17\20\5\4\3\2\20"+
+		"\21\7\5\2\2\21\22\b\3\1\2\22 \3\2\2\2\23\24\7\7\2\2\24 \b\3\1\2\25\26"+
+		"\7\b\2\2\26 \b\3\1\2\27\30\7\3\2\2\30 \b\3\1\2\31\32\7\13\2\2\32 \b\3"+
+		"\1\2\33\34\7\f\2\2\34\35\7\4\2\2\35\36\7\f\2\2\36 \b\3\1\2\37\t\3\2\2"+
+		"\2\37\16\3\2\2\2\37\23\3\2\2\2\37\25\3\2\2\2\37\27\3\2\2\2\37\31\3\2\2"+
+		"\2\37\33\3\2\2\2 (\3\2\2\2!\"\6\3\2\3\"#\7\t\2\2#$\5\4\3\2$%\b\3\1\2%"+
+		"\'\3\2\2\2&!\3\2\2\2\'*\3\2\2\2(&\3\2\2\2()\3\2\2\2)\5\3\2\2\2*(\3\2\2"+
+		"\2\4\37(";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

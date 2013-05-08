@@ -41,6 +41,7 @@ type returns [DefaultMutableTreeNode node]
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
+		| 	e1=NUM '\\upto' e2=NUM {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;
 
 BINOP	:	'\\rel'
@@ -55,4 +56,5 @@ UNOP	:	'\\power'
 		;
 
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('0'..'9')*;
+NUM:	('0'..'9')+;
 WS: 	(' '|'\t'|'\r'|'\n')+ {skip();} ;

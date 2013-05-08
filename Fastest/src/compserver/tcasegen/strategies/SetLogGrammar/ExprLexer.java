@@ -284,11 +284,11 @@ public class ExprLexer extends Lexer {
 		
 		private String typeInfo(String var, String type) {
 			
-			if (tipoSchema == 0 & type != null) {
+			if (type != null) {
 				if (isBasic(type)) {
 					if(!type.startsWith("BasicType")) {
 						type = type.split(":")[1];
-						print(var + " in " + type);
+						if (tipoSchema == 0) print(var + " in " + type);
 					} else
 						type = type.split(":")[1];
 					return type;
@@ -297,31 +297,39 @@ public class ExprLexer extends Lexer {
 				String nodeType = getType(type);
 				
 				if (isSequence(nodeType)){
-					if (nodeType.equals("\\seq_{1}"))
-						print(var + " neq []");
-					printAtEnd("list(" + var + ")");
+					if (tipoSchema == 0) {
+						if (nodeType.equals("\\seq_{1}"))
+							print(var + " neq []");
+						printAtEnd("list(" + var + ")");
+					}
 				}
 				else if (nodeType.equals("\\rel"))
-					printAtEnd("is_rel(" + var + ")");
+					if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
 				else if (nodeType.equals("\\pfun"))
-					printAtEnd("is_pfun(" + var + ")");
+					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				else if (nodeType.equals("\\fun"))
-					printAtEnd("is_fun(" + var + ")");
+					if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}"))
-					print(var + " in " + memory.get(type));
+					if (tipoSchema == 0) print(var + " in " + memory.get(type));
 				else if (nodeType.equals("\\power")) {
 					//Veo si lo que sigue es un tipo enumerado
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
 					if (childType != null && childType.startsWith("EnumerationType"))
-						print("subset(" + var + "," + childType.split(":")[1] + ")");
+						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+				}
+				else if (nodeType.contains("\\upto")) {
+					String nodeName = memory.get(nodeType);
+					if (nodeName != null) {
+						if (tipoSchema == 0) print(var + " in " + nodeName);
+					}
 				}
 				else { //double check
 					type = types.get(type);
 					if (type != null && isBasic(type)) {
 						if(!type.startsWith("BasicType")) {
 							type = type.split(":")[1];
-							print(var + " in " + type);
+							if (tipoSchema == 0) print(var + " in " + type);
 						} else
 							type = type.split(":")[1];
 						return type;
