@@ -268,7 +268,7 @@ public class ConstantCreator {
 						return "\\langle\\rangle}";
 					
 					String elem;
-					salida = "\\langle,";
+					salida = "\\langle";
 					while(expr.hasNext()){
 						elem = expr.next();
 						salida = salida + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem) + ","; 
@@ -282,6 +282,8 @@ public class ConstantCreator {
 		return salida;
 	}
 
+	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
+	 * construcciones de tipos finitos. */
 	public ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.zNames = znames;
