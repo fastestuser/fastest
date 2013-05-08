@@ -666,11 +666,23 @@ predicate
 	|	predicate '\\lor' predicate
 	|	predicate '\\land' predicate
 	;
+
+expression0
+locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	expression
+	;
 	
 expression
 locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
 	String newVarName1 = "", String newVarName2 = ""]
-	:	a=expression IN_GEN b=expression 
+	:	expression1
+	;
+	
+expression1
+locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	a=expression1 IN_GEN b=expression1 
 	{
 		//Guardo el tipo
 		String aType = types.get($a.text);
@@ -686,13 +698,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		else
 			types.put($a.text + $IN_GEN.text + $b.text, aType + $IN_GEN.text + bType );
 	}
-	|	e1=expression {$expression::elements.add($e1.text);} ('\\cross' e2=expression {$expression::elements.add($e2.text);})+
+	|	e1=expression2 {$expression::elements.add($e1.text);} ('\\cross' e2=expression2 {$expression::elements.add($e2.text);})+
 	{
 		String unfoldedType = "";
 		
 		//Para cada exp realizamos el procesamiento
-		while( !$expression::elements.isEmpty() ) {
-			String exp = $expression::elements.remove(0);
+		while( !$expression2::elements.isEmpty() ) {
+			String exp = $expression2::elements.remove(0);
 			
 			$zName = $zName.concat(exp);
 			
@@ -702,7 +714,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else
 				unfoldedType = unfoldedType.concat(expType);
 				
-			if (!$expression::elements.isEmpty()) {
+			if (!$expression2::elements.isEmpty()) {
 				$zName = $zName.concat("\\cross");
 				unfoldedType = unfoldedType.concat("\\cross");
 			}
@@ -710,7 +722,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		
 		types.put($zName, unfoldedType);
 	}
-	|	seq_op e=expression
+	|	seq_op e=expression2
 	{
 		String a;
 		a = memory.get($e.text);
@@ -780,7 +792,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression DECORATION e2=expression
+	|	e1=expression2 DECORATION e2=expression2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -806,7 +818,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			typeInfo(newVarName, newVarType);
 		}
 	}
-	|	e1=expression IN_FUN_P6 e2=expression
+	|	expression2
+	;
+	
+	
+	
+expression2
+	locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	e1=expression2 IN_FUN_P6 e2=expression2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -867,7 +887,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression IN_FUN_P5 e2=expression
+	|	e1=expression2 IN_FUN_P5 e2=expression2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -895,7 +915,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression IN_FUN_P4 e2=expression
+	|	e1=expression2 IN_FUN_P4 e2=expression2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -1000,7 +1020,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression IN_FUN_P3 e2=expression
+	|	e1=expression2 IN_FUN_P3 e2=expression2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -1075,7 +1095,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression '\\upto' e2=expression //IN_FUN_2
+	|	e1=expression2 '\\upto' e2=expression2 //IN_FUN_2
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -1089,7 +1109,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			print(newVarName + " = int(" + a + "," + b + ")");
 		}
 	}
-	|	e1=expression '\\mapsto' e2=expression //IN_FUN_1
+	|	e1=expression2 '\\mapsto' e2=expression2 //IN_FUN_1
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -1097,7 +1117,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		memory.put($e1.text + "\\mapsto" + $e2.text, "[" + a + "," + b + "]");
 		types.put($e1.text + "\\mapsto" + $e2.text, types.get($e1.text) + "\\cross" + types.get($e2.text));
 	}
-	|	'\\power' e=expression
+	|	'\\power' e=expression4
 	{
 		String eType = types.get($e.text);
 		if (isBasic(eType))
@@ -1105,7 +1125,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	
 		types.put("\\power" + $e.text, "\\power" + eType );
 	}
-	|	pre_gen e=expression //Pre-Gen
+	|	pre_gen e=expression4 //Pre-Gen
 	{
 		String a;
 		a = memory.get($e.text);
@@ -1226,25 +1246,38 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression IMGSTART e2=expression IMGEND (DECORATION)?
+	|	e82=expression4 IMGSTART e2=expression0 IMGEND (DECORATION)?
 	{
 		String a, b;
-		a = memory.get($e1.text);
+		a = memory.get($e82.text);
 		b = memory.get($e2.text);
 		
-		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text) == null) {
+		if (memory.get($e82.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text) == null) {
 			String newVarName = newVar();
 			print("rimg(" + a + "," + b + "," + newVarName + ")");
-			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
-			String type1 = types.get($e1.text);
+			memory.put($e82.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
+			String type1 = types.get($e82.text);
 			String type = "\\power(" + getChildType(type1, 1) + ")";
-			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, type);
+			types.put($e82.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, type);
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
+				setExpressionVars.put($e82.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
 		}
 	}
-	|	NAME
+	|	expression3
+	;
+	
+expression3
+	locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	expression3 expression4
+	|	expression4
+	;
+	
+expression4
+	locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	NAME
 	{
 		if (memory.get($NAME.text) == null)
 		{
@@ -1395,7 +1428,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			types.put($zName, type);
 		}
 	}
-	|	e1=expression '.' e2=expression
+	|	e1=expression4 '.' e2=expression4
 	{
 		if (memory.get($e1.text + "." + $e2.text) == null) {
 		
@@ -1428,7 +1461,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e=expression post_fun
+	|	e=expression4 post_fun
 	{
 		String a;
 		a = memory.get($e.text);
@@ -1455,7 +1488,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	'(' e=expression ')'
+	|	'(' e=expression0 ')'
 	{
 		String a = memory.get($e.text);
 		
@@ -1484,15 +1517,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	}
 	|	'\\nat' '_{1}' 
 	{	
-		printInfo($expression.text);	
+		printInfo($expression4.text);	
 	}
 	|	'\\nat' 
 	{	
-		printInfo($expression.text);	
+		printInfo($expression4.text);	
 	}
 	|	'\\num'
 	{	
-		printInfo($expression.text);	
+		printInfo($expression4.text);	
 	}
 	;
 	

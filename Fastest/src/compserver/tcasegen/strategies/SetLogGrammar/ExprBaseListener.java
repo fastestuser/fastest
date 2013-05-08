@@ -26,17 +26,32 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterBasic_type(ExprParser.Basic_typeContext ctx) { }
 	@Override public void exitBasic_type(ExprParser.Basic_typeContext ctx) { }
 
-	@Override public void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
-	@Override public void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
-
 	@Override public void enterPost_fun(ExprParser.Post_funContext ctx) { }
 	@Override public void exitPost_fun(ExprParser.Post_funContext ctx) { }
+
+	@Override public void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
+	@Override public void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx) { }
 
 	@Override public void enterPredicate(ExprParser.PredicateContext ctx) { }
 	@Override public void exitPredicate(ExprParser.PredicateContext ctx) { }
 
 	@Override public void enterEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
 	@Override public void exitEquivalent_type(ExprParser.Equivalent_typeContext ctx) { }
+
+	@Override public void enterExpression0(ExprParser.Expression0Context ctx) { }
+	@Override public void exitExpression0(ExprParser.Expression0Context ctx) { }
+
+	@Override public void enterExpression1(ExprParser.Expression1Context ctx) { }
+	@Override public void exitExpression1(ExprParser.Expression1Context ctx) { }
+
+	@Override public void enterExpression2(ExprParser.Expression2Context ctx) { }
+	@Override public void exitExpression2(ExprParser.Expression2Context ctx) { }
+
+	@Override public void enterExpression3(ExprParser.Expression3Context ctx) { }
+	@Override public void exitExpression3(ExprParser.Expression3Context ctx) { }
+
+	@Override public void enterExpression4(ExprParser.Expression4Context ctx) { }
+	@Override public void exitExpression4(ExprParser.Expression4Context ctx) { }
 
 	@Override public void enterDeclPart(ExprParser.DeclPartContext ctx) { }
 	@Override public void exitDeclPart(ExprParser.DeclPartContext ctx) { }
