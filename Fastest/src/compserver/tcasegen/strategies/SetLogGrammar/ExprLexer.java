@@ -283,10 +283,10 @@ public class ExprLexer extends Lexer {
 		}
 		
 		private String typeInfo(String var, String type) {
-			
+				
 			if (type != null) {
 				if (isBasic(type)) {
-					if(!type.startsWith("BasicType")) {
+					if(type.startsWith("EnumerationType")) {
 						type = type.split(":")[1];
 						if (tipoSchema == 0) print(var + " in " + type);
 					} else
@@ -303,20 +303,27 @@ public class ExprLexer extends Lexer {
 						printAtEnd("list(" + var + ")");
 					}
 				}
-				else if (nodeType.equals("\\rel"))
+				else if (nodeType.equals("\\rel")) {
 					if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
-				else if (nodeType.equals("\\pfun"))
+				}
+				else if (nodeType.equals("\\pfun")) {
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
-				else if (nodeType.equals("\\fun"))
+				}
+				else if (nodeType.equals("\\fun")) {
 					if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
-				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}"))
-					if (tipoSchema == 0) print(var + " in " + memory.get(type));
+				}
+				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
+					if (tipoSchema == 0) {
+						print(var + " in " + printInfo(type));
+					}
+				}
 				else if (nodeType.equals("\\power")) {
 					//Veo si lo que sigue es un tipo enumerado
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
-					if (childType != null && childType.startsWith("EnumerationType"))
+					if (childType != null && childType.startsWith("EnumerationType")) {
 						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+					}
 				}
 				else if (nodeType.contains("\\upto")) {
 					String nodeName = memory.get(nodeType);
@@ -326,7 +333,7 @@ public class ExprLexer extends Lexer {
 				}
 				else { //double check
 					type = types.get(type);
-					if (type != null && isBasic(type)) {
+					if (type.startsWith("EnumerationType")) {
 						if(!type.startsWith("BasicType")) {
 							type = type.split(":")[1];
 							if (tipoSchema == 0) print(var + " in " + type);
@@ -337,6 +344,35 @@ public class ExprLexer extends Lexer {
 				}
 			}
 			return type;
+		}
+		
+		private String printInfo(String type) {
+			String translation = memory.get(type);
+			
+			if (translation == null) {
+				if (type.equals("\\num"))
+					translation = newVar("INT");
+				else if (type.equals("\\nat"))
+					translation = newVar("NAT");
+				else if (type.equals("\\nat_{1}"))
+					translation = newVar("NAT1");
+				else
+					translation = newVar();
+			
+				memory.put(type, translation);
+				types.put(type, type);
+			}
+			
+			if (!out.contains( translation + " = int(")){ //Chequeo si ya se imprimio informacion del tipo
+				if (type.equals("\\num"))
+					print(translation + " = int(-10000000000, 10000000000)");
+				else if (type.equals("\\nat"))
+					print(translation + " = int(0, 10000000000)");
+				else if (type.equals("\\nat_{1}"))
+					print(translation + " = int(1, 10000000000)");
+			}
+			
+			return translation;
 		}
 		
 		private boolean isBasic(String type) {

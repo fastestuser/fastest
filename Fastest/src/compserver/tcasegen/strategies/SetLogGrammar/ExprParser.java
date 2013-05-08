@@ -288,10 +288,10 @@ public class ExprParser extends Parser {
 		}
 		
 		private String typeInfo(String var, String type) {
-			
+				
 			if (type != null) {
 				if (isBasic(type)) {
-					if(!type.startsWith("BasicType")) {
+					if(type.startsWith("EnumerationType")) {
 						type = type.split(":")[1];
 						if (tipoSchema == 0) print(var + " in " + type);
 					} else
@@ -308,20 +308,27 @@ public class ExprParser extends Parser {
 						printAtEnd("list(" + var + ")");
 					}
 				}
-				else if (nodeType.equals("\\rel"))
+				else if (nodeType.equals("\\rel")) {
 					if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
-				else if (nodeType.equals("\\pfun"))
+				}
+				else if (nodeType.equals("\\pfun")) {
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
-				else if (nodeType.equals("\\fun"))
+				}
+				else if (nodeType.equals("\\fun")) {
 					if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
-				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}"))
-					if (tipoSchema == 0) print(var + " in " + memory.get(type));
+				}
+				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
+					if (tipoSchema == 0) {
+						print(var + " in " + printInfo(type));
+					}
+				}
 				else if (nodeType.equals("\\power")) {
 					//Veo si lo que sigue es un tipo enumerado
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
-					if (childType != null && childType.startsWith("EnumerationType"))
+					if (childType != null && childType.startsWith("EnumerationType")) {
 						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+					}
 				}
 				else if (nodeType.contains("\\upto")) {
 					String nodeName = memory.get(nodeType);
@@ -331,7 +338,7 @@ public class ExprParser extends Parser {
 				}
 				else { //double check
 					type = types.get(type);
-					if (type != null && isBasic(type)) {
+					if (type.startsWith("EnumerationType")) {
 						if(!type.startsWith("BasicType")) {
 							type = type.split(":")[1];
 							if (tipoSchema == 0) print(var + " in " + type);
@@ -342,6 +349,35 @@ public class ExprParser extends Parser {
 				}
 			}
 			return type;
+		}
+		
+		private String printInfo(String type) {
+			String translation = memory.get(type);
+			
+			if (translation == null) {
+				if (type.equals("\\num"))
+					translation = newVar("INT");
+				else if (type.equals("\\nat"))
+					translation = newVar("NAT");
+				else if (type.equals("\\nat_{1}"))
+					translation = newVar("NAT1");
+				else
+					translation = newVar();
+			
+				memory.put(type, translation);
+				types.put(type, type);
+			}
+			
+			if (!out.contains( translation + " = int(")){ //Chequeo si ya se imprimio informacion del tipo
+				if (type.equals("\\num"))
+					print(translation + " = int(-10000000000, 10000000000)");
+				else if (type.equals("\\nat"))
+					print(translation + " = int(0, 10000000000)");
+				else if (type.equals("\\nat_{1}"))
+					print(translation + " = int(1, 10000000000)");
+			}
+			
+			return translation;
 		}
 		
 		private boolean isBasic(String type) {
@@ -1841,14 +1877,7 @@ public class ExprParser extends Parser {
 							else if ((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null).startsWith("front")){
 								String n = newVar();
 								print("prolog_call(length(" + a + "," + n + "))");
-								String natName = memory.get("\\nat");
-								if (natName == null) {
-								    natName = newVar("NAT");
-									memory.put("\\nat", natName);
-									print(natName + " = int(0, 10000000000)");
-									types.put("\\nat", "\\nat");
-								}
-								print(n + " in " + natName);
+								print(n + " in " + printInfo("\\nat"));
 								print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
 								memory.put((((ExpressionContext)_localctx).seq_op!=null?_input.getText(((ExpressionContext)_localctx).seq_op.start,((ExpressionContext)_localctx).seq_op.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								String type = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
@@ -1909,14 +1938,7 @@ public class ExprParser extends Parser {
 								else
 									print("size(" + a + "," + newVarName + ")");					
 								
-								String natName = memory.get("\\nat");
-								if (natName == null) {
-								    natName = newVar("NAT");
-									memory.put("\\nat", natName);
-									print(natName + " = int(0, 10000000000)");
-									types.put("\\nat", "\\nat");
-								}
-								print(newVarName + " in " + natName);
+								print(newVarName + " in " + printInfo("\\nat"));
 							}
 						}
 						else if ((((ExpressionContext)_localctx).pre_gen!=null?_input.getText(((ExpressionContext)_localctx).pre_gen.start,((ExpressionContext)_localctx).pre_gen.stop):null).equals("\\dom")){
@@ -2340,12 +2362,7 @@ public class ExprParser extends Parser {
 				setState(401); match(26);
 				setState(402); match(9);
 					
-						if (memory.get(_input.getText(_localctx.start, _input.LT(-1))) == null) {
-						    String newVarName = newVar("NAT1");
-							memory.put(_input.getText(_localctx.start, _input.LT(-1)), newVarName);
-							print(newVarName + " = int(1, 10000000000)");
-							types.put(_input.getText(_localctx.start, _input.LT(-1)), _input.getText(_localctx.start, _input.LT(-1)));
-						}	
+						printInfo(_input.getText(_localctx.start, _input.LT(-1)));	
 					
 				}
 				break;
@@ -2354,12 +2371,7 @@ public class ExprParser extends Parser {
 				{
 				setState(404); match(26);
 					
-						if (memory.get(_input.getText(_localctx.start, _input.LT(-1))) == null) {
-						    String newVarName = newVar("NAT");
-							memory.put(_input.getText(_localctx.start, _input.LT(-1)), newVarName);
-							print(newVarName + " = int(0, 10000000000)");
-							types.put(_input.getText(_localctx.start, _input.LT(-1)), _input.getText(_localctx.start, _input.LT(-1)));
-						}	
+						printInfo(_input.getText(_localctx.start, _input.LT(-1)));	
 					
 				}
 				break;
@@ -2368,12 +2380,7 @@ public class ExprParser extends Parser {
 				{
 				setState(406); match(61);
 					
-						if (memory.get(_input.getText(_localctx.start, _input.LT(-1))) == null) {
-						    String newVarName = newVar("INT");
-							memory.put(_input.getText(_localctx.start, _input.LT(-1)), newVarName);
-							print(newVarName + " = int(-10000000000, 10000000000)");
-							types.put(_input.getText(_localctx.start, _input.LT(-1)), _input.getText(_localctx.start, _input.LT(-1)));
-						}	
+						printInfo(_input.getText(_localctx.start, _input.LT(-1)));	
 					
 				}
 				break;
@@ -2675,14 +2682,7 @@ public class ExprParser extends Parser {
 						          			}
 						          			
 						          			if (isNumeric) {
-						          				String numName = memory.get("\\num");
-						          				if (numName == null) {
-						          				    numName = newVar("INT");
-						          					memory.put("\\num", numName);
-						          					print(numName + " = int(-10000000000, 10000000000)");
-						          					types.put("\\num", "\\num");
-						          				}
-						          				print(newVarName + " in " + numName);
+						          				print(newVarName + " in " + printInfo("\\num"));
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_P4!=null?((ExpressionContext)_localctx).IN_FUN_P4.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "\\num");
 						          			}
 						          		}
@@ -2768,14 +2768,7 @@ public class ExprParser extends Parser {
 						          			}
 						          			
 						          			if (isNumeric) {
-						          				String numName = memory.get("\\num");
-						          				if (numName == null) {
-						          				    numName = newVar("INT");
-						          					memory.put("\\num", numName);
-						          					print(numName + " = int(-10000000000, 10000000000)");
-						          					types.put("\\num", "\\num");
-						          				}
-						          				print(newVarName + " in " + numName);
+						          				print(newVarName + " in " + printInfo("\\num"));
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_P3!=null?((ExpressionContext)_localctx).IN_FUN_P3.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "\\num");
 						          			}
 						          		}

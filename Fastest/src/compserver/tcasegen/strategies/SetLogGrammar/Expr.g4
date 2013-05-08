@@ -230,10 +230,10 @@ grammar Expr;
 	}
 	
 	private String typeInfo(String var, String type) {
-		
+			
 		if (type != null) {
 			if (isBasic(type)) {
-				if(!type.startsWith("BasicType")) {
+				if(type.startsWith("EnumerationType")) {
 					type = type.split(":")[1];
 					if (tipoSchema == 0) print(var + " in " + type);
 				} else
@@ -250,20 +250,27 @@ grammar Expr;
 					printAtEnd("list(" + var + ")");
 				}
 			}
-			else if (nodeType.equals("\\rel"))
+			else if (nodeType.equals("\\rel")) {
 				if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
-			else if (nodeType.equals("\\pfun"))
+			}
+			else if (nodeType.equals("\\pfun")) {
 				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
-			else if (nodeType.equals("\\fun"))
+			}
+			else if (nodeType.equals("\\fun")) {
 				if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
-			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}"))
-				if (tipoSchema == 0) print(var + " in " + memory.get(type));
+			}
+			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
+				if (tipoSchema == 0) {
+					print(var + " in " + printInfo(type));
+				}
+			}
 			else if (nodeType.equals("\\power")) {
 				//Veo si lo que sigue es un tipo enumerado
 				String childType = getChildType(type,0);
 				childType = types.get(childType);
-				if (childType != null && childType.startsWith("EnumerationType"))
+				if (childType != null && childType.startsWith("EnumerationType")) {
 					if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+				}
 			}
 			else if (nodeType.contains("\\upto")) {
 				String nodeName = memory.get(nodeType);
@@ -273,7 +280,7 @@ grammar Expr;
 			}
 			else { //double check
 				type = types.get(type);
-				if (type != null && isBasic(type)) {
+				if (type.startsWith("EnumerationType")) {
 					if(!type.startsWith("BasicType")) {
 						type = type.split(":")[1];
 						if (tipoSchema == 0) print(var + " in " + type);
@@ -284,6 +291,35 @@ grammar Expr;
 			}
 		}
 		return type;
+	}
+	
+	private String printInfo(String type) {
+		String translation = memory.get(type);
+		
+		if (translation == null) {
+			if (type.equals("\\num"))
+				translation = newVar("INT");
+			else if (type.equals("\\nat"))
+				translation = newVar("NAT");
+			else if (type.equals("\\nat_{1}"))
+				translation = newVar("NAT1");
+			else
+				translation = newVar();
+		
+			memory.put(type, translation);
+			types.put(type, type);
+		}
+		
+		if (!out.contains( translation + " = int(")){ //Chequeo si ya se imprimio informacion del tipo
+			if (type.equals("\\num"))
+				print(translation + " = int(-10000000000, 10000000000)");
+			else if (type.equals("\\nat"))
+				print(translation + " = int(0, 10000000000)");
+			else if (type.equals("\\nat_{1}"))
+				print(translation + " = int(1, 10000000000)");
+		}
+		
+		return translation;
 	}
 	
 	private boolean isBasic(String type) {
@@ -721,14 +757,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else if ($seq_op.text.startsWith("front")){
 				String n = newVar();
 				print("prolog_call(length(" + a + "," + n + "))");
-				String natName = memory.get("\\nat");
-				if (natName == null) {
-				    natName = newVar("NAT");
-					memory.put("\\nat", natName);
-					print(natName + " = int(0, 10000000000)");
-					types.put("\\nat", "\\nat");
-				}
-				print(n + " in " + natName);
+				print(n + " in " + printInfo("\\nat"));
 				print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
 				memory.put($seq_op.text + $e.text, newVarName);
 				String type = types.get($e.text);
@@ -968,14 +997,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 			
 			if (isNumeric) {
-				String numName = memory.get("\\num");
-				if (numName == null) {
-				    numName = newVar("INT");
-					memory.put("\\num", numName);
-					print(numName + " = int(-10000000000, 10000000000)");
-					types.put("\\num", "\\num");
-				}
-				print(newVarName + " in " + numName);
+				print(newVarName + " in " + printInfo("\\num"));
 				types.put($e1.text + $IN_FUN_P4.text + $e2.text, "\\num");
 			}
 		}
@@ -1050,14 +1072,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 			
 			if (isNumeric) {
-				String numName = memory.get("\\num");
-				if (numName == null) {
-				    numName = newVar("INT");
-					memory.put("\\num", numName);
-					print(numName + " = int(-10000000000, 10000000000)");
-					types.put("\\num", "\\num");
-				}
-				print(newVarName + " in " + numName);
+				print(newVarName + " in " + printInfo("\\num"));
 				types.put($e1.text + $IN_FUN_P3.text + $e2.text, "\\num");
 			}
 		}
@@ -1111,14 +1126,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				else
 					print("size(" + a + "," + newVarName + ")");					
 				
-				String natName = memory.get("\\nat");
-				if (natName == null) {
-				    natName = newVar("NAT");
-					memory.put("\\nat", natName);
-					print(natName + " = int(0, 10000000000)");
-					types.put("\\nat", "\\nat");
-				}
-				print(newVarName + " in " + natName);
+				print(newVarName + " in " + printInfo("\\nat"));
 			}
 		}
 		else if ($pre_gen.text.equals("\\dom")){
@@ -1478,30 +1486,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	}
 	|	'\\nat' '_{1}' 
 	{	
-		if (memory.get($expression.text) == null) {
-		    String newVarName = newVar("NAT1");
-			memory.put($expression.text, newVarName);
-			print(newVarName + " = int(1, 10000000000)");
-			types.put($expression.text, $expression.text);
-		}	
+		printInfo($expression.text);	
 	}
 	|	'\\nat' 
 	{	
-		if (memory.get($expression.text) == null) {
-		    String newVarName = newVar("NAT");
-			memory.put($expression.text, newVarName);
-			print(newVarName + " = int(0, 10000000000)");
-			types.put($expression.text, $expression.text);
-		}	
+		printInfo($expression.text);	
 	}
 	|	'\\num'
 	{	
-		if (memory.get($expression.text) == null) {
-		    String newVarName = newVar("INT");
-			memory.put($expression.text, newVarName);
-			print(newVarName + " = int(-10000000000, 10000000000)");
-			types.put($expression.text, $expression.text);
-		}	
+		printInfo($expression.text);	
 	}
 	;
 	
