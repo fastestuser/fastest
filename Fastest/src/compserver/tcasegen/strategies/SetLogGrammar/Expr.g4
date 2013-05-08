@@ -342,8 +342,9 @@ grammar Expr;
 				String newVarName = newVar();
 				print("list_to_rel(" + setlogVar + "," + newVarName + ")");
 				//Hace falta ver el tipo?
-				//String seqType = leftAndRightTypes(type).get(1);
+				String seqType = leftAndRightTypes(type).get(1);
 				//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
+				types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 				memory.put("list_to_rel(" + zVar + ")", newVarName);
 				return newVarName;
 			} else {
@@ -785,6 +786,9 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		
 		if (memory.get($e1.text + "~" + $e2.text) == null) {
 			String newVarName = newVar();
 			memory.put($e1.text + "~" + $e2.text, newVarName);
@@ -792,14 +796,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			if (modoSetExpression != 0 )
 				setExpressionVars.put($e1.text + "~" + $e2.text, newVarName);
 
-			//Si es una lista debo transformarla
 			String type1 = types.get($e1.text);
-			if (isSequence(getType(type1))) {
-				String newVarName2 = newVar();
-				print("list_to_rel(" + a + "," + newVarName2 +  ")");
-				a = newVarName2;
-			}
-
+			getType(type1);
 			String newVarType = leftAndRightTypes(type1).get(1);
 			types.put($e1.text + "~" + $e2.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");

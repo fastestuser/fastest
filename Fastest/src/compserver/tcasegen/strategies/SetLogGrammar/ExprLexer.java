@@ -395,8 +395,9 @@ public class ExprLexer extends Lexer {
 					String newVarName = newVar();
 					print("list_to_rel(" + setlogVar + "," + newVarName + ")");
 					//Hace falta ver el tipo?
-					//String seqType = leftAndRightTypes(type).get(1);
+					String seqType = leftAndRightTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
+					types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 					memory.put("list_to_rel(" + zVar + ")", newVarName);
 					return newVarName;
 				} else {

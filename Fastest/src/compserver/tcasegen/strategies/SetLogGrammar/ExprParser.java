@@ -400,8 +400,9 @@ public class ExprParser extends Parser {
 					String newVarName = newVar();
 					print("list_to_rel(" + setlogVar + "," + newVarName + ")");
 					//Hace falta ver el tipo?
-					//String seqType = leftAndRightTypes(type).get(1);
+					String seqType = leftAndRightTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
+					types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 					memory.put("list_to_rel(" + zVar + ")", newVarName);
 					return newVarName;
 				} else {
@@ -2437,6 +2438,9 @@ public class ExprParser extends Parser {
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          		b = memory.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
 						          		
+						          		//Si a es una lista, debo convertirla
+						          		a = convertToSet((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null), a);
+						          		
 						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)) == null) {
 						          			String newVarName = newVar();
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
@@ -2444,14 +2448,8 @@ public class ExprParser extends Parser {
 						          			if (modoSetExpression != 0 )
 						          				setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 
-						          			//Si es una lista debo transformarla
 						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          			if (isSequence(getType(type1))) {
-						          				String newVarName2 = newVar();
-						          				print("list_to_rel(" + a + "," + newVarName2 +  ")");
-						          				a = newVarName2;
-						          			}
-
+						          			getType(type1);
 						          			String newVarType = leftAndRightTypes(type1).get(1);
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "~" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarType);
 						          			print("apply(" + a + "," + b + "," + newVarName + ")");
