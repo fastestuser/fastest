@@ -1394,6 +1394,10 @@ public class ExprParser extends Parser {
 						String a, b;
 						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
 						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
+						
+						System.out.println("AAAAAAA " + (((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null) + "-" + a);
+						System.out.println("BBBBBBB " + (((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null) + "-" + b);
+						
 						print(a + " =< " + b);
 					
 				}
@@ -1827,16 +1831,15 @@ public class ExprParser extends Parser {
 		public String newVarName1 = "";
 		public String newVarName2 = "";
 		public Expression1Context a;
-		public Expression2Context e1;
-		public Expression2Context e2;
+		public Expression2Context e21;
+		public Expression2Context e22;
 		public Seq_opContext seq_op;
-		public Expression2Context e;
+		public Expression2Context e2;
 		public Token IN_GEN;
 		public Expression1Context b;
 		public Seq_opContext seq_op() {
 			return getRuleContext(Seq_opContext.class,0);
 		}
-		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public List<Expression1Context> expression1() {
 			return getRuleContexts(Expression1Context.class);
 		}
@@ -1877,12 +1880,12 @@ public class ExprParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(341);
+			setState(336);
 			switch ( getInterpreter().adaptivePredict(_input,34,_ctx) ) {
 			case 1:
 				{
-				setState(319); ((Expression1Context)_localctx).e1 = expression2(0);
-				((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null));
+				setState(319); ((Expression1Context)_localctx).e21 = expression2(0);
+				((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e21!=null?_input.getText(((Expression1Context)_localctx).e21.start,((Expression1Context)_localctx).e21.stop):null));
 				setState(325); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,33,_ctx);
@@ -1892,8 +1895,8 @@ public class ExprParser extends Parser {
 						{
 						{
 						setState(321); match(48);
-						setState(322); ((Expression1Context)_localctx).e2 = expression2(0);
-						((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
+						setState(322); ((Expression1Context)_localctx).e22 = expression2(0);
+						((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e22!=null?_input.getText(((Expression1Context)_localctx).e22.start,((Expression1Context)_localctx).e22.stop):null));
 						}
 						}
 						break;
@@ -1933,73 +1936,73 @@ public class ExprParser extends Parser {
 			case 2:
 				{
 				setState(331); ((Expression1Context)_localctx).seq_op = seq_op();
-				setState(332); ((Expression1Context)_localctx).e = expression2(0);
+				setState(332); ((Expression1Context)_localctx).e2 = expression2(0);
 
 						String a;
-						a = memory.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null));
+						a = memory.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
 						
-						if (memory.get( (((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null)) == null) {
+						if (memory.get( (((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null)) == null) {
 						
 							String newVarName = newVar();
 						
 							if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("rev")){
 								print("prolog_call(reverse(" + a + "," + newVarName + "))");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null));
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 							else if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("head")){
 								print("nth1(1," + a + "," + newVarName + ")");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = getChildType(types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null)), 0);
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = getChildType(types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null)), 0);
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 							else if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("last")){
 								print("prolog_call(last(" + a + "," + newVarName + "))");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = getChildType(types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null)), 0);
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = getChildType(types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null)), 0);
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 							else if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("tail")){
 								print("prolog_call(drop(1," + a + "," + newVarName + "))");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null));
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 							else if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("front")){
 								String n = newVar();
 								print("prolog_call(length(" + a + "," + n + "))");
 								print(n + " in " + printInfo("\\nat"));
 								print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null));
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 							else if ((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null).startsWith("squash")){
 								print("squash(" + a + "," + newVarName + ")");
-								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
-								String type = types.get((((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null));
+								memory.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
+								String type = types.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
 								ArrayList<String> leftAndRight = leftAndRightTypes(type);
 								type = "\\seq(" + leftAndRight.get(1) + ")";
-								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), type);
+								types.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e!=null?_input.getText(((Expression1Context)_localctx).e.start,((Expression1Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put((((Expression1Context)_localctx).seq_op!=null?_input.getText(((Expression1Context)_localctx).seq_op.start,((Expression1Context)_localctx).seq_op.stop):null) + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
 							}
 						}
 					
@@ -2008,45 +2011,12 @@ public class ExprParser extends Parser {
 
 			case 3:
 				{
-				setState(335); ((Expression1Context)_localctx).e1 = expression2(0);
-				setState(336); match(DECORATION);
-				setState(337); ((Expression1Context)_localctx).e2 = expression2(0);
-
-						String a, b;
-						a = memory.get((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null));
-						b = memory.get((((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null));
-						
-						//Si a es una lista, debo convertirla
-						a = convertToSet((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null), a);
-						
-						if (memory.get((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null) + "~" + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null)) == null) {
-							String newVarName = newVar();
-							memory.put((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null) + "~" + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
-							
-							if (modoSetExpression != 0 )
-								setExpressionVars.put((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null) + "~" + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarName);
-
-							String type1 = types.get((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null));
-							getType(type1);
-							String newVarType = leftAndRightTypes(type1).get(1);
-							types.put((((Expression1Context)_localctx).e1!=null?_input.getText(((Expression1Context)_localctx).e1.start,((Expression1Context)_localctx).e1.stop):null) + "~" + (((Expression1Context)_localctx).e2!=null?_input.getText(((Expression1Context)_localctx).e2.start,((Expression1Context)_localctx).e2.stop):null), newVarType);
-							print("apply(" + a + "," + b + "," + newVarName + ")");
-							
-							//Imprimimos la informacion del tipo de la variable
-							typeInfo(newVarName, newVarType);
-						}
-					
-				}
-				break;
-
-			case 4:
-				{
-				setState(340); expression2(0);
+				setState(335); ((Expression1Context)_localctx).e2 = expression2(0);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(350);
+			setState(345);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,35,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
@@ -2058,10 +2028,10 @@ public class ExprParser extends Parser {
 					_localctx = new Expression1Context(_parentctx, _parentState, _p);
 					_localctx.a = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_expression1);
-					setState(343);
-					if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
-					setState(344); ((Expression1Context)_localctx).IN_GEN = match(IN_GEN);
-					setState(345); ((Expression1Context)_localctx).b = expression1(6);
+					setState(338);
+					if (!(4 >= _localctx._p)) throw new FailedPredicateException(this, "4 >= $_p");
+					setState(339); ((Expression1Context)_localctx).IN_GEN = match(IN_GEN);
+					setState(340); ((Expression1Context)_localctx).b = expression1(5);
 
 					          		//Guardo el tipo
 					          		String aType = types.get((((Expression1Context)_localctx).a!=null?_input.getText(((Expression1Context)_localctx).a.start,((Expression1Context)_localctx).a.stop):null));
@@ -2080,7 +2050,7 @@ public class ExprParser extends Parser {
 					}
 					} 
 				}
-				setState(352);
+				setState(347);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,35,_ctx);
 			}
@@ -2105,21 +2075,25 @@ public class ExprParser extends Parser {
 		public String operator = "";
 		public String newVarName1 = "";
 		public String newVarName2 = "";
-		public Expression2Context e1;
-		public Expression4Context e;
+		public Expression2Context e21;
+		public Expression4Context e4;
 		public Pre_genContext pre_gen;
-		public Expression4Context e82;
 		public Token IMGSTART;
-		public Expression0Context e2;
+		public Expression0Context e0;
 		public Token IMGEND;
 		public Token DECORATION;
 		public Token IN_FUN_P6;
+		public Expression2Context e22;
 		public Token IN_FUN_P5;
 		public Token IN_FUN_P4;
 		public Token IN_FUN_P3;
 		public TerminalNode IN_FUN_P6() { return getToken(ExprParser.IN_FUN_P6, 0); }
+		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public Expression0Context expression0() {
 			return getRuleContext(Expression0Context.class,0);
+		}
+		public Pre_genContext pre_gen() {
+			return getRuleContext(Pre_genContext.class,0);
 		}
 		public List<Expression2Context> expression2() {
 			return getRuleContexts(Expression2Context.class);
@@ -2127,20 +2101,16 @@ public class ExprParser extends Parser {
 		public Expression3Context expression3() {
 			return getRuleContext(Expression3Context.class,0);
 		}
+		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
+		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
 		public Expression4Context expression4() {
 			return getRuleContext(Expression4Context.class,0);
 		}
+		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
+		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public Expression2Context expression2(int i) {
 			return getRuleContext(Expression2Context.class,i);
 		}
-		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
-		public Pre_genContext pre_gen() {
-			return getRuleContext(Pre_genContext.class,0);
-		}
-		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
-		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
-		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
-		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public TerminalNode IN_FUN_P5() { return getToken(ExprParser.IN_FUN_P5, 0); }
 		public Expression2Context(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public Expression2Context(ParserRuleContext parent, int invokingState, int _p) {
@@ -2169,39 +2139,39 @@ public class ExprParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(372);
+			setState(367);
 			switch ( getInterpreter().adaptivePredict(_input,37,_ctx) ) {
 			case 1:
 				{
-				setState(354); match(52);
-				setState(355); ((Expression2Context)_localctx).e = expression4(0);
+				setState(349); match(52);
+				setState(350); ((Expression2Context)_localctx).e4 = expression4(0);
 
-						String eType = types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+						String eType = types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 						if (isBasic(eType))
-							eType = (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null);
+							eType = (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null);
 					
-						types.put("\\power" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\power" + eType );
+						types.put("\\power" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\power" + eType );
 					
 				}
 				break;
 
 			case 2:
 				{
-				setState(358); ((Expression2Context)_localctx).pre_gen = pre_gen();
-				setState(359); ((Expression2Context)_localctx).e = expression4(0);
+				setState(353); ((Expression2Context)_localctx).pre_gen = pre_gen();
+				setState(354); ((Expression2Context)_localctx).e4 = expression4(0);
 
 						String a;
-						a = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+						a = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 						
 						if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\#")){
-							if (memory.get("\\#" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get("\\#" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put("\\#" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put("\\#" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\nat");
+								memory.put("\\#" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put("\\#" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\nat");
 								if (modoSetExpression != 0 )
-									setExpressionVars.put("\\#" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+									setExpressionVars.put("\\#" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 									
-								String type = getType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)));
+								String type = getType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)));
 								if (isSequence(type))
 									print("prolog_call(length(" + a + "," + newVarName + "))");
 								else
@@ -2211,17 +2181,17 @@ public class ExprParser extends Parser {
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\dom")){
-							if (memory.get("\\dom" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get("\\dom" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put("\\dom" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put("\\dom" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put("\\dom" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put("\\dom" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\power(" + getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 0) + ")");
+									setExpressionVars.put("\\dom" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put("\\dom" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\power(" + getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 0) + ")");
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								
 								//Chequeamos si e es una lista, estas son tratadas de forma diferente
-								String type = getType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)));
+								String type = getType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)));
 								if (isSequence(type))
 									print("ddom_list(" + e + "," + newVarName + ")");
 								else
@@ -2229,17 +2199,17 @@ public class ExprParser extends Parser {
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\ran")){
-							if (memory.get("\\ran" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get("\\ran" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put("\\ran" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put("\\ran" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put("\\ran" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put("\\ran" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\power(" + getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 1) + ")");
+									setExpressionVars.put("\\ran" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put("\\ran" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\power(" + getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 1) + ")");
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								
 								//Chequeamos si e es una lista, estas son tratadas de forma diferente
-								String type = getType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)));
+								String type = getType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)));
 								if (isSequence(type))
 									print("list_to_set(" + e + "," + newVarName + ")");
 								else
@@ -2247,64 +2217,64 @@ public class ExprParser extends Parser {
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).startsWith("seq_{1}")) {
-							String eType = types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+							String eType = types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 							if (isBasic(eType))
-								eType = (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null);
+								eType = (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null);
 						
-							types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\seq_{1}" + eType);
+							types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\seq_{1}" + eType);
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\seq")) {
-							String eType = types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+							String eType = types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 							if (isBasic(eType))
-								eType = (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null);
+								eType = (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null);
 						
-							types.put("\\seq" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), "\\seq" + eType);
+							types.put("\\seq" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\seq" + eType);
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\bigcup")){
-							if (memory.get("\\bigcup" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get("\\bigcup" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put("\\bigcup" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put("\\bigcup" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put("\\bigcup" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put("\\bigcup" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 0));
+									setExpressionVars.put("\\bigcup" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put("\\bigcup" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 0));
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								print("bun(" + e + "," + newVarName + ")");
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\bigcap")){
-							if (memory.get("\\bigcap" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get("\\bigcap" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put("\\bigcap" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put("\\bigcap" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put("\\bigcap" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put("\\bigcap" + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 0));
+									setExpressionVars.put("\\bigcap" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put("\\bigcap" + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 0));
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								print("bdinters(" + e + "," + newVarName + ")");
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).startsWith("min")){
-							if (memory.get((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 0));
+									setExpressionVars.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 0));
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								print("prolog_call(min(" + e + "," + newVarName + "))");
 							}
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).startsWith("max")){
-							if (memory.get((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)) == null) {
+							if (memory.get((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)) == null) {
 								String newVarName = newVar();
-								memory.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
+								memory.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
 								if (modoSetExpression != 0 )
-									setExpressionVars.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), newVarName);
-								types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null), getChildType(types.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null)), 0));
+									setExpressionVars.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), newVarName);
+								types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), getChildType(types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null)), 0));
 								
-								String e = memory.get((((Expression2Context)_localctx).e!=null?_input.getText(((Expression2Context)_localctx).e.start,((Expression2Context)_localctx).e.stop):null));
+								String e = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 								print("max(" + e + "," + newVarName + ")");
 							}
 						}
@@ -2314,33 +2284,33 @@ public class ExprParser extends Parser {
 
 			case 3:
 				{
-				setState(362); ((Expression2Context)_localctx).e82 = expression4(0);
-				setState(363); ((Expression2Context)_localctx).IMGSTART = match(IMGSTART);
-				setState(364); ((Expression2Context)_localctx).e2 = expression0();
-				setState(365); ((Expression2Context)_localctx).IMGEND = match(IMGEND);
-				setState(367);
+				setState(357); ((Expression2Context)_localctx).e4 = expression4(0);
+				setState(358); ((Expression2Context)_localctx).IMGSTART = match(IMGSTART);
+				setState(359); ((Expression2Context)_localctx).e0 = expression0();
+				setState(360); ((Expression2Context)_localctx).IMGEND = match(IMGEND);
+				setState(362);
 				switch ( getInterpreter().adaptivePredict(_input,36,_ctx) ) {
 				case 1:
 					{
-					setState(366); ((Expression2Context)_localctx).DECORATION = match(DECORATION);
+					setState(361); ((Expression2Context)_localctx).DECORATION = match(DECORATION);
 					}
 					break;
 				}
 
 						String a, b;
-						a = memory.get((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null));
-						b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						a = memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
+						b = memory.get((((Expression2Context)_localctx).e0!=null?_input.getText(((Expression2Context)_localctx).e0.start,((Expression2Context)_localctx).e0.stop):null));
 						
-						if (memory.get((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null)) == null) {
+						if (memory.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e0!=null?_input.getText(((Expression2Context)_localctx).e0.start,((Expression2Context)_localctx).e0.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null)) == null) {
 							String newVarName = newVar();
 							print("rimg(" + a + "," + b + "," + newVarName + ")");
-							memory.put((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), newVarName);
-							String type1 = types.get((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null));
+							memory.put((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e0!=null?_input.getText(((Expression2Context)_localctx).e0.start,((Expression2Context)_localctx).e0.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), newVarName);
+							String type1 = types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));
 							String type = "\\power(" + getChildType(type1, 1) + ")";
-							types.put((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), type);
+							types.put((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e0!=null?_input.getText(((Expression2Context)_localctx).e0.start,((Expression2Context)_localctx).e0.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), type);
 							typeInfo(newVarName, type);
 							if (modoSetExpression != 0 )
-								setExpressionVars.put((((Expression2Context)_localctx).e82!=null?_input.getText(((Expression2Context)_localctx).e82.start,((Expression2Context)_localctx).e82.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), newVarName);
+								setExpressionVars.put((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null) + (((Expression2Context)_localctx).IMGSTART!=null?((Expression2Context)_localctx).IMGSTART.getText():null) + (((Expression2Context)_localctx).e0!=null?_input.getText(((Expression2Context)_localctx).e0.start,((Expression2Context)_localctx).e0.stop):null) + (((Expression2Context)_localctx).IMGEND!=null?((Expression2Context)_localctx).IMGEND.getText():null) + (((Expression2Context)_localctx).DECORATION!=null?((Expression2Context)_localctx).DECORATION.getText():null), newVarName);
 						}
 					
 				}
@@ -2348,12 +2318,12 @@ public class ExprParser extends Parser {
 
 			case 4:
 				{
-				setState(371); expression3(0);
+				setState(366); expression3(0);
 				}
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(406);
+			setState(401);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,39,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
@@ -2361,74 +2331,74 @@ public class ExprParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(404);
+					setState(399);
 					switch ( getInterpreter().adaptivePredict(_input,38,_ctx) ) {
 					case 1:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(374);
+						setState(369);
 						if (!(10 >= _localctx._p)) throw new FailedPredicateException(this, "10 >= $_p");
-						setState(375); ((Expression2Context)_localctx).IN_FUN_P6 = match(IN_FUN_P6);
-						setState(376); ((Expression2Context)_localctx).e2 = expression2(11);
+						setState(370); ((Expression2Context)_localctx).IN_FUN_P6 = match(IN_FUN_P6);
+						setState(371); ((Expression2Context)_localctx).e22 = expression2(11);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          		
 						          		//Si a es una lista, debo convertirla
-						          		a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          		a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          		//Si b es una lista, debo convertirla
-						          		b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          		b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          		
-						          		if (memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)) == null) {
+						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          		
 						          			String newVarName = newVar();
 						          		
 						          			if ((((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null).equals("\\dres")){
 						          				print("dres(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\dres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type2 = types.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\dres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type2 = types.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\dres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\dres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\dres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\dres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null).equals("\\ndres")){
 						          				print("ndres(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type2 = types.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type2 = types.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\ndres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null).equals("\\rres")){
 						          				print("rres(" + b + "," + a + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\rres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type1 = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\rres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type1 = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\rres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\rres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\rres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\rres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P6!=null?((Expression2Context)_localctx).IN_FUN_P6.getText():null).equals("\\nrres")){
 						          				print("nrres(" + b + "," + a + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type1 = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type1 = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\nrres" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          		}
 						          	
@@ -2438,36 +2408,36 @@ public class ExprParser extends Parser {
 					case 2:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(379);
+						setState(374);
 						if (!(9 >= _localctx._p)) throw new FailedPredicateException(this, "9 >= $_p");
-						setState(380); ((Expression2Context)_localctx).IN_FUN_P5 = match(IN_FUN_P5);
-						setState(381); ((Expression2Context)_localctx).e2 = expression2(10);
+						setState(375); ((Expression2Context)_localctx).IN_FUN_P5 = match(IN_FUN_P5);
+						setState(376); ((Expression2Context)_localctx).e22 = expression2(10);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          		
 						          		//Si a es una lista, debo convertirla
-						          		a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          		a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          		//Si b es una lista, debo convertirla
-						          		b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          		b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          		
-						          		if (memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P5!=null?((Expression2Context)_localctx).IN_FUN_P5.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)) == null) {
+						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P5!=null?((Expression2Context)_localctx).IN_FUN_P5.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          		
 						          			String newVarName = newVar();
 						          		
 						          			if ((((Expression2Context)_localctx).IN_FUN_P5!=null?((Expression2Context)_localctx).IN_FUN_P5.getText():null).equals("\\oplus")){
 						          				print("oplus(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type1 = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type1 = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\oplus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          		}
 						          	
@@ -2477,113 +2447,117 @@ public class ExprParser extends Parser {
 					case 3:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(384);
+						setState(379);
 						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
-						setState(385); ((Expression2Context)_localctx).IN_FUN_P4 = match(IN_FUN_P4);
-						setState(386); ((Expression2Context)_localctx).e2 = expression2(9);
+						setState(380); ((Expression2Context)_localctx).IN_FUN_P4 = match(IN_FUN_P4);
+						setState(381); ((Expression2Context)_localctx).e22 = expression2(9);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
 						          		
-						          		if (memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)) == null) {
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
+
+						          		System.out.println("AAAAAAA " + (((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "-" + a);
+						          		System.out.println("BBBBBBB " + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null) + "-" + b);
+						          		
+						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          		
 						          			String newVarName = newVar();
 						          			Boolean isNumeric = false; 
 						          		
 						          			if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("*")){
 						          				print( newVarName + " is " + a + "*" + b );
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "*" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "*" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "*" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "*" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				isNumeric = true;
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\div")) {
 						          				print( newVarName + " is div(" + a + "," + b + ")" );
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\div" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\div" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\div" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\div" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				isNumeric = true;
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\mod")){
 						          				print( newVarName + " is mod(" + a + "," + b + ")" );
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\mod" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\mod" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\mod" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\mod" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				isNumeric = true;
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\cap")){
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          				a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          				//Si b es una lista, debo convertirla
-						          				b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          				b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          								
 						          				print("dinters(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cap" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cap" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cap" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cap" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cap" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cap" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\comp")){
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          				a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          				//Si b es una lista, debo convertirla
-						          				b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          				b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          						
 						          				print("comp(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\comp" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type1 = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          				String type2 = types.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\comp" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type1 = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          				String type2 = types.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          				String type = "\\power((" + leftAndRightTypes(type1).get(0) + ")\\cross(" + leftAndRightTypes(type2).get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\comp" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\comp" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\comp" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\comp" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\circ")){
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          				a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          				//Si b es una lista, debo convertirla
-						          				b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          				b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          				
 						          				print("circ(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\circ" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type1 = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\circ" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type1 = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				type1 = leftAndRightTypes(type1).get(1);
 						          				String type = "\\power((" + type1 + ")\\cross(" + type1 + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\circ" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\circ" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\circ" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\circ" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\extract")){
 						          				print("extract(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\extract" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\extract" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\extract" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\extract" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\extract" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\extract" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null).equals("\\filter")){
 						          				print("filter(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\filter" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\filter" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\filter" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\filter" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\filter" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\filter" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			
 						          			if (isNumeric) {
 						          				print(newVarName + " in " + printInfo("\\num"));
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), "\\num");
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P4!=null?((Expression2Context)_localctx).IN_FUN_P4.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), "\\num");
 						          			}
 						          		}
 						          	
@@ -2593,18 +2567,18 @@ public class ExprParser extends Parser {
 					case 4:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(389);
+						setState(384);
 						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(390); ((Expression2Context)_localctx).IN_FUN_P3 = match(IN_FUN_P3);
-						setState(391); ((Expression2Context)_localctx).e2 = expression2(8);
+						setState(385); ((Expression2Context)_localctx).IN_FUN_P3 = match(IN_FUN_P3);
+						setState(386); ((Expression2Context)_localctx).e22 = expression2(8);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          		
-						          		if (memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)) == null) {
+						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          		
 						          			String newVarName = newVar();
 						          			Boolean isNumeric = false; 
@@ -2612,64 +2586,64 @@ public class ExprParser extends Parser {
 						          		
 						          			if ((((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null).equals("+")){
 						          				print( newVarName + " is " + a + "+" + b );
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "+" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "+" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "+" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "+" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				isNumeric = true;
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null).equals("-")) {
 						          				print( newVarName + " is " + a + "-" + b );
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "-" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "-" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "-" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "-" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          				isNumeric = true;
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null).equals("\\cup")){
 						          			
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          				a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          				//Si b es una lista, debo convertirla
-						          				b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          				b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          				
 						          				print("dun(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cup" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cup" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cup" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cup" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cup" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cup" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null).equals("\\setminus")){
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null), a);
+						          				a = convertToSet((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null), a);
 						          				//Si b es una lista, debo convertirla
-						          				b = convertToSet((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), b);
+						          				b = convertToSet((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), b);
 						          		
 						          				print("diff(" + a + "," + b + "," + newVarName + ")");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
 						          				if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\setminus" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			else if ((((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null).equals("\\cat")){
 						          				print("prolog_call(append(" + a + "," + b + "," + newVarName + "))");
-						          				memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cat" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          				String type = types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cat" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), type);
+						          				memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cat" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          				String type = types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cat" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\cat" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cat" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}
 						          			
 						          			if (isNumeric) {
 						          				print(newVarName + " in " + printInfo("\\num"));
-						          				types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + (((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null) + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), "\\num");
+						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + (((Expression2Context)_localctx).IN_FUN_P3!=null?((Expression2Context)_localctx).IN_FUN_P3.getText():null) + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), "\\num");
 						          			}
 						          		}
 						          	
@@ -2679,22 +2653,22 @@ public class ExprParser extends Parser {
 					case 5:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(394);
+						setState(389);
 						if (!(6 >= _localctx._p)) throw new FailedPredicateException(this, "6 >= $_p");
-						setState(395); match(12);
-						setState(396); ((Expression2Context)_localctx).e2 = expression2(7);
+						setState(390); match(12);
+						setState(391); ((Expression2Context)_localctx).e22 = expression2(7);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
-						          		if (memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\upto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)) == null) {
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
+						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          			String newVarName = newVar();
-						          			memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\upto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
-						          			types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\upto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), (((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\upto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
+						          			memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
+						          			types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), (((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
 						          			if (modoSetExpression != 0 )
-						          				setExpressionVars.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\upto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), newVarName);
+						          				setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			print(newVarName + " = int(" + a + "," + b + ")");
 						          		}
 						          	
@@ -2704,25 +2678,25 @@ public class ExprParser extends Parser {
 					case 6:
 						{
 						_localctx = new Expression2Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e21 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression2);
-						setState(399);
+						setState(394);
 						if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
-						setState(400); match(63);
-						setState(401); ((Expression2Context)_localctx).e2 = expression2(6);
+						setState(395); match(63);
+						setState(396); ((Expression2Context)_localctx).e22 = expression2(6);
 
 						          		String a, b;
-						          		a = memory.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null));
-						          		b = memory.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null));
-						          		memory.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\mapsto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), "[" + a + "," + b + "]");
-						          		types.put((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null) + "\\mapsto" + (((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null), types.get((((Expression2Context)_localctx).e1!=null?_input.getText(((Expression2Context)_localctx).e1.start,((Expression2Context)_localctx).e1.stop):null)) + "\\cross" + types.get((((Expression2Context)_localctx).e2!=null?_input.getText(((Expression2Context)_localctx).e2.start,((Expression2Context)_localctx).e2.stop):null)));
+						          		a = memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null));
+						          		b = memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
+						          		memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\mapsto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), "[" + a + "," + b + "]");
+						          		types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\mapsto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), types.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null)) + "\\cross" + types.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)));
 						          	
 						}
 						break;
 					}
 					} 
 				}
-				setState(408);
+				setState(403);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,39,_ctx);
 			}
@@ -2747,6 +2721,10 @@ public class ExprParser extends Parser {
 		public String operator = "";
 		public String newVarName1 = "";
 		public String newVarName2 = "";
+		public Expression3Context e3;
+		public Token DECORATION;
+		public Expression4Context e4;
+		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public Expression3Context expression3() {
 			return getRuleContext(Expression3Context.class,0);
 		}
@@ -2781,12 +2759,12 @@ public class ExprParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			{
-			setState(410); expression4(0);
+			setState(405); expression4(0);
 			}
 			_ctx.stop = _input.LT(-1);
 			setState(416);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,40,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,41,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
@@ -2794,16 +2772,53 @@ public class ExprParser extends Parser {
 					{
 					{
 					_localctx = new Expression3Context(_parentctx, _parentState, _p);
+					_localctx.e3 = _prevctx;
 					pushNewRecursionContext(_localctx, _startState, RULE_expression3);
-					setState(412);
+					setState(407);
 					if (!(2 >= _localctx._p)) throw new FailedPredicateException(this, "2 >= $_p");
-					setState(413); expression4(0);
+					setState(409);
+					switch ( getInterpreter().adaptivePredict(_input,40,_ctx) ) {
+					case 1:
+						{
+						setState(408); ((Expression3Context)_localctx).DECORATION = match(DECORATION);
+						}
+						break;
+					}
+					setState(411); ((Expression3Context)_localctx).e4 = expression4(0);
+
+					          		String a, b;
+					          		a = memory.get((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null));
+					          		b = memory.get((((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null));
+					          		String op = " ";
+					          		if ((((Expression3Context)_localctx).DECORATION!=null?((Expression3Context)_localctx).DECORATION.getText():null) != null) op = "~";
+					          		System.out.println("APPLYYYYYYYYYYYYYYYYYYY " + (((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + " - " + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null));
+					          		
+					          		//Si a es una lista, debo convertirla
+					          		a = convertToSet((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null), a);
+					          		
+					          		if (memory.get((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null)) == null) {
+					          			String newVarName = newVar();
+					          			memory.put((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null), newVarName);
+					          			
+					          			if (modoSetExpression != 0 )
+					          				setExpressionVars.put((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null), newVarName);
+
+					          			String type1 = types.get((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null));
+					          			getType(type1);
+					          			String newVarType = leftAndRightTypes(type1).get(1);
+					          			types.put((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null), newVarType);
+					          			print("apply(" + a + "," + b + "," + newVarName + ")");
+					          			
+					          			//Imprimimos la informacion del tipo de la variable
+					          			typeInfo(newVarName, newVarType);
+					          		}
+					          	
 					}
 					} 
 				}
 				setState(418);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,40,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,41,_ctx);
 			}
 			}
 		}
@@ -2826,8 +2841,8 @@ public class ExprParser extends Parser {
 		public String operator = "";
 		public String newVarName1 = "";
 		public String newVarName2 = "";
-		public Expression4Context e1;
-		public Expression4Context e;
+		public Expression4Context e41;
+		public Expression4Context e4;
 		public Token NAME;
 		public Token NUM;
 		public Token SETSTART;
@@ -2840,7 +2855,8 @@ public class ExprParser extends Parser {
 		public Token DECORATION;
 		public Token LISTSTART;
 		public Token LISTEND;
-		public Expression4Context e2;
+		public Expression0Context e0;
+		public Expression4Context e42;
 		public Expression4Context expression4;
 		public Post_funContext post_fun;
 		public List<ExpressionContext> expression() {
@@ -2903,7 +2919,7 @@ public class ExprParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(511);
-			switch ( getInterpreter().adaptivePredict(_input,49,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,50,_ctx) ) {
 			case 1:
 				{
 				setState(420); ((Expression4Context)_localctx).NAME = match(NAME);
@@ -3187,10 +3203,10 @@ public class ExprParser extends Parser {
 			case 8:
 				{
 				setState(499); match(40);
-				setState(500); ((Expression4Context)_localctx).e = expression0();
+				setState(500); ((Expression4Context)_localctx).e0 = expression0();
 				setState(501); match(18);
 
-						String a = memory.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null));
+						String a = memory.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null));
 						
 						//Chequeo el nombre para ver si se trata de una sola variable, en ese caso no guardo en la memoria
 						//los parentesis, en otro caso si
@@ -3200,20 +3216,20 @@ public class ExprParser extends Parser {
 							boolean hasSpecialChar = p.matcher(a).find();
 							
 							if (hasSpecialChar){
-								memory.put("(" + (((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + ")", "(" + a + ")");
-								if (types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)) != null) {
-									types.put("(" + (((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + ")", types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)));
+								memory.put("(" + (((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null) + ")", "(" + a + ")");
+								if (types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)) != null) {
+									types.put("(" + (((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null) + ")", types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)));
 								}
 							}
 							else {
-								memory.put("(" + (((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + ")", a);
-								if (types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)) != null) {
-									types.put("(" + (((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + ")", types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)));
+								memory.put("(" + (((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null) + ")", a);
+								if (types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)) != null) {
+									types.put("(" + (((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null) + ")", types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)));
 								}
 							}
 						} else  //Si estoy en la parte de declaracion
-							if (types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)) != null)
-								types.put("(" + (((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + ")", "(" + types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null)) + ")");
+							if (types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)) != null)
+								types.put("(" + (((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null) + ")", "(" + types.get((((Expression4Context)_localctx).e0!=null?_input.getText(((Expression4Context)_localctx).e0.start,((Expression4Context)_localctx).e0.stop):null)) + ")");
 					
 				}
 				break;
@@ -3249,27 +3265,27 @@ public class ExprParser extends Parser {
 			_ctx.stop = _input.LT(-1);
 			setState(524);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,51,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,52,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
 					setState(522);
-					switch ( getInterpreter().adaptivePredict(_input,50,_ctx) ) {
+					switch ( getInterpreter().adaptivePredict(_input,51,_ctx) ) {
 					case 1:
 						{
 						_localctx = new Expression4Context(_parentctx, _parentState, _p);
-						_localctx.e1 = _prevctx;
+						_localctx.e41 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression4);
 						setState(513);
 						if (!(6 >= _localctx._p)) throw new FailedPredicateException(this, "6 >= $_p");
 						setState(514); match(53);
-						setState(515); ((Expression4Context)_localctx).e2 = ((Expression4Context)_localctx).expression4 = expression4(7);
+						setState(515); ((Expression4Context)_localctx).e42 = ((Expression4Context)_localctx).expression4 = expression4(7);
 
-						          		if (memory.get((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null) + "." + (((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null)) == null) {
+						          		if (memory.get((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null) + "." + (((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null)) == null) {
 						          		
-						          			String e1Type = types.get((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null));
+						          			String e1Type = types.get((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null));
 						          			if (!e1Type.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
 						          				e1Type = types.get(e1Type);
 						          			
@@ -3281,17 +3297,17 @@ public class ExprParser extends Parser {
 						          				String[] vars = schemaVars.split(",");
 						          				//Buscamos la posicion de la variable
 						          				int position = 1;
-						          				while (!vars[position-1].contains((((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null) + ":")) //Se resta 1 porque en setlog empiezan en 1, no en 0 como en java
+						          				while (!vars[position-1].contains((((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null) + ":")) //Se resta 1 porque en setlog empiezan en 1, no en 0 como en java
 						          					position++;
 						          				//Creamos una nueva variable
 						          				String newVarName = newVar();
 						          				//Vemos su tipo
-						          				String type = vars[position-1].substring((((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null).length()+1);
-						          				memory.put((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null) + "." + (((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null), newVarName);
+						          				String type = vars[position-1].substring((((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null).length()+1);
+						          				memory.put((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null) + "." + (((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null), newVarName);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null) + "." + (((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null), newVarName);
-						          				types.put((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null) + "." + (((Expression4Context)_localctx).e2!=null?_input.getText(((Expression4Context)_localctx).e2.start,((Expression4Context)_localctx).e2.stop):null), type);
-						          				print("nth1(" + position + "," + memory.get((((Expression4Context)_localctx).e1!=null?_input.getText(((Expression4Context)_localctx).e1.start,((Expression4Context)_localctx).e1.stop):null)) + "," + newVarName + ")");
+						          					setExpressionVars.put((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null) + "." + (((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null), newVarName);
+						          				types.put((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null) + "." + (((Expression4Context)_localctx).e42!=null?_input.getText(((Expression4Context)_localctx).e42.start,((Expression4Context)_localctx).e42.stop):null), type);
+						          				print("nth1(" + position + "," + memory.get((((Expression4Context)_localctx).e41!=null?_input.getText(((Expression4Context)_localctx).e41.start,((Expression4Context)_localctx).e41.stop):null)) + "," + newVarName + ")");
 						          				
 						          				typeInfo(newVarName, type);
 						          				
@@ -3304,34 +3320,34 @@ public class ExprParser extends Parser {
 					case 2:
 						{
 						_localctx = new Expression4Context(_parentctx, _parentState, _p);
-						_localctx.e = _prevctx;
+						_localctx.e4 = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_expression4);
 						setState(518);
 						if (!(5 >= _localctx._p)) throw new FailedPredicateException(this, "5 >= $_p");
 						setState(519); ((Expression4Context)_localctx).post_fun = post_fun();
 
 						          		String a;
-						          		a = memory.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null));
+						          		a = memory.get((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null));
 						          		String op = (((Expression4Context)_localctx).post_fun!=null?_input.getText(((Expression4Context)_localctx).post_fun.start,((Expression4Context)_localctx).post_fun.stop):null);
 						          		
-						          		if (memory.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + op) == null) {
+						          		if (memory.get((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null) + op) == null) {
 						          		
 						          			String newVarName = newVar();
 						          		
 						          			if (op.startsWith("\\inv")){
 						          				//Si a es una lista, debo convertirla
-						          				a = convertToSet((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null), a);
+						          				a = convertToSet((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null), a);
 						          			
 						          				print("inv(" + newVarName + "," + a + ")");
-						          				memory.put((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + op, newVarName);
-						          				String type = types.get((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null));
+						          				memory.put((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null) + op, newVarName);
+						          				String type = types.get((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null));
 						          				if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 						          				type = invertType(type); 
-						          				types.put((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + op, type);
+						          				types.put((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null) + op, type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
-						          					setExpressionVars.put((((Expression4Context)_localctx).e!=null?_input.getText(((Expression4Context)_localctx).e.start,((Expression4Context)_localctx).e.stop):null) + op, newVarName);
+						          					setExpressionVars.put((((Expression4Context)_localctx).e4!=null?_input.getText(((Expression4Context)_localctx).e4.start,((Expression4Context)_localctx).e4.stop):null) + op, newVarName);
 						          			}
 						          		}
 						          	
@@ -3342,7 +3358,7 @@ public class ExprParser extends Parser {
 				}
 				setState(526);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,51,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,52,_ctx);
 			}
 			}
 		}
@@ -3381,7 +3397,7 @@ public class ExprParser extends Parser {
 			{
 			setState(527); match(47);
 			setState(529);
-			switch ( getInterpreter().adaptivePredict(_input,52,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,53,_ctx) ) {
 			case 1:
 				{
 				setState(528); match(DECORATION);
@@ -3424,7 +3440,7 @@ public class ExprParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(543);
-			switch ( getInterpreter().adaptivePredict(_input,53,_ctx) ) {
+			switch ( getInterpreter().adaptivePredict(_input,54,_ctx) ) {
 			case 1:
 				{
 				setState(531); match(44);
@@ -3566,7 +3582,7 @@ public class ExprParser extends Parser {
 	}
 	private boolean expression1_sempred(Expression1Context _localctx, int predIndex) {
 		switch (predIndex) {
-		case 4: return 5 >= _localctx._p;
+		case 4: return 4 >= _localctx._p;
 		}
 		return true;
 	}
@@ -3626,15 +3642,15 @@ public class ExprParser extends Parser {
 		"\3\13\3\13\3\13\3\13\3\13\5\13\u012a\n\13\3\13\3\13\3\13\3\13\3\13\3\13"+
 		"\3\13\3\13\3\13\3\13\3\13\3\13\7\13\u0138\n\13\f\13\16\13\u013b\13\13"+
 		"\3\f\3\f\3\r\3\r\3\16\3\16\3\16\3\16\3\16\3\16\3\16\6\16\u0148\n\16\r"+
-		"\16\16\16\u0149\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16\3\16"+
-		"\3\16\5\16\u0158\n\16\3\16\3\16\3\16\3\16\3\16\7\16\u015f\n\16\f\16\16"+
-		"\16\u0162\13\16\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17"+
-		"\3\17\3\17\3\17\5\17\u0172\n\17\3\17\3\17\3\17\5\17\u0177\n\17\3\17\3"+
-		"\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3"+
-		"\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3"+
-		"\17\7\17\u0197\n\17\f\17\16\17\u019a\13\17\3\20\3\20\3\20\3\20\3\20\7"+
-		"\20\u01a1\n\20\f\20\16\20\u01a4\13\20\3\21\3\21\3\21\3\21\3\21\3\21\3"+
-		"\21\3\21\3\21\3\21\3\21\5\21\u01b1\n\21\3\21\3\21\3\21\3\21\7\21\u01b7"+
+		"\16\16\16\u0149\3\16\3\16\3\16\3\16\3\16\3\16\3\16\5\16\u0153\n\16\3\16"+
+		"\3\16\3\16\3\16\3\16\7\16\u015a\n\16\f\16\16\16\u015d\13\16\3\17\3\17"+
+		"\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\5\17\u016d"+
+		"\n\17\3\17\3\17\3\17\5\17\u0172\n\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17"+
+		"\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17"+
+		"\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\3\17\7\17\u0192\n\17\f\17\16"+
+		"\17\u0195\13\17\3\20\3\20\3\20\3\20\3\20\5\20\u019c\n\20\3\20\3\20\3\20"+
+		"\7\20\u01a1\n\20\f\20\16\20\u01a4\13\20\3\21\3\21\3\21\3\21\3\21\3\21"+
+		"\3\21\3\21\3\21\3\21\3\21\5\21\u01b1\n\21\3\21\3\21\3\21\3\21\7\21\u01b7"+
 		"\n\21\f\21\16\21\u01ba\13\21\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3\21\3"+
 		"\21\3\21\3\21\5\21\u01c7\n\21\3\21\3\21\3\21\3\21\3\21\5\21\u01ce\n\21"+
 		"\3\21\3\21\3\21\3\21\3\21\5\21\u01d5\n\21\3\21\3\21\3\21\3\21\5\21\u01db"+
@@ -3648,7 +3664,7 @@ public class ExprParser extends Parser {
 		";;JJ\b\6\6\17\17\27\27\33\33\'\'<<\u0273\2/\3\2\2\2\4Y\3\2\2\2\6[\3\2"+
 		"\2\2\bj\3\2\2\2\no\3\2\2\2\f\u0083\3\2\2\2\16\u0095\3\2\2\2\20\u009d\3"+
 		"\2\2\2\22\u00ac\3\2\2\2\24\u0129\3\2\2\2\26\u013c\3\2\2\2\30\u013e\3\2"+
-		"\2\2\32\u0157\3\2\2\2\34\u0176\3\2\2\2\36\u019b\3\2\2\2 \u0201\3\2\2\2"+
+		"\2\2\32\u0152\3\2\2\2\34\u0171\3\2\2\2\36\u0196\3\2\2\2 \u0201\3\2\2\2"+
 		"\"\u0211\3\2\2\2$\u0221\3\2\2\2&\u0223\3\2\2\2(,\5\4\3\2)+\7J\2\2*)\3"+
 		"\2\2\2+.\3\2\2\2,*\3\2\2\2,-\3\2\2\2-\60\3\2\2\2.,\3\2\2\2/(\3\2\2\2\60"+
 		"\61\3\2\2\2\61/\3\2\2\2\61\62\3\2\2\2\62\63\3\2\2\2\63\64\b\2\1\2\64\3"+
@@ -3734,64 +3750,64 @@ public class ExprParser extends Parser {
 		"\1\2\u0143\u0144\7\62\2\2\u0144\u0145\5\34\17\2\u0145\u0146\b\16\1\2\u0146"+
 		"\u0148\3\2\2\2\u0147\u0143\3\2\2\2\u0148\u0149\3\2\2\2\u0149\u0147\3\2"+
 		"\2\2\u0149\u014a\3\2\2\2\u014a\u014b\3\2\2\2\u014b\u014c\b\16\1\2\u014c"+
-		"\u0158\3\2\2\2\u014d\u014e\5&\24\2\u014e\u014f\5\34\17\2\u014f\u0150\b"+
-		"\16\1\2\u0150\u0158\3\2\2\2\u0151\u0152\5\34\17\2\u0152\u0153\7I\2\2\u0153"+
-		"\u0154\5\34\17\2\u0154\u0155\b\16\1\2\u0155\u0158\3\2\2\2\u0156\u0158"+
-		"\5\34\17\2\u0157\u0140\3\2\2\2\u0157\u014d\3\2\2\2\u0157\u0151\3\2\2\2"+
-		"\u0157\u0156\3\2\2\2\u0158\u0160\3\2\2\2\u0159\u015a\6\16\6\3\u015a\u015b"+
-		"\7H\2\2\u015b\u015c\5\32\16\2\u015c\u015d\b\16\1\2\u015d\u015f\3\2\2\2"+
-		"\u015e\u0159\3\2\2\2\u015f\u0162\3\2\2\2\u0160\u015e\3\2\2\2\u0160\u0161"+
-		"\3\2\2\2\u0161\33\3\2\2\2\u0162\u0160\3\2\2\2\u0163\u0164\b\17\1\2\u0164"+
-		"\u0165\7\66\2\2\u0165\u0166\5 \21\2\u0166\u0167\b\17\1\2\u0167\u0177\3"+
-		"\2\2\2\u0168\u0169\5$\23\2\u0169\u016a\5 \21\2\u016a\u016b\b\17\1\2\u016b"+
-		"\u0177\3\2\2\2\u016c\u016d\5 \21\2\u016d\u016e\7P\2\2\u016e\u016f\5\26"+
-		"\f\2\u016f\u0171\7Q\2\2\u0170\u0172\7I\2\2\u0171\u0170\3\2\2\2\u0171\u0172"+
-		"\3\2\2\2\u0172\u0173\3\2\2\2\u0173\u0174\b\17\1\2\u0174\u0177\3\2\2\2"+
-		"\u0175\u0177\5\36\20\2\u0176\u0163\3\2\2\2\u0176\u0168\3\2\2\2\u0176\u016c"+
-		"\3\2\2\2\u0176\u0175\3\2\2\2\u0177\u0198\3\2\2\2\u0178\u0179\6\17\7\3"+
-		"\u0179\u017a\7G\2\2\u017a\u017b\5\34\17\2\u017b\u017c\b\17\1\2\u017c\u0197"+
-		"\3\2\2\2\u017d\u017e\6\17\b\3\u017e\u017f\7F\2\2\u017f\u0180\5\34\17\2"+
-		"\u0180\u0181\b\17\1\2\u0181\u0197\3\2\2\2\u0182\u0183\6\17\t\3\u0183\u0184"+
-		"\7E\2\2\u0184\u0185\5\34\17\2\u0185\u0186\b\17\1\2\u0186\u0197\3\2\2\2"+
-		"\u0187\u0188\6\17\n\3\u0188\u0189\7D\2\2\u0189\u018a\5\34\17\2\u018a\u018b"+
-		"\b\17\1\2\u018b\u0197\3\2\2\2\u018c\u018d\6\17\13\3\u018d\u018e\7\16\2"+
-		"\2\u018e\u018f\5\34\17\2\u018f\u0190\b\17\1\2\u0190\u0197\3\2\2\2\u0191"+
-		"\u0192\6\17\f\3\u0192\u0193\7A\2\2\u0193\u0194\5\34\17\2\u0194\u0195\b"+
-		"\17\1\2\u0195\u0197\3\2\2\2\u0196\u0178\3\2\2\2\u0196\u017d\3\2\2\2\u0196"+
-		"\u0182\3\2\2\2\u0196\u0187\3\2\2\2\u0196\u018c\3\2\2\2\u0196\u0191\3\2"+
-		"\2\2\u0197\u019a\3\2\2\2\u0198\u0196\3\2\2\2\u0198\u0199\3\2\2\2\u0199"+
-		"\35\3\2\2\2\u019a\u0198\3\2\2\2\u019b\u019c\b\20\1\2\u019c\u019d\5 \21"+
-		"\2\u019d\u01a2\3\2\2\2\u019e\u019f\6\20\r\3\u019f\u01a1\5 \21\2\u01a0"+
-		"\u019e\3\2\2\2\u01a1\u01a4\3\2\2\2\u01a2\u01a0\3\2\2\2\u01a2\u01a3\3\2"+
-		"\2\2\u01a3\37\3\2\2\2\u01a4\u01a2\3\2\2\2\u01a5\u01a6\b\21\1\2\u01a6\u01a7"+
-		"\7B\2\2\u01a7\u0202\b\21\1\2\u01a8\u01a9\7C\2\2\u01a9\u0202\b\21\1\2\u01aa"+
-		"\u01ab\7\r\2\2\u01ab\u0202\b\21\1\2\u01ac\u01b0\7L\2\2\u01ad\u01ae\5\30"+
-		"\r\2\u01ae\u01af\b\21\1\2\u01af\u01b1\3\2\2\2\u01b0\u01ad\3\2\2\2\u01b0"+
-		"\u01b1\3\2\2\2\u01b1\u01b8\3\2\2\2\u01b2\u01b3\7(\2\2\u01b3\u01b4\5\30"+
-		"\r\2\u01b4\u01b5\b\21\1\2\u01b5\u01b7\3\2\2\2\u01b6\u01b2\3\2\2\2\u01b7"+
-		"\u01ba\3\2\2\2\u01b8\u01b6\3\2\2\2\u01b8\u01b9\3\2\2\2\u01b9\u01bb\3\2"+
-		"\2\2\u01ba\u01b8\3\2\2\2\u01bb\u01bc\7M\2\2\u01bc\u0202\b\21\1\2\u01bd"+
-		"\u01be\7L\2\2\u01be\u01bf\b\21\1\2\u01bf\u01c0\5\16\b\2\u01c0\u01c6\b"+
-		"\21\1\2\u01c1\u01c2\7#\2\2\u01c2\u01c3\b\21\1\2\u01c3\u01c4\5\24\13\2"+
-		"\u01c4\u01c5\b\21\1\2\u01c5\u01c7\3\2\2\2\u01c6\u01c1\3\2\2\2\u01c6\u01c7"+
-		"\3\2\2\2\u01c7\u01cd\3\2\2\2\u01c8\u01c9\7\25\2\2\u01c9\u01ca\b\21\1\2"+
-		"\u01ca\u01cb\5\30\r\2\u01cb\u01cc\b\21\1\2\u01cc\u01ce\3\2\2\2\u01cd\u01c8"+
-		"\3\2\2\2\u01cd\u01ce\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0\7M\2\2\u01d0"+
-		"\u01d1\b\21\1\2\u01d1\u01d2\b\21\1\2\u01d2\u0202\3\2\2\2\u01d3\u01d5\7"+
-		"I\2\2\u01d4\u01d3\3\2\2\2\u01d4\u01d5\3\2\2\2\u01d5\u01d6\3\2\2\2\u01d6"+
-		"\u01da\7N\2\2\u01d7\u01d8\5\30\r\2\u01d8\u01d9\b\21\1\2\u01d9\u01db\3"+
-		"\2\2\2\u01da\u01d7\3\2\2\2\u01da\u01db\3\2\2\2\u01db\u01e2\3\2\2\2\u01dc"+
-		"\u01dd\7(\2\2\u01dd\u01de\5\30\r\2\u01de\u01df\b\21\1\2\u01df\u01e1\3"+
-		"\2\2\2\u01e0\u01dc\3\2\2\2\u01e1\u01e4\3\2\2\2\u01e2\u01e0\3\2\2\2\u01e2"+
-		"\u01e3\3\2\2\2\u01e3\u01e5\3\2\2\2\u01e4\u01e2\3\2\2\2\u01e5\u01e6\7O"+
-		"\2\2\u01e6\u0202\b\21\1\2\u01e7\u01e8\7*\2\2\u01e8\u01e9\5\30\r\2\u01e9"+
-		"\u01ee\b\21\1\2\u01ea\u01eb\7(\2\2\u01eb\u01ec\5\30\r\2\u01ec\u01ed\b"+
-		"\21\1\2\u01ed\u01ef\3\2\2\2\u01ee\u01ea\3\2\2\2\u01ef\u01f0\3\2\2\2\u01f0"+
-		"\u01ee\3\2\2\2\u01f0\u01f1\3\2\2\2\u01f1\u01f2\3\2\2\2\u01f2\u01f3\7\24"+
-		"\2\2\u01f3\u01f4\b\21\1\2\u01f4\u0202\3\2\2\2\u01f5\u01f6\7*\2\2\u01f6"+
-		"\u01f7\5\26\f\2\u01f7\u01f8\7\24\2\2\u01f8\u01f9\b\21\1\2\u01f9\u0202"+
-		"\3\2\2\2\u01fa\u01fb\7\34\2\2\u01fb\u01fc\7\13\2\2\u01fc\u0202\b\21\1"+
-		"\2\u01fd\u01fe\7\34\2\2\u01fe\u0202\b\21\1\2\u01ff\u0200\7?\2\2\u0200"+
+		"\u0153\3\2\2\2\u014d\u014e\5&\24\2\u014e\u014f\5\34\17\2\u014f\u0150\b"+
+		"\16\1\2\u0150\u0153\3\2\2\2\u0151\u0153\5\34\17\2\u0152\u0140\3\2\2\2"+
+		"\u0152\u014d\3\2\2\2\u0152\u0151\3\2\2\2\u0153\u015b\3\2\2\2\u0154\u0155"+
+		"\6\16\6\3\u0155\u0156\7H\2\2\u0156\u0157\5\32\16\2\u0157\u0158\b\16\1"+
+		"\2\u0158\u015a\3\2\2\2\u0159\u0154\3\2\2\2\u015a\u015d\3\2\2\2\u015b\u0159"+
+		"\3\2\2\2\u015b\u015c\3\2\2\2\u015c\33\3\2\2\2\u015d\u015b\3\2\2\2\u015e"+
+		"\u015f\b\17\1\2\u015f\u0160\7\66\2\2\u0160\u0161\5 \21\2\u0161\u0162\b"+
+		"\17\1\2\u0162\u0172\3\2\2\2\u0163\u0164\5$\23\2\u0164\u0165\5 \21\2\u0165"+
+		"\u0166\b\17\1\2\u0166\u0172\3\2\2\2\u0167\u0168\5 \21\2\u0168\u0169\7"+
+		"P\2\2\u0169\u016a\5\26\f\2\u016a\u016c\7Q\2\2\u016b\u016d\7I\2\2\u016c"+
+		"\u016b\3\2\2\2\u016c\u016d\3\2\2\2\u016d\u016e\3\2\2\2\u016e\u016f\b\17"+
+		"\1\2\u016f\u0172\3\2\2\2\u0170\u0172\5\36\20\2\u0171\u015e\3\2\2\2\u0171"+
+		"\u0163\3\2\2\2\u0171\u0167\3\2\2\2\u0171\u0170\3\2\2\2\u0172\u0193\3\2"+
+		"\2\2\u0173\u0174\6\17\7\3\u0174\u0175\7G\2\2\u0175\u0176\5\34\17\2\u0176"+
+		"\u0177\b\17\1\2\u0177\u0192\3\2\2\2\u0178\u0179\6\17\b\3\u0179\u017a\7"+
+		"F\2\2\u017a\u017b\5\34\17\2\u017b\u017c\b\17\1\2\u017c\u0192\3\2\2\2\u017d"+
+		"\u017e\6\17\t\3\u017e\u017f\7E\2\2\u017f\u0180\5\34\17\2\u0180\u0181\b"+
+		"\17\1\2\u0181\u0192\3\2\2\2\u0182\u0183\6\17\n\3\u0183\u0184\7D\2\2\u0184"+
+		"\u0185\5\34\17\2\u0185\u0186\b\17\1\2\u0186\u0192\3\2\2\2\u0187\u0188"+
+		"\6\17\13\3\u0188\u0189\7\16\2\2\u0189\u018a\5\34\17\2\u018a\u018b\b\17"+
+		"\1\2\u018b\u0192\3\2\2\2\u018c\u018d\6\17\f\3\u018d\u018e\7A\2\2\u018e"+
+		"\u018f\5\34\17\2\u018f\u0190\b\17\1\2\u0190\u0192\3\2\2\2\u0191\u0173"+
+		"\3\2\2\2\u0191\u0178\3\2\2\2\u0191\u017d\3\2\2\2\u0191\u0182\3\2\2\2\u0191"+
+		"\u0187\3\2\2\2\u0191\u018c\3\2\2\2\u0192\u0195\3\2\2\2\u0193\u0191\3\2"+
+		"\2\2\u0193\u0194\3\2\2\2\u0194\35\3\2\2\2\u0195\u0193\3\2\2\2\u0196\u0197"+
+		"\b\20\1\2\u0197\u0198\5 \21\2\u0198\u01a2\3\2\2\2\u0199\u019b\6\20\r\3"+
+		"\u019a\u019c\7I\2\2\u019b\u019a\3\2\2\2\u019b\u019c\3\2\2\2\u019c\u019d"+
+		"\3\2\2\2\u019d\u019e\5 \21\2\u019e\u019f\b\20\1\2\u019f\u01a1\3\2\2\2"+
+		"\u01a0\u0199\3\2\2\2\u01a1\u01a4\3\2\2\2\u01a2\u01a0\3\2\2\2\u01a2\u01a3"+
+		"\3\2\2\2\u01a3\37\3\2\2\2\u01a4\u01a2\3\2\2\2\u01a5\u01a6\b\21\1\2\u01a6"+
+		"\u01a7\7B\2\2\u01a7\u0202\b\21\1\2\u01a8\u01a9\7C\2\2\u01a9\u0202\b\21"+
+		"\1\2\u01aa\u01ab\7\r\2\2\u01ab\u0202\b\21\1\2\u01ac\u01b0\7L\2\2\u01ad"+
+		"\u01ae\5\30\r\2\u01ae\u01af\b\21\1\2\u01af\u01b1\3\2\2\2\u01b0\u01ad\3"+
+		"\2\2\2\u01b0\u01b1\3\2\2\2\u01b1\u01b8\3\2\2\2\u01b2\u01b3\7(\2\2\u01b3"+
+		"\u01b4\5\30\r\2\u01b4\u01b5\b\21\1\2\u01b5\u01b7\3\2\2\2\u01b6\u01b2\3"+
+		"\2\2\2\u01b7\u01ba\3\2\2\2\u01b8\u01b6\3\2\2\2\u01b8\u01b9\3\2\2\2\u01b9"+
+		"\u01bb\3\2\2\2\u01ba\u01b8\3\2\2\2\u01bb\u01bc\7M\2\2\u01bc\u0202\b\21"+
+		"\1\2\u01bd\u01be\7L\2\2\u01be\u01bf\b\21\1\2\u01bf\u01c0\5\16\b\2\u01c0"+
+		"\u01c6\b\21\1\2\u01c1\u01c2\7#\2\2\u01c2\u01c3\b\21\1\2\u01c3\u01c4\5"+
+		"\24\13\2\u01c4\u01c5\b\21\1\2\u01c5\u01c7\3\2\2\2\u01c6\u01c1\3\2\2\2"+
+		"\u01c6\u01c7\3\2\2\2\u01c7\u01cd\3\2\2\2\u01c8\u01c9\7\25\2\2\u01c9\u01ca"+
+		"\b\21\1\2\u01ca\u01cb\5\30\r\2\u01cb\u01cc\b\21\1\2\u01cc\u01ce\3\2\2"+
+		"\2\u01cd\u01c8\3\2\2\2\u01cd\u01ce\3\2\2\2\u01ce\u01cf\3\2\2\2\u01cf\u01d0"+
+		"\7M\2\2\u01d0\u01d1\b\21\1\2\u01d1\u01d2\b\21\1\2\u01d2\u0202\3\2\2\2"+
+		"\u01d3\u01d5\7I\2\2\u01d4\u01d3\3\2\2\2\u01d4\u01d5\3\2\2\2\u01d5\u01d6"+
+		"\3\2\2\2\u01d6\u01da\7N\2\2\u01d7\u01d8\5\30\r\2\u01d8\u01d9\b\21\1\2"+
+		"\u01d9\u01db\3\2\2\2\u01da\u01d7\3\2\2\2\u01da\u01db\3\2\2\2\u01db\u01e2"+
+		"\3\2\2\2\u01dc\u01dd\7(\2\2\u01dd\u01de\5\30\r\2\u01de\u01df\b\21\1\2"+
+		"\u01df\u01e1\3\2\2\2\u01e0\u01dc\3\2\2\2\u01e1\u01e4\3\2\2\2\u01e2\u01e0"+
+		"\3\2\2\2\u01e2\u01e3\3\2\2\2\u01e3\u01e5\3\2\2\2\u01e4\u01e2\3\2\2\2\u01e5"+
+		"\u01e6\7O\2\2\u01e6\u0202\b\21\1\2\u01e7\u01e8\7*\2\2\u01e8\u01e9\5\30"+
+		"\r\2\u01e9\u01ee\b\21\1\2\u01ea\u01eb\7(\2\2\u01eb\u01ec\5\30\r\2\u01ec"+
+		"\u01ed\b\21\1\2\u01ed\u01ef\3\2\2\2\u01ee\u01ea\3\2\2\2\u01ef\u01f0\3"+
+		"\2\2\2\u01f0\u01ee\3\2\2\2\u01f0\u01f1\3\2\2\2\u01f1\u01f2\3\2\2\2\u01f2"+
+		"\u01f3\7\24\2\2\u01f3\u01f4\b\21\1\2\u01f4\u0202\3\2\2\2\u01f5\u01f6\7"+
+		"*\2\2\u01f6\u01f7\5\26\f\2\u01f7\u01f8\7\24\2\2\u01f8\u01f9\b\21\1\2\u01f9"+
+		"\u0202\3\2\2\2\u01fa\u01fb\7\34\2\2\u01fb\u01fc\7\13\2\2\u01fc\u0202\b"+
+		"\21\1\2\u01fd\u01fe\7\34\2\2\u01fe\u0202\b\21\1\2\u01ff\u0200\7?\2\2\u0200"+
 		"\u0202\b\21\1\2\u0201\u01a5\3\2\2\2\u0201\u01a8\3\2\2\2\u0201\u01aa\3"+
 		"\2\2\2\u0201\u01ac\3\2\2\2\u0201\u01bd\3\2\2\2\u0201\u01d4\3\2\2\2\u0201"+
 		"\u01e7\3\2\2\2\u0201\u01f5\3\2\2\2\u0201\u01fa\3\2\2\2\u0201\u01fd\3\2"+
@@ -3808,11 +3824,11 @@ public class ExprParser extends Parser {
 		"\u0215\3\2\2\2\u0221\u0216\3\2\2\2\u0221\u0217\3\2\2\2\u0221\u0219\3\2"+
 		"\2\2\u0221\u021a\3\2\2\2\u0221\u021b\3\2\2\2\u0221\u021c\3\2\2\2\u0221"+
 		"\u021d\3\2\2\2\u0221\u021f\3\2\2\2\u0222%\3\2\2\2\u0223\u0224\t\3\2\2"+
-		"\u0224\u0225\7I\2\2\u0225\'\3\2\2\28,\619DJOUYdtz~\u0087\u008b\u0092\u009a"+
+		"\u0224\u0225\7I\2\2\u0225\'\3\2\2\29,\619DJOUYdtz~\u0087\u008b\u0092\u009a"+
 		"\u00a5\u00b7\u00c0\u00c7\u00cf\u00d7\u00df\u00ec\u00f5\u00fd\u0106\u010e"+
-		"\u0116\u011e\u0129\u0137\u0139\u0149\u0157\u0160\u0171\u0176\u0196\u0198"+
-		"\u01a2\u01b0\u01b8\u01c6\u01cd\u01d4\u01da\u01e2\u01f0\u0201\u020c\u020e"+
-		"\u0213\u0221";
+		"\u0116\u011e\u0129\u0137\u0139\u0149\u0152\u015b\u016c\u0171\u0191\u0193"+
+		"\u019b\u01a2\u01b0\u01b8\u01c6\u01cd\u01d4\u01da\u01e2\u01f0\u0201\u020c"+
+		"\u020e\u0213\u0221";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {
