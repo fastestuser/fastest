@@ -702,13 +702,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		else
 			types.put($a.text + $IN_GEN.text + $b.text, aType + $IN_GEN.text + bType );
 	}
-	|	e21=expression2 {$expression::elements.add($e21.text);} ('\\cross' e22=expression2 {$expression::elements.add($e22.text);})+
+	|	e21=expression2 {$expression1::elements.add($e21.text);} ('\\cross' e22=expression2 {$expression1::elements.add($e22.text);})+
 	{
 		String unfoldedType = "";
 		
 		//Para cada exp realizamos el procesamiento
-		while( !$expression2::elements.isEmpty() ) {
-			String exp = $expression2::elements.remove(0);
+		while( !$expression1::elements.isEmpty() ) {
+			String exp = $expression1::elements.remove(0);
 			
 			$zName = $zName.concat(exp);
 			
@@ -718,7 +718,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else
 				unfoldedType = unfoldedType.concat(expType);
 				
-			if (!$expression2::elements.isEmpty()) {
+			if (!$expression1::elements.isEmpty()) {
 				$zName = $zName.concat("\\cross");
 				unfoldedType = unfoldedType.concat("\\cross");
 			}
@@ -1257,7 +1257,7 @@ expression3
 		String a, b;
 		a = memory.get($e3.text);
 		b = memory.get($e4.text);
-		String op = " ";
+		String op = "";
 		if ($DECORATION.text != null) op = "~";
 		System.out.println("APPLYYYYYYYYYYYYYYYYYYY " + $e3.text + " - " + $e4.text);
 		

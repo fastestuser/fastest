@@ -1885,7 +1885,7 @@ public class ExprParser extends Parser {
 			case 1:
 				{
 				setState(319); ((Expression1Context)_localctx).e21 = expression2(0);
-				((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e21!=null?_input.getText(((Expression1Context)_localctx).e21.start,((Expression1Context)_localctx).e21.stop):null));
+				((Expression1Context)getInvokingContext(12)).elements.add((((Expression1Context)_localctx).e21!=null?_input.getText(((Expression1Context)_localctx).e21.start,((Expression1Context)_localctx).e21.stop):null));
 				setState(325); 
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,33,_ctx);
@@ -1896,7 +1896,7 @@ public class ExprParser extends Parser {
 						{
 						setState(321); match(48);
 						setState(322); ((Expression1Context)_localctx).e22 = expression2(0);
-						((ExpressionContext)getInvokingContext(11)).elements.add((((Expression1Context)_localctx).e22!=null?_input.getText(((Expression1Context)_localctx).e22.start,((Expression1Context)_localctx).e22.stop):null));
+						((Expression1Context)getInvokingContext(12)).elements.add((((Expression1Context)_localctx).e22!=null?_input.getText(((Expression1Context)_localctx).e22.start,((Expression1Context)_localctx).e22.stop):null));
 						}
 						}
 						break;
@@ -1911,8 +1911,8 @@ public class ExprParser extends Parser {
 						String unfoldedType = "";
 						
 						//Para cada exp realizamos el procesamiento
-						while( !((Expression2Context)getInvokingContext(13)).elements.isEmpty() ) {
-							String exp = ((Expression2Context)getInvokingContext(13)).elements.remove(0);
+						while( !((Expression1Context)getInvokingContext(12)).elements.isEmpty() ) {
+							String exp = ((Expression1Context)getInvokingContext(12)).elements.remove(0);
 							
 							((Expression1Context)_localctx).zName =  _localctx.zName.concat(exp);
 							
@@ -1922,7 +1922,7 @@ public class ExprParser extends Parser {
 							else
 								unfoldedType = unfoldedType.concat(expType);
 								
-							if (!((Expression2Context)getInvokingContext(13)).elements.isEmpty()) {
+							if (!((Expression1Context)getInvokingContext(12)).elements.isEmpty()) {
 								((Expression1Context)_localctx).zName =  _localctx.zName.concat("\\cross");
 								unfoldedType = unfoldedType.concat("\\cross");
 							}
@@ -2088,12 +2088,8 @@ public class ExprParser extends Parser {
 		public Token IN_FUN_P4;
 		public Token IN_FUN_P3;
 		public TerminalNode IN_FUN_P6() { return getToken(ExprParser.IN_FUN_P6, 0); }
-		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public Expression0Context expression0() {
 			return getRuleContext(Expression0Context.class,0);
-		}
-		public Pre_genContext pre_gen() {
-			return getRuleContext(Pre_genContext.class,0);
 		}
 		public List<Expression2Context> expression2() {
 			return getRuleContexts(Expression2Context.class);
@@ -2101,16 +2097,20 @@ public class ExprParser extends Parser {
 		public Expression3Context expression3() {
 			return getRuleContext(Expression3Context.class,0);
 		}
-		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
-		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
 		public Expression4Context expression4() {
 			return getRuleContext(Expression4Context.class,0);
 		}
-		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
-		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public Expression2Context expression2(int i) {
 			return getRuleContext(Expression2Context.class,i);
 		}
+		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
+		public Pre_genContext pre_gen() {
+			return getRuleContext(Pre_genContext.class,0);
+		}
+		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
+		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
+		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
+		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public TerminalNode IN_FUN_P5() { return getToken(ExprParser.IN_FUN_P5, 0); }
 		public Expression2Context(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public Expression2Context(ParserRuleContext parent, int invokingState, int _p) {
@@ -2789,7 +2789,7 @@ public class ExprParser extends Parser {
 					          		String a, b;
 					          		a = memory.get((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null));
 					          		b = memory.get((((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null));
-					          		String op = " ";
+					          		String op = "";
 					          		if ((((Expression3Context)_localctx).DECORATION!=null?((Expression3Context)_localctx).DECORATION.getText():null) != null) op = "~";
 					          		System.out.println("APPLYYYYYYYYYYYYYYYYYYY " + (((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + " - " + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null));
 					          		
