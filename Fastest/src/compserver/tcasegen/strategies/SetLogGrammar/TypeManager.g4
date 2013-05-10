@@ -46,6 +46,7 @@ type returns [DefaultMutableTreeNode node]
 
 BINOP	:	'\\rel'
 		|	'\\pfun'
+		|	'\\ffun'
 		|	'\\fun'
 		|	'\\cross'
 		;

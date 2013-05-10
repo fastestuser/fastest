@@ -101,7 +101,7 @@ implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>
 			//chequeamos si es un tipo basico, si no lo es, es un esquema
 			String value = tree.getUserObject().toString();
 			
-			if (value.equals("\\num") || value.equals("\\nat"))
+			if (value.equals("\\num") || value.equals("\\nat") || value.equals("\\nat_{1}"))
 				return list;
 			
 			list.add(value);
