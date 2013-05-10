@@ -342,7 +342,7 @@ public class SetLogStrategy implements TCaseStrategy{
 			e.printStackTrace(); 
 		} 
 		//traduccion de SLog a Z
-		//setlogOutput = "CONSTR = [set(_G1810), set(_G1824), set(_G1837), _G1080 neq liftOff, _G1080 neq thrustDrop1E],\nNAT = int(0, 1000000000),\nREVENT = {liftOff, thrustDrop1E, thrustDrop2E, thrustDrop3E},\nY1 = Y2, Y2 = Y3, Y3 = Now, Now = Fa, Fa = 0,\\nE = liftOff,\\nEE = thrustDrop1E,\nOt = {[_G1080, _G1106]},\nTli = {[liftOff, 0]\\_G1810},\\nTls = {[liftOff, 0]\\_G1824},\nX = {[liftOff, 0]\\_G1837},\nS1 = {[liftOff, 0], [thrustDrop1E, 2]},";
+		setlogOutput = "CONSTR = [],\nINT = int(-10000000000, 10000000000),\nK1 = 2,\nA=X,\nX=Y,";
 		input = new ANTLRInputStream(setlogOutput);
 		SLog2ZLexer lexer2 = new SLog2ZLexer(input);
 		tokens = new CommonTokenStream(lexer2);

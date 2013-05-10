@@ -49,6 +49,11 @@ public class ExprIterator implements Iterator<String>{
 		// TODO Auto-generated method stub
 
 	}
+	
+	//retorna si la expresione solo una variable
+	public boolean esVariable(){
+		return (Character.isUpperCase(expr.charAt(0)) || expr.charAt(0) == '_'); 
+	}
 
 }
 
