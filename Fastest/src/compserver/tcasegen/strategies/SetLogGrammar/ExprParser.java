@@ -244,8 +244,8 @@ public class ExprParser extends Parser {
 					while (((String) right.getUserObject()).equals("()"))
 						right = (DefaultMutableTreeNode) right.getChildAt(0);
 					
-					leftAndRight.add((String) left.getUserObject());
-					leftAndRight.add((String) right.getUserObject());
+					leftAndRight.add(parser.printTree(left));
+					leftAndRight.add(parser.printTree(right));
 				}
 			
 			}
@@ -255,7 +255,7 @@ public class ExprParser extends Parser {
 				right = (DefaultMutableTreeNode) root.getChildAt(0);
 				while (((String) right.getUserObject()).equals("()"))
 					right = (DefaultMutableTreeNode) right.getChildAt(0);
-				leftAndRight.add((String) right.getUserObject());
+				leftAndRight.add(parser.printTree(right));
 
 			}
 			else { //Entonces empieza con pfun, rel etc
@@ -267,8 +267,8 @@ public class ExprParser extends Parser {
 			while (((String) right.getUserObject()).equals("()"))
 				right = (DefaultMutableTreeNode) right.getChildAt(0);
 				
-			leftAndRight.add((String) left.getUserObject());
-			leftAndRight.add((String) right.getUserObject());
+			leftAndRight.add(parser.printTree(left));
+			leftAndRight.add(parser.printTree(right));
 			}
 			
 			return leftAndRight;
@@ -892,7 +892,8 @@ public class ExprParser extends Parser {
 						String eMinus = e.substring(0,1).toLowerCase() + e.substring(1); //Pasamos la primer mayuscula a minuscula ya que setlog asi lo precisa
 						elements = elements.concat(eMinus);
 						
-						memory.put(e,eMinus);
+						memory.put(e, eMinus);
+						types.put(e, (((Enumeration_typeContext)_localctx).d!=null?_input.getText(((Enumeration_typeContext)_localctx).d.start,((Enumeration_typeContext)_localctx).d.stop):null));
 						
 						if (!((Enumeration_typeContext)getInvokingContext(4)).cases.isEmpty()){
 							elements = elements.concat(",");
@@ -2801,7 +2802,7 @@ public class ExprParser extends Parser {
 					          				setExpressionVars.put((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null), newVarName);
 
 					          			String type1 = types.get((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null));
-					          			getType(type1);
+					          			//getType(type1);
 					          			String newVarType = leftAndRightTypes(type1).get(1);
 					          			types.put((((Expression3Context)_localctx).e3!=null?_input.getText(((Expression3Context)_localctx).e3.start,((Expression3Context)_localctx).e3.stop):null) + op + (((Expression3Context)_localctx).e4!=null?_input.getText(((Expression3Context)_localctx).e4.start,((Expression3Context)_localctx).e4.stop):null), newVarType);
 					          			print("apply(" + a + "," + b + "," + newVarName + ")");

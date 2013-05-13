@@ -237,8 +237,8 @@ public class ExprLexer extends Lexer {
 					while (((String) right.getUserObject()).equals("()"))
 						right = (DefaultMutableTreeNode) right.getChildAt(0);
 					
-					leftAndRight.add((String) left.getUserObject());
-					leftAndRight.add((String) right.getUserObject());
+					leftAndRight.add(parser.printTree(left));
+					leftAndRight.add(parser.printTree(right));
 				}
 			
 			}
@@ -248,7 +248,7 @@ public class ExprLexer extends Lexer {
 				right = (DefaultMutableTreeNode) root.getChildAt(0);
 				while (((String) right.getUserObject()).equals("()"))
 					right = (DefaultMutableTreeNode) right.getChildAt(0);
-				leftAndRight.add((String) right.getUserObject());
+				leftAndRight.add(parser.printTree(right));
 
 			}
 			else { //Entonces empieza con pfun, rel etc
@@ -260,8 +260,8 @@ public class ExprLexer extends Lexer {
 			while (((String) right.getUserObject()).equals("()"))
 				right = (DefaultMutableTreeNode) right.getChildAt(0);
 				
-			leftAndRight.add((String) left.getUserObject());
-			leftAndRight.add((String) right.getUserObject());
+			leftAndRight.add(parser.printTree(left));
+			leftAndRight.add(parser.printTree(right));
 			}
 			
 			return leftAndRight;

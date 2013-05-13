@@ -184,8 +184,8 @@ grammar Expr;
 				while (((String) right.getUserObject()).equals("()"))
 					right = (DefaultMutableTreeNode) right.getChildAt(0);
 				
-				leftAndRight.add((String) left.getUserObject());
-				leftAndRight.add((String) right.getUserObject());
+				leftAndRight.add(parser.printTree(left));
+				leftAndRight.add(parser.printTree(right));
 			}
 		
 		}
@@ -195,7 +195,7 @@ grammar Expr;
 			right = (DefaultMutableTreeNode) root.getChildAt(0);
 			while (((String) right.getUserObject()).equals("()"))
 				right = (DefaultMutableTreeNode) right.getChildAt(0);
-			leftAndRight.add((String) right.getUserObject());
+			leftAndRight.add(parser.printTree(right));
 
 		}
 		else { //Entonces empieza con pfun, rel etc
@@ -207,8 +207,8 @@ grammar Expr;
 		while (((String) right.getUserObject()).equals("()"))
 			right = (DefaultMutableTreeNode) right.getChildAt(0);
 			
-		leftAndRight.add((String) left.getUserObject());
-		leftAndRight.add((String) right.getUserObject());
+		leftAndRight.add(parser.printTree(left));
+		leftAndRight.add(parser.printTree(right));
 		}
 		
 		return leftAndRight;
@@ -443,7 +443,8 @@ locals [ArrayList<String> cases;]
 			String eMinus = e.substring(0,1).toLowerCase() + e.substring(1); //Pasamos la primer mayuscula a minuscula ya que setlog asi lo precisa
 			elements = elements.concat(eMinus);
 			
-			memory.put(e,eMinus);
+			memory.put(e, eMinus);
+			types.put(e, $d.text);
 			
 			if (!$enumeration_type::cases.isEmpty()){
 				elements = elements.concat(",");
@@ -1265,7 +1266,7 @@ expression3
 				setExpressionVars.put($e3.text + op + $e4.text, newVarName);
 
 			String type1 = types.get($e3.text);
-			getType(type1);
+			//getType(type1);
 			String newVarType = leftAndRightTypes(type1).get(1);
 			types.put($e3.text + op + $e4.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");
