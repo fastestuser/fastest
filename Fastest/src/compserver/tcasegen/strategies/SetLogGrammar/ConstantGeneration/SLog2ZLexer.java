@@ -1,6 +1,6 @@
 // Generated from SLog2Z.g4 by ANTLR 4.0
 
-package compserver.tcasegen.strategies.SetLogGrammar;
+package compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration;
 	import java.util.HashMap;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
@@ -9,7 +9,9 @@ package compserver.tcasegen.strategies.SetLogGrammar;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;
-	import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
+	import compserver.tcasegen.strategies.SetLogGrammar.ExprParser;
+	import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerLexer;
+	import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerParser;
 
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

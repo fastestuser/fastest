@@ -1,4 +1,4 @@
-package compserver.tcasegen.strategies.SetLogGrammar;
+package compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -7,7 +7,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import compserver.tcasegen.strategies.SetLogGrammar.StringPointer;
 
 
 public class ConstantCreator {
@@ -180,7 +179,7 @@ public class ConstantCreator {
 	/* Dada una expresion y un tipo, genera un terminal cte para el tipo respetando la estructura de la expresion
 	 * ej. expr = {[a,X]} y tipo = FT \pfun \num    genera     {[a,1]}	
 	 * las variables dentro de la expresion pueden tener valores prohibidos, o valores ya calculados */
-	public String cte(DefaultMutableTreeNode nodo, String exprS) {
+	private String cte(DefaultMutableTreeNode nodo, String exprS) {
 		
 		ExprIterator expr = new ExprIterator(exprS);
 		
@@ -284,7 +283,7 @@ public class ConstantCreator {
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
 	 * construcciones de tipos finitos. */
-	public ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> valoresProhibidos) {
+	ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.zNames = znames;
 		this.slVars = slvars;
@@ -293,7 +292,7 @@ public class ConstantCreator {
 		this.postfijo = 1;
 	}
 
-	public String getCte(String expr, DefaultMutableTreeNode root){
+	String getCte(String expr, DefaultMutableTreeNode root){
 		this.arbol = root;
 		return cte(arbol, expr);
 	}

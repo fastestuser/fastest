@@ -1,10 +1,11 @@
-package compserver.tcasegen.strategies.SetLogGrammar;
+package compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration;
 
 import java.util.HashMap;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
+
 
 
 public class IntExprMap {

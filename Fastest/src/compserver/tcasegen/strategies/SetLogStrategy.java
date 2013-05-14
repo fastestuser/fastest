@@ -6,18 +6,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
-
 
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -29,30 +22,19 @@ import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
-import client.blogic.management.Controller;
-import client.presentation.ClientTextUI;
 
 
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.StringSource;
-import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ParaList;
-import net.sourceforge.czt.z.ast.Pred;
-import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
 import common.z.AbstractTCase;
@@ -62,13 +44,12 @@ import common.z.TClass;
 import common.z.TClassImpl;
 
 import common.z.czt.UniqueZLive;
-import common.z.czt.visitors.BasicTypeNamesExtractor;
 
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
-import common.z.czt.visitors.BasicTypeNamesExtractor;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.SetLogGrammar.*;
+import compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration.ZVarsFiller;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
  * que se utiliza en ANTLRv3 distinto al que se usa en TestRing (ANTLRv4) el cual tiene un procedimiento un poco difrente
@@ -81,112 +62,7 @@ public class SetLogStrategy implements TCaseStrategy{
 	private List<String> basicTypeNames; 
 
 
-	private void printHashMap(HashMap map){
-		Iterator<String> iterator = map.keySet().iterator();  
-		String key,value;
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			if (map.get(key) == null)
-				value = "nullc";
-			else 
-				value = map.get(key).toString();
-			System.out.println(key + " = " + value);  
-		} 
-	}
-	private void printHashMap2(HashMap<String,String[]> map){
-		Iterator<String> iterator = map.keySet().iterator();  
-		String key;	String[] value;
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			if (map.get(key) == null){
-				System.out.println(key + " = " + "nullc");
-				continue;
-			}
-			else{ 
-
-				value = map.get(key);
-				System.out.print(key + " = "); 
-				for (int i = 0; i<value.length;i++) 
-					System.out.print(value[i] + ",");
-				System.out.println(); 
-			}
-		} 
-	}
-
-	private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
-		Iterator<String> iterator = tiposLibres.keySet().iterator();  
-		String key;	String value;
-		while (iterator.hasNext()) { 
-			key = iterator.next().toString();
-			value = tiposLibres.get(key);
-			if(value !=null){
-				if (value.contains(elem))
-					return key;
-			}
-		}
-
-		return "null";
-	}
-
-	private HashMap<String,String> invertMap(HashMap<String,String> m){
-		Iterator<String> iterator = m.keySet().iterator();  
-		HashMap<String,String> s = new HashMap<String,String>();
-
-		while (iterator.hasNext()) {  
-			String key = iterator.next().toString();  
-			String value = m.get(key).toString();  
-			s.put(value,key);
-		} 	
-		return s;
-	}
-
-	private HashMap<String,String> llenarZVars(ExprParser exprP, SLog2ZParser SL2ZP){
-		HashMap<String, String> zVars = SL2ZP.getZVars();
-		HashMap<String, String> sLogName = exprP.getMemory();
-		HashMap<String,String> zNames = invertMap(exprP.getMemory());
-
-		Iterator<String> iterator = zVars.keySet().iterator();  
-		String key,valor;
-		HashMap<String,String> tipos = exprP.getTypes();
-		ConstantCreator cc = new ConstantCreator(tipos,zNames,null,null); 
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			valor = zVars.get(key);
-			if (valor == null){
-
-				String tipo = tipos.get(key);
-				ANTLRInputStream input = new ANTLRInputStream(tipo);
-				TypeManagerLexer lexer = new TypeManagerLexer(input);
-				CommonTokenStream tokens = new CommonTokenStream(lexer);
-				TypeManagerParser TMP = new TypeManagerParser(tokens);
-				TMP.typeManage();
-				DefaultMutableTreeNode root =  TMP.getRoot();
-
-				valor =  cc.getCte(sLogName.get(key),root);
-				zVars.put(key, valor);
-			}  
-		}
-		return (HashMap<String, String>) zVars;
-	}
-
-	private HashMap<String,String> llenarFreeTypes(HashMap<String,String> m){
-		HashMap<String,String> s = new HashMap<String,String>();
-		Iterator<String> iterator = m.keySet().iterator();
-		String key,valor,nomtipo;
-		while (iterator.hasNext()) { 
-			key = iterator.next().toString();
-			valor = m.get(key);
-			//EnumerationType:FT:{elem1,elem2}
-			if (valor.startsWith("EnumerationType")){
-				String[] aux = valor.split(":");
-				nomtipo =  aux[1];
-				//aux = ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)).split(",");
-				s.put(nomtipo, ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)));
-			}
-		}
-
-		return s;
-	}
+	
 
 	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
 		this.axDefsValues = axDefsValues;
@@ -341,26 +217,9 @@ public class SetLogStrategy implements TCaseStrategy{
 		catch (Exception e){ 
 			e.printStackTrace(); 
 		} 
-		//traduccion de SLog a Z
-		setlogOutput = "CONSTR = [],\nINT = int(-10000000000, 10000000000),\nK1 = 2,\nA=X,\nX=Y,";
-		input = new ANTLRInputStream(setlogOutput);
-		SLog2ZLexer lexer2 = new SLog2ZLexer(input);
-		tokens = new CommonTokenStream(lexer2);
-		SLog2ZParser parser2 = new SLog2ZParser(tokens);
-		parser2.loadTablas(parser);
-
-		//tambien imprime en pantalla
-		parser2.lineas();
-		Map<String, String> zVars = llenarZVars(parser,parser2);
-		System.out.println("\nzVars llenas****************\n");
-		printHashMap((HashMap) zVars);
-
-		System.out.println("\n FreeTipos ****************\n");
-		HashMap mapaux = llenarFreeTypes(parser.getTypes());
-		printHashMap(mapaux);
-
-		String ssss = getTipoLibre("xxx1",mapaux);
-		System.out.println("tipo de xxx1++++++++" + ssss);
+		//llenamos las variables z con las constantes generadas por SetLog o generadas posteriormente con las reglas del paper
+		ZVarsFiller zvf = new ZVarsFiller(parser,setlogOutput);
+		Map<String, String> zVars = zvf.generar();
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();

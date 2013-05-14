@@ -1,4 +1,4 @@
-package compserver.tcasegen.strategies.SetLogGrammar;
+package compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration;
 
 class StringPointer{
 	
