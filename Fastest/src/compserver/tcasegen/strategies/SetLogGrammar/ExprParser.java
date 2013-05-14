@@ -1555,7 +1555,7 @@ public class ExprParser extends Parser {
 							if (isSequence(getType(type)))
 								type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 							types.put((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null) + "\\cap" + (((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), type);
-							typeInfo(c, type);
+							//typeInfo(c, type);
 						}
 						
 						print(c + " neq " + a);
@@ -2499,7 +2499,7 @@ public class ExprParser extends Parser {
 						          				if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 						          				types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cap" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), type);
-						          				typeInfo(newVarName, type);
+						          				//typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
 						          					setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\cap" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			}

@@ -625,7 +625,7 @@ predicate
 			if (isSequence(getType(type)))
 				type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 			types.put($e1.text + "\\cap" + $e2.text, type);
-			typeInfo(c, type);
+			//typeInfo(c, type);
 		}
 		
 		print(c + " neq " + a);
@@ -936,7 +936,7 @@ expression2
 				if (isSequence(getType(type)))
 					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 				types.put($e21.text + "\\cap" + $e22.text, type);
-				typeInfo(newVarName, type);
+				//typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put($e21.text + "\\cap" + $e22.text, newVarName);
 			}
