@@ -1,10 +1,5 @@
 
-%%% VERSION 4.6.17-9
-
-% aggiunto regola in sat_neq_vv per fare Y neq X ---> X neq Y
-% aggiunto regola in sat_un per fare un(Y,X,Z) ---> un(X,Y,Z) 
-% aggiunto regola in sat_disj per fare disj(Y,X) ---> disj(X,Y) 
- 
+%%% VERSION 4.6.17-11
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                          
@@ -25,7 +20,7 @@
 %%
 %%       B.Bazzan  S.Manzoli  S.Monica  C.Piazza  L.Gelsomino
 %%
-%%          Last revision by Gianfranco Rossi (March 2013)           
+%%          Last revision by Gianfranco Rossi (May 2013)           
 %%                                                              
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -104,7 +99,7 @@ top_level :-
        setlog_read_term(Goal,[variable_names(VarNames)]),
        solve(Goal,Constr),
        add_FDc(Constr,ConstrAll,Warning),
-       top_level_warning(Warning),
+       fd_warning(Warning),
        chvar([],_,v(VarNames,ConstrAll),_,_,v(VarNames1,Constr1)),  
        mk_subs_ext(VarNames1,VarNames_ext1),    
        extract_vars(VarNames_ext1,Vars),
@@ -131,18 +126,17 @@ syntax_error_msg(Text) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-top_level_warning(R) :- 
+fd_warning(R) :- 
        var(R),!.
-%top_level_warning(_) :- 
-%       nl,write('WARNING: no finite domain specified for uninstantiated'),
-%       write(' variables in integer terms'),nl.
-%top_level_warning(_) :- 
+fd_warning(_) :- 
+       nl,write('WARNING: non-finite domain').
+%fd_warning(_) :- 
 %       nl,write('No finite domain specified for uninstantiated'),
 %       write(' variables in integer terms'),nl,
 %       raise_exception(error(instantiation_error,_)).
-top_level_warning(_) :- 
-       write('ERROR - no finite domain specified'),nl,
-       fail.
+%fd_warning(_) :- 
+%       write('ERROR - no finite domain specified'),nl,
+%       fail.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -247,7 +241,8 @@ setlog(Goal,OutConstrLst) :-
        nonvar(Goal), 
        copy_term(Goal,NewGoal),
        solve(NewGoal,C),
-       add_FDc(C,Constr,_),
+       add_FDc(C,Constr,Warning),
+       fd_warning(Warning),
        postproc(Constr,OutConstrLst),         %from 'with' to {...} notation;  
        postproc(NewGoal,NewGoal_ext),
        postproc(Goal,Goal_ext),
@@ -261,8 +256,9 @@ setlog(Goal,InConstrLst,OutConstrLst) :-
        conj_append(Goal,InConstr,ExtdGoal),
        copy_term(ExtdGoal,NewGoal),
        solve(NewGoal,OutCLstIntl),
-       remove_solved(OutCLstIntl,ROutCLstIntl),  %remove info about "solved" constraints
-       add_FDc(ROutCLstIntl,OutFinalCLstIntl,_), %add the possibly remaining interval constr's
+       remove_solved(OutCLstIntl,ROutCLstIntl),        %remove info about "solved" constraints
+       add_FDc(ROutCLstIntl,OutFinalCLstIntl,Warning), %add the possibly remaining interval constr's
+       fd_warning(Warning),
        postproc(OutFinalCLstIntl,OutConstrLst),        
        postproc(NewGoal,NewGoal_ext),
        postproc(ExtdGoal,ExtdGoal_ext),
@@ -366,7 +362,7 @@ write('   1.  Extensional set/multiset terms:'), nl,
    write('          (equivalent to R mwith b mwith a)'), nl,       
    write('        - {} is the empty set/multiset'), nl,                             
    write('        - int(h,k) (interval) is the set of integer numbers'), nl,
-   write('          ranging from h to k (h,k integer constants, k>=h)'), nl, 
+   write('          ranging from h to k (h,k known integers, k>=h)'), nl, 
    nl,      
 write('   2.  RUQs: '), nl,                            
    write('       (''a'' either a set or a multiset or a list or an interval int(h,k))'), nl,
@@ -740,12 +736,12 @@ dis([X|L1],[Y|L2],L3):-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Intensional sets
 
-solve_SF(S,GName,_PName,VarList,_Cin,Cout) :- 
-        ground(VarList),!,
-        InPred =.. [GName,X|VarList],
-        setof(X,solve_goal_fin(InPred,C1),L),
-        list_to_set(L,S,C2),
-        append(C2,C1,Cout).
+%solve_SF(S,GName,_PName,VarList,_Cin,Cout) :- 
+%        ground(VarList),!,
+%        InPred =.. [GName,X|VarList],
+%        setof(X,solve_goal_fin(InPred,C1),L),
+%        list_to_set(L,S,C2),
+%        append(C2,C1,Cout).
 solve_SF({},_GName,PName,VarList,Cin,Cout) :- 
         InPred =.. [PName,{}|VarList],
         solve_goal_fin(Cin,[neg(InPred & true)],Cout).
@@ -1430,7 +1426,13 @@ sat_neq([T1 neq T2|R1],R2,c,F):-                % t neq X  (rule 4)
          sat_neq([T2 neq T1|R1],R2,_,F).                         
 sat_neq([T1 neq T2|R1],R2,R,F):-  
          var(T1), var(T2),!,
-         sat_neq_vv([T1 neq T2|R1],R2,R,F).    
+         sat_neq_vv([T1 neq T2|R1],R2,R,F).   
+sat_neq([T1 neq T2|R1],R2,c,F):-  
+         is_int(T1,A1,B1), is_int(T2,A2,B2), !,
+         (A1 \== A2,!
+          ;
+          B1 \== B2),
+         sat_step(R1,R2,_,F).
 sat_neq([T1 neq T2|R1],R2,R,F):-  
          is_int(T1,_,_), T2 = _ with _, !,
          sat_neq_i([T1 neq T2|R1],R2,R,F).    
@@ -1788,12 +1790,25 @@ sat_un([un(T1,T2,T3)|R1],R2,c,F):-                   % un(s,t,{}) (rule 2 + 10)
          nonvar(T3), is_empty(T3),!, 
          unify_empty(T1), unify_empty(T2), 
          sat_step(R1,R2,_,F).
-%sat_un([un(T1,T2,S)|R1],R2,c,F):-                    % un({},{},X) (rule ...)
-%         var(S),
-%         nonvar(T1), is_empty(T1),
-%         nonvar(T2), is_empty(T2), !, 
-%         S = {},
-%         sat_step(R1,R2,_,F).
+
+sat_un([un(I1,I2,S)|R1], R2, c, F) :-                % un(int(...),int(...),s) 
+         nonvar(I1), nonvar(I2),
+         is_int(I1,A1,B1), is_int(I2,A2,B2), 
+         B1 >= A2,!,
+         A3 is min(A1,A2),
+         B3 is max(B1,B2),
+         sunify(int(A3,B3),S,C),
+         append(C,R1,R3),  
+         sat_step(R3,R2,_,F).  
+sat_un([un(I1,I2,S)|R1], R2, c, F) :-                % un(int(...),int(...),s) 
+         nonvar(I1), nonvar(I2),
+         is_int(I1,_A1,B1), is_int(I2,A2,_B2), 
+         B1 < A2,!,
+         int_to_set(I2,S2),
+         int_to_set(I1,S1,S2),
+         sunify(S1,S,C),
+         append(C,R1,R3),  
+         sat_step(R3,R2,_,F).  
 
 sat_un([un(S1,S2,I)|R1], R2, c, F) :-                % un(s1,s2,int(L,L)) 
          nonvar(I), is_int(I,T1,T2), T1==T2, !,
@@ -2381,9 +2396,9 @@ sat_set([set(X)|R1],R2,c,F):-                    % set({}) (rule 1)
 sat_set([set(X)|R1],R2,c,F):-                    % set({...}) (rule 2.a)
         X = _S with _A, !,
         sat_step(R1,R2,_,F).
-%NO sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   
-%NO        is_int(X,_,_),!, 
-%NO        sat_step(R1,R2,_,F).
+% sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   
+%         is_int(X,_,_),!, 
+%         sat_step(R1,R2,_,F).
 sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   %MOD
         X = int(A,B),!, 
         sat_step([integer(A),integer(B),A =< B|R1],R2,_,F).
@@ -2759,7 +2774,9 @@ labeling1(X,(I) \/ (In)) :-        % e.g., X in (inf..2)\/(4..5)\/(7..9)
         ;
         X in (inf..B)).
 labeling1(X,_D) :-                 % e.g., X in (1..2)\/(4..5)\/(7..9)
-        clpfd:indomain(X).
+        clpfd:indomain(X).  
+%        clpfd:labeling([ff,down,enum],[X]).
+
 
 first_int((A .. B),(A .. B),(1 .. 0)) :- !.  % first_int(+Int,?Rest,?First) 
 first_int((I) \/ (In),I0,(IRest) \/ (In)) :-     % 'Int' is a disj. of intervals and
@@ -2797,18 +2814,18 @@ add_FDc([integer(X)|SETc],FDc,Warning) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 isetlog((true :- true),sys).
-isetlog((less(A,B,C) :- 
-         A=C with B & B nin C & set(C) & true),sys).
+isetlog((less(A,X,C) :- 
+         A = C with X & X nin C & set(C) & true),sys).
 isetlog((nsubset(A,B) :- 
-         C in A & C nin B & set(B) & true),sys).
+         X in A & X nin B & set(B) & true),sys).
 isetlog((ssubset(A,B) :- 
          A neq B & subset(A,B) & true),sys).
 %isetlog((inters(A,B,C) :- 
 %         un(D,C,A) & un(E,C,B) & disj(D,E) & 
 %         set(A) & set(B) & set(C) & true),sys).
 isetlog((ninters(A,B,C) :- 
-         D in C & 
-         (D nin A & set(A) & true or D nin B & set(B) & true) & true),sys).
+         X in C & set(C) & set(A) & set(B) &
+         (X nin A & true or X nin B & true) & true),sys).
 isetlog((diff(A,B,C) :- 
          subset(C,A) & un(B,C,D) & subset(A,D) & disj(B,C) & 
          set(B) & true),sys).
@@ -3531,6 +3548,13 @@ int_to_set(int(A,B),S with A) :-      % of all elements of the interval I
        A < B,
        A1 is A + 1,
        int_to_set(int(A1,B),S).
+
+int_to_set(int(A,A),R with A,R) :- !. % int_to_set(+I,?S) is true if S contains the set
+int_to_set(int(A,B),S with A,R) :-    % of all elements of the interval I 
+       A < B,
+       A1 is A + 1,
+       int_to_set(int(A1,B),S,R).
+
 
 int_length(int(A,B),L) :-
        N is B - A + 1,
