@@ -18,6 +18,9 @@ public class SetLogGenerator {
 	public static HashMap<String, String> generate(String antlrInput){
 		
 		String setLogInput = toSetLog(antlrInput);
+		System.out.println("**********************************************************************************************");
+		System.out.println("ANTLROUTPUT\n" + setLogInput);
+		System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 		
 		
@@ -49,6 +52,7 @@ public class SetLogGenerator {
 			String antlrOutput = setLogInput;
 
 			String setlogInput = "consult(setlog4617)."
+					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
 					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 					+ "\ntime_out(setlog( \n"
@@ -60,6 +64,7 @@ public class SetLogGenerator {
 
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
+			System.out.println("**********************************************************************************************");
 			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				System.out.println(s);
@@ -72,7 +77,8 @@ public class SetLogGenerator {
 					break;
 				}
 			}
-			System.out.println("SETLOG OUT:\n" + setlogOutput);
+			//System.out.println("SETLOG OUT:\n" + setlogOutput);
+			System.out.println("**********************************************************************************************\n");
 
 		}
 		catch (Exception e){ 

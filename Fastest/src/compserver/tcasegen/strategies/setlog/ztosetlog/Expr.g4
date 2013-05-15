@@ -359,7 +359,7 @@ grammar Expr;
 
 specification
 	:	( paragraph NL*)+
-	{
+	{/*
 	   System.out.println("tablita de tippos");
 	   System.out.println("-------------------");
 	   String key, value;
@@ -386,7 +386,7 @@ specification
            System.out.println(key + "\t\t| " + value);
   	   }
      
-	}
+	*/}
 	;
 
 paragraph
