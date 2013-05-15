@@ -1,10 +1,6 @@
 package compserver.tcasegen.strategies;
 
-import java.io.BufferedReader;
-
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -12,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.z.ParseUtils;
@@ -48,8 +41,7 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.TypesExtractor;
-import compserver.tcasegen.strategies.SetLogGrammar.*;
-import compserver.tcasegen.strategies.SetLogGrammar.ConstantGeneration.ZVarsFiller;
+import compserver.tcasegen.strategies.setlog.*;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
  * que se utiliza en ANTLRv3 distinto al que se usa en TestRing (ANTLRv4) el cual tiene un procedimiento un poco difrente
@@ -167,59 +159,7 @@ public class SetLogStrategy implements TCaseStrategy{
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
 		System.out.println("ANTLRINPUT\n" + antlrInput);
 
-		//parseo de Z a SetLog con ANTLR
-		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
-		ExprLexer lexer = new ExprLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		ExprParser parser = new ExprParser(tokens);
-		//tambien imprime en pantalla
-		parser.specification();
-
-		String auxs = parser.getSalida().replaceAll("&", "\n");
-		System.out.println("\n salida antlr:\n" + auxs );
-
-		//Ejecucion de SetLog
-		String setlogOutput = "";
-		try{
-			String[] cmd = {"prolog" , "-q"};
-			final Process proc = Runtime.getRuntime().exec(cmd); 
-			OutputStream out = proc.getOutputStream();
-
-			String antlrOutput = parser.getSalida();
-
-			String setlogInput = "consult(setlog4617)."
-					+ "\nuse_module(library(dialect/sicstus/timeout))."
-					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
-					+ "\ntime_out(setlog( \n"
-					+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
-					+ "\n,_CONSTR),1000,_RET).";
-
-			out.write(setlogInput.getBytes());
-			out.close();
-
-			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
-			String s;
-			System.out.println("SETLOG OUT:\n");
-			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
-				if (s.equals("false.") || s.equals("_RET = time_out.")) //No encontro solucion
-					return null;
-				if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
-					setlogOutput = setlogOutput.concat(s + "\n");
-				}else if(s.startsWith("_CONSTR")){
-					setlogOutput = s +"\n"+ setlogOutput;
-					break;
-				}
-			}
-			System.out.println("SETLOG OUT:\n" + setlogOutput);
-
-		}
-		catch (Exception e){ 
-			e.printStackTrace(); 
-		} 
-		//llenamos las variables z con las constantes generadas por SetLog o generadas posteriormente con las reglas del paper
-		ZVarsFiller zvf = new ZVarsFiller(parser,setlogOutput);
-		Map<String, String> zVars = zvf.generar();
+		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput);
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
@@ -252,35 +192,6 @@ public class SetLogStrategy implements TCaseStrategy{
 		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
 
 		return abstractTCase;
-
-	}
-
-	private TClass replaceAxDefValues(TClass tClass){
-
-		AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-		String tClassName = tClass.getSchName();
-
-		// We replace in predicate the values for axiomatic definitions
-		if (axDefsValues != null) {
-
-			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
-			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-			CZTReplacer replaceVisitor = new CZTReplacer();
-
-			while (iterator.hasNext()) {
-				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-				RefExpr refExpr = mapEntry.getKey();
-				Expr expr = mapEntry.getValue();
-				replaceVisitor.setOrigTerm(refExpr);
-				replaceVisitor.setNewTerm(expr);
-				pred = (Pred) pred.accept(replaceVisitor);
-			}
-
-			SpecUtils.setAxParaPred(tClassAxPara, pred);
-		}
-
-		return tClass = new TClassImpl(tClassAxPara, tClassName);
 
 	}
 }

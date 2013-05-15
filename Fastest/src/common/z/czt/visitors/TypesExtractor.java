@@ -30,8 +30,8 @@ import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 import net.sourceforge.czt.z.impl.ZParaListImpl;
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerLexer;
-import compserver.tcasegen.strategies.SetLogGrammar.TypeManagerParser;
+import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
+import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 /*
  * A visitor that obtains all the needed types (basic, free and schema types) from a Z schema,
