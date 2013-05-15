@@ -54,6 +54,7 @@ BINOP	:	'\\rel'
 UNOP	:	'\\power'
 		|	'\\seq_{1}'
 		|	'\\seq'
+		|	'\\finset'
 		;
 
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('0'..'9')*;

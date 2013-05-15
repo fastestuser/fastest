@@ -1094,13 +1094,13 @@ expression2
 		memory.put($e21.text + "\\mapsto" + $e22.text, "[" + a + "," + b + "]");
 		types.put($e21.text + "\\mapsto" + $e22.text, types.get($e21.text) + "\\cross" + types.get($e22.text));
 	}
-	|	'\\power' e4=expression4
+	|	('\\power' | '\\finset') e4=expression4
 	{
 		String eType = types.get($e4.text);
 		if (isBasic(eType))
 			eType = $e4.text;
 	
-		types.put("\\power" + $e4.text, "\\power" + eType );
+		types.put($expression2.text, "\\power" + eType );
 	}
 	|	pre_gen e=expression //Pre-Gen //REVISAR, ya que pre-gen no dice tener todo lo que aca hay!
 	{
