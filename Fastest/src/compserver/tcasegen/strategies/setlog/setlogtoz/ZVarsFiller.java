@@ -2,7 +2,6 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -11,7 +10,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
-import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 
 public class ZVarsFiller {
 	
@@ -28,7 +26,7 @@ public class ZVarsFiller {
 	}
 	
 	
-	private void printHashMap(HashMap map){
+	private void printHashMap(HashMap<String, String> map){
 		Iterator<String> iterator = map.keySet().iterator();  
 		String key,value;
 		while (iterator.hasNext()) {  
@@ -40,25 +38,7 @@ public class ZVarsFiller {
 			System.out.println(key + " = " + value);  
 		} 
 	}
-	private void printHashMap2(HashMap<String,String[]> map){
-		Iterator<String> iterator = map.keySet().iterator();  
-		String key;	String[] value;
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			if (map.get(key) == null){
-				System.out.println(key + " = " + "nullc");
-				continue;
-			}
-			else{ 
-
-				value = map.get(key);
-				System.out.print(key + " = "); 
-				for (int i = 0; i<value.length;i++) 
-					System.out.print(value[i] + ",");
-				System.out.println(); 
-			}
-		} 
-	}
+	
 
 	private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
 		Iterator<String> iterator = tiposLibres.keySet().iterator();  

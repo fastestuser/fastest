@@ -162,7 +162,7 @@ public class IntExprMap {
 				ctaux = tipoProximoHijo(hijoDer);
 				p.y = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.y-1 : p.y;
 				
-				salida = "["+f(hijoIzq,p.x) + " , " + f(hijoDer,p.y) +"]";
+				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
 			}
 		}else /*si es tipo libre*/{
 			String tipo = tipos.get(ct);

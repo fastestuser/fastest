@@ -7,8 +7,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-
-
 public class ConstantCreator {
 
 	private final int MAXDESIGUALDADES = 10;
@@ -24,7 +22,6 @@ public class ConstantCreator {
 	public String getNumber(){
 		return String.valueOf(postfijo++);
 	}
-
 	
 	private String printTree(DefaultMutableTreeNode tree){
 		if (tree.isLeaf()) 
@@ -138,13 +135,13 @@ public class ConstantCreator {
 		} else if(ct == "()"){
 			return cteCanonica(nodo.getChildAt(0),var);
 		} else if (ct.equals("\\pfun") || ct.equals("\\fun") || ct.equals("\\rel")) {
-			return "\\{ "+"(" + cteCanonica(nodo.getChildAt(0),var) + " \\mapsto " + cteCanonica(nodo.getChildAt(1),var) + ")" + " \\}";
+			return "{"+"[" + cteCanonica(nodo.getChildAt(0),var) + "," + cteCanonica(nodo.getChildAt(1),var) + "]" + "}";
 		} else if(ct.equals("\\cross")){
-			return cteCanonica(nodo.getChildAt(0),var) + " \\mapsto " + cteCanonica(nodo.getChildAt(1),var)  ;
+			return cteCanonica(nodo.getChildAt(0),var) + "," + cteCanonica(nodo.getChildAt(1),var)  ;
 		} else if (ct.equals("\\power")) {
-			return "\\{ " + cteCanonica(nodo.getChildAt(0),var) + " \\}";
+			return "{" + cteCanonica(nodo.getChildAt(0),var) + "}";
 		} else if (ct.equals("\\seq")) {
-			return "\\langle " + cteCanonica(nodo.getChildAt(0),var) + " \\rangle";
+			return "[" + cteCanonica(nodo.getChildAt(0),var) + "]";
 		}else { 
 			String nodoType = tipos.get(ct);
 			String cte;
@@ -168,12 +165,9 @@ public class ConstantCreator {
 					else
 						cte = cte + zname.replace("?","");
 				}
-				
-				
 			}
 			return cte;
 		}
-		
 	}
 	
 	/* Dada una expresion y un tipo, genera un terminal cte para el tipo respetando la estructura de la expresion
@@ -231,7 +225,7 @@ public class ConstantCreator {
 		} 
 		else if (ct.equals("\\cross")){
 			//caso [X,Y]
-			salida = "(" + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "\\mapsto " + cte((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
+			salida = "[" + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "," + cte((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + "]"; 
 			return salida;
 		}
 		else if (ct.equals("\\power") ) {
@@ -247,10 +241,10 @@ public class ConstantCreator {
 			else{
 					//pinta {X,X,X}
 					if(	exprS.charAt(1)=='}')
-						return "\\{\\}";
+						return "{}";
 					
 					String elem;
-					salida = "\\{";
+					salida = "{";
 					while(expr.hasNext()){
 						elem = expr.next();
 						salida = salida + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem) + ","; 
@@ -258,16 +252,16 @@ public class ConstantCreator {
 					//le quito la coma final
 					if (salida.charAt(salida.length()-1) == ',')
 						salida = salida.substring(0, salida.length()-1);
-					return salida + "\\}";
+					return salida + "}";
 				}
 		}
 		else if (ct.equals("\\seq") ) {
 					//pinta [X,X,X]
 					if(	exprS.charAt(1)==']')
-						return "\\langle\\rangle}";
+						return "[]";
 					
 					String elem;
-					salida = "\\langle";
+					salida = "[";
 					while(expr.hasNext()){
 						elem = expr.next();
 						salida = salida + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem) + ","; 
@@ -275,7 +269,7 @@ public class ConstantCreator {
 					//le quito la coma final
 					if (salida.charAt(salida.length()-1) == ',')
 						salida = salida.substring(0, salida.length()-1);
-					return salida + "\\rangle";
+					return salida + "]";
 		}
 		
 		return salida;
@@ -294,7 +288,8 @@ public class ConstantCreator {
 
 	String getCte(String expr, DefaultMutableTreeNode root){
 		this.arbol = root;
-		return cte(arbol, expr);
+		String s = cte(arbol, expr);
+		return s;
 	}
 	
 }

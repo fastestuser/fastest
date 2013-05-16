@@ -132,8 +132,15 @@ public class Test {
 		//ConstantGenIterator c = new ConstantGenIterator(e); 
 		int n = 0;
 		String s =  "{{{{}}}}}";
-		s.replaceAll("{", "\\{");
-		System.out.println(n);
+		s = s.replace('{', '$');
+		s = s.replace('}', '#');
+		s = s.replaceAll("$","\\{");
+		// = s.replaceAll("#","\\}");
+		
+		
+		
+		
+		System.out.println(s);
 		
 	}
 

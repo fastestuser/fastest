@@ -23,7 +23,7 @@ public class ConstantGenIterator implements Iterator {
 		return false;
 	}
 	
-	private void printHashMap(HashMap map){
+	private void printHashMap(HashMap<String, String> map){
 		Iterator<String> iterator = map.keySet().iterator();  
 		String key,value;
 		while (iterator.hasNext()) {  
@@ -53,7 +53,7 @@ public class ConstantGenIterator implements Iterator {
 	
 	private ExprIterator powerNext(DefaultMutableTreeNode tipo, ExprIterator expr){
 		if (expr.esVariable())
-		return null;
+			return null;
 		return expr;
 	}
 
