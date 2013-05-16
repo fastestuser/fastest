@@ -1364,8 +1364,11 @@ expression4
 				if (keysIt.hasNext()) $setlogName = $setlogName.concat(",");
 			}
 		
-			$setlogName = $setlogName.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) +
-			setExpressionPred + setExpressionExpr + " & " + $newVarName1 + " is " + memory.get($c.text) + ")" + " }");
+			String content = setExpressionDecl + setExpressionPred + setExpressionExpr;
+			content = content.substring(content.indexOf('&') + 1);
+			if (!content.equals(""));
+				content = content.concat(" & ");
+			$setlogName = $setlogName.concat("], " + content + $newVarName1 + " is " + memory.get($c.text) + ")" + " }");
 		
 			memory.put($zName, $newVarName2);
 			types.put($zName, "\\power(" + types.get($c.text) + ")"); //REVISAR!!!

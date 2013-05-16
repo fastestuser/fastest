@@ -3078,8 +3078,11 @@ public class ExprParser extends Parser {
 								if (keysIt.hasNext()) ((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(",");
 							}
 						
-							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("], " + setExpressionDecl.substring(setExpressionDecl.indexOf('&') + 1) +
-							setExpressionPred + setExpressionExpr + " & " + _localctx.newVarName1 + " is " + memory.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)) + ")" + " }");
+							String content = setExpressionDecl + setExpressionPred + setExpressionExpr;
+							content = content.substring(content.indexOf('&') + 1);
+							if (!content.equals(""));
+								content = content.concat(" & ");
+							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("], " + content + _localctx.newVarName1 + " is " + memory.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)) + ")" + " }");
 						
 							memory.put(_localctx.zName, _localctx.newVarName2);
 							types.put(_localctx.zName, "\\power(" + types.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)) + ")"); //REVISAR!!!
