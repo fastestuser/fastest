@@ -12,6 +12,7 @@ grammar Expr;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
 	import javax.swing.tree.DefaultMutableTreeNode;
+	
 }
 
 @members {
@@ -51,9 +52,10 @@ grammar Expr;
 	}
 
 	public void print(String c) {
-		if (modoSetExpression == 0 && tipoSchema == 0) 
-			//System.out.println(c + " &");
+		if (modoSetExpression == 0 && tipoSchema == 0) { 
+			System.out.println(c + " &");
 			out = out.concat(c + " &");
+		}
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -263,7 +265,7 @@ grammar Expr;
 			}
 			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 				if (tipoSchema == 0) {
-					print(var + " in " + printInfo(type));
+					print(var + " in " + printInfo(type, true));
 				}
 			}
 			else if (nodeType.equals("\\power")) {
@@ -295,7 +297,7 @@ grammar Expr;
 		return type;
 	}
 	
-	private String printInfo(String type) {
+	private String printInfo(String type, boolean wantToPrint) {
 		String translation = memory.get(type);
 		
 		if (translation == null) {
@@ -312,7 +314,7 @@ grammar Expr;
 			types.put(type, type);
 		}
 		
-		if (!out.contains( translation + " = int(")){ //Chequeo si ya se imprimio informacion del tipo
+		if (wantToPrint && (!out.contains( translation + " = int("))){ //Chequeo si ya se imprimio informacion del tipo
 			if (type.equals("\\num"))
 				print(translation + " = int(-10000000000, 10000000000)");
 			else if (type.equals("\\nat"))
@@ -490,10 +492,13 @@ locals [ArrayList<String> vars;]
 			
 			String expType = types.get($expression.text);
 			expType = typeInfo(newVarName, expType);
+			
+			/*
 			//Chequeo si es un tipo basico, ej [ACCNUM], ya que estos no se imprimen en typeInfo
 			String t = types.get(expType);
 			if (t != null && t.startsWith("BasicType"))
 				print(newVarName + " in " + expType);
+			*/
 			
 			if (tipoSchema == 0)
 				types.put(var, expType);
@@ -774,7 +779,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else if ($seq_op.text.startsWith("front")){
 				String n = newVar();
 				print("prolog_call(length(" + a + "," + n + "))");
-				print(n + " in " + printInfo("\\nat"));
+				print(n + " in " + printInfo("\\nat", true));
 				print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
 				memory.put($seq_op.text + $e2.text, newVarName);
 				String type = types.get($e2.text);
@@ -994,7 +999,7 @@ expression2
 			}
 			
 			if (isNumeric) {
-				print(newVarName + " in " + printInfo("\\num"));
+				print(newVarName + " in " + printInfo("\\num", true));
 				types.put($e21.text + $IN_FUN_P4.text + $e22.text, "\\num");
 			}
 		}
@@ -1069,7 +1074,7 @@ expression2
 			}
 			
 			if (isNumeric) {
-				print(newVarName + " in " + printInfo("\\num"));
+				print(newVarName + " in " + printInfo("\\num", true));
 				types.put($e21.text + $IN_FUN_P3.text + $e22.text, "\\num");
 			}
 		}
@@ -1096,13 +1101,13 @@ expression2
 		memory.put($e21.text + "\\mapsto" + $e22.text, "[" + a + "," + b + "]");
 		types.put($e21.text + "\\mapsto" + $e22.text, types.get($e21.text) + "\\cross" + types.get($e22.text));
 	}
-	|	'\\power' e4=expression4
+	|	('\\power' | '\\finset') e2=expression2
 	{
-		String eType = types.get($e4.text);
+		String eType = types.get($e2.text);
 		if (isBasic(eType))
-			eType = $e4.text;
+			eType = $e2.text;
 	
-		types.put("\\power" + $e4.text, "\\power" + eType );
+		types.put($expression2.text, "\\power" + eType );
 	}
 	|	pre_gen e=expression //Pre-Gen //REVISAR, ya que pre-gen no dice tener todo lo que aca hay!
 	{
@@ -1123,7 +1128,7 @@ expression2
 				else
 					print("size(" + a + "," + newVarName + ")");					
 				
-				print(newVarName + " in " + printInfo("\\nat"));
+				print(newVarName + " in " + printInfo("\\nat", true));
 			}
 		}
 		else if ($pre_gen.text.equals("\\dom")){
@@ -1523,15 +1528,15 @@ expression4
 	}
 	|	'\\nat' '_{1}' 
 	{	
-		printInfo($expression4.text);	
+		printInfo($expression4.text, false);	
 	}
 	|	'\\nat' 
 	{	
-		printInfo($expression4.text);	
+		printInfo($expression4.text, false);	
 	}
 	|	'\\num'
 	{	
-		printInfo($expression4.text);	
+		printInfo($expression4.text, false);	
 	}
 	;
 	
