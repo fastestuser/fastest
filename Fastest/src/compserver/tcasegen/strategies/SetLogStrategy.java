@@ -162,6 +162,9 @@ public class SetLogStrategy implements TCaseStrategy{
 		System.out.println("**********************************************************************************************\n");
 
 		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput);
+		
+		if (zVars == null) //No encontro caso
+			return null;
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();

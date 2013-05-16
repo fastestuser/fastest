@@ -114,6 +114,8 @@ public class SetLogGenerator {
 		System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 		
+		if (setlogOutput == null) //No se encontro caso
+			return null;
 		
 		HashMap<String,String> memory = parser.getMemory();
 		HashMap<String,String> tipos = parser.getTypes();
