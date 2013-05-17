@@ -7,6 +7,7 @@
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import java.util.Collection;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 
@@ -287,7 +288,7 @@ public class ExprParser extends Parser {
 		
 		private String newVar(String zName) {
 			String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
-			if (memory.containsValue(newVarName) || modoSetExpression==1) { 
+			if (memory.containsValue(newVarName) /*|| modoSetExpression==1*/) { 
 				newVarName = "VAR" + varNumber;
 				varNumber++;
 			}
@@ -360,6 +361,7 @@ public class ExprParser extends Parser {
 		
 		private String printInfo(String type, boolean wantToPrint) {
 			String translation = memory.get(type);
+			int modoSetExpressionBk = modoSetExpression;
 			
 			if (translation == null) {
 				if (type.equals("\\num"))
@@ -373,15 +375,19 @@ public class ExprParser extends Parser {
 			
 				memory.put(type, translation);
 				types.put(type, type);
+				//if (modoSetExpression > 0)
+				//	setExpressionVars.put(type, translation);
 			}
 			
-			if (wantToPrint && (!out.contains( translation + " = int("))){ //Chequeo si ya se imprimio informacion del tipo
+			if (wantToPrint && (!out.contains(translation + " = int(")) && ((modoSetExpression == 0) || !((setExpressionDecl+setExpressionExpr+setExpressionPred).contains(translation + " = int(")))){ //Chequeo si ya se imprimio informacion del tipo
+				modoSetExpression = 0;
 				if (type.equals("\\num"))
 					print(translation + " = int(-10000000000, 10000000000)");
 				else if (type.equals("\\nat"))
 					print(translation + " = int(0, 10000000000)");
 				else if (type.equals("\\nat_{1}"))
 					print(translation + " = int(1, 10000000000)");
+				modoSetExpression = modoSetExpressionBk;
 			}
 			
 			return translation;
@@ -389,6 +395,12 @@ public class ExprParser extends Parser {
 		
 		private boolean isBasic(String type) {
 			if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+				return true;
+			return false;
+		}
+		
+		private boolean isNumeric(String type) {
+			if (type.equals("\\num") || type.equals("\\nat") || type.equals("\\nat_{1}"))
 				return true;
 			return false;
 		}
@@ -1142,7 +1154,7 @@ public class ExprParser extends Parser {
 						if (tipoSchema == 0)
 							memory.put(var, newVarName);
 						if (modoSetExpression==1)
-							setExpressionVars.put(var, newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
+							setExpressionVars.put(var, newVarName);
 						
 						String expType = types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
 						expType = typeInfo(newVarName, expType);
@@ -3066,29 +3078,50 @@ public class ExprParser extends Parser {
 
 						if (memory.get(_localctx.zName)==null) {
 						
+							// Probando eliminar la variable extra y usar '=' en vez de 'is' cuando corresponde
+							String varName = memory.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null));
+							String op = getType(types.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)));
+							if (isNumeric(op))
+								op = " is ";
+							else
+								op = " = ";
+							
+							boolean needsNewName = false;
+							if ((varName == null) || (varName.matches("^.*[^a-zA-Z0-9 ].*"))) { //Si es nulo o tiene caracteres que no son letras o numeros
+								varName = newVar();
+								needsNewName = true;
+							}
+						
 							((Expression4Context)_localctx).setlogName =  "";
-							((Expression4Context)_localctx).newVarName1 =  newVar();
 							((Expression4Context)_localctx).newVarName2 =  newVar();
 							
-							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("{ " + _localctx.newVarName1 + ":exists([");
+							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("{ " + varName + ":exists([");
 							
-							Iterator<String> keysIt = setExpressionVars.keySet().iterator();
-							while (keysIt.hasNext()){
-								((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(setExpressionVars.get(keysIt.next()));
-								if (keysIt.hasNext()) ((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(",");
+							Collection<String> values = setExpressionVars.values();
+							if (!needsNewName)
+								values.remove(varName);
+							
+							Iterator<String> valuesIt = values.iterator();
+							while (valuesIt.hasNext()){
+								((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(valuesIt.next());
+								if (valuesIt.hasNext()) ((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(",");
 							}
 						
 							String content = setExpressionDecl + setExpressionPred + setExpressionExpr;
 							content = content.substring(content.indexOf('&') + 1);
-							if (!content.equals(""));
+							if (!content.equals("") && needsNewName)
 								content = content.concat(" & ");
-							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("], " + content + _localctx.newVarName1 + " is " + memory.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)) + ")" + " }");
+							
+							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("], " + content);
+							if (needsNewName)
+								((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(varName + op + memory.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)));
+							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(")" + " }");
 						
 							memory.put(_localctx.zName, _localctx.newVarName2);
 							types.put(_localctx.zName, "\\power(" + types.get((((Expression4Context)_localctx).c!=null?_input.getText(((Expression4Context)_localctx).c.start,((Expression4Context)_localctx).c.stop):null)) + ")"); //REVISAR!!!
 							print(_localctx.newVarName2 + " = " + _localctx.setlogName);
 							
-							keysIt = setExpressionVars.keySet().iterator();
+							Iterator<String> keysIt = setExpressionVars.keySet().iterator();
 							while (keysIt.hasNext()){
 								String var = keysIt.next();
 								memory.remove(var);

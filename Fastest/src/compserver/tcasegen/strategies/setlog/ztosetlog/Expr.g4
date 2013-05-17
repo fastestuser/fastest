@@ -11,6 +11,7 @@ grammar Expr;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import java.util.Collection;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 }
@@ -226,7 +227,7 @@ grammar Expr;
 	
 	private String newVar(String zName) {
 		String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
-		if (memory.containsValue(newVarName) || modoSetExpression==1) { 
+		if (memory.containsValue(newVarName) /*|| modoSetExpression==1*/) { 
 			newVarName = "VAR" + varNumber;
 			varNumber++;
 		}
@@ -299,6 +300,7 @@ grammar Expr;
 	
 	private String printInfo(String type, boolean wantToPrint) {
 		String translation = memory.get(type);
+		int modoSetExpressionBk = modoSetExpression;
 		
 		if (translation == null) {
 			if (type.equals("\\num"))
@@ -312,15 +314,19 @@ grammar Expr;
 		
 			memory.put(type, translation);
 			types.put(type, type);
+			//if (modoSetExpression > 0)
+			//	setExpressionVars.put(type, translation);
 		}
 		
-		if (wantToPrint && (!out.contains( translation + " = int("))){ //Chequeo si ya se imprimio informacion del tipo
+		if (wantToPrint && (!out.contains(translation + " = int(")) && ((modoSetExpression == 0) || !((setExpressionDecl+setExpressionExpr+setExpressionPred).contains(translation + " = int(")))){ //Chequeo si ya se imprimio informacion del tipo
+			modoSetExpression = 0;
 			if (type.equals("\\num"))
 				print(translation + " = int(-10000000000, 10000000000)");
 			else if (type.equals("\\nat"))
 				print(translation + " = int(0, 10000000000)");
 			else if (type.equals("\\nat_{1}"))
 				print(translation + " = int(1, 10000000000)");
+			modoSetExpression = modoSetExpressionBk;
 		}
 		
 		return translation;
@@ -328,6 +334,12 @@ grammar Expr;
 	
 	private boolean isBasic(String type) {
 		if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+			return true;
+		return false;
+	}
+	
+	private boolean isNumeric(String type) {
+		if (type.equals("\\num") || type.equals("\\nat") || type.equals("\\nat_{1}"))
 			return true;
 		return false;
 	}
@@ -488,7 +500,7 @@ locals [ArrayList<String> vars;]
 			if (tipoSchema == 0)
 				memory.put(var, newVarName);
 			if (modoSetExpression==1)
-				setExpressionVars.put(var, newVarName); //Falta ver que hacemos para variables ligadas con el mismo nombre en distintas ligaduras
+				setExpressionVars.put(var, newVarName);
 			
 			String expType = types.get($expression.text);
 			expType = typeInfo(newVarName, expType);
@@ -1352,29 +1364,50 @@ expression4
 	{
 		if (memory.get($zName)==null) {
 		
+			// Probando eliminar la variable extra y usar '=' en vez de 'is' cuando corresponde
+			String varName = memory.get($c.text);
+			String op = getType(types.get($c.text));
+			if (isNumeric(op))
+				op = " is ";
+			else
+				op = " = ";
+			
+			boolean needsNewName = false;
+			if ((varName == null) || (varName.matches("^.*[^a-zA-Z0-9 ].*$"))) { //Si es nulo o tiene caracteres que no son letras o numeros
+				varName = newVar();
+				needsNewName = true;
+			}
+		
 			$setlogName = "";
-			$newVarName1 = newVar();
 			$newVarName2 = newVar();
 			
-			$setlogName = $setlogName.concat("{ " + $newVarName1 + ":exists([");
+			$setlogName = $setlogName.concat("{ " + varName + ":exists([");
 			
-			Iterator<String> keysIt = setExpressionVars.keySet().iterator();
-			while (keysIt.hasNext()){
-				$setlogName = $setlogName.concat(setExpressionVars.get(keysIt.next()));
-				if (keysIt.hasNext()) $setlogName = $setlogName.concat(",");
+			Collection<String> values = setExpressionVars.values();
+			if (!needsNewName)
+				values.remove(varName);
+			
+			Iterator<String> valuesIt = values.iterator();
+			while (valuesIt.hasNext()){
+				((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(valuesIt.next());
+				if (valuesIt.hasNext()) ((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat(",");
 			}
 		
 			String content = setExpressionDecl + setExpressionPred + setExpressionExpr;
 			content = content.substring(content.indexOf('&') + 1);
-			if (!content.equals(""));
+			if (!content.equals("") && needsNewName)
 				content = content.concat(" & ");
-			$setlogName = $setlogName.concat("], " + content + $newVarName1 + " is " + memory.get($c.text) + ")" + " }");
+			
+			$setlogName = $setlogName.concat("], " + content);
+			if (needsNewName)
+				$setlogName = $setlogName.concat(varName + op + memory.get($c.text));
+			$setlogName = $setlogName.concat(")" + " }");
 		
 			memory.put($zName, $newVarName2);
 			types.put($zName, "\\power(" + types.get($c.text) + ")"); //REVISAR!!!
 			print($newVarName2 + " = " + $setlogName);
 			
-			keysIt = setExpressionVars.keySet().iterator();
+			Iterator<String> keysIt = setExpressionVars.keySet().iterator();
 			while (keysIt.hasNext()){
 				String var = keysIt.next();
 				memory.remove(var);

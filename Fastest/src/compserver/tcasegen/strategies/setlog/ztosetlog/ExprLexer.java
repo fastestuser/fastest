@@ -7,6 +7,7 @@
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
+	import java.util.Collection;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 
@@ -281,7 +282,7 @@ public class ExprLexer extends Lexer {
 		
 		private String newVar(String zName) {
 			String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
-			if (memory.containsValue(newVarName) || modoSetExpression==1) { 
+			if (memory.containsValue(newVarName) /*|| modoSetExpression==1*/) { 
 				newVarName = "VAR" + varNumber;
 				varNumber++;
 			}
@@ -354,6 +355,7 @@ public class ExprLexer extends Lexer {
 		
 		private String printInfo(String type, boolean wantToPrint) {
 			String translation = memory.get(type);
+			int modoSetExpressionBk = modoSetExpression;
 			
 			if (translation == null) {
 				if (type.equals("\\num"))
@@ -367,15 +369,19 @@ public class ExprLexer extends Lexer {
 			
 				memory.put(type, translation);
 				types.put(type, type);
+				//if (modoSetExpression > 0)
+				//	setExpressionVars.put(type, translation);
 			}
 			
-			if (wantToPrint && (!out.contains( translation + " = int("))){ //Chequeo si ya se imprimio informacion del tipo
+			if (wantToPrint && (!out.contains(translation + " = int(")) && ((modoSetExpression == 0) || !((setExpressionDecl+setExpressionExpr+setExpressionPred).contains(translation + " = int(")))){ //Chequeo si ya se imprimio informacion del tipo
+				modoSetExpression = 0;
 				if (type.equals("\\num"))
 					print(translation + " = int(-10000000000, 10000000000)");
 				else if (type.equals("\\nat"))
 					print(translation + " = int(0, 10000000000)");
 				else if (type.equals("\\nat_{1}"))
 					print(translation + " = int(1, 10000000000)");
+				modoSetExpression = modoSetExpressionBk;
 			}
 			
 			return translation;
@@ -383,6 +389,12 @@ public class ExprLexer extends Lexer {
 		
 		private boolean isBasic(String type) {
 			if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
+				return true;
+			return false;
+		}
+		
+		private boolean isNumeric(String type) {
+			if (type.equals("\\num") || type.equals("\\nat") || type.equals("\\nat_{1}"))
 				return true;
 			return false;
 		}
