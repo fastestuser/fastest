@@ -7,9 +7,13 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-public class ConstantCreator {
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
+import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
-	private final int MAXDESIGUALDADES = 10;
+
+
+public final class ConstantCreator {
+
 	private DefaultMutableTreeNode arbol;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> zNames;
@@ -17,23 +21,12 @@ public class ConstantCreator {
 	private HashMap<String,StringPointer> slVars;
 	private List<String> basicTypes;
 	
-	//static al pedo???
 	private int postfijo;
 	public String getNumber(){
 		return String.valueOf(postfijo++);
 	}
 	
-	private String printTree(DefaultMutableTreeNode tree){
-		if (tree.isLeaf()) 
-			return (String) tree.toString();
-		else if (tree.getChildCount() == 1)
-			if ( tree.toString().equals("()")) //REVISAR
-				return "(" + printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
-			else
-				return tree.toString()+ printTree((DefaultMutableTreeNode) tree.getChildAt(0));
-		else //tiene dos hijos
-			return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + tree.toString() + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
-	}
+	
 	
 	//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
 	//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
@@ -51,7 +44,7 @@ public class ConstantCreator {
     }
 	
 	private boolean soloTipoFinito(DefaultMutableTreeNode nodo){
-		String tipo = printTree(nodo);
+		String tipo = TypeManagerParser.printTree(nodo);
 		if(tipo.contains("num") || tipo.contains("nat"))
 			return false;
 		if (basicTypes == null)
@@ -66,16 +59,10 @@ public class ConstantCreator {
 		return true;
 	}
 	
-	private void refrescarValoresProhibidos(String var, String expr){
-		Iterator<String> it = valoresProhibidos.keySet().iterator();
-		String key,value;
-		while (it.hasNext()) {  
-			key = it.next().toString();
-			value = valoresProhibidos.get(key);
-			value = value.replace(var, expr);
-			valoresProhibidos.put(key, value);
-		}
-	}
+	
+	
+	
+	
 	/* Dado un tipo y una variable, crea un terminal del tipo y se lo asigna a la variable
 	 * Refresca valoresProhibidos, reemplaza el nombre de la variable por el valor cte generado*/
 	private String cteRestringuida(DefaultMutableTreeNode nodo, String var){
@@ -90,43 +77,15 @@ public class ConstantCreator {
 		//si esta formados por al menos un tipo no finito
 		if(!soloTipoFinito(nodo)){
 			salida = cteCanonica(nodo,var);
-			refrescarValoresProhibidos(var,salida);
+			CCUtils.refrescarValoresProhibidos(var,salida,valoresProhibidos);
 			return salida;
 		}
 		
-		//si esta solo formado por tipos finitos
-		ExprIterator exprs = new ExprIterator("{"+valoresProhibidos.get(var)+"}");
-		String expresion = null;
-		int varNat = 1;
-		int nats[] = new int[MAXDESIGUALDADES];
-		int i = 0;
-		IntExprMap varMap = new IntExprMap(tipos);
-		while(exprs.hasNext()){
-			expresion = exprs.next();
-			//si no es varaible convierto la expresion a nat
-			if (!expresion.startsWith("_")){
-				nats[i] = varMap.toNum(nodo,expresion);
-				i++;
-			}
-		}
-			
-		//m es la cantidad de constantes que fueron mapeadas a nat, y  a las cuales var debe ser distinta.
-		int m = i;
-		i = 0;
-		while (i<m){
-			if(varNat==nats[i]){
-				varNat++;
-				i = 0;
-			}
-			else
-				i++;
-		}
-		
-		salida = varMap.toExpr(nodo, varNat);
-		refrescarValoresProhibidos(var,salida);
-		
+		//si esta formado solo por tipos finitos
+		salida = CCUtils.getCteDesigual(nodo, var, valoresProhibidos, slVars, tipos);
 		return salida;
 	}
+	
 	/*Dado un tipo y una variable, genera un terminal canonico para el tipo*/
 	private String cteCanonica(TreeNode nodo,String var) {
 		String ct = nodo.toString();
@@ -277,10 +236,10 @@ public class ConstantCreator {
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
 	 * construcciones de tipos finitos. */
-	ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slvars,HashMap<String,String> valoresProhibidos) {
+	ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.zNames = znames;
-		this.slVars = slvars;
+		this.slVars = slVars;
 		this.valoresProhibidos = valoresProhibidos;
 		this.basicTypes = null;
 		this.postfijo = 1;

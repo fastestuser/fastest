@@ -4,12 +4,55 @@ import java.util.HashMap;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
+
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 
 
-public class IntExprMap {
+
+
+public final class IntExprMap {
 	private HashMap<String, String> tipos;
+	
+	
+	
+	//devuelve el elemento en la pos i del tipo libre de izq a derecha
+	private  String elemFromFreeType(String tipo, int i){
+		String s;
+		String aux[] = tipo.split(":");
+		s = aux[2].substring(1, aux[2].length()-1);
+		aux = s.split(",");
+		return aux[i-1];
+	}
+	
+	//cardinalidad del tipo libre
+	private int cardOfFreeType(String tipo){
+		String aux[] = tipo.split(":");
+		aux = aux[2].split(",");
+		return aux.length;
+	}
+
+	// devuelve la cardinalidad del tipo finito, por ahora solo formado por tipos libres.
+	// si el numero es mayor al maximo del int devuelve 0.
+	private int cardinalidadTipoFinito( DefaultMutableTreeNode nodo){
+		String ct = nodo.toString();
+		int c=0;
+		
+		if (ct.equals("\\power")){
+			c = cardinalidadTipoFinito((DefaultMutableTreeNode) nodo.getChildAt(0));
+			c = (2<<(c-1));
+		}
+		else if (ct.equals("()")){
+			c = cardinalidadTipoFinito((DefaultMutableTreeNode) nodo.getChildAt(0));
+		}
+		else if(ct.equals("\\cross")){
+			c = cardinalidadTipoFinito((DefaultMutableTreeNode) nodo.getChildAt(0));
+			c = c * cardinalidadTipoFinito((DefaultMutableTreeNode) nodo.getChildAt(1));
+		}
+		else
+			c = cardOfFreeType(tipos.get(ct));
+		return c;
+	}
 	
 	private  class Par{
 		int x,y;
@@ -34,13 +77,7 @@ public class IntExprMap {
 		return card*(x-1) + y;
 	}
 	
-	private  String elemFromFreeType(String tipo, int i){
-		String s;
-		String aux[] = tipo.split(":");
-		s = aux[2].substring(1, aux[2].length()-1);
-		aux = s.split(",");
-		return aux[i-1];
-	}
+	
 	//devuelve el bit que corresponde a la posicion, ej bitFromFreeType(FT::=a|b|c , a)
 	// = 100 en binario = 4 en decimal
 	private  int numFromFreeType(String tipo,String elem){
@@ -54,11 +91,7 @@ public class IntExprMap {
 		}
 		return 0;
 	}
-	private  int cardFromFreeType(String tipo){
-		String aux[] = tipo.split(":");
-		aux = aux[2].split(",");
-		return aux.length;
-	}
+	
 	
 	//devuelve la posicion de los bits encendidos de la representacion binaria del entero,
 	private  int[] posEncendidas(int n){
@@ -79,32 +112,8 @@ public class IntExprMap {
 		return palabra;
 	}
 
-	public int cardinalidad(DefaultMutableTreeNode nodo){
-		String ct = nodo.toString();
-		int c=0;
-		
-		if (ct.equals("\\power")){
-			c = cardinalidad((DefaultMutableTreeNode) nodo.getChildAt(0));
-			c = (2<<(c-1));
-		}
-		else if (ct.equals("()")){
-			c = cardinalidad((DefaultMutableTreeNode) nodo.getChildAt(0));
-		}
-		else if(ct.equals("\\cross")){
-			c = cardinalidad((DefaultMutableTreeNode) nodo.getChildAt(0));
-			c = c * cardinalidad((DefaultMutableTreeNode) nodo.getChildAt(1));
-		}
-		else
-			c = cardFromFreeType(tipos.get(ct));
-		return c;
-	}
 	
-	//devuelve el tipo del proximo hijo que no es "()"
-	private String tipoProximoHijo(TreeNode nodo){
-		while(nodo.toString().equals("()"))
-			nodo = nodo.getChildAt(0);
-		return nodo.toString();
-	}
+	
 	/* Dado un numero natural y un tipo devuelve una expresion terminal del tipo */
 	private  String f(DefaultMutableTreeNode nodo, int num){
 		String salida = null;
@@ -133,7 +142,7 @@ public class IntExprMap {
 			salida = p1;
 			int aux;
 			while(numi!=0){
-				ctHijo = tipoProximoHijo(hijoIzq);
+				ctHijo = SetLogUtils.tipoNoParentesis(hijoIzq);
 				//numi - 1 es el numero decimal que representa la constante
 				//el cual es la posicion del bit encendido - 1
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? numi-1 : numi;
@@ -150,16 +159,16 @@ public class IntExprMap {
 		}else if(ct.equals("\\cross")){
 			DefaultMutableTreeNode hijoDer = (DefaultMutableTreeNode) nodo.getChildAt(1);
 			//Tipo t2 = (Tipo) ((DefaultMutableTreeNode) nodo.getChildAt(1)).getUserObject();
-			int c = cardinalidad(hijoDer);
+			int c = cardinalidadTipoFinito(hijoDer);
 			//int c2 =t2.cardinalidad;
 			if (num ==0)
 				salida = "[]";
 			else{
 				Par p = parFromInt(c,num);
 				
-				String ctaux = tipoProximoHijo(hijoIzq);
+				String ctaux = SetLogUtils.tipoNoParentesis(hijoIzq);
 				p.x = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.x-1 : p.x;
-				ctaux = tipoProximoHijo(hijoDer);
+				ctaux = SetLogUtils.tipoNoParentesis(hijoDer);
 				p.y = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.y-1 : p.y;
 				
 				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
@@ -212,7 +221,7 @@ public class IntExprMap {
 				posbit = f((DefaultMutableTreeNode)nodo.getChildAt(0),elem);
 				//crea el numero a partir de las posiciones de los bit encendidos los cuales
 				//pertenecen a cada elemento del conjunto
-				ctHijo = tipoProximoHijo(hijoIzq);
+				ctHijo = SetLogUtils.tipoNoParentesis(hijoIzq);
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? posbit : posbit-1;
 				ac |= 1<<aux; //acumula bits, cad auno corresponde a un elemento presente.
 			}
@@ -228,12 +237,12 @@ public class IntExprMap {
 			int f1 = f(hijoIzq,s1);
 			int f2 = f(hijoDer,s2);
 			
-			String ctaux = tipoProximoHijo(hijoIzq);
+			String ctaux = SetLogUtils.tipoNoParentesis(hijoIzq);
 			f1 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f1+1 : f1;
-			ctaux = tipoProximoHijo(hijoDer);
+			ctaux = SetLogUtils.tipoNoParentesis(hijoDer);
 			f2 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f2+1 : f2;
 			
-			return intFromPar( f1 , f2, cardinalidad(hijoDer));
+			return intFromPar( f1 , f2, cardinalidadTipoFinito(hijoDer));
 		}
 		else{
 			salida = numFromFreeType(tipos.get(ct),expr);

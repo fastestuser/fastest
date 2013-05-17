@@ -2,11 +2,14 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
-public class ConstantGenIterator implements Iterator {
+
+
+
+public final class ConstantGenIterator implements Iterator {
 	
 	private HashMap<String,StringPointer> slVars;
 	private HashMap<String, String> tipos;
@@ -15,7 +18,7 @@ public class ConstantGenIterator implements Iterator {
 	public ConstantGenIterator(ExprIterator expr) {
 		
 		HashMap<String,String> vp = llenarValoresProhibidos(expr); 
-		printHashMap(vp);
+		SetLogUtils.printHashMap(vp);
 	}
 
 	
@@ -23,18 +26,7 @@ public class ConstantGenIterator implements Iterator {
 		return false;
 	}
 	
-	private void printHashMap(HashMap<String, String> map){
-		Iterator<String> iterator = map.keySet().iterator();  
-		String key,value;
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			if (map.get(key) == null)
-				value = "nullc";
-			else 
-				value = map.get(key).toString();
-			System.out.println(key + " = " + value);  
-		} 
-	}
+	
 	
 	private HashMap<String,String> llenarValoresProhibidos(ExprIterator expr){
 		HashMap<String,String> vp = new HashMap<String,String>();
@@ -51,12 +43,70 @@ public class ConstantGenIterator implements Iterator {
 		return vp;
 	}
 	
-	private ExprIterator powerNext(DefaultMutableTreeNode tipo, ExprIterator expr){
-		if (expr.esVariable())
-			return null;
-		return expr;
+	private String getCteDesigual(DefaultMutableTreeNode nodo,String var,HashMap<String,String> vp, int varNat){
+		String salida = null;
+		ExprIterator exprs = new ExprIterator("{"+vp.get(var)+"}");
+		int nats[] = new int[exprs.cardinalidad()];
+		int i = 0;
+		String expresion = null;
+		IntExprMap varMap = new IntExprMap(tipos);
+		while(exprs.hasNext()){
+			expresion = exprs.next();
+			//si no es varaible convierto la expresion a nat
+			if (!CCUtils.esVariable(expresion)){
+				nats[i] = varMap.toNum(nodo,expresion);
+				i++;
+			}
+		}
+		String tipo = SetLogUtils.tipoNoParentesis(nodo);
+		
+		//el 0 de tipo power y seq es {},el resto de los tipos empieza en 1
+		if (!tipo.equals("\\power") && !tipo.equals("\\seq")){
+			varNat = 1;
+		}
+		
+		//m es la cantidad de constantes que fueron mapeadas a nat, y  a las cuales var debe ser distinta.
+		int m = i;
+		i = 0;
+		while (i<m){
+			if(varNat==nats[i]){
+				next(nodo,varNat);
+				i = 0;
+			}
+			else
+				i++;
+		}
+		salida = varMap.toExpr(nodo, varNat);
+		CCUtils.refrescarValoresProhibidos(var,salida,vp);
+		
+		return salida;
 	}
-
+	
+	private String powerNext(DefaultMutableTreeNode nodo, String exprS, int valorActual){
+		
+		if (CCUtils.esVariable(exprS))
+			return null;
+		
+		ExprIterator expr = new ExprIterator(exprS);
+		HashMap<String,String> vp =  llenarValoresProhibidos(expr);
+		
+		Iterator<String> it = vp.keySet().iterator();
+		String var,cte;
+		while(it.hasNext()){
+			var = it.next().toString();
+			cte = CCUtils.getCteDesigual((DefaultMutableTreeNode) nodo.getChildAt(0), var, vp);
+			
+		}
+		
+		return null;
+	}
+	private ExprIterator powerNext(DefaultMutableTreeNode nodo, String exprS){
+		
+		if()
+		
+		
+		return powerNext(nodo,exprS,0);
+	}
 	@Override
 	public void remove() {
 		// TODO Auto-generated method stub

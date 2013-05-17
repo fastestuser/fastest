@@ -13,6 +13,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
+	import compserver.tcasegen.strategies.setlog.SetLogUtils;
 }
 
 @members {
@@ -77,7 +78,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
     }
     
 	public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory){
-		zNames = invertMap(memory);
+		zNames = CCUtils.invertHashMap(memory);
 		this.tipos = tipos;
 		this.zVars = zVars;
 		
@@ -95,21 +96,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		cc = new ConstantCreator(tipos,zNames,slvars,valoresProhibidos);
 		
 	}
-	private String getCte(String cte, String tipo) {
-		ANTLRInputStream input = new ANTLRInputStream(tipo);
-        TypeManagerLexer lexer = new TypeManagerLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        TypeManagerParser parser = new TypeManagerParser(tokens);
-        parser.typeManage();
-        DefaultMutableTreeNode root =  parser.getRoot();
-        
-        System.out.println("\narbol " + parser.printTree(root)); 
-        System.out.println("cte " + cte);
-        System.out.println("tipo " + tipo);
-        System.out.println("root " + root.toString());
-         
-        return cc.getCte(cte,root);
-	}
+	
 	
 	private String getTipoLibre(String elem){
     	Iterator<String> iterator = freeTypes.keySet().iterator();  
@@ -126,17 +113,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
     	return "null";
     }
 	
-	private HashMap<String,String> invertMap(HashMap<String,String> m){
-		Iterator<String> iterator = m.keySet().iterator();  
-   		HashMap<String,String> s = new HashMap<String,String>();
-   		
-		while (iterator.hasNext()) {  
-		   String key = iterator.next().toString();  
-		   String value = m.get(key).toString();  
-		   s.put(value,key);
-		} 	
-		return s;
-	}
+	
 	
 	public void printHashMap(HashMap map){
 		Iterator iterator = map.keySet().iterator();  
@@ -262,7 +239,7 @@ locals [StringPointer valor;]
 			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
 			{
 				String var = $v2.valor;
-				$seqIgual::valor.setString(getCte(var,tipo));
+				$seqIgual::valor.setString(cc.getCte(var,SetLogUtils.toTree(tipo)));
 			}
 			 	
 		 }

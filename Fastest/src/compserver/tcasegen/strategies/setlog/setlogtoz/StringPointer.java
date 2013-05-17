@@ -1,6 +1,6 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
-class StringPointer{
+public final class  StringPointer{
 	
 	private String valor;
 	

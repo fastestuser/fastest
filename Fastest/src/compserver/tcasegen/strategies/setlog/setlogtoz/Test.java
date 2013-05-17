@@ -126,21 +126,16 @@ public class Test {
 			System.out.println(it.next());
 		String s = "aaa}";
 		System.out.println(s.charAt(s.length()-1));*/
-		//ExprIterator e = new ExprIterator("{aaa}");
-		//e.remove();
-		//System.out.println(e);
+		ExprIterator e = new ExprIterator("{a,b,c,d,e}");
+		e.remove();
+		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
+		
 		//ConstantGenIterator c = new ConstantGenIterator(e); 
-		int n = 0;
-		String s =  "{{{{}}}}}";
-		s = s.replace('{', '$');
-		s = s.replace('}', '#');
-		s = s.replaceAll("$","\\{");
-		// = s.replaceAll("#","\\}");
 		
 		
 		
 		
-		System.out.println(s);
+		
 		
 	}
 

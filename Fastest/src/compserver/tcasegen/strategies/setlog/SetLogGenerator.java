@@ -17,7 +17,7 @@ import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 
-public class SetLogGenerator {
+public final class SetLogGenerator {
 	private static ExprParser parser;
 	
 	//cambia los caracteres de setlog [] por langlerangle, etc...
@@ -86,14 +86,6 @@ public class SetLogGenerator {
 		return salida;
 	}
 	
-	private static String setLogToLatexCharsReplacer(String tipo,String expr){
-		ANTLRInputStream input = new ANTLRInputStream(tipo);
-        TypeManagerLexer lexer = new TypeManagerLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        TypeManagerParser parser = new TypeManagerParser(tokens);
-        parser.typeManage();
-        return setLogToLatexCharsReplacer(parser.getRoot(),expr);
-	}
 	
 	private static void setLogToLatexCharsReplacer(HashMap<String,String> zVars,HashMap<String,String> tipos){
 		Iterator<String> it = zVars.keySet().iterator();
@@ -102,7 +94,7 @@ public class SetLogGenerator {
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			zVars.put(var, setLogToLatexCharsReplacer(tipo,expr));
+			zVars.put(var, setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr));
 		}
 	}
 	

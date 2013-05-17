@@ -18,7 +18,7 @@ grammar TypeManager;
 		return root;
 	}
 	
-	public String printTree(DefaultMutableTreeNode tree){
+	public static String printTree(DefaultMutableTreeNode tree){
 		if (tree.isLeaf()) 
 			return (String) tree.getUserObject();
 		else if (tree.getChildCount() == 1)

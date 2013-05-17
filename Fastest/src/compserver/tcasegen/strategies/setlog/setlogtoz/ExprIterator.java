@@ -4,7 +4,7 @@ import java.util.Iterator;
 
 /*Dada una expresion permite iterar sobre sus elementos
  * ej: expr = {ccc,[XXX],dsad3,{{}{}},dsda} entonces cada elemento es ccc, [XXX], etc....*/
-public class ExprIterator implements Iterator<String>{
+public final class ExprIterator implements Iterator<String>{
 	private int posActual,posPrev;
 	private String expr;
 	private char cierre,open;
@@ -19,6 +19,18 @@ public class ExprIterator implements Iterator<String>{
 
 	public void reiniciar(){
 		posActual = 0;
+	}
+	
+	public int cardinalidad(){
+		int backup = posActual;
+		posActual = 0;
+		int ac = 0;
+		while (hasNext()){
+			next();
+			ac++;
+		}
+		posActual = backup;
+		return ac;
 	}
 	
 	public boolean hasNext() {
@@ -86,10 +98,7 @@ public class ExprIterator implements Iterator<String>{
 		return expr;
 	}
 	
-	//retorna si la expresione solo una variable
-	public boolean esVariable(){
-		return (Character.isUpperCase(expr.charAt(0)) || expr.charAt(0) == '_'); 
-	}
+	
 
 }
 

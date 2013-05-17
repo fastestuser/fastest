@@ -8,37 +8,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
-public class ZVarsFiller {
+public final class ZVarsFiller {
 	
 	private String setlogOutput;
 	private HashMap<String,String> zVars;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> memory;
-	
-	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory,String setlogOutput){
-		this.zVars = zVars;
-		this.tipos = tipos;
-		this.memory = memory;
-		this.setlogOutput = setlogOutput;
-	}
-	
-	
-	private void printHashMap(HashMap<String, String> map){
-		Iterator<String> iterator = map.keySet().iterator();  
-		String key,value;
-		while (iterator.hasNext()) {  
-			key = iterator.next().toString();
-			if (map.get(key) == null)
-				value = "nullc";
-			else 
-				value = map.get(key).toString();
-			System.out.println(key + " = " + value);  
-		} 
-	}
-	
 
 	private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
 		Iterator<String> iterator = tiposLibres.keySet().iterator();  
@@ -54,20 +33,6 @@ public class ZVarsFiller {
 
 		return "null";
 	}
-
-	private HashMap<String,String> invertMap(HashMap<String,String> m){
-		Iterator<String> iterator = m.keySet().iterator();  
-		HashMap<String,String> s = new HashMap<String,String>();
-
-		while (iterator.hasNext()) {  
-			String key = iterator.next().toString();  
-			String value = m.get(key).toString();  
-			s.put(value,key);
-		} 	
-		return s;
-	}
-
-	
 
 	private HashMap<String,String> llenarFreeTypes(HashMap<String,String> m){
 		HashMap<String,String> s = new HashMap<String,String>();
@@ -87,9 +52,10 @@ public class ZVarsFiller {
 
 		return s;
 	}
-	private void llenarZVars(SLog2ZParser SL2ZP){
+	
+	private void llenarZVars(){
 		//zVars = SL2ZP.getZVars();
-		HashMap<String,String> zNames = invertMap(memory);
+		HashMap<String,String> zNames = CCUtils.invertHashMap(memory);
 
 		Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
@@ -98,16 +64,8 @@ public class ZVarsFiller {
 			key = iterator.next().toString();
 			valor = zVars.get(key);
 			if (valor == null){
-
 				String tipo = tipos.get(key);
-				ANTLRInputStream input = new ANTLRInputStream(tipo);
-				TypeManagerLexer lexer = new TypeManagerLexer(input);
-				CommonTokenStream tokens = new CommonTokenStream(lexer);
-				TypeManagerParser TMP = new TypeManagerParser(tokens);
-				TMP.typeManage();
-				DefaultMutableTreeNode root =  TMP.getRoot();
-
-				valor =  cc.getCte(memory.get(key),root);
+				valor =  cc.getCte(memory.get(key),SetLogUtils.toTree(tipo));
 				zVars.put(key, valor);
 			}  
 		}
@@ -124,16 +82,23 @@ public class ZVarsFiller {
 
 				//tambien imprime en pantalla
 				SL2ZP.lineas();
-				llenarZVars(SL2ZP);
+				llenarZVars();
 				System.out.println("\nzVars llenas****************\n");
-				printHashMap(zVars);
+				SetLogUtils.printHashMap(zVars);
 
 				System.out.println("\n FreeTipos ****************\n");
-				HashMap mapaux = llenarFreeTypes(tipos);
-				printHashMap(mapaux);
+				HashMap<String, String> mapaux = llenarFreeTypes(tipos);
+				SetLogUtils.printHashMap(mapaux);
 
 				String ssss = getTipoLibre("xxx1",mapaux);
 				System.out.println("tipo de xxx1++++++++" + ssss);
 				
+	}
+	
+	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory,String setlogOutput){
+		this.zVars = zVars;
+		this.tipos = tipos;
+		this.memory = memory;
+		this.setlogOutput = setlogOutput;
 	}
 }

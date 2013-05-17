@@ -12,6 +12,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
+	import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -116,7 +117,7 @@ public class SLog2ZParser extends Parser {
 	    }
 	    
 		public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory){
-			zNames = invertMap(memory);
+			zNames = CCUtils.invertHashMap(memory);
 			this.tipos = tipos;
 			this.zVars = zVars;
 			
@@ -134,21 +135,7 @@ public class SLog2ZParser extends Parser {
 			cc = new ConstantCreator(tipos,zNames,slvars,valoresProhibidos);
 			
 		}
-		private String getCte(String cte, String tipo) {
-			ANTLRInputStream input = new ANTLRInputStream(tipo);
-	        TypeManagerLexer lexer = new TypeManagerLexer(input);
-	        CommonTokenStream tokens = new CommonTokenStream(lexer);
-	        TypeManagerParser parser = new TypeManagerParser(tokens);
-	        parser.typeManage();
-	        DefaultMutableTreeNode root =  parser.getRoot();
-	        
-	        System.out.println("\narbol " + parser.printTree(root)); 
-	        System.out.println("cte " + cte);
-	        System.out.println("tipo " + tipo);
-	        System.out.println("root " + root.toString());
-	         
-	        return cc.getCte(cte,root);
-		}
+		
 		
 		private String getTipoLibre(String elem){
 	    	Iterator<String> iterator = freeTypes.keySet().iterator();  
@@ -165,17 +152,7 @@ public class SLog2ZParser extends Parser {
 	    	return "null";
 	    }
 		
-		private HashMap<String,String> invertMap(HashMap<String,String> m){
-			Iterator<String> iterator = m.keySet().iterator();  
-	   		HashMap<String,String> s = new HashMap<String,String>();
-	   		
-			while (iterator.hasNext()) {  
-			   String key = iterator.next().toString();  
-			   String value = m.get(key).toString();  
-			   s.put(value,key);
-			} 	
-			return s;
-		}
+		
 		
 		public void printHashMap(HashMap map){
 			Iterator iterator = map.keySet().iterator();  
@@ -599,7 +576,7 @@ public class SLog2ZParser extends Parser {
 							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
 							{
 								String var = ((SeqIgualContext)_localctx).v2.valor;
-								((SeqIgualContext)getInvokingContext(3)).valor.setString(getCte(var,tipo));
+								((SeqIgualContext)getInvokingContext(3)).valor.setString(cc.getCte(var,SetLogUtils.toTree(tipo)));
 							}
 							 	
 						 

@@ -12,6 +12,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
+	import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 
 import org.antlr.v4.runtime.ParserRuleContext;
