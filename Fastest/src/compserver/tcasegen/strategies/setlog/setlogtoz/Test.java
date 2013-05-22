@@ -81,7 +81,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		String tipo = "\\seq FT";
+		String tipo = "\\power(\\power FT)";
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
 		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
@@ -138,9 +138,11 @@ public class Test {
 //		ExprIterator e = new ExprIterator("{a,b,c,d,e}");
 //		e.remove();
 //		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
+		HashMap<String, String> valoresProhibidos = new HashMap();
+		valoresProhibidos.put("X", "{a}");
 		
 		String e = "X";
-		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
+		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos,valoresProhibidos); 
 		String s = c.generate();
 		System.out.println(e + " --> " + s);
 		

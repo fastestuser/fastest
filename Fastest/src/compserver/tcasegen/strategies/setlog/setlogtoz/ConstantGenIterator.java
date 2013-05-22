@@ -9,11 +9,12 @@ public final class ConstantGenIterator  {
 
 	private static HashMap<String,StringPointer> slVars;
 	private static HashMap<String, String> tipos;
+	private static HashMap<String, String> valoresProhibidos;
 	private static HashMap<String, String> znames;
 	private static Iterador it;
 	private static DefaultMutableTreeNode nodo;
 
-	public ConstantGenIterator(DefaultMutableTreeNode nodo,String exprS,HashMap<String, String> tipos){
+	public ConstantGenIterator(DefaultMutableTreeNode nodo,String exprS,HashMap<String, String> tipos, HashMap<String, String> valoresProhibidos){
 		this.tipos = tipos;
 		this.nodo = nodo;
 		it = new Iterador(nodo,exprS);
@@ -110,6 +111,7 @@ public final class ConstantGenIterator  {
 				}
 
 			}
+			
 			String ct = this.nodo.toString();
 			if (ct.equals("()")) {
 				this.nodo = (DefaultMutableTreeNode) this.nodo.getChildAt(0);
