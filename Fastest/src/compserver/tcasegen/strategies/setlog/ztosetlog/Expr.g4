@@ -1381,7 +1381,7 @@ expression4
 			$setlogName = "";
 			$newVarName2 = newVar();
 			
-			$setlogName = $setlogName.concat("{ " + varName + ":exists([");
+			$setlogName = $setlogName.concat("{ " + varName + " :exists([");
 			
 			Collection<String> values = setExpressionVars.values();
 			if (!needsNewName)

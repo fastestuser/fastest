@@ -81,7 +81,7 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		String tipo = "\\power (FT \\cross FT)";
+		String tipo = "\\seq FT";
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
 		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
@@ -139,7 +139,7 @@ public class Test {
 //		e.remove();
 //		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
 		
-		String e = "{[a,Y]}";
+		String e = "X";
 		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
 		String s = c.generate();
 		System.out.println(e + " --> " + s);
