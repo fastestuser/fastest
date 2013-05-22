@@ -141,7 +141,7 @@ public final class ConstantCreator {
 		String salida = "error";
 		
 		// si es variable auxiliar de {log} genero
-		if (Character.isUpperCase(c) || c == '_') {
+		if (CCUtils.esVariable(exprS)) {
 			String cte = null;
 			StringPointer sp;
 			
@@ -163,7 +163,7 @@ public final class ConstantCreator {
 			return salida;
 		}
 		// si es constante la meto
-		else if (Character.isLowerCase(c) || Character.isDigit(c) || c == '-') {
+		else if (CCUtils.esCteSimple(exprS)) {
 			salida = (c=='-')?("\\neg " + exprS):exprS;
 			return salida;
 		} 

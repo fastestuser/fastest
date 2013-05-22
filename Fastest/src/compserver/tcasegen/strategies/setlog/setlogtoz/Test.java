@@ -1,5 +1,15 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
+import java.util.HashMap;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
+import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
+import compserver.tcasegen.strategies.setlog.TypeManagerParser;
+
 
 
 
@@ -71,23 +81,23 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-//		String tipo = "\\power (\\power FT)";
-//		
-//		ANTLRInputStream input = new ANTLRInputStream(tipo);
-//		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
-//        TypeManagerLexer lexer = new TypeManagerLexer(input);
-//        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//        TypeManagerParser parser = new TypeManagerParser(tokens);
-//        parser.typeManage();
-//        DefaultMutableTreeNode root =  parser.getRoot();
-//        
-//        input = new ANTLRInputStream(tipo);
-//		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
-//        lexer = new TypeManagerLexer(input);
-//        tokens = new CommonTokenStream(lexer);
-//        parser = new TypeManagerParser(tokens);
-//        parser.typeManage();
-//        DefaultMutableTreeNode root2 =  parser.getRoot();
+		String tipo = "\\power (FT \\cross FT)";
+		
+		ANTLRInputStream input = new ANTLRInputStream(tipo);
+		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root =  parser.getRoot();
+        
+        input = new ANTLRInputStream(tipo);
+		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+        lexer = new TypeManagerLexer(input);
+        tokens = new CommonTokenStream(lexer);
+        parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root2 =  parser.getRoot();
       
         
 //        HashMap<String,String> tipos = new HashMap<String, String>();
@@ -105,18 +115,17 @@ public class Test {
         
         
         
-//		HashMap<String,String> tipos = new HashMap<String, String>();
-//		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
+		HashMap<String,String> tipos = new HashMap<String, String>();
+		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
 //		IntExprMap tmp = new IntExprMap(tipos);
-//		int num = 11;
-//		String expr = tmp.toExpr(root,num);
+//		int num = 5;
+//		String expr1 = tmp.toExpr(root,num);
 //		
-//		
-//		System.out.println( num + " to expr = " + expr);
-//		int num2 = tmp.toNum(root2,"{{a},{a,c},{a,b,c}}");
-//		System.out.println( expr + " to num = " + num2);
-//		
-//		System.out.println("tamaño integer  " + Integer.SIZE);
+//		String expr2 = "[{a,b},{{{a}}}]";
+//		System.out.println( num + " to expr = " + expr1);
+//		int num2 = tmp.toNum(root2,expr1);
+//		System.out.println( expr1 + " to num = " + num2);
+		
 		/*String tipo =  "EnumerationType:FT:{a,b,c,d}";
 		System.out.println("posicion: " + numFromFreeType(tipo,""));
 		*/
@@ -126,13 +135,14 @@ public class Test {
 			System.out.println(it.next());
 		String s = "aaa}";
 		System.out.println(s.charAt(s.length()-1));*/
-		ExprIterator e = new ExprIterator("{a,b,c,d,e}");
-		e.remove();
-		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
+//		ExprIterator e = new ExprIterator("{a,b,c,d,e}");
+//		e.remove();
+//		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
 		
-		//ConstantGenIterator c = new ConstantGenIterator(e); 
-		
-		
+		String e = "{[a,Y]}";
+		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
+		String s = c.generate();
+		System.out.println(e + " --> " + s);
 		
 		
 		

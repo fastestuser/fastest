@@ -32,6 +32,11 @@ public final class CCUtils {
 		return (expr.startsWith("_")|| Character.isUpperCase(c));
 	}
 	
+	protected static boolean esCteSimple(String expr){
+		char c = expr.charAt(0);
+		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
+	}
+	
 	protected static void refrescarValoresProhibidos(String var, String expr,HashMap<String,String> vp){
 		Iterator<String> it = vp.keySet().iterator();
 		String key,value;
@@ -83,5 +88,47 @@ public final class CCUtils {
 		
 		return salida;
 	}
+	
+	//cardinalidad del tipo libre
+		private static int cardOfFreeType(String tipo){
+			String aux[] = tipo.split(":");
+			aux = aux[2].split(",");
+			return aux.length;
+		}
+
+		// devuelve la cardinalidad del tipo finito, por ahora solo formado por tipos libres.
+		// si el numero es mayor al maximo del int devuelve 0.
+		public static int cardinalidadTipoFinito(HashMap<String, String> tipos, DefaultMutableTreeNode nodo){
+			String ct = nodo.toString();
+			int c=0;
+			
+			if (ct.equals("\\power")){
+				c = cardinalidadTipoFinito(tipos,(DefaultMutableTreeNode) nodo.getChildAt(0));
+				c = (2<<(c-1));
+			}
+			else if (ct.equals("()")){
+				c = cardinalidadTipoFinito(tipos,(DefaultMutableTreeNode) nodo.getChildAt(0));
+			}
+			else if(ct.equals("\\cross")){
+				c = cardinalidadTipoFinito(tipos,(DefaultMutableTreeNode) nodo.getChildAt(0));
+				c = c * cardinalidadTipoFinito(tipos,(DefaultMutableTreeNode) nodo.getChildAt(1));
+			}
+			else
+				c = cardOfFreeType(tipos.get(ct));
+			return c;
+		}
+		//devuelve el numero que corresponde a la posicion, ej bitFromFreeType(FT::=a|b|c , a)
+		// 4 en decimal
+		public static  int numFromFreeType(String tipo,String elem){
+			String s;
+			String aux[] = tipo.split(":");
+			s = aux[2].substring(1, aux[2].length()-1);
+			aux = s.split(",");
+			for(int i=0;i<aux.length;i++){
+				if (aux[i].equals(elem))
+					return i+1;
+			}
+			return 0;
+		}
 	
 }
