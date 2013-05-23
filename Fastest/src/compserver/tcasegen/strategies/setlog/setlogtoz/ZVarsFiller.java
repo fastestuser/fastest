@@ -2,15 +2,9 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
-import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
-import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 public final class ZVarsFiller {
 	

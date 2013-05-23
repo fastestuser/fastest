@@ -4,10 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
-
-import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 
@@ -94,7 +91,7 @@ public final class ConstantCreator {
 				i++;
 			}
 		}
-		String tipo = SetLogUtils.tipoNoParentesis(nodo);
+		String tipo = nodo.toString();
 
 		//el 0 de tipo power y seq es {},el resto de los tipos empieza en 1
 		int varNat = 0 ;

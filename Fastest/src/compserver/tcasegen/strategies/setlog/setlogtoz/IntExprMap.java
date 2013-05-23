@@ -119,7 +119,7 @@ public final class IntExprMap {
 			salida = p1;
 			int aux;
 			while(numi!=0){
-				ctHijo = SetLogUtils.tipoNoParentesis(hijoIzq);
+				ctHijo = hijoIzq.toString();
 				//numi - 1 es el numero decimal que representa la constante
 				//el cual es la posicion del bit encendido - 1
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? numi-1 : numi;
@@ -141,9 +141,9 @@ public final class IntExprMap {
 			else{
 				Par p = parFromInt(c,num);
 
-				String ctaux = SetLogUtils.tipoNoParentesis(hijoIzq);
+				String ctaux = hijoIzq.toString();
 				p.x = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.x-1 : p.x;
-				ctaux = SetLogUtils.tipoNoParentesis(hijoDer);
+				ctaux = hijoDer.toString();
 				p.y = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? p.y-1 : p.y;
 
 				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
