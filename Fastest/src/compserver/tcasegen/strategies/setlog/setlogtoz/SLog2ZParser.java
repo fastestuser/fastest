@@ -66,35 +66,7 @@ public class SLog2ZParser extends Parser {
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}
-		//devuelve un elemento que pertenece a la resta de dos conjuntos de String
-		// e = "aaa,bbb,ccc,ddd", ne = "bbb,aaa,ddd" , devuelve ccc
-		private static String getNotEqType(String e, String ne){
-			String[] aux1 = e.split(",");
-			int m = aux1.length;
-			int i;
-			String s; 
-			for (i = 0; i < m; i++){
-				s = aux1[i];
-				if(!ne.contains(s))
-					return s;
-			
-			}	
-			
-			return null;
-		}
-		//usa la estructura tipos, conjunto de valores posible de las variables enumeradas
-		//y los valores prohibidos de la estructura valoresProhibidos, y pone un valor por variable en slvars
-		private void putNotEqInSlvars(){
-			Iterator<String> iterator = valoresProhibidos.keySet().iterator();  
-			String key,value,e,cte;String[] aux;
-			while (iterator.hasNext()) {  
-			   key = iterator.next().toString();
-			   e = tipos.get(key);
-			   e = e.substring(1,e.length()-1);
-			   cte = getNotEqType(e,valoresProhibidos.get(key));
-			   slvars.put(key, new StringPointer(cte));
-			} 
-		}
+		
 		//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
 		//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
 		private HashMap<String,String> llenarFreeTypes(){
@@ -117,7 +89,7 @@ public class SLog2ZParser extends Parser {
 	    }
 	    
 		public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory){
-			zNames = CCUtils.invertHashMap(memory);
+			zNames = SetLogUtils.invertHashMap(memory);
 			this.tipos = tipos;
 			this.zVars = zVars;
 			
@@ -135,23 +107,6 @@ public class SLog2ZParser extends Parser {
 			cc = new ConstantCreator(tipos,zNames,slvars,valoresProhibidos);
 			
 		}
-		
-		
-		private String getTipoLibre(String elem){
-	    	Iterator<String> iterator = freeTypes.keySet().iterator();  
-			String key;	String value;
-			while (iterator.hasNext()) { 
-				key = iterator.next().toString();
-				value = freeTypes.get(key);
-				if(value !=null){
-					if (value.contains(elem))
-						return value;
-				}
-			}
-	    	
-	    	return "null";
-	    }
-		
 		
 		
 		public void printHashMap(HashMap map){
@@ -576,7 +531,7 @@ public class SLog2ZParser extends Parser {
 							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
 							{
 								String var = ((SeqIgualContext)_localctx).v2.valor;
-								((SeqIgualContext)getInvokingContext(3)).valor.setString(cc.getCte(var,SetLogUtils.toTree(tipo)));
+								((SeqIgualContext)getInvokingContext(3)).valor.setString(cc.getCte(var,SetLogUtils.toTreeNorm(tipo)));
 							}
 							 	
 						 

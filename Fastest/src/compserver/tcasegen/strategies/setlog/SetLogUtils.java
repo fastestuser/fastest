@@ -32,6 +32,17 @@ public final class SetLogUtils {
 		return TMP.getRoot();
 	}
 	
+	public static HashMap<String,String> invertHashMap(HashMap<String,String> m){
+		Iterator<String> iterator = m.keySet().iterator();  
+		HashMap<String,String> s = new HashMap<String,String>();
+
+		while (iterator.hasNext()) {  
+			String key = iterator.next().toString();  
+			String value = m.get(key).toString();  
+			s.put(value,key);
+		} 	
+		return s;
+	} 
 	
 	//devuelve el tipo del proximo hijo que no es "()", es frecuente hacer esto
 	public static String tipoNoParentesis(TreeNode nodo){
@@ -52,6 +63,6 @@ public final class SetLogUtils {
 				value = map.get(key).toString();
 			System.out.println(key + " = " + value);  
 		} 
-		
 	}
+	
 }

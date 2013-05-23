@@ -142,17 +142,14 @@ public class Test {
 //		ExprIterator e = new ExprIterator("{a,b,c,d,e}");
 //		e.remove();
 //		System.out.println(e +" "+ String.valueOf(e.cardinalidad()));
-		HashMap<String, String> valoresProhibidos = new HashMap();
-		valoresProhibidos.put("X", "{a}");
+//		HashMap<String, String> valoresProhibidos = new HashMap();
+//		valoresProhibidos.put("X", "{a}");
 		
 
 //		String e = "X";
 //		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
 //		String s = c.generate();
 //		System.out.println(e + " --> " + s);
-
-		
-		
 		
 	}
 

@@ -20,7 +20,7 @@ public final class ExprIterator implements Iterator<String>{
 	public void reiniciar(){
 		posActual = 0;
 	}
-	
+
 	public int cardinalidad(){
 		int backup = posActual;
 		posActual = 0;
@@ -32,7 +32,7 @@ public final class ExprIterator implements Iterator<String>{
 		posActual = backup;
 		return ac;
 	}
-	
+
 	public boolean hasNext() {
 		if ( expr.charAt(posActual)== cierre || expr.charAt(posActual+1) == cierre)
 			return false;
@@ -42,7 +42,7 @@ public final class ExprIterator implements Iterator<String>{
 	public boolean hasElement(){
 		return expr.length() != 2;
 	}
-	
+
 	public String next() {
 		posPrev = posActual;
 		int length = expr.length();
@@ -65,7 +65,7 @@ public final class ExprIterator implements Iterator<String>{
 		return elem;
 	}
 
-	@Override
+	//borra el elemento actual y reinicia el iterador
 	public void remove() {
 		int a,b;
 		a  = b = posActual;
@@ -85,20 +85,18 @@ public final class ExprIterator implements Iterator<String>{
 	
 	public void remove(String elem){
 		int backup = posActual;
-		
+
 		while (!elem.equals(next()));
 		posActual = posPrev;
 		remove();
-		
+
 		posActual = backup;
-			
+
 	}
-	
+
 	public String toString(){
 		return expr;
 	}
-	
-	
 
 }
 

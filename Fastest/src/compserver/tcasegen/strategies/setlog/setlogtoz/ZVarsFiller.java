@@ -55,7 +55,7 @@ public final class ZVarsFiller {
 	
 	private void llenarZVars(){
 		//zVars = SL2ZP.getZVars();
-		HashMap<String,String> zNames = CCUtils.invertHashMap(memory);
+		HashMap<String,String> zNames = SetLogUtils.invertHashMap(memory);
 
 		Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
