@@ -7,8 +7,6 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
-
-
 public final class ConstantCreator {
 
 	private DefaultMutableTreeNode arbol;

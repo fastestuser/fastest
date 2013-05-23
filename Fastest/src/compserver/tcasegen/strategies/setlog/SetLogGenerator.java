@@ -27,19 +27,8 @@ public final class SetLogGenerator {
 		String ct = nodo.toString();
 		String salida = null;
 		
-		if(ct.equals("()")){
-			return setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.toString());
-		}
-		else if(ct.equals("\\cross")){
+		if(ct.equals("\\cross")){
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
-		}
-		else if(ct.equals("\\fun") ||ct.equals("\\pfun")|| ct.equals("\\rel")){
-			DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
-			cross.add((MutableTreeNode) nodo.getChildAt(0));
-			cross.add((MutableTreeNode) nodo.getChildAt(0));
-			nodo.setUserObject("\\power");
-			nodo.add(cross);
-			return setLogToLatexCharsReplacer(nodo,exprS);
 		}
 		else if(ct.equals("\\power")){
 			if(c == '['){
@@ -94,7 +83,7 @@ public final class SetLogGenerator {
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			zVars.put(var, setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr));
+			zVars.put(var, setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr));
 		}
 	}
 	
