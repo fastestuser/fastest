@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -49,7 +50,7 @@ public final class CCUtils {
 	}
 	
 	//devuelve una cte distinta a todos 
-	protected static String getCteDesigual(DefaultMutableTreeNode nodo,String var,HashMap<String,String> vp,HashMap<String,StringPointer> vars,HashMap<String,String> tipos){
+	protected static String getCteDesigual(DefaultMutableTreeNode nodo,String var,HashMap<String,String> vp,HashMap<String,String> tipos){
 		String salida = null;
 		ExprIterator exprs = new ExprIterator("{"+vp.get(var)+"}");
 		int nats[] = new int[exprs.cardinalidad()];
@@ -130,5 +131,9 @@ public final class CCUtils {
 			}
 			return 0;
 		}
+		
+		
+		
+		
 	
 }

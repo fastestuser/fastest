@@ -7,6 +7,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
@@ -81,15 +82,18 @@ public class Test {
 	
 	public static void main(String[] args) {
 		
-		String tipo = "\\power(\\power FT)";
+
+		String tipo = "((\\power (\\power (FT \\pfun FT))))";
+
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
 		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
         TypeManagerLexer lexer = new TypeManagerLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         TypeManagerParser parser = new TypeManagerParser(tokens);
-        parser.typeManage();
+        parser.typeManageNorm();
         DefaultMutableTreeNode root =  parser.getRoot();
+        System.out.println(parser.printTree(root));
         
         input = new ANTLRInputStream(tipo);
 		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
@@ -141,11 +145,12 @@ public class Test {
 		HashMap<String, String> valoresProhibidos = new HashMap();
 		valoresProhibidos.put("X", "{a}");
 		
-		String e = "X";
-		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos,valoresProhibidos); 
-		String s = c.generate();
-		System.out.println(e + " --> " + s);
-		
+
+//		String e = "X";
+//		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
+//		String s = c.generate();
+//		System.out.println(e + " --> " + s);
+
 		
 		
 		

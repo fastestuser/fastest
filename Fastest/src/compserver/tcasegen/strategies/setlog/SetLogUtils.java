@@ -21,7 +21,15 @@ public final class SetLogUtils {
 		TypeManagerParser TMP = new TypeManagerParser(tokens);
 		TMP.typeManage();
 		return TMP.getRoot();
-		
+	}
+	
+	public static DefaultMutableTreeNode toTreeNorm(String tipo){
+		ANTLRInputStream input = new ANTLRInputStream(tipo);
+		TypeManagerLexer lexer = new TypeManagerLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		TypeManagerParser TMP = new TypeManagerParser(tokens);
+		TMP.typeManageNorm();
+		return TMP.getRoot();
 	}
 	
 	

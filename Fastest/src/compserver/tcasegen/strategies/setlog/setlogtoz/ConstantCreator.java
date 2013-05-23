@@ -82,7 +82,7 @@ public final class ConstantCreator {
 		}
 		
 		//si esta formado solo por tipos finitos
-		salida = CCUtils.getCteDesigual(nodo, var, valoresProhibidos, slVars, tipos);
+		salida = CCUtils.getCteDesigual(nodo, var, valoresProhibidos, tipos);
 		return salida;
 	}
 	

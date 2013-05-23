@@ -5,6 +5,10 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import java.util.Random;
 
 
+
+/*Esta clase Toma una expresion (preferentemente de conjunto, ej. {a,{ss},X} , cualquier cosa) y genera
+ * un caso con elementos diferentes, 
+ * */
 public final class ConstantGenIterator  {
 
 	private static HashMap<String,StringPointer> slVars;

@@ -32,6 +32,7 @@ grammar TypeManager;
 }
 
 typeManage: type {root = $type.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
+typeManageNorm: typeNorm {root = $typeNorm.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 
 type returns [DefaultMutableTreeNode node]
 		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
@@ -43,6 +44,32 @@ type returns [DefaultMutableTreeNode node]
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
 		| 	e1=NUM '\\upto' e2=NUM {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;
+
+typeNorm returns [DefaultMutableTreeNode node]
+		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
+		|	a=typeNorm BINOP b=typeNorm 
+				{
+					if(!($BINOP.text.equals("\\cross"))){
+						$node = new DefaultMutableTreeNode("\\power"); 
+						DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
+						$node.add(cross);
+						cross.add($a.node); 
+						cross.add($b.node);
+					}
+					else{
+						$node = new DefaultMutableTreeNode("\\cross");
+						$node.add($a.node); 
+						$node.add($b.node);
+					}
+				}
+		|	'(' a=typeNorm ')' {$node = $a.node;}
+		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
+		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
+		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
+		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
+		| 	e1=NUM '\\upto' e2=NUM {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
+		;		
+
 
 BINOP	:	'\\rel'
 		|	'\\pfun'
