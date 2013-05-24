@@ -528,7 +528,7 @@ public class SLog2ZParser extends Parser {
 
 							String zname = zNames.get((((SeqIgualContext)_localctx).v1!=null?((SeqIgualContext)_localctx).v1.getText():null));
 							String tipo = tipos.get(zname);
-							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
+							if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
 							{
 								String var = ((SeqIgualContext)_localctx).v2.valor;
 								((SeqIgualContext)getInvokingContext(3)).valor.setString(cc.getCte(var,SetLogUtils.toTreeNorm(tipo)));

@@ -5,6 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
+
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 public final class ConstantCreator {
@@ -35,17 +37,17 @@ public final class ConstantCreator {
 				basicTypes.add(key);
 		}
 	}
-	
+
 	private boolean esVariable(String expr){
 		char c = expr.charAt(0);
 		return (expr.startsWith("_")|| Character.isUpperCase(c));
 	}
-	
+
 	private boolean esCteSimple(String expr){
 		char c = expr.charAt(0);
 		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
 	}
-	
+
 	private void refrescarValoresProhibidos(String var, String expr){
 		Iterator<String> it = valoresProhibidos.keySet().iterator();
 		String key,value;
@@ -56,7 +58,7 @@ public final class ConstantCreator {
 			valoresProhibidos.put(key, value);
 		}
 	}
-	
+
 	private boolean soloTipoFinito(DefaultMutableTreeNode nodo){
 		String tipo = TypeManagerParser.printTree(nodo);
 		if(tipo.contains("num") || tipo.contains("nat"))
@@ -143,40 +145,54 @@ public final class ConstantCreator {
 	/*Dado un tipo y una variable, genera un terminal canonico para el tipo*/
 	private String cteCanonica(TreeNode nodo,String var) {
 		String ct = nodo.toString();
-		if (ct.equals("\\num") || ct.equals("\\nat") ) {
+
+		if (ct.equals("\\num") || ct.equals("\\nat") ) 
 			return this.getNumber();
-		} else if(ct.equals("\\cross")){
+
+		if(ct.equals("\\cross"))
 			return cteCanonica(nodo.getChildAt(0),var) + "," + cteCanonica(nodo.getChildAt(1),var)  ;
-		} else if (ct.equals("\\power")) {
+
+		if (ct.equals("\\power")) 
 			return "{" + cteCanonica(nodo.getChildAt(0),var) + "}";
-		} else if (ct.equals("\\seq")) {
+
+		if (ct.equals("\\seq")) 
 			return "[" + cteCanonica(nodo.getChildAt(0),var) + "]";
-		}else { 
-			String nodoType = tipos.get(ct);
-			String cte;
-			//si es EnumerationType
-			if (nodoType.startsWith("EnumerationType")){
-				//si nodoType == EnumerationType:FT:{elem1,elem2}
-				// aux = EnumerationType:FT: , elem1 , elem2}
-				String[] aux = nodoType.split("[{,]");
-				cte =  aux[1];
-			}else{
-				//si es basicType
-				//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
-				cte = ct.toLowerCase();
-				if(zNames == null)
-					cte = cte + var;
-				else
-				{
-					String zname = zNames.get(var);
-					if (zname == null)
-						cte = cte + this.getNumber();
-					else
-						cte = cte + zname.replace("?","");
-				}
+
+		String tipoCompleto = tipos.get(ct);
+		if (tipoCompleto.startsWith("SchemaType")){
+			ExprIterator tiposDecl = schemaTypeToExprIterator(ct,tipoCompleto);
+			String salida = "";
+			int i = 1;
+			while(tiposDecl.hasNext()){
+				salida += "," + cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),"X"+i);
 			}
+			if (!salida.isEmpty())
+				return "[" + salida.substring(1) + "]";
+			return "[]";
+		}
+		String cte;
+		//si es EnumerationType
+		if (tipoCompleto.startsWith("EnumerationType")){
+			//si nodoType == EnumerationType:FT:{elem1,elem2}
+			// aux = EnumerationType:FT: , elem1 , elem2}
+			String[] aux = tipoCompleto.split("[{,]");
+			cte =  aux[1];
 			return cte;
 		}
+		//si es basicType
+		//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
+		cte = ct.toLowerCase();
+		if(zNames == null)
+			cte = cte + var;
+		else
+		{
+			String zname = zNames.get(var);
+			if (zname == null)
+				cte = cte + this.getNumber();
+			else
+				cte = cte + zname.replace("?","");
+		}
+		return cte;
 	}
 
 	/* Dada una expresion y un tipo, genera un terminal cte para el tipo respetando la estructura de la expresion
@@ -188,7 +204,7 @@ public final class ConstantCreator {
 
 		char c = exprS.charAt(0);
 		String ct = nodo.toString();
-		String salida = "error";
+		String salida = "";
 
 		// si es variable auxiliar de {log} genero
 		if (esVariable(exprS)) {
@@ -213,16 +229,16 @@ public final class ConstantCreator {
 			return salida;
 		}
 		// si es constante la meto
-		else if (esCteSimple(exprS)) {
+		if (esCteSimple(exprS)) {
 			salida = (c=='-')?("\\neg " + exprS):exprS;
 			return salida;
 		} 
-		else if (ct.equals("\\cross")){
+		if (ct.equals("\\cross")){
 			//caso [X,Y]
 			salida = "[" + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "," + cte((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + "]"; 
 			return salida;
 		}
-		else if (ct.equals("\\power") ) {
+		if (ct.equals("\\power") ) {
 			//es por que el tipo \\powe(\\num\\pfun\\A) es equivalente a \\seq A
 			if(c == '['){
 				DefaultMutableTreeNode naux = new DefaultMutableTreeNode("\\seq");
@@ -232,41 +248,55 @@ public final class ConstantCreator {
 				naux.add(nauxHijo);
 				return salida = cte(naux,exprS);
 			}
-			else{
-				//pinta {X,X,X}
-				if(	exprS.charAt(1)=='}')
-					return "{}";
-
-				String elem;
-				salida = "{";
-				while(expr.hasNext()){
-					elem = expr.next();
-					salida = salida + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem) + ","; 
-				}
-				//le quito la coma final
-				if (salida.charAt(salida.length()-1) == ',')
-					salida = salida.substring(0, salida.length()-1);
-				return salida + "}";
-			}
-		}
-		else if (ct.equals("\\seq") ) {
-			//pinta [X,X,X]
-			if(	exprS.charAt(1)==']')
-				return "[]";
 
 			String elem;
-			salida = "[";
 			while(expr.hasNext()){
 				elem = expr.next();
-				salida = salida + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem) + ","; 
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem); 
 			}
-			//le quito la coma final
-			if (salida.charAt(salida.length()-1) == ',')
-				salida = salida.substring(0, salida.length()-1);
-			return salida + "]";
-		}
+			if (!salida.isEmpty())
+				return "{" + salida.substring(1) + "}";
+			return "{}";
 
-		return salida;
+		}
+		if (ct.equals("\\seq") ) {
+			String elem;
+			while(expr.hasNext()){
+				elem = expr.next();
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem); 
+			}
+			if (!salida.isEmpty())
+				return "[" + salida.substring(1) + "]";
+			return "[]";
+		}
+		/*es tipo esquema, porque tiene estructura y no es ningun tipo anterior */
+		//pinta [X,X,X]
+		ExprIterator tiposDecl = schemaTypeToExprIterator(ct,tipos.get(ct));
+		String elem;
+		while(expr.hasNext()){
+			elem = expr.next();
+			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),elem); 
+		}
+		if (!salida.isEmpty())
+			return "[" + salida.substring(1) + "]";
+		return "[]";
+
+	}
+
+	private ExprIterator schemaTypeToExprIterator(String nomTipo,String tipoCompleto){
+		// ej SchemaType:Estado:[var1:\num,var2:E]
+		// "SchemaType:".length() = 
+		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		ExprIterator expr = new ExprIterator(tipoCompleto);
+		String elem,aux[],salida="";
+		while(expr.hasNext()){
+			elem = expr.next();
+			aux = elem.split(":");
+			salida += "," + aux[1];
+			System.out.println(elem);
+		}
+		salida = "{" + salida.substring(1) + "}";
+		return new ExprIterator(salida);
 	}
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo

@@ -46,7 +46,7 @@ import compserver.tcasegen.strategies.setlog.*;
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
  * que se utiliza en ANTLRv3 distinto al que se usa en TestRing (ANTLRv4) el cual tiene un procedimiento un poco difrente
  */
-public class SetLogStrategy implements TCaseStrategy{
+public final class SetLogStrategy implements TCaseStrategy{
 
 	private Map<RefExpr, Expr> axDefsValues;
 	private Map<String, List<String>> basicAxDefs;

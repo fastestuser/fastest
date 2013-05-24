@@ -191,7 +191,7 @@ locals [StringPointer valor;]
 		{
 			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);
-			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") )
+			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
 			{
 				String var = $v2.valor;
 				$seqIgual::valor.setString(cc.getCte(var,SetLogUtils.toTreeNorm(tipo)));

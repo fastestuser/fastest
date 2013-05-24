@@ -15,6 +15,21 @@ import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 
 public class Test {
+	private static ExprIterator schemaTypeToExprIterator(String tipoCompleto,String nomTipo){
+		// ej SchemaType:Estado:[var1:\num,var2:E]
+		// "SchemaType:".length() = 
+		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		ExprIterator expr = new ExprIterator(tipoCompleto);
+		String elem,aux[],salida="";
+		while(expr.hasNext()){
+			elem = expr.next();
+			aux = elem.split(":");
+			salida += "," + aux[1];
+			System.out.println(elem);
+		}
+		salida = "{" + salida.substring(1) + "}";
+		return new ExprIterator(salida);
+	}
 	
 //	private class Tipo{
 //		int cardinalidad;
@@ -83,7 +98,7 @@ public class Test {
 	public static void main(String[] args) {
 		
 
-		String tipo = "((\\power (\\power (FT \\pfun FT))))";
+		String tipo = "Estado";
 
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
@@ -104,23 +119,24 @@ public class Test {
         DefaultMutableTreeNode root2 =  parser.getRoot();
       
         
-//        HashMap<String,String> tipos = new HashMap<String, String>();
-//		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
-//		String s = "{[1,{a,X}]}";
+        HashMap<String,String> tipos = new HashMap<String, String>();
+		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
+		tipos.put("Estado", "SchemaType:Estado:[var1:\\num,var2:FT]");
+		tipos.put("V", "Estado");
+		
+		String s = "X";
 //		
-//       ConstantCreator cc = new ConstantCreator(tipos, null, null, null);
-//		 String salida = cc.getCte(s,root);
+        ConstantCreator cc = new ConstantCreator(tipos, null, null, null);
+		 String salida = cc.getCte(s,root);
 //		
 //		 System.out.println("ENTRADA\n" + s);
-//		 System.out.println("SALIDA\n" + salida);
+		 System.out.println("SALIDA\n" + salida);
 //        
         
         
         
         
         
-		HashMap<String,String> tipos = new HashMap<String, String>();
-		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
 //		IntExprMap tmp = new IntExprMap(tipos);
 //		int num = 5;
 //		String expr1 = tmp.toExpr(root,num);
@@ -150,6 +166,10 @@ public class Test {
 //		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
 //		String s = c.generate();
 //		System.out.println(e + " --> " + s);
+		
+//		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
+//		String s2 = "Estado";
+//		System.out.println("" + schemaTypeToExprIterator(s1,s2));
 		
 	}
 
