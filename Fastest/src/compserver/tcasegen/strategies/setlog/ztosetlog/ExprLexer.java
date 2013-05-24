@@ -8,6 +8,8 @@
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
 	import java.util.Collection;
+	import java.util.Iterator;
+	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 
@@ -332,8 +334,17 @@ public class ExprLexer extends Lexer {
 						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
 					}
 				}
-				else if (nodeType.contains("\\upto")) {
-					String nodeName = memory.get(nodeType);
+				else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)
+					String[] childs = nodeType.split("\\\\upto");
+					String childa = childs[0];
+					String childb = childs[1];
+					
+					//Como pueden ser variables de setlog, debo buscar su equivalente Z
+					childa = getKey(childa, memory);
+					childb = getKey(childb, memory);
+					
+					//Obtengo la variable de setlg que representa el upto
+					String nodeName = memory.get(childa + "\\upto" + childb); 
 					if (nodeName != null) {
 						if (tipoSchema == 0) print(var + " in " + nodeName);
 					}
@@ -351,6 +362,16 @@ public class ExprLexer extends Lexer {
 				}
 			}
 			return type;
+		}
+		
+		private String getKey(String value, HashMap<String,String> hashmap) {
+			Iterator<String> keysIt= hashmap.keySet().iterator();
+			while (keysIt.hasNext()) {
+				String key = keysIt.next();
+				if (hashmap.get(key).equals(value))
+					return key;
+			}
+			return null;
 		}
 		
 		private String printInfo(String type, boolean wantToPrint) {

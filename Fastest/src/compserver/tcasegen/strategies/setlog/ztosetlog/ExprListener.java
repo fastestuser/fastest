@@ -8,6 +8,8 @@
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
 	import java.util.Collection;
+	import java.util.Iterator;
+	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 

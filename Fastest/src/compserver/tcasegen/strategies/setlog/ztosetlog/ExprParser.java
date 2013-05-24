@@ -8,6 +8,8 @@
 	import java.util.regex.Matcher;
 	import java.util.regex.Pattern;
 	import java.util.Collection;
+	import java.util.Iterator;
+	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	
 
@@ -338,8 +340,17 @@ public class ExprParser extends Parser {
 						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
 					}
 				}
-				else if (nodeType.contains("\\upto")) {
-					String nodeName = memory.get(nodeType);
+				else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)
+					String[] childs = nodeType.split("\\\\upto");
+					String childa = childs[0];
+					String childb = childs[1];
+					
+					//Como pueden ser variables de setlog, debo buscar su equivalente Z
+					childa = getKey(childa, memory);
+					childb = getKey(childb, memory);
+					
+					//Obtengo la variable de setlg que representa el upto
+					String nodeName = memory.get(childa + "\\upto" + childb); 
 					if (nodeName != null) {
 						if (tipoSchema == 0) print(var + " in " + nodeName);
 					}
@@ -357,6 +368,16 @@ public class ExprParser extends Parser {
 				}
 			}
 			return type;
+		}
+		
+		private String getKey(String value, HashMap<String,String> hashmap) {
+			Iterator<String> keysIt= hashmap.keySet().iterator();
+			while (keysIt.hasNext()) {
+				String key = keysIt.next();
+				if (hashmap.get(key).equals(value))
+					return key;
+			}
+			return null;
 		}
 		
 		private String printInfo(String type, boolean wantToPrint) {
@@ -2694,7 +2715,7 @@ public class ExprParser extends Parser {
 						          		if (memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)) == null) {
 						          			String newVarName = newVar();
 						          			memory.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
-						          			types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), (((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null));
+						          			types.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), memory.get((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null)) + "\\upto" + memory.get((((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null)));
 						          			if (modoSetExpression != 0 )
 						          				setExpressionVars.put((((Expression2Context)_localctx).e21!=null?_input.getText(((Expression2Context)_localctx).e21.start,((Expression2Context)_localctx).e21.stop):null) + "\\upto" + (((Expression2Context)_localctx).e22!=null?_input.getText(((Expression2Context)_localctx).e22.start,((Expression2Context)_localctx).e22.stop):null), newVarName);
 						          			print(newVarName + " = int(" + a + "," + b + ")");
@@ -3095,7 +3116,7 @@ public class ExprParser extends Parser {
 							((Expression4Context)_localctx).setlogName =  "";
 							((Expression4Context)_localctx).newVarName2 =  newVar();
 							
-							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("{ " + varName + ":exists([");
+							((Expression4Context)_localctx).setlogName =  _localctx.setlogName.concat("{ " + varName + " :exists([");
 							
 							Collection<String> values = setExpressionVars.values();
 							if (!needsNewName)

@@ -42,7 +42,7 @@ type returns [DefaultMutableTreeNode node]
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
-		| 	e1=NUM '\\upto' e2=NUM {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
+		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;
 
 typeNorm returns [DefaultMutableTreeNode node]
@@ -67,7 +67,7 @@ typeNorm returns [DefaultMutableTreeNode node]
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
-		| 	e1=NUM '\\upto' e2=NUM {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
+		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;		
 
 
