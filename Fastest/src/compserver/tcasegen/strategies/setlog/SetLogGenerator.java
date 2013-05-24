@@ -41,17 +41,17 @@ public final class SetLogGenerator {
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
 			varn = crossReplacer(SetLogUtils.toTreeNorm(tipo),expr);
-			
+
 			varn = varn.replace('[', '$');
 			varn = varn.replace(']', '#');
 			varn = varn.replace("$", "\\langle");
 			varn = varn.replace("#", "\\rangle");
-			
+
 			varn = varn.replace('{', '$');
 			varn = varn.replace('}', '#');
 			varn = varn.replace("$", "\\{");
 			varn = varn.replace("#", "\\}");
-			
+
 			zVars.put(var,varn);
 		}
 	}

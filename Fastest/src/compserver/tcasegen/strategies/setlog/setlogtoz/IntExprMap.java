@@ -191,7 +191,7 @@ public final class IntExprMap {
 					return -1;
 				//crea el numero a partir de las posiciones de los bit encendidos los cuales
 				//pertenecen a cada elemento del conjunto
-				ctHijo = SetLogUtils.tipoNoParentesis(hijoIzq);
+				ctHijo = hijoIzq.toString();
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? posbit : posbit-1;
 				ac |= 1<<aux; //acumula bits, cad auno corresponde a un elemento presente.
 			}
@@ -209,9 +209,9 @@ public final class IntExprMap {
 			if(f2 == -1)
 				return -1;
 
-			String ctaux = SetLogUtils.tipoNoParentesis(hijoIzq);
+			String ctaux = hijoIzq.toString();
 			f1 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f1+1 : f1;
-			ctaux = SetLogUtils.tipoNoParentesis(hijoDer);
+			ctaux = hijoDer.toString();
 			f2 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f2+1 : f2;
 
 			return intFromPar( f1 , f2, cardinalidadTipoFinito(hijoDer));

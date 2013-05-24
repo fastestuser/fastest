@@ -7,7 +7,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 public final class ZVarsFiller {
-	
+
 	private String setlogOutput;
 	private HashMap<String,String> zVars;
 	private HashMap<String,String> tipos;
@@ -46,7 +46,7 @@ public final class ZVarsFiller {
 
 		return s;
 	}
-	
+
 	private void llenarZVars(){
 		//zVars = SL2ZP.getZVars();
 		HashMap<String,String> zNames = SetLogUtils.invertHashMap(memory);
@@ -64,31 +64,31 @@ public final class ZVarsFiller {
 			}  
 		}
 	}
-	
+
 	public void generar(){
 		//traduccion de SLog a Z
-				//setlogOutput = "CONSTR = [],\nINT = int(-10000000000, 10000000000),\nK1 = 2,\nA=X,\nX=Y,";
-				ANTLRInputStream input = new ANTLRInputStream(setlogOutput);
-				SLog2ZLexer lexer2 = new SLog2ZLexer(input);
-				CommonTokenStream tokens = new CommonTokenStream(lexer2);
-				SLog2ZParser SL2ZP = new SLog2ZParser(tokens);
-				SL2ZP.loadTablas(zVars,tipos, memory);
+		//setlogOutput = "CONSTR = [],\nINT = int(-10000000000, 10000000000),\nK1 = 2,\nA=X,\nX=Y,";
+		ANTLRInputStream input = new ANTLRInputStream(setlogOutput);
+		SLog2ZLexer lexer2 = new SLog2ZLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer2);
+		SLog2ZParser SL2ZP = new SLog2ZParser(tokens);
+		SL2ZP.loadTablas(zVars,tipos, memory);
 
-				//tambien imprime en pantalla
-				SL2ZP.lineas();
-				llenarZVars();
-				System.out.println("\nzVars llenas****************\n");
-				SetLogUtils.printHashMap(zVars);
+		//tambien imprime en pantalla
+		SL2ZP.lineas();
+		llenarZVars();
+		System.out.println("\nzVars llenas****************\n");
+		SetLogUtils.printHashMap(zVars);
 
-				System.out.println("\n FreeTipos ****************\n");
-				HashMap<String, String> mapaux = llenarFreeTypes(tipos);
-				SetLogUtils.printHashMap(mapaux);
+		System.out.println("\n FreeTipos ****************\n");
+		HashMap<String, String> mapaux = llenarFreeTypes(tipos);
+		SetLogUtils.printHashMap(mapaux);
 
-				String ssss = getTipoLibre("xxx1",mapaux);
-				System.out.println("tipo de xxx1++++++++" + ssss);
-				
+		String ssss = getTipoLibre("xxx1",mapaux);
+		System.out.println("tipo de xxx1++++++++" + ssss);
+
 	}
-	
+
 	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory,String setlogOutput){
 		this.zVars = zVars;
 		this.tipos = tipos;
