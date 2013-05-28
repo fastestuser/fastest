@@ -9,6 +9,8 @@ import javax.swing.tree.TreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
+
 public final class SetLogUtils {
 	
 	
@@ -65,4 +67,45 @@ public final class SetLogUtils {
 		} 
 	}
 	
+	public static boolean esSLVariableSimple(String expr){
+		char c = expr.charAt(0);
+		return (expr.startsWith("_")|| Character.isUpperCase(c));
+	}
+
+	public static boolean esSLCteSimple(String expr){
+		char c = expr.charAt(0);
+		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
+	}
+	
+	public static ExprIterator schemaToVarExprIterator(String nomTipo,String tipoCompleto){
+		// ej SchemaType:Estado:[var1:\num,var2:E] -> {var1,var2}
+		// "SchemaType:".length() = 11 + :.lingth()
+		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		ExprIterator expr = new ExprIterator(tipoCompleto);
+		String elem,aux[],salida="";
+		while(expr.hasNext()){
+			elem = expr.next();
+			aux = elem.split(":");
+			salida += "," + aux[0];
+			System.out.println(elem);
+		}
+		salida = "{" + salida.substring(1) + "}";
+		return new ExprIterator(salida);
+	}
+	
+	public static ExprIterator schemaToTypeExprIterator(String nomTipo,String tipoCompleto){
+		// ej SchemaType:Estado:[var1:\num,var2:E]-> {\num,E}
+		// "SchemaType:".length() = 11 + :.lingth()
+		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		ExprIterator expr = new ExprIterator(tipoCompleto);
+		String elem,aux[],salida="";
+		while(expr.hasNext()){
+			elem = expr.next();
+			aux = elem.split(":");
+			salida += "," + aux[1];
+			System.out.println(elem);
+		}
+		salida = "{" + salida.substring(1) + "}";
+		return new ExprIterator(salida);
+	}
 }

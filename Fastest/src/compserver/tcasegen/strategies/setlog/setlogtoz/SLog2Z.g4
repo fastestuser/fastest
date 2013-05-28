@@ -49,8 +49,8 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
     	return s;
     }
     
-	public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory){
-		zNames = SetLogUtils.invertHashMap(memory);
+	public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames){
+		this.zNames = zNames;
 		this.tipos = tipos;
 		this.zVars = zVars;
 		
@@ -65,7 +65,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		System.out.println("\n tipos Libres: "); 
 		printHashMap(freeTypes);
 		System.out.println("\n");
-		cc = new ConstantCreator(tipos,zNames,slvars,valoresProhibidos);
+		cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
 		
 	}
 	

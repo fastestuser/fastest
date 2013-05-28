@@ -11,7 +11,7 @@ public final class ZVarsFiller {
 	private String setlogOutput;
 	private HashMap<String,String> zVars;
 	private HashMap<String,String> tipos;
-	private HashMap<String,String> memory;
+	private HashMap<String, String> zNames;
 
 	private String getTipoLibre(String elem,HashMap<String,String> tiposLibres){
 		Iterator<String> iterator = tiposLibres.keySet().iterator();  
@@ -49,11 +49,10 @@ public final class ZVarsFiller {
 
 	private void llenarZVars(){
 		//zVars = SL2ZP.getZVars();
-		HashMap<String,String> zNames = SetLogUtils.invertHashMap(memory);
-
+		HashMap<String, String> memory = SetLogUtils.invertHashMap(zNames);
 		Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
-		ConstantCreator cc = new ConstantCreator(tipos,zNames,null,null); 
+		ConstantCreator cc = new ConstantCreator(tipos,null,null); 
 		while (iterator.hasNext()) {  
 			key = iterator.next().toString();
 			valor = zVars.get(key);
@@ -72,7 +71,7 @@ public final class ZVarsFiller {
 		SLog2ZLexer lexer2 = new SLog2ZLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer2);
 		SLog2ZParser SL2ZP = new SLog2ZParser(tokens);
-		SL2ZP.loadTablas(zVars,tipos, memory);
+		SL2ZP.loadTablas(zVars,tipos, zNames);
 
 		//tambien imprime en pantalla
 		SL2ZP.lineas();
@@ -89,10 +88,10 @@ public final class ZVarsFiller {
 
 	}
 
-	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> memory,String setlogOutput){
+	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames,String setlogOutput){
 		this.zVars = zVars;
 		this.tipos = tipos;
-		this.memory = memory;
+		this.zNames = zNames;
 		this.setlogOutput = setlogOutput;
 	}
 }

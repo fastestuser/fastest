@@ -13,7 +13,6 @@ public final class ConstantCreator {
 
 	private DefaultMutableTreeNode arbol;
 	private HashMap<String,String> tipos;
-	private HashMap<String,String> zNames;
 	private HashMap<String,String> valoresProhibidos;
 	private HashMap<String,StringPointer> slVars;
 	private List<String> basicTypes;
@@ -38,15 +37,7 @@ public final class ConstantCreator {
 		}
 	}
 
-	private boolean esVariable(String expr){
-		char c = expr.charAt(0);
-		return (expr.startsWith("_")|| Character.isUpperCase(c));
-	}
 
-	private boolean esCteSimple(String expr){
-		char c = expr.charAt(0);
-		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
-	}
 
 	private void refrescarValoresProhibidos(String var, String expr){
 		Iterator<String> it = valoresProhibidos.keySet().iterator();
@@ -86,7 +77,7 @@ public final class ConstantCreator {
 		while(exprs.hasNext()){
 			expresion = exprs.next();
 			//si no es varaible convierto la expresion a nat
-			if (!esVariable(expresion)){
+			if (!SetLogUtils.esSLVariableSimple(expresion)){
 				nats[i] = varMap.toNum(nodo,expresion);
 				i++;
 			}
@@ -160,39 +151,24 @@ public final class ConstantCreator {
 
 		String tipoCompleto = tipos.get(ct);
 		if (tipoCompleto.startsWith("SchemaType")){
-			ExprIterator tiposDecl = schemaTypeToExprIterator(ct,tipoCompleto);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipoCompleto);
+			ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipoCompleto);
 			String salida = "";
-			int i = 1;
-			while(tiposDecl.hasNext()){
-				salida += "," + cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),"X"+i);
-			}
+			while(tiposDecl.hasNext())
+				salida += "," + cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next());
+			
 			if (!salida.isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
 		}
-		String cte;
 		//si es EnumerationType
 		if (tipoCompleto.startsWith("EnumerationType")){
 			//si nodoType == EnumerationType:FT:{elem1,elem2}
 			// aux = EnumerationType:FT: , elem1 , elem2}
 			String[] aux = tipoCompleto.split("[{,]");
-			cte =  aux[1];
-			return cte;
+			return aux[1];
 		}
-		//si es basicType
-		//para cuando se llama con la lista de zName vacia, cuando var ya es una variable Z.
-		cte = ct.toLowerCase();
-		if(zNames == null)
-			cte = cte + var;
-		else
-		{
-			String zname = zNames.get(var);
-			if (zname == null)
-				cte = cte + this.getNumber();
-			else
-				cte = cte + zname.replace("?","");
-		}
-		return cte;
+		return var;
 	}
 
 	/* Dada una expresion y un tipo, genera un terminal cte para el tipo respetando la estructura de la expresion
@@ -207,7 +183,7 @@ public final class ConstantCreator {
 		String salida = "";
 
 		// si es variable auxiliar de {log} genero
-		if (esVariable(exprS)) {
+		if (SetLogUtils.esSLVariableSimple(exprS)) {
 			String cte = null;
 			StringPointer sp;
 
@@ -229,9 +205,8 @@ public final class ConstantCreator {
 			return salida;
 		}
 		// si es constante la meto
-		if (esCteSimple(exprS)) {
-			salida = (c=='-')?("\\neg " + exprS):exprS;
-			return salida;
+		if (SetLogUtils.esSLCteSimple(exprS)) {
+			return exprS;
 		} 
 		if (ct.equals("\\cross")){
 			//caso [X,Y]
@@ -271,11 +246,16 @@ public final class ConstantCreator {
 		}
 		/*es tipo esquema, porque tiene estructura y no es ningun tipo anterior */
 		//pinta [X,X,X]
-		ExprIterator tiposDecl = schemaTypeToExprIterator(ct,tipos.get(ct));
+		ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipos.get(ct));
+		ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipos.get(ct));
 		String elem;
 		while(expr.hasNext()){
 			elem = expr.next();
+			varsDecl.next();
 			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),elem); 
+		}
+		while(tiposDecl.hasNext()){
+			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next()); 
 		}
 		if (!salida.isEmpty())
 			return "[" + salida.substring(1) + "]";
@@ -283,27 +263,12 @@ public final class ConstantCreator {
 
 	}
 
-	private ExprIterator schemaTypeToExprIterator(String nomTipo,String tipoCompleto){
-		// ej SchemaType:Estado:[var1:\num,var2:E]
-		// "SchemaType:".length() = 
-		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
-		ExprIterator expr = new ExprIterator(tipoCompleto);
-		String elem,aux[],salida="";
-		while(expr.hasNext()){
-			elem = expr.next();
-			aux = elem.split(":");
-			salida += "," + aux[1];
-			System.out.println(elem);
-		}
-		salida = "{" + salida.substring(1) + "}";
-		return new ExprIterator(salida);
-	}
+	
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
 	 * construcciones de tipos finitos. */
-	ConstantCreator(HashMap<String, String> tipos,HashMap<String, String> znames,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
+	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
-		this.zNames = znames;
 		this.slVars = slVars;
 		this.valoresProhibidos = valoresProhibidos;
 		this.basicTypes = null;

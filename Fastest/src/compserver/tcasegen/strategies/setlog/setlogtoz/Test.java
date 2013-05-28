@@ -98,39 +98,39 @@ public class Test {
 	public static void main(String[] args) {
 		
 
-		String tipo = "Estado";
-
-		
-		ANTLRInputStream input = new ANTLRInputStream(tipo);
-		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
-        TypeManagerLexer lexer = new TypeManagerLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        TypeManagerParser parser = new TypeManagerParser(tokens);
-        parser.typeManageNorm();
-        DefaultMutableTreeNode root =  parser.getRoot();
-        System.out.println(parser.printTree(root));
-        
-        input = new ANTLRInputStream(tipo);
-		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
-        lexer = new TypeManagerLexer(input);
-        tokens = new CommonTokenStream(lexer);
-        parser = new TypeManagerParser(tokens);
-        parser.typeManage();
-        DefaultMutableTreeNode root2 =  parser.getRoot();
-      
-        
-        HashMap<String,String> tipos = new HashMap<String, String>();
-		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
-		tipos.put("Estado", "SchemaType:Estado:[var1:\\num,var2:FT]");
-		tipos.put("V", "Estado");
-		
-		String s = "X";
+//		String tipo = "Estado";
+//
 //		
-        ConstantCreator cc = new ConstantCreator(tipos, null, null, null);
-		 String salida = cc.getCte(s,root);
+//		ANTLRInputStream input = new ANTLRInputStream(tipo);
+//		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+//        TypeManagerLexer lexer = new TypeManagerLexer(input);
+//        CommonTokenStream tokens = new CommonTokenStream(lexer);
+//        TypeManagerParser parser = new TypeManagerParser(tokens);
+//        parser.typeManageNorm();
+//        DefaultMutableTreeNode root =  parser.getRoot();
+//        System.out.println(parser.printTree(root));
+//        
+//        input = new ANTLRInputStream(tipo);
+//		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+//        lexer = new TypeManagerLexer(input);
+//        tokens = new CommonTokenStream(lexer);
+//        parser = new TypeManagerParser(tokens);
+//        parser.typeManage();
+//        DefaultMutableTreeNode root2 =  parser.getRoot();
+//      
+//        
+//        HashMap<String,String> tipos = new HashMap<String, String>();
+//		tipos.put("FT", "EnumerationType:FT:{a,b,c}");
+//		tipos.put("Estado", "SchemaType:Estado:[var1:\\num,var2:FT]");
+//		tipos.put("V", "Estado");
 //		
-//		 System.out.println("ENTRADA\n" + s);
-		 System.out.println("SALIDA\n" + salida);
+//		String s = "X";
+////		
+//        ConstantCreator cc = new ConstantCreator(tipos, null, null, null);
+//		 String salida = cc.getCte(s,root);
+////		
+////		 System.out.println("ENTRADA\n" + s);
+//		 System.out.println("SALIDA\n" + salida);
 //        
         
         
@@ -171,6 +171,11 @@ public class Test {
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
 		
+		String sss = "1\\upto0";
+		String aux[] = sss.split("\\\\upto");
+		System.out.println(aux[0]);
+		System.out.println(aux[1]);
+		 
 	}
 
 }

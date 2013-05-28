@@ -8,6 +8,7 @@ import compserver.tcasegen.strategies.setlog.SetLogUtils;
 /*Mapeador de naturales a expresion, por cada numero natural da una expresion y biceversa*/
 public final class IntExprMap {
 	private HashMap<String, String> tipos;
+	private HashMap<String, String> zNames;
 
 
 	//devuelve el numero que corresponde a la posicion, ej bitFromFreeType(FT::=a|b|c , a)

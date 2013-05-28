@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
+import compserver.tcasegen.strategies.setlog.setlogtoz.StringPointer;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
@@ -20,19 +21,62 @@ import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 public final class SetLogGenerator {
 	private static ExprParser parser;
 	private static HashMap<String,String> tipos;
+	private static HashMap<String, String> zNames;
+	private static HashMap<String, String> zVars;
+	private static int postfijo;
+	private static String getNumber(){
+		return String.valueOf(postfijo++);
+	}
 
 	//cambia los caracteres de setlog [] por langlerangle, etc...
-	private static String crossReplacer(DefaultMutableTreeNode nodo,String exprS){
+	private static String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS){
 		ExprIterator expr = new ExprIterator(exprS);
 
-		if (nodo.toString().equals("\\cross"))
-			return "(" + crossReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "," + crossReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
+		String ct = nodo.toString();
+
+		if (ct.equals("\\cross"))
+			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "\\mapsto" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
+
+		String tipocompleto = tipos.get(ct);
+
+		if (tipocompleto !=null){
+			if (tipocompleto.startsWith("SchemaType")){
+				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipocompleto);
+				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipocompleto);
+				String c,v,salida="";
+				while(expr.hasNext()){
+					c = expr.next();
+					v = varsDecl.next();
+					salida += ";" + v + ":" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tiposDecl.next()),c); 
+				}
+				if (!salida.isEmpty())
+					return "\\lblot" + salida.substring(1) + "\\rblot";
+				return "\\lblot\\rblot";
+			}
+
+			if (tipocompleto.startsWith("FreeType")){
+				return zNames.get(exprS);
+			}
+
+			if (tipocompleto.startsWith("BasicType")){
+				String salida = zNames.get(exprS);
+				salida = ct.toLowerCase() + salida!=null?salida:getNumber();
+				salida.replace("?","");
+				return salida;
+			}
+		}
 
 		return exprS;
 	}
 
 
-	private static void setLogToLatexCharsReplacer(HashMap<String,String> zVars,HashMap<String,String> tipos){
+
+	private String limpiarParentesis(String exprS){
+		return null;
+	}
+
+	private static void setLogToLatexCharsReplacer(){
+		postfijo=0;
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
 		String varn;
@@ -40,7 +84,7 @@ public final class SetLogGenerator {
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			varn = crossReplacer(SetLogUtils.toTreeNorm(tipo),expr);
+			varn = setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr);
 
 			varn = varn.replace('[', '$');
 			varn = varn.replace(']', '#');
@@ -51,6 +95,7 @@ public final class SetLogGenerator {
 			varn = varn.replace('}', '#');
 			varn = varn.replace("$", "\\{");
 			varn = varn.replace("#", "\\}");
+			varn = varn.replace("-", "\\neg");
 
 			zVars.put(var,varn);
 		}
@@ -67,15 +112,15 @@ public final class SetLogGenerator {
 		if (setlogOutput == null) //No se encontro caso
 			return null;
 
-		HashMap<String,String> memory = parser.getMemory();
+		zNames = SetLogUtils.invertHashMap(parser.getMemory());
 		tipos = parser.getTypes();
-		HashMap<String,String> zVars = parser.getZVars();
+		zVars = parser.getZVars();
 
 
-		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,memory,setlogOutput);
+		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
 		zvf.generar();
 
-		setLogToLatexCharsReplacer(zVars,tipos);
+		setLogToLatexCharsReplacer();
 
 		return zVars;
 	}
