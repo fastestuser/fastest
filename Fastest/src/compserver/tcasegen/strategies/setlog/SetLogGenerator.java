@@ -105,7 +105,7 @@ public final class SetLogGenerator {
 
 		String setLogInput = toSetLog(antlrInput);
 		System.out.println("**********************************************************************************************");
-		System.out.println("ANTLROUTPUT\n" + setLogInput);
+		System.out.println("Entrada setlog:\n" + setLogInput);
 		System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 

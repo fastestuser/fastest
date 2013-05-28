@@ -157,9 +157,9 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
-		System.out.println("**********************************************************************************************");
-		System.out.println("ANTLRINPUT\n" + antlrInput);
-		System.out.println("**********************************************************************************************\n");
+		//System.out.println("**********************************************************************************************");
+		//System.out.println("ANTLRINPUT\n" + antlrInput);
+		//System.out.println("**********************************************************************************************\n");
 
 		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput);
 		

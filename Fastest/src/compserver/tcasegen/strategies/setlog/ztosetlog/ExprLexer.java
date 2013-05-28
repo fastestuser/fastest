@@ -319,7 +319,7 @@ public class ExprLexer extends Lexer {
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (nodeType.equals("\\fun")) {
-					if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
+					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 					if (tipoSchema == 0) {

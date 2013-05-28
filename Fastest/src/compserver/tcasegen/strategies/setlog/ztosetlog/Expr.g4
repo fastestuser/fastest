@@ -264,7 +264,7 @@ grammar Expr;
 				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 			}
 			else if (nodeType.equals("\\fun")) {
-				if (tipoSchema == 0) printAtEnd("is_fun(" + var + ")");
+				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 			}
 			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 				if (tipoSchema == 0) {
@@ -735,9 +735,9 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (isBasic(bType))
 			bType = $b.text;
 		
-		if ($IN_GEN.text.equals("\\ffun"))
-			types.put($a.text + $IN_GEN.text + $b.text, aType + "\\pfun" + bType );
-		else
+		//if ($IN_GEN.text.equals("\\fun"))
+		//	types.put($a.text + $IN_GEN.text + $b.text, aType + "\\pfun" + bType );
+		//else
 			types.put($a.text + $IN_GEN.text + $b.text, aType + $IN_GEN.text + bType );
 	}
 	|	e21=expression2 {$expression1::elements.add($e21.text);} ('\\cross' e22=expression2 {$expression1::elements.add($e22.text);})+
@@ -1142,20 +1142,20 @@ expression2
 	
 		types.put($expression2.text, "\\power" + eType );
 	}
-	|	pre_gen e=expression //Pre-Gen //REVISAR, ya que pre-gen no dice tener todo lo que aca hay!
+	|	pre_gen e4=expression4 //Pre-Gen //REVISAR, ya que pre-gen no dice tener todo lo que aca hay!
 	{
 		String a;
-		a = memory.get($e.text);
+		a = memory.get($e4.text);
 		
 		if ($pre_gen.text.equals("\\#")){
-			if (memory.get("\\#" + $e.text) == null) {
+			if (memory.get("\\#" + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put("\\#" + $e.text, newVarName);
-				types.put("\\#" + $e.text, "\\nat");
+				memory.put("\\#" + $e4.text, newVarName);
+				types.put("\\#" + $e4.text, "\\nat");
 				if (modoSetExpression != 0 )
-					setExpressionVars.put("\\#" + $e.text, newVarName);
+					setExpressionVars.put("\\#" + $e4.text, newVarName);
 					
-				String type = getType(types.get($e.text));
+				String type = getType(types.get($e4.text));
 				if (isSequence(type))
 					print("prolog_call(length(" + a + "," + newVarName + "))");
 				else
@@ -1165,17 +1165,17 @@ expression2
 			}
 		}
 		else if ($pre_gen.text.equals("\\dom")){
-			if (memory.get("\\dom" + $e.text) == null) {
+			if (memory.get("\\dom" + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put("\\dom" + $e.text, newVarName);
+				memory.put("\\dom" + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put("\\dom" + $e.text, newVarName);
-				types.put("\\dom" + $e.text, "\\power(" + getChildType(types.get($e.text), 0) + ")");
+					setExpressionVars.put("\\dom" + $e4.text, newVarName);
+				types.put("\\dom" + $e4.text, "\\power(" + getChildType(types.get($e4.text), 0) + ")");
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
-				String type = getType(types.get($e.text));
+				String type = getType(types.get($e4.text));
 				if (isSequence(type))
 					print("ddom_list(" + e + "," + newVarName + ")");
 				else
@@ -1183,17 +1183,17 @@ expression2
 			}
 		}
 		else if ($pre_gen.text.equals("\\ran")){
-			if (memory.get("\\ran" + $e.text) == null) {
+			if (memory.get("\\ran" + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put("\\ran" + $e.text, newVarName);
+				memory.put("\\ran" + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put("\\ran" + $e.text, newVarName);
-				types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 1) + ")");
+					setExpressionVars.put("\\ran" + $e4.text, newVarName);
+				types.put("\\ran" + $e4.text, "\\power(" + getChildType(types.get($e4.text), 1) + ")");
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
-				String type = getType(types.get($e.text));
+				String type = getType(types.get($e4.text));
 				if (isSequence(type))
 					print("list_to_set(" + e + "," + newVarName + ")");
 				else
@@ -1201,64 +1201,64 @@ expression2
 			}
 		}
 		else if ($pre_gen.text.startsWith("seq_{1}")) {
-			String eType = types.get($e.text);
+			String eType = types.get($e4.text);
 			if (isBasic(eType))
-				eType = $e.text;
+				eType = $e4.text;
 		
-			types.put($pre_gen.text + $e.text, "\\seq_{1}" + eType);
+			types.put($pre_gen.text + $e4.text, "\\seq_{1}" + eType);
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
-			String eType = types.get($e.text);
+			String eType = types.get($e4.text);
 			if (isBasic(eType))
-				eType = $e.text;
+				eType = $e4.text;
 		
-			types.put("\\seq" + $e.text, "\\seq" + eType);
+			types.put("\\seq" + $e4.text, "\\seq" + eType);
 		}
 		else if ($pre_gen.text.equals("\\bigcup")){
-			if (memory.get("\\bigcup" + $e.text) == null) {
+			if (memory.get("\\bigcup" + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put("\\bigcup" + $e.text, newVarName);
+				memory.put("\\bigcup" + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put("\\bigcup" + $e.text, newVarName);
-				types.put("\\bigcup" + $e.text, getChildType(types.get($e.text), 0));
+					setExpressionVars.put("\\bigcup" + $e4.text, newVarName);
+				types.put("\\bigcup" + $e4.text, getChildType(types.get($e4.text), 0));
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				print("bun(" + e + "," + newVarName + ")");
 			}
 		}
 		else if ($pre_gen.text.equals("\\bigcap")){
-			if (memory.get("\\bigcap" + $e.text) == null) {
+			if (memory.get("\\bigcap" + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put("\\bigcap" + $e.text, newVarName);
+				memory.put("\\bigcap" + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put("\\bigcap" + $e.text, newVarName);
-				types.put("\\bigcap" + $e.text, getChildType(types.get($e.text), 0));
+					setExpressionVars.put("\\bigcap" + $e4.text, newVarName);
+				types.put("\\bigcap" + $e4.text, getChildType(types.get($e4.text), 0));
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				print("bdinters(" + e + "," + newVarName + ")");
 			}
 		}
 		else if ($pre_gen.text.startsWith("min")){
-			if (memory.get($pre_gen.text + $e.text) == null) {
+			if (memory.get($pre_gen.text + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put($pre_gen.text + $e.text, newVarName);
+				memory.put($pre_gen.text + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put($pre_gen.text + $e.text, newVarName);
-				types.put($pre_gen.text + $e.text, getChildType(types.get($e.text), 0));
+					setExpressionVars.put($pre_gen.text + $e4.text, newVarName);
+				types.put($pre_gen.text + $e4.text, getChildType(types.get($e4.text), 0));
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				print("prolog_call(min(" + e + "," + newVarName + "))");
 			}
 		}
 		else if ($pre_gen.text.startsWith("max")){
-			if (memory.get($pre_gen.text + $e.text) == null) {
+			if (memory.get($pre_gen.text + $e4.text) == null) {
 				String newVarName = newVar();
-				memory.put($pre_gen.text + $e.text, newVarName);
+				memory.put($pre_gen.text + $e4.text, newVarName);
 				if (modoSetExpression != 0 )
-					setExpressionVars.put($pre_gen.text + $e.text, newVarName);
-				types.put($pre_gen.text + $e.text, getChildType(types.get($e.text), 0));
+					setExpressionVars.put($pre_gen.text + $e4.text, newVarName);
+				types.put($pre_gen.text + $e4.text, getChildType(types.get($e4.text), 0));
 				
-				String e = memory.get($e.text);
+				String e = memory.get($e4.text);
 				print("max(" + e + "," + newVarName + ")");
 			}
 		}
