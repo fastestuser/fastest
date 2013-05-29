@@ -13,8 +13,10 @@ grammar Expr;
 	import java.util.regex.Pattern;
 	import java.util.Collection;
 	import java.util.Iterator;
+	import java.util.Set;
 	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
+	import javax.rmi.CORBA.Util;
 	
 }
 
@@ -1437,6 +1439,32 @@ expression4
 				keysIt.remove();
 				//setExpressionVars.remove(var);
 			}
+		}
+	}
+	|	'\\lblot' {setExpressionVars = new HashMap();} (n=NAME '==' e=expression {setExpressionVars.put($n.text, $e.text);} (',')?)+ '\\rblot' //Tipos schema
+	{
+		$setlogName = "[";
+		Set<String> vars = setExpressionVars.keySet();
+		List<String> sortedVars = new ArrayList<String>(vars);
+		java.util.Collections.sort(sortedVars);
+		
+		int i = 0;
+		while( i < sortedVars.size() ){
+			String value = setExpressionVars.get(sortedVars.get(i));
+
+			$setlogName = $setlogName.concat(value);
+			
+			if (i+1 < sortedVars.size()){
+				$setlogName = $setlogName.concat(",");
+			}
+			i++;
+		}
+		
+		$setlogName = $setlogName.concat("]");
+		
+		if (memory.get($expression4.text) == null) {
+			memory.put($expression4.text, $setlogName);
+			types.put($expression4.text, "\\seq(" + "generic" + ")");
 		}
 	}
 	|	//list extension
