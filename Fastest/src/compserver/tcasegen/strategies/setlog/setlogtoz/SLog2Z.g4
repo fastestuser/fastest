@@ -21,33 +21,12 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	HashMap<String,String> zNames = new HashMap();
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
-	HashMap<String,String> freeTypes = new HashMap();
 	HashMap<String,String> valoresProhibidos = new HashMap();
 	ConstantCreator cc;
 	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
-	
-	//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
-	//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
-	private HashMap<String,String> llenarFreeTypes(){
-    	HashMap<String,String> s = new HashMap<String,String>();
-    	Iterator<String> iterator = tipos.keySet().iterator();
-    	String key,valor,nomtipo;
-    	while (iterator.hasNext()) { 
-    		key = iterator.next().toString();
-			valor = tipos.get(key);
-			//EnumerationType:FT:{elem1,elem2}
-			if (valor.startsWith("EnumerationType")){
-				String[] aux = valor.split(":");
-				nomtipo =  aux[1];
-				//aux = ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)).split(",");
-				s.put(nomtipo, ((String) (aux[2]).subSequence(1, (aux[2]).length()-1)));
-			}
-    	}
-    	
-    	return s;
-    }
+
     
 	public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames){
 		this.zNames = zNames;
@@ -61,9 +40,6 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		System.out.println("\n tipos: "); 
 		printHashMap(tipos);
 		System.out.println("\n");
-		freeTypes = llenarFreeTypes();
-		System.out.println("\n tipos Libres: "); 
-		printHashMap(freeTypes);
 		System.out.println("\n");
 		cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
 		
@@ -165,9 +141,8 @@ locals [StringPointer valor;]
 				valoresProhibidos.put(var, s);
 				}
 				
-			char c = cte.charAt(0);
 			s = valoresProhibidos.get(cte);
-			if (Character.isUpperCase(c) || c == '_') {
+			if (SetLogUtils.esSLVariableSimple(cte)) {
 				
 				if (s!=null && !s.contains(var)) 
 					valoresProhibidos.put(cte,s.concat("," + var));

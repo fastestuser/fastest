@@ -49,9 +49,9 @@ public final class SetLogGenerator {
 		
 		if (ct.equals("\\seq")){
 			String salida = "";
-			while(expr.hasNext()){
+			while(expr.hasNext())
 				salida = "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
-			}
+			
 			if (!salida.isEmpty())
 				return "\\langle" + salida.substring(1) + "\\rangle";
 			return "\\langle\\rangle";
@@ -74,9 +74,8 @@ public final class SetLogGenerator {
 				return "\\lblot\\rblot";
 			}
 
-			if (tipocompleto.startsWith("EnumerationType")){
+			if (tipocompleto.startsWith("EnumerationType"))
 				return zNames.get(exprS);
-			}
 
 			if (tipocompleto.startsWith("BasicType")){
 				String salida = zNames.get(exprS);
