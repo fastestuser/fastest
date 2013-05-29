@@ -439,6 +439,8 @@ public class ExprParser extends Parser {
 				if (memory.get("list_to_rel(" + zVar + ")") == null) {
 					String newVarName = newVar();
 					print("list_to_rel(" + setlogVar + "," + newVarName + ")");
+					if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
+						setExpressionVars.put(zVar, newVarName);				
 					//Hace falta ver el tipo?
 					String seqType = leftAndRightTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
@@ -2130,12 +2132,8 @@ public class ExprParser extends Parser {
 		public Token IN_FUN_P4;
 		public Token IN_FUN_P3;
 		public TerminalNode IN_FUN_P6() { return getToken(ExprParser.IN_FUN_P6, 0); }
-		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public Expression0Context expression0() {
 			return getRuleContext(Expression0Context.class,0);
-		}
-		public Pre_genContext pre_gen() {
-			return getRuleContext(Pre_genContext.class,0);
 		}
 		public List<Expression2Context> expression2() {
 			return getRuleContexts(Expression2Context.class);
@@ -2143,16 +2141,20 @@ public class ExprParser extends Parser {
 		public Expression3Context expression3() {
 			return getRuleContext(Expression3Context.class,0);
 		}
-		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
-		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
 		public Expression4Context expression4() {
 			return getRuleContext(Expression4Context.class,0);
 		}
-		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
-		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public Expression2Context expression2(int i) {
 			return getRuleContext(Expression2Context.class,i);
 		}
+		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
+		public Pre_genContext pre_gen() {
+			return getRuleContext(Pre_genContext.class,0);
+		}
+		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
+		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
+		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
+		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public TerminalNode IN_FUN_P5() { return getToken(ExprParser.IN_FUN_P5, 0); }
 		public Expression2Context(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public Expression2Context(ParserRuleContext parent, int invokingState, int _p) {

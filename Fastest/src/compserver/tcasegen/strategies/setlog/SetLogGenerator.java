@@ -67,10 +67,10 @@ public final class SetLogGenerator {
 				while(expr.hasNext()){
 					c = expr.next();
 					v = varsDecl.next();
-					salida += ";" + v + ":" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tiposDecl.next()),c); 
+					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tiposDecl.next()),c); 
 				}
 				if (!salida.isEmpty())
-					return "\\lblot" + salida.substring(1) + "\\rblot";
+					return "\\lblot " + salida.substring(1) + " \\rblot";
 				return "\\lblot\\rblot";
 			}
 

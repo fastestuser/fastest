@@ -249,7 +249,7 @@ public final class ConstantCreator {
 			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),expr.next()); 
 		}
 		while(tiposDecl.hasNext()){
-			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next()); 
+			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()), varsDecl.next().toUpperCase()); //Se pasa a mayus para que lo tome como variable 
 		}
 		if (!salida.isEmpty())
 			return "[" + salida.substring(1) + "]";

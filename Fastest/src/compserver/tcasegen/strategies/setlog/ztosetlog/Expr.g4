@@ -378,6 +378,8 @@ grammar Expr;
 			if (memory.get("list_to_rel(" + zVar + ")") == null) {
 				String newVarName = newVar();
 				print("list_to_rel(" + setlogVar + "," + newVarName + ")");
+				if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
+					setExpressionVars.put(zVar, newVarName);				
 				//Hace falta ver el tipo?
 				String seqType = leftAndRightTypes(type).get(1);
 				//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
