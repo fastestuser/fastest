@@ -83,9 +83,6 @@ public final class ZVarsFiller {
 		HashMap<String, String> mapaux = llenarFreeTypes(tipos);
 		SetLogUtils.printHashMap(mapaux);
 
-		String ssss = getTipoLibre("xxx1",mapaux);
-		System.out.println("tipo de xxx1++++++++" + ssss);
-
 	}
 
 	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames,String setlogOutput){

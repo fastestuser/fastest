@@ -37,6 +37,26 @@ public final class SetLogGenerator {
 		if (ct.equals("\\cross"))
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "\\mapsto" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
 
+		if (ct.equals("\\power")){
+			String salida = "";
+			while(expr.hasNext()){
+				salida = "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+			}
+			if (!salida.isEmpty())
+				return "\\{" + salida.substring(1) + "\\}";
+			return "\\{\\}";
+		}
+		
+		if (ct.equals("\\seq")){
+			String salida = "";
+			while(expr.hasNext()){
+				salida = "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+			}
+			if (!salida.isEmpty())
+				return "\\langle" + salida.substring(1) + "\\rangle";
+			return "\\langle\\rangle";
+		}
+		
 		String tipocompleto = tipos.get(ct);
 
 		if (tipocompleto !=null){
@@ -54,7 +74,7 @@ public final class SetLogGenerator {
 				return "\\lblot\\rblot";
 			}
 
-			if (tipocompleto.startsWith("FreeType")){
+			if (tipocompleto.startsWith("EnumerationType")){
 				return zNames.get(exprS);
 			}
 
@@ -65,7 +85,6 @@ public final class SetLogGenerator {
 				return salida;
 			}
 		}
-
 		return exprS;
 	}
 
@@ -85,16 +104,6 @@ public final class SetLogGenerator {
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
 			varn = setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr);
-
-			varn = varn.replace('[', '$');
-			varn = varn.replace(']', '#');
-			varn = varn.replace("$", "\\langle");
-			varn = varn.replace("#", "\\rangle");
-
-			varn = varn.replace('{', '$');
-			varn = varn.replace('}', '#');
-			varn = varn.replace("$", "\\{");
-			varn = varn.replace("#", "\\}");
 			varn = varn.replace("-", "\\neg");
 
 			zVars.put(var,varn);

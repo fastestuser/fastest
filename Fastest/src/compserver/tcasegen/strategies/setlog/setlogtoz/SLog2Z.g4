@@ -149,8 +149,8 @@ constr
 restr
 locals [StringPointer valor;]
 @init{$restr::valor = new StringPointer();}
-	: 'set(' expr ')' {$restr::valor.setString("\\{\\}"); slvars.put($expr.text,$restr::valor);}
-	| 'list(' expr ')' {$restr::valor.setString("\\langle\\rangle"); slvars.put($expr.text,$restr::valor);}
+	: 'set(' expr ')' {$restr::valor.setString("{}"); slvars.put($expr.text,$restr::valor);}
+	| 'list(' expr ')' {$restr::valor.setString("[]"); slvars.put($expr.text,$restr::valor);}
 	| 'integer(' expr ')' {$restr::valor.setString(cc.getNumber()); slvars.put($expr.text,$restr::valor);}
 	| (NAME 'neq' expr | expr 'neq' NAME) 
 		{

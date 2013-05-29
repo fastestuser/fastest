@@ -224,22 +224,18 @@ public final class ConstantCreator {
 				return salida = cte(naux,exprS);
 			}
 
-			String elem;
-			while(expr.hasNext()){
-				elem = expr.next();
-				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem); 
-			}
+			while(expr.hasNext())
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()); 
+
 			if (!salida.isEmpty())
 				return "{" + salida.substring(1) + "}";
 			return "{}";
 
 		}
 		if (ct.equals("\\seq") ) {
-			String elem;
-			while(expr.hasNext()){
-				elem = expr.next();
-				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),elem); 
-			}
+			while(expr.hasNext())
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()); 
+			
 			if (!salida.isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
@@ -248,11 +244,9 @@ public final class ConstantCreator {
 		//pinta [X,X,X]
 		ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipos.get(ct));
 		ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipos.get(ct));
-		String elem;
 		while(expr.hasNext()){
-			elem = expr.next();
 			varsDecl.next();
-			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),elem); 
+			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),expr.next()); 
 		}
 		while(tiposDecl.hasNext()){
 			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next()); 

@@ -356,7 +356,7 @@ public class SLog2ZParser extends Parser {
 				setState(40); match(7);
 				setState(41); ((RestrContext)_localctx).expr = expr();
 				setState(42); match(3);
-				((RestrContext)getInvokingContext(2)).valor.setString("\\{\\}"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("{}"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 6:
@@ -365,7 +365,7 @@ public class SLog2ZParser extends Parser {
 				setState(45); match(6);
 				setState(46); ((RestrContext)_localctx).expr = expr();
 				setState(47); match(3);
-				((RestrContext)getInvokingContext(2)).valor.setString("\\langle\\rangle"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
+				((RestrContext)getInvokingContext(2)).valor.setString("[]"); slvars.put((((RestrContext)_localctx).expr!=null?_input.getText(((RestrContext)_localctx).expr.start,((RestrContext)_localctx).expr.stop):null),((RestrContext)getInvokingContext(2)).valor);
 				}
 				break;
 			case 12:
