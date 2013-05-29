@@ -84,24 +84,51 @@ public final class SetLogGenerator {
 				return salida;
 			}
 		}
+		
 		return exprS;
 	}
 
 
 
-	private String limpiarParentesis(String exprS){
-		return null;
+	private static DefaultMutableTreeNode aglutinarCorss(DefaultMutableTreeNode nodo){
+		String ct = nodo.toString();
+		
+		DefaultMutableTreeNode n = new DefaultMutableTreeNode(ct);
+		if(ct.equals("\\cross")){
+			DefaultMutableTreeNode izq = (DefaultMutableTreeNode) nodo.getChildAt(0);
+			DefaultMutableTreeNode der = (DefaultMutableTreeNode) nodo.getChildAt(1);
+			if (izq.toString().equals("\\cross")){
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
+			}
+			else
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq));
+			if (der.toString().equals("\\cross")){
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
+			}
+			else
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der));
+			return n;
+		}
+		if(!nodo.isLeaf()){
+			n.add(aglutinarCorss((DefaultMutableTreeNode) nodo.getChildAt(0)));
+			return n;
+		}
+		
+		return n;
 	}
 
 	private static void setLogToLatexCharsReplacer(){
 		postfijo=0;
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
-		String varn;
+		String varn;DefaultMutableTreeNode aux;
 		while (it.hasNext()) {  
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
+			aux = aglutinarCorss(SetLogUtils.toTree(tipo));
 			varn = setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr);
 			varn = varn.replace("-", "\\neg");
 
