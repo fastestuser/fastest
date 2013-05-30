@@ -23,15 +23,15 @@ grammar Expr;
 @members {
 	
 	String setExpressionDecl, setExpressionPred, setExpressionExpr;
-	String schemaTypeVars = new String();
 	
 	int varNumber = 0;
 	int modoSetExpression = 0; //0 = false, 1 = true
 	int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
 					           //cuando trabajamos en tipos schema
 	
+	HashMap<String,String> schemaTypeVars;
+
 	HashMap<String,String> setExpressionVars;
-	
 	HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
 	HashMap<String,String> types = new HashMap<String,String>();  //En types se guarda informacion sobre los tipos definidos
 	HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
@@ -431,14 +431,32 @@ specification
 paragraph
 	//Aceptamos 3 tipos de schemas: la clase de prueba (schema), los tipos esquema necesarios (schemaType) y
 	//las definiciones de tipos basicos y enumerados
-	:	'\\begin{' ('schema' | ('schemaType' {tipoSchema = 1; schemaTypeVars = "";})) '}{' NAME '}'
+	:	'\\begin{' ('schema' | ('schemaType' {tipoSchema = 1; schemaTypeVars = new HashMap<String,String>();})) '}{' NAME '}'
 		schemaText
 		{
 			if (tipoSchema == 1) {
 				String newVarName = newVar($NAME.text);
 				memory.put($NAME.text, newVarName);
-				types.put($NAME.text, "SchemaType:" + newVarName + ":[" + schemaTypeVars + "]");
-				schemaTypeVars = "";
+				String vars = "";
+				
+				List<String> sortedVars = new ArrayList<String>(schemaTypeVars.keySet());
+				java.util.Collections.sort(sortedVars);
+				
+				int i = 0;
+				while( i < sortedVars.size() ){
+				
+					String type = schemaTypeVars.get(sortedVars.get(i));
+				
+					vars = vars.concat(sortedVars.get(i) + ":" + type);
+		
+					if (i+1 < sortedVars.size()){
+						vars = vars.concat(",");
+					}
+					i++;
+				}
+				
+				types.put($NAME.text, "SchemaType:" + newVarName + ":[" + vars + "]");
+				vars = "";
 			}
 		}
 		'\\end{' ('schema' | ('schemaType' {tipoSchema = 0;})) '}'
@@ -540,9 +558,7 @@ locals [ArrayList<String> vars;]
 			if (tipoSchema == 0)
 				types.put(var, expType);
 			else { //La agregamos como variable del esquema
-				if (!schemaTypeVars.equals(""))
-					schemaTypeVars = schemaTypeVars.concat(",");
-				schemaTypeVars = schemaTypeVars.concat(var + ":" + expType);
+				schemaTypeVars.put(var,expType);
 			}
 		}
 	}
@@ -1444,8 +1460,7 @@ expression4
 	|	'\\lblot' {setExpressionVars = new HashMap();} (n=NAME '==' e=expression {setExpressionVars.put($n.text, $e.text);} (',')?)+ '\\rblot' //Tipos schema
 	{
 		$setlogName = "[";
-		Set<String> vars = setExpressionVars.keySet();
-		List<String> sortedVars = new ArrayList<String>(vars);
+		List<String> sortedVars = new ArrayList<String>(setExpressionVars.keySet());
 		java.util.Collections.sort(sortedVars);
 		
 		int i = 0;

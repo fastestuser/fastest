@@ -51,7 +51,7 @@ public class ExprLexer extends Lexer {
 		"'schema'", "'\\lnot'", "'\\#'", "'rev'", "'min'", "'['", "'<'", "'false'", 
 		"'_{1}'", "'\\dom'", "'\\emptyset'", "'\\upto'", "'tail'", "'\\finset'", 
 		"'}'", "'\\notin'", "'max'", "'\\land'", "')'", "'@'", "'\\seq'", "'head'", 
-		"'='", "'\\leq'", "'\\prefix'", "'squash'", "'\\nat'", "'\\neq'", "'\\where'", 
+		"'='", "'\\leq'", "'\\prefix'", "'squash'", "'\\neq'", "'\\nat'", "'\\where'", 
 		"'\\geq'", "'\\bigcup'", "'::='", "'\\subseteq'", "'|'", "'\\end{'", "'\\suffix'", 
 		"']'", "'last'", "','", "'}{'", "'('", "':'", "'\\lor'", "'\\end{zed}'", 
 		"'\\ran'", "'\\in'", "'seq_{1}'", "'\\rblot'", "'\\inv'", "'\\cross'", 
@@ -78,15 +78,15 @@ public class ExprLexer extends Lexer {
 
 		
 		String setExpressionDecl, setExpressionPred, setExpressionExpr;
-		String schemaTypeVars = new String();
 		
 		int varNumber = 0;
 		int modoSetExpression = 0; //0 = false, 1 = true
 		int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
 						           //cuando trabajamos en tipos schema
 		
+		HashMap<String,String> schemaTypeVars;
+
 		HashMap<String,String> setExpressionVars;
-		
 		HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
 		HashMap<String,String> types = new HashMap<String,String>();  //En types se guarda informacion sobre los tipos definidos
 		HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
@@ -606,9 +606,9 @@ public class ExprLexer extends Lexer {
 		"t\2\2\u011d\u011e\7g\2\2\u011e\u011f\7h\2\2\u011f\u0120\7k\2\2\u0120\u0121"+
 		"\7z\2\2\u0121\64\3\2\2\2\u0122\u0123\7u\2\2\u0123\u0124\7s\2\2\u0124\u0125"+
 		"\7w\2\2\u0125\u0126\7c\2\2\u0126\u0127\7u\2\2\u0127\u0128\7j\2\2\u0128"+
-		"\66\3\2\2\2\u0129\u012a\7^\2\2\u012a\u012b\7p\2\2\u012b\u012c\7c\2\2\u012c"+
-		"\u012d\7v\2\2\u012d8\3\2\2\2\u012e\u012f\7^\2\2\u012f\u0130\7p\2\2\u0130"+
-		"\u0131\7g\2\2\u0131\u0132\7s\2\2\u0132:\3\2\2\2\u0133\u0134\7^\2\2\u0134"+
+		"\66\3\2\2\2\u0129\u012a\7^\2\2\u012a\u012b\7p\2\2\u012b\u012c\7g\2\2\u012c"+
+		"\u012d\7s\2\2\u012d8\3\2\2\2\u012e\u012f\7^\2\2\u012f\u0130\7p\2\2\u0130"+
+		"\u0131\7c\2\2\u0131\u0132\7v\2\2\u0132:\3\2\2\2\u0133\u0134\7^\2\2\u0134"+
 		"\u0135\7y\2\2\u0135\u0136\7j\2\2\u0136\u0137\7g\2\2\u0137\u0138\7t\2\2"+
 		"\u0138\u0139\7g\2\2\u0139<\3\2\2\2\u013a\u013b\7^\2\2\u013b\u013c\7i\2"+
 		"\2\u013c\u013d\7g\2\2\u013d\u013e\7s\2\2\u013e>\3\2\2\2\u013f\u0140\7"+

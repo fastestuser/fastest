@@ -46,7 +46,7 @@ public class ExprParser extends Parser {
 		"<INVALID>", "'schema'", "'\\lnot'", "'\\#'", "'rev'", "'min'", "'['", 
 		"'<'", "'false'", "'_{1}'", "'\\dom'", "'\\emptyset'", "'\\upto'", "'tail'", 
 		"'\\finset'", "'}'", "'\\notin'", "'max'", "'\\land'", "')'", "'@'", "'\\seq'", 
-		"'head'", "'='", "'\\leq'", "'\\prefix'", "'squash'", "'\\nat'", "'\\neq'", 
+		"'head'", "'='", "'\\leq'", "'\\prefix'", "'squash'", "'\\neq'", "'\\nat'", 
 		"'\\where'", "'\\geq'", "'\\bigcup'", "'::='", "'\\subseteq'", "'|'", 
 		"'\\end{'", "'\\suffix'", "']'", "'last'", "','", "'}{'", "'('", "':'", 
 		"'\\lor'", "'\\end{zed}'", "'\\ran'", "'\\in'", "'seq_{1}'", "'\\rblot'", 
@@ -85,15 +85,15 @@ public class ExprParser extends Parser {
 
 		
 		String setExpressionDecl, setExpressionPred, setExpressionExpr;
-		String schemaTypeVars = new String();
 		
 		int varNumber = 0;
 		int modoSetExpression = 0; //0 = false, 1 = true
 		int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
 						           //cuando trabajamos en tipos schema
 		
+		HashMap<String,String> schemaTypeVars;
+
 		HashMap<String,String> setExpressionVars;
-		
 		HashMap<String,String> memory = new HashMap<String,String>(); //En memory se guardan las variables y expressiones leidas
 		HashMap<String,String> types = new HashMap<String,String>();  //En types se guarda informacion sobre los tipos definidos
 		HashMap<String,String> zVars = new HashMap<String,String>();  //En zVars se almacenan las variables Z, a las cuales luego (antes de generar
@@ -624,7 +624,7 @@ public class ExprParser extends Parser {
 					{
 					{
 					setState(53); match(58);
-					tipoSchema = 1; schemaTypeVars = "";
+					tipoSchema = 1; schemaTypeVars = new HashMap<String,String>();
 					}
 					}
 					break;
@@ -639,8 +639,26 @@ public class ExprParser extends Parser {
 							if (tipoSchema == 1) {
 								String newVarName = newVar((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null));
 								memory.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), newVarName);
-								types.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), "SchemaType:" + newVarName + ":[" + schemaTypeVars + "]");
-								schemaTypeVars = "";
+								String vars = "";
+								
+								List<String> sortedVars = new ArrayList<String>(schemaTypeVars.keySet());
+								java.util.Collections.sort(sortedVars);
+								
+								int i = 0;
+								while( i < sortedVars.size() ){
+								
+									String type = schemaTypeVars.get(sortedVars.get(i));
+								
+									vars = vars.concat(sortedVars.get(i) + ":" + type);
+						
+									if (i+1 < sortedVars.size()){
+										vars = vars.concat(",");
+									}
+									i++;
+								}
+								
+								types.put((((ParagraphContext)_localctx).NAME!=null?((ParagraphContext)_localctx).NAME.getText():null), "SchemaType:" + newVarName + ":[" + vars + "]");
+								vars = "";
 							}
 						
 				setState(62); match(35);
@@ -899,7 +917,7 @@ public class ExprParser extends Parser {
 			((Enumeration_typeContext)getInvokingContext(4)).cases.add((((Enumeration_typeContext)_localctx).a!=null?_input.getText(((Enumeration_typeContext)_localctx).a.start,((Enumeration_typeContext)_localctx).a.stop):null));
 			setState(114);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 27) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 28) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
 				{
 				setState(113); expression();
 				}
@@ -916,7 +934,7 @@ public class ExprParser extends Parser {
 				((Enumeration_typeContext)getInvokingContext(4)).cases.add((((Enumeration_typeContext)_localctx).b!=null?_input.getText(((Enumeration_typeContext)_localctx).b.start,((Enumeration_typeContext)_localctx).b.stop):null));
 				setState(120);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 27) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 28) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
 					{
 					setState(119); expression();
 					}
@@ -1020,7 +1038,7 @@ public class ExprParser extends Parser {
 			setState(144);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 3) | (1L << 4) | (1L << 5) | (1L << 8) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 27) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 51) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
+			while ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 2) | (1L << 3) | (1L << 4) | (1L << 5) | (1L << 8) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 28) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 51) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
 				{
 				{
 				setState(139); predicate(0);
@@ -1195,9 +1213,7 @@ public class ExprParser extends Parser {
 						if (tipoSchema == 0)
 							types.put(var, expType);
 						else { //La agregamos como variable del esquema
-							if (!schemaTypeVars.equals(""))
-								schemaTypeVars = schemaTypeVars.concat(",");
-							schemaTypeVars = schemaTypeVars.concat(var + ":" + expType);
+							schemaTypeVars.put(var,expType);
 						}
 					}
 				
@@ -1329,7 +1345,7 @@ public class ExprParser extends Parser {
 				case 21:
 				case 22:
 				case 26:
-				case 27:
+				case 28:
 				case 31:
 				case 38:
 				case 41:
@@ -1614,7 +1630,7 @@ public class ExprParser extends Parser {
 			case 12:
 				{
 				setState(265); ((PredicateContext)_localctx).e1 = expression();
-				setState(266); match(28);
+				setState(266); match(27);
 				setState(268);
 				switch ( getInterpreter().adaptivePredict(_input,27,_ctx) ) {
 				case 1:
@@ -2136,8 +2152,12 @@ public class ExprParser extends Parser {
 		public Token IN_FUN_P4;
 		public Token IN_FUN_P3;
 		public TerminalNode IN_FUN_P6() { return getToken(ExprParser.IN_FUN_P6, 0); }
+		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
 		public Expression0Context expression0() {
 			return getRuleContext(Expression0Context.class,0);
+		}
+		public Pre_genContext pre_gen() {
+			return getRuleContext(Pre_genContext.class,0);
 		}
 		public List<Expression2Context> expression2() {
 			return getRuleContexts(Expression2Context.class);
@@ -2145,20 +2165,16 @@ public class ExprParser extends Parser {
 		public Expression3Context expression3() {
 			return getRuleContext(Expression3Context.class,0);
 		}
+		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
+		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
 		public Expression4Context expression4() {
 			return getRuleContext(Expression4Context.class,0);
 		}
+		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
+		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public Expression2Context expression2(int i) {
 			return getRuleContext(Expression2Context.class,i);
 		}
-		public TerminalNode DECORATION() { return getToken(ExprParser.DECORATION, 0); }
-		public Pre_genContext pre_gen() {
-			return getRuleContext(Pre_genContext.class,0);
-		}
-		public TerminalNode IMGSTART() { return getToken(ExprParser.IMGSTART, 0); }
-		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
-		public TerminalNode IN_FUN_P3() { return getToken(ExprParser.IN_FUN_P3, 0); }
-		public TerminalNode IN_FUN_P4() { return getToken(ExprParser.IN_FUN_P4, 0); }
 		public TerminalNode IN_FUN_P5() { return getToken(ExprParser.IN_FUN_P5, 0); }
 		public Expression2Context(ParserRuleContext parent, int invokingState) { super(parent, invokingState); }
 		public Expression2Context(ParserRuleContext parent, int invokingState, int _p) {
@@ -3020,7 +3036,7 @@ public class ExprParser extends Parser {
 				setState(426); ((Expression4Context)_localctx).SETSTART = match(SETSTART);
 				setState(430);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 27) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 28) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
 					{
 					setState(427); ((Expression4Context)_localctx).a = expression();
 					_localctx.elements.add((((Expression4Context)_localctx).a!=null?_input.getText(((Expression4Context)_localctx).a.start,((Expression4Context)_localctx).a.stop):null));
@@ -3192,8 +3208,7 @@ public class ExprParser extends Parser {
 				setState(478); match(48);
 
 						((Expression4Context)_localctx).setlogName =  "[";
-						Set<String> vars = setExpressionVars.keySet();
-						List<String> sortedVars = new ArrayList<String>(vars);
+						List<String> sortedVars = new ArrayList<String>(setExpressionVars.keySet());
 						java.util.Collections.sort(sortedVars);
 						
 						int i = 0;
@@ -3231,7 +3246,7 @@ public class ExprParser extends Parser {
 				setState(484); ((Expression4Context)_localctx).LISTSTART = match(LISTSTART);
 				setState(488);
 				_la = _input.LA(1);
-				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 27) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
+				if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << 3) | (1L << 4) | (1L << 5) | (1L << 10) | (1L << 11) | (1L << 13) | (1L << 14) | (1L << 17) | (1L << 21) | (1L << 22) | (1L << 26) | (1L << 28) | (1L << 31) | (1L << 38) | (1L << 41) | (1L << 45) | (1L << 47) | (1L << 53) | (1L << 55) | (1L << 61))) != 0) || ((((_la - 64)) & ~0x3f) == 0 && ((1L << (_la - 64)) & ((1L << (64 - 64)) | (1L << (NAME - 64)) | (1L << (NUM - 64)) | (1L << (DECORATION - 64)) | (1L << (SETSTART - 64)) | (1L << (LISTSTART - 64)))) != 0)) {
 					{
 					setState(485); ((Expression4Context)_localctx).a = expression();
 					_localctx.elements.add((((Expression4Context)_localctx).a!=null?_input.getText(((Expression4Context)_localctx).a.start,((Expression4Context)_localctx).a.stop):null));
@@ -3372,7 +3387,7 @@ public class ExprParser extends Parser {
 
 			case 10:
 				{
-				setState(520); match(27);
+				setState(520); match(28);
 				setState(521); match(9);
 					
 						printInfo(_input.getText(_localctx.start, _input.LT(-1)), false);	
@@ -3382,7 +3397,7 @@ public class ExprParser extends Parser {
 
 			case 11:
 				{
-				setState(523); match(27);
+				setState(523); match(28);
 					
 						printInfo(_input.getText(_localctx.start, _input.LT(-1)), false);	
 					
@@ -3862,7 +3877,7 @@ public class ExprParser extends Parser {
 		"\13\1\2\u0101\u012a\3\2\2\2\u0102\u0103\7\4\2\2\u0103\u0104\5\30\r\2\u0104"+
 		"\u0106\78\2\2\u0105\u0107\7L\2\2\u0106\u0105\3\2\2\2\u0106\u0107\3\2\2"+
 		"\2\u0107\u0108\3\2\2\2\u0108\u0109\5\30\r\2\u0109\u010a\b\13\1\2\u010a"+
-		"\u012a\3\2\2\2\u010b\u010c\5\30\r\2\u010c\u010e\7\36\2\2\u010d\u010f\7"+
+		"\u012a\3\2\2\2\u010b\u010c\5\30\r\2\u010c\u010e\7\35\2\2\u010d\u010f\7"+
 		"L\2\2\u010e\u010d\3\2\2\2\u010e\u010f\3\2\2\2\u010f\u0110\3\2\2\2\u0110"+
 		"\u0111\5\30\r\2\u0111\u0112\b\13\1\2\u0112\u012a\3\2\2\2\u0113\u0114\5"+
 		"\30\r\2\u0114\u0116\7\33\2\2\u0115\u0117\7L\2\2\u0116\u0115\3\2\2\2\u0116"+
@@ -3949,8 +3964,8 @@ public class ExprParser extends Parser {
 		"\u01fe\3\2\2\2\u0200\u0201\3\2\2\2\u0201\u0202\3\2\2\2\u0202\u0203\7\25"+
 		"\2\2\u0203\u0204\b\21\1\2\u0204\u0212\3\2\2\2\u0205\u0206\7+\2\2\u0206"+
 		"\u0207\5\26\f\2\u0207\u0208\7\25\2\2\u0208\u0209\b\21\1\2\u0209\u0212"+
-		"\3\2\2\2\u020a\u020b\7\35\2\2\u020b\u020c\7\13\2\2\u020c\u0212\b\21\1"+
-		"\2\u020d\u020e\7\35\2\2\u020e\u0212\b\21\1\2\u020f\u0210\7B\2\2\u0210"+
+		"\3\2\2\2\u020a\u020b\7\36\2\2\u020b\u020c\7\13\2\2\u020c\u0212\b\21\1"+
+		"\2\u020d\u020e\7\36\2\2\u020e\u0212\b\21\1\2\u020f\u0210\7B\2\2\u0210"+
 		"\u0212\b\21\1\2\u0211\u01a5\3\2\2\2\u0211\u01a8\3\2\2\2\u0211\u01aa\3"+
 		"\2\2\2\u0211\u01ac\3\2\2\2\u0211\u01bd\3\2\2\2\u0211\u01d3\3\2\2\2\u0211"+
 		"\u01e4\3\2\2\2\u0211\u01f7\3\2\2\2\u0211\u0205\3\2\2\2\u0211\u020a\3\2"+
