@@ -79,8 +79,8 @@ public final class SetLogGenerator {
 
 			if (tipocompleto.startsWith("BasicType")){
 				String salida = zNames.get(exprS);
-				salida = ct.toLowerCase() + salida!=null?salida:getNumber();
-				salida.replace("?","");
+				salida = ct.toLowerCase() + (salida!=null?salida:getNumber());
+				salida = salida.replace("?","");
 				return salida;
 			}
 		}
@@ -128,7 +128,7 @@ public final class SetLogGenerator {
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			aux = aglutinarCorss(SetLogUtils.toTree(tipo));
+			
 			varn = setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr);
 			varn = varn.replace("-", "\\neg");
 

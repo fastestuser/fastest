@@ -93,7 +93,46 @@ public class Test {
 //		}
 //		return elems;
 //	}
+	public static String printTree(DefaultMutableTreeNode tree){
+		if (tree.isLeaf()) 
+			return tree.toString();
+		if (tree.toString().equals("()"))
+			return "(" + printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+		int i;
+		String salida=tree.toString();
+		for (i=0;i<tree.getChildCount();i++)
+			salida += " " + printTree((DefaultMutableTreeNode) tree.getChildAt(i));
+		return salida; 
+	}
 	
+	private static DefaultMutableTreeNode aglutinarCorss(DefaultMutableTreeNode nodo){
+		String ct = nodo.toString();
+		
+		DefaultMutableTreeNode n = new DefaultMutableTreeNode(ct);
+		if(ct.equals("\\cross")){
+			DefaultMutableTreeNode izq = (DefaultMutableTreeNode) nodo.getChildAt(0);
+			DefaultMutableTreeNode der = (DefaultMutableTreeNode) nodo.getChildAt(1);
+			if (izq.toString().equals("\\cross")){
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
+			}
+			else
+				n.add(aglutinarCorss((DefaultMutableTreeNode) izq));
+			if (der.toString().equals("\\cross")){
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
+			}
+			else
+				n.add(aglutinarCorss((DefaultMutableTreeNode) der));
+			return n;
+		}
+		if(!nodo.isLeaf()){
+			n.add(aglutinarCorss((DefaultMutableTreeNode) nodo.getChildAt(0)));
+			return n;
+		}
+		
+		return n;
+	}
 	
 	public static void main(String[] args) {
 		
@@ -171,10 +210,8 @@ public class Test {
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
 		
-		String sss = "1\\upto0";
-		String aux[] = sss.split("\\\\upto");
-		System.out.println(aux[0]);
-		System.out.println(aux[1]);
+		DefaultMutableTreeNode aux = aglutinarCorss(SetLogUtils.toTree(" \\power (FT \\cross FT \\cross (FT \\cross FT))"));
+		System.out.println(printTree(aux));
 		 
 	}
 
