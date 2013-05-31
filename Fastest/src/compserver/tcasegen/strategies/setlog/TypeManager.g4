@@ -29,15 +29,28 @@ grammar TypeManager;
 		else //tiene dos hijos
 			return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
 	}
+	
+	public static String printTreeNCross(DefaultMutableTreeNode tree){
+		if (tree.isLeaf()) 
+			return tree.toString();
+		if (tree.toString().equals("()"))
+			return "(" + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+		int i;
+		String salida=tree.toString();
+		for (i=0;i<tree.getChildCount();i++)
+			salida += " " + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(i));
+		return salida; 
+	}
 }
 
 typeManage: type {root = $type.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 typeManageNorm: typeNorm {root = $typeNorm.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
+typeManageNCross: typeNormNCross {root = $typeNormNCross.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 
 type returns [DefaultMutableTreeNode node]
 		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
 		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
-		|	a=type '\\cross' b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
+		|	a=type '\\cross' b=type {$node = new DefaultMutableTreeNode("\\cross"); $node.add($a.node); $node.add($b.node);}
 		|	'(' a=type ')' {$node = new DefaultMutableTreeNode("()"); $node.add($a.node);}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
@@ -80,7 +93,7 @@ typeNormNCross returns [DefaultMutableTreeNode node]
 					cross.add($a.node); 
 					cross.add($b.node);
 				}
-		|	'\\cross' {$node = new DefaultMutableTreeNode($UNOP.text);} (a=typeNormNCross {$node.add($a.node);})+
+		|	'\\cross' {$node = new DefaultMutableTreeNode("\\cross");} (a=typeNormNCross {$node.add($a.node);})+
 		|	'(' a=typeNormNCross ')' {$node = $a.node;}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}

@@ -210,8 +210,11 @@ public class Test {
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
 		
-		DefaultMutableTreeNode aux = aglutinarCorss(SetLogUtils.toTree(" \\power (FT \\cross FT \\cross (FT \\cross FT))"));
-		System.out.println(printTree(aux));
+		DefaultMutableTreeNode aux =SetLogUtils.toTree("FT \\cross FT \\cross (FT \\cross FT)");
+		System.out.println(TypeManagerParser.printTree(aux));
+		aux=aglutinarCorss(aux);
+		aux = SetLogUtils.toTreeNCross(TypeManagerParser.printTreeNCross(aux));
+		System.out.println(TypeManagerParser.printTreeNCross(aux));
 		 
 	}
 
