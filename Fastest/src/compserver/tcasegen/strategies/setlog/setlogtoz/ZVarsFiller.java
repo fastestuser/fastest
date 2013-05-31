@@ -58,7 +58,7 @@ public final class ZVarsFiller {
 			valor = zVars.get(key);
 			if (valor == null){
 				String tipo = tipos.get(key);
-				valor =  cc.getCte(memory.get(key),SetLogUtils.toTree(tipo));
+				valor =  cc.getCte(memory.get(key),SetLogUtils.toTreeNorm(tipo));
 				zVars.put(key, valor);
 			}  
 		}

@@ -29,23 +29,10 @@ grammar TypeManager;
 		else //tiene dos hijos
 			return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
 	}
-	
-	public static String printTreeNCross(DefaultMutableTreeNode tree){
-		if (tree.isLeaf()) 
-			return tree.toString();
-		if (tree.toString().equals("()"))
-			return "(" + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
-		int i;
-		String salida=tree.toString();
-		for (i=0;i<tree.getChildCount();i++)
-			salida += " " + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(i));
-		return salida; 
-	}
 }
 
 typeManage: type {root = $type.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 typeManageNorm: typeNorm {root = $typeNorm.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
-typeManageNCross: typeNormNCross {root = $typeNormNCross.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 
 type returns [DefaultMutableTreeNode node]
 		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
@@ -82,26 +69,6 @@ typeNorm returns [DefaultMutableTreeNode node]
 		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
 		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;		
-
-typeNormNCross returns [DefaultMutableTreeNode node]
-		:	UNOP a=typeNormNCross {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
-		|	a=typeNormNCross BINOP b=typeNormNCross 
-				{
-					$node = new DefaultMutableTreeNode("\\power"); 
-					DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
-					$node.add(cross);
-					cross.add($a.node); 
-					cross.add($b.node);
-				}
-		|	'\\cross' {$node = new DefaultMutableTreeNode("\\cross");} (a=typeNormNCross {$node.add($a.node);})+
-		|	'(' a=typeNormNCross ')' {$node = $a.node;}
-		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
-		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
-		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
-		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
-		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
-		;		
-
 
 BINOP	:	'\\rel'
 		|	'\\pfun'

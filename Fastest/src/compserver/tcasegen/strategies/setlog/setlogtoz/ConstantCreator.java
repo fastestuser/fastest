@@ -141,7 +141,7 @@ public final class ConstantCreator {
 			return this.getNumber();
 
 		if(ct.equals("\\cross"))
-			return cteCanonica(nodo.getChildAt(0),var) + "," + cteCanonica(nodo.getChildAt(1),var)  ;
+			return "[" + cteCanonica(nodo.getChildAt(0),var) + "," + cteCanonica(nodo.getChildAt(1),var) + "]";
 
 		if (ct.equals("\\power")) 
 			return "{" + cteCanonica(nodo.getChildAt(0),var) + "}";

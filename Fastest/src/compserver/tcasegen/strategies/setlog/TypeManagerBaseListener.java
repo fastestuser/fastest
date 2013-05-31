@@ -12,14 +12,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ErrorNode;
 
 public class TypeManagerBaseListener implements TypeManagerListener {
-	@Override public void enterTypeNormNCross(TypeManagerParser.TypeNormNCrossContext ctx) { }
-	@Override public void exitTypeNormNCross(TypeManagerParser.TypeNormNCrossContext ctx) { }
-
 	@Override public void enterTypeManage(TypeManagerParser.TypeManageContext ctx) { }
 	@Override public void exitTypeManage(TypeManagerParser.TypeManageContext ctx) { }
-
-	@Override public void enterTypeManageNCross(TypeManagerParser.TypeManageNCrossContext ctx) { }
-	@Override public void exitTypeManageNCross(TypeManagerParser.TypeManageNCrossContext ctx) { }
 
 	@Override public void enterTypeManageNorm(TypeManagerParser.TypeManageNormContext ctx) { }
 	@Override public void exitTypeManageNorm(TypeManagerParser.TypeManageNormContext ctx) { }

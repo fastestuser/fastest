@@ -7,13 +7,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.MutableTreeNode;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
-import compserver.tcasegen.strategies.setlog.setlogtoz.StringPointer;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
@@ -34,9 +32,32 @@ public final class SetLogGenerator {
 
 		String ct = nodo.toString();
 
-		if (ct.equals("\\cross"))
-			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + "\\mapsto" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next()) + ")"; 
 
+		if (ct.equals("()")) 
+			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
+		
+		if (ct.equals("\\cross")){
+			
+			String salida = "";
+			ExprIterator eAux = new ExprIterator(expr.next());
+			DefaultMutableTreeNode izq = (DefaultMutableTreeNode) nodo.getChildAt(0);
+			DefaultMutableTreeNode der = (DefaultMutableTreeNode) nodo.getChildAt(1);
+			String coma = ",";
+			if (izq.toString().equals("\\cross"))
+				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(0),eAux.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(1),eAux.next()); 
+			else {
+				coma = "\\mapsto";
+				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq,eAux.toString());
+			}
+			eAux = new ExprIterator(expr.next());
+						
+			if (der.toString().equals("\\cross"))
+				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der.getChildAt(0),eAux.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der.getChildAt(1),eAux.next()); 
+			else{
+				salida += coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der,eAux.toString());
+			}
+			return "(" + salida + ")";
+		}
 		if (ct.equals("\\power")){
 			String salida = "";
 			while(expr.hasNext()){
@@ -88,50 +109,17 @@ public final class SetLogGenerator {
 		return exprS;
 	}
 
-
-
-	private static DefaultMutableTreeNode aglutinarCorss(DefaultMutableTreeNode nodo){
-		String ct = nodo.toString();
-		
-		DefaultMutableTreeNode n = new DefaultMutableTreeNode(ct);
-		if(ct.equals("\\cross")){
-			DefaultMutableTreeNode izq = (DefaultMutableTreeNode) nodo.getChildAt(0);
-			DefaultMutableTreeNode der = (DefaultMutableTreeNode) nodo.getChildAt(1);
-			if (izq.toString().equals("\\cross")){
-				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
-				n.add(aglutinarCorss((DefaultMutableTreeNode) izq.getChildAt(0)));
-			}
-			else
-				n.add(aglutinarCorss((DefaultMutableTreeNode) izq));
-			if (der.toString().equals("\\cross")){
-				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
-				n.add(aglutinarCorss((DefaultMutableTreeNode) der.getChildAt(0)));
-			}
-			else
-				n.add(aglutinarCorss((DefaultMutableTreeNode) der));
-			return n;
-		}
-		if(!nodo.isLeaf()){
-			n.add(aglutinarCorss((DefaultMutableTreeNode) nodo.getChildAt(0)));
-			return n;
-		}
-		
-		return n;
-	}
-
 	private static void setLogToLatexCharsReplacer(){
 		postfijo=0;
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
-		String varn;DefaultMutableTreeNode aux;
+		String varn;
 		while (it.hasNext()) {  
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			
-			varn = setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tipo),expr);
+			varn = setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr);
 			varn = varn.replace("-", "\\neg");
-
 			zVars.put(var,varn);
 		}
 	}

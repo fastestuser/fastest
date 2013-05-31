@@ -34,15 +34,6 @@ public final class SetLogUtils {
 		return TMP.getRoot();
 	}
 	
-	public static DefaultMutableTreeNode toTreeNCross(String tipo){
-		ANTLRInputStream input = new ANTLRInputStream(tipo);
-		TypeManagerLexer lexer = new TypeManagerLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		TypeManagerParser TMP = new TypeManagerParser(tokens);
-		TMP.typeManageNCross();
-		return TMP.getRoot();
-	}
-	
 	public static HashMap<String,String> invertHashMap(HashMap<String,String> m){
 		Iterator<String> iterator = m.keySet().iterator();  
 		HashMap<String,String> s = new HashMap<String,String>();

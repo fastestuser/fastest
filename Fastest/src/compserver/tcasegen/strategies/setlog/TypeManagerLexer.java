@@ -54,18 +54,6 @@ public class TypeManagerLexer extends Lexer {
 			else //tiene dos hijos
 				return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
 		}
-		
-		public static String printTreeNCross(DefaultMutableTreeNode tree){
-			if (tree.isLeaf()) 
-				return tree.toString();
-			if (tree.toString().equals("()"))
-				return "(" + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
-			int i;
-			String salida=tree.toString();
-			for (i=0;i<tree.getChildCount();i++)
-				salida += " " + printTreeNCross((DefaultMutableTreeNode) tree.getChildAt(i));
-			return salida; 
-		}
 
 
 	public TypeManagerLexer(CharStream input) {

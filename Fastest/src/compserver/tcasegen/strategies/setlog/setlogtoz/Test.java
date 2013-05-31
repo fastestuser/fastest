@@ -209,12 +209,6 @@ public class Test {
 //		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
-		
-		DefaultMutableTreeNode aux =SetLogUtils.toTree("FT \\cross FT \\cross (FT \\cross FT)");
-		System.out.println(TypeManagerParser.printTree(aux));
-		aux=aglutinarCorss(aux);
-		aux = SetLogUtils.toTreeNCross(TypeManagerParser.printTreeNCross(aux));
-		System.out.println(TypeManagerParser.printTreeNCross(aux));
 		 
 	}
 
