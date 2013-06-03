@@ -26,6 +26,10 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
+	
+	public ConstantCreator getCC(){
+		return cc;
+	}
 
     
 	public void loadTablas(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames){
@@ -35,13 +39,13 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		
 		
 		System.out.println("\n");
-		System.out.println("memory: "); 
+		System.out.println("zNames: "); 
 		printHashMap(zNames);
 		System.out.println("\n tipos: "); 
 		printHashMap(tipos);
 		System.out.println("\n");
 		System.out.println("\n");
-		cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
+		cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
 		
 	}
 	

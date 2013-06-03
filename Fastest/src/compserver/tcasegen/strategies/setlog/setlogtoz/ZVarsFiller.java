@@ -47,12 +47,11 @@ public final class ZVarsFiller {
 		return s;
 	}
 
-	private void llenarZVars(){
+	private void llenarZVars(ConstantCreator cc){
 		//zVars = SL2ZP.getZVars();
 		HashMap<String, String> memory = SetLogUtils.invertHashMap(zNames);
 		Iterator<String> iterator = zVars.keySet().iterator();  
 		String key,valor;
-		ConstantCreator cc = new ConstantCreator(tipos,null,null); 
 		while (iterator.hasNext()) {  
 			key = iterator.next().toString();
 			valor = zVars.get(key);
@@ -75,7 +74,7 @@ public final class ZVarsFiller {
 
 		//tambien imprime en pantalla
 		SL2ZP.lineas();
-		llenarZVars();
+		llenarZVars(SL2ZP.getCC());
 		System.out.println("\nzVars llenas****************\n");
 		SetLogUtils.printHashMap(zVars);
 

@@ -6,6 +6,8 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import net.sourceforge.czt.z.ast.ZName;
+
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
@@ -18,6 +20,7 @@ public final class ConstantCreator {
 	private List<String> basicTypes;
 
 	private int postfijo;
+	private HashMap<String, String> zName;
 	protected String getNumber(){
 		return String.valueOf(postfijo++);
 	}
@@ -137,7 +140,7 @@ public final class ConstantCreator {
 	private String cteCanonica(TreeNode nodo,String var) {
 		String ct = nodo.toString();
 
-		if (ct.equals("\\num") || ct.equals("\\nat") ) 
+		if (ct.equals("\\num") || ct.contains("nat") ) 
 			return this.getNumber();
 
 		if(ct.equals("\\cross"))
@@ -146,7 +149,7 @@ public final class ConstantCreator {
 		if (ct.equals("\\power")) 
 			return "{" + cteCanonica(nodo.getChildAt(0),var) + "}";
 
-		if (ct.equals("\\seq")) 
+		if (ct.contains("seq")) 
 			return "[" + cteCanonica(nodo.getChildAt(0),var) + "]";
 
 		String tipoCompleto = tipos.get(ct);
@@ -156,7 +159,7 @@ public final class ConstantCreator {
 			String salida = "";
 			while(tiposDecl.hasNext())
 				salida += "," + cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next());
-			
+
 			if (!salida.isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
@@ -235,7 +238,7 @@ public final class ConstantCreator {
 		if (ct.equals("\\seq") ) {
 			while(expr.hasNext())
 				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()); 
-			
+
 			if (!salida.isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
@@ -250,28 +253,48 @@ public final class ConstantCreator {
 		}
 		while(tiposDecl.hasNext())
 			salida += "," + cte(SetLogUtils.toTreeNorm(tiposDecl.next()), varsDecl.next().toUpperCase()); //Se pasa a mayus para que lo tome como variable 
-		
+
 		if (!salida.isEmpty())
 			return "[" + salida.substring(1) + "]";
 		return "[]";
 
 	}
 
-	
+
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
 	 * construcciones de tipos finitos. */
-	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
+	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos,HashMap<String,String> zName) {
 		this.tipos = tipos;
 		this.slVars = slVars;
 		this.valoresProhibidos = valoresProhibidos;
 		this.basicTypes = null;
 		this.postfijo = 1;
+		this.zName = zName;
 	}
 
 	String getCte(String expr, DefaultMutableTreeNode root){
 		expr = expr.replaceAll("\\s+",""); 
 		this.arbol = root;
+
+		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
+		// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
+		if(valoresProhibidos != null){
+			Iterator<String> it = valoresProhibidos.keySet().iterator();
+			String var,tipo;
+			StringPointer valor;
+			while (it.hasNext()) { 
+				var = it.next().toString();
+				if (zName != null && zName.get(var)!=null){
+					tipo = tipos.get(zName.get(var));
+					DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
+					valor = new StringPointer(cteRestringuida(nodo,var));
+					if(slVars != null)
+						slVars.put(var, valor);
+				}
+			}
+		}
+
 		String s = cte(arbol, expr);
 		return s;
 	}
