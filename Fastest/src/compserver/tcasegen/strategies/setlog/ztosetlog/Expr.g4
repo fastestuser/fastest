@@ -254,7 +254,7 @@ grammar Expr;
 			
 			if (isSequence(nodeType)){
 				if (tipoSchema == 0) {
-					if (nodeType.equals("\\seq_{1}"))
+					if (nodeType.startsWith("seq_{1}"))
 						print(var + " neq []");
 					printAtEnd("list(" + var + ")");
 				}
@@ -368,7 +368,7 @@ grammar Expr;
 	}
 	
 	private boolean isSequence(String type) {
-		if (type.startsWith("\\seq"))
+		if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 			return true;
 		return false;
 	}
@@ -1225,7 +1225,7 @@ expression2
 			if (isBasic(eType))
 				eType = $e4.text;
 		
-			types.put($pre_gen.text + $e4.text, "\\seq_{1}" + eType);
+			types.put($pre_gen.text + $e4.text, $pre_gen.text + eType);
 		}
 		else if ($pre_gen.text.equals("\\seq")) {
 			String eType = types.get($e4.text);

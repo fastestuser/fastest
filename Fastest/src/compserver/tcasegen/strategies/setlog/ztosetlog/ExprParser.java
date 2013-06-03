@@ -316,7 +316,7 @@ public class ExprParser extends Parser {
 				
 				if (isSequence(nodeType)){
 					if (tipoSchema == 0) {
-						if (nodeType.equals("\\seq_{1}"))
+						if (nodeType.startsWith("seq_{1}"))
 							print(var + " neq []");
 						printAtEnd("list(" + var + ")");
 					}
@@ -430,7 +430,7 @@ public class ExprParser extends Parser {
 		}
 		
 		private boolean isSequence(String type) {
-			if (type.startsWith("\\seq"))
+			if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 				return true;
 			return false;
 		}
@@ -2291,7 +2291,7 @@ public class ExprParser extends Parser {
 							if (isBasic(eType))
 								eType = (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null);
 						
-							types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), "\\seq_{1}" + eType);
+							types.put((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + (((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null), (((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null) + eType);
 						}
 						else if ((((Expression2Context)_localctx).pre_gen!=null?_input.getText(((Expression2Context)_localctx).pre_gen.start,((Expression2Context)_localctx).pre_gen.stop):null).equals("\\seq")) {
 							String eType = types.get((((Expression2Context)_localctx).e4!=null?_input.getText(((Expression2Context)_localctx).e4.start,((Expression2Context)_localctx).e4.stop):null));

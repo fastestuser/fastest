@@ -309,7 +309,7 @@ public class ExprLexer extends Lexer {
 				
 				if (isSequence(nodeType)){
 					if (tipoSchema == 0) {
-						if (nodeType.equals("\\seq_{1}"))
+						if (nodeType.startsWith("seq_{1}"))
 							print(var + " neq []");
 						printAtEnd("list(" + var + ")");
 					}
@@ -423,7 +423,7 @@ public class ExprLexer extends Lexer {
 		}
 		
 		private boolean isSequence(String type) {
-			if (type.startsWith("\\seq"))
+			if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 				return true;
 			return false;
 		}
