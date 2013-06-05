@@ -36,6 +36,19 @@ public final class SetLogGenerator {
 		if (ct.equals("()")) 
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
 		
+		if (ct.equals("\\pfun")||ct.equals("\\fun")||ct.equals("\\ffun")||ct.equals("\\rel")){
+			String salida = "";
+			String coma = ct.equals("\\rel")?",":"\\mapsto ";
+			ExprIterator exprAux;
+			while(expr.hasNext()){
+				exprAux = new ExprIterator(expr.next());
+				salida += "," + "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprAux.next()) + coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),exprAux.next()) + ")";
+			}
+			if (!salida.isEmpty())
+				return "\\{" + salida.substring(1) + "\\}";
+			return "\\{\\}";
+		}
+		
 		if (ct.equals("\\cross")){
 			
 			String salida = "";
@@ -46,7 +59,7 @@ public final class SetLogGenerator {
 			if (izq.toString().equals("\\cross"))
 				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(0),eAux.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(1),eAux.next()); 
 			else {
-				coma = "\\mapsto";
+				coma = "\\mapsto ";
 				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq,eAux.toString());
 			}
 			eAux = new ExprIterator(expr.next());
@@ -58,10 +71,11 @@ public final class SetLogGenerator {
 			}
 			return "(" + salida + ")";
 		}
+		
 		if (ct.equals("\\power")){
 			String salida = "";
 			while(expr.hasNext()){
-				salida = "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
 			}
 			if (!salida.isEmpty())
 				return "\\{" + salida.substring(1) + "\\}";
@@ -71,7 +85,7 @@ public final class SetLogGenerator {
 		if (ct.equals("\\seq")){
 			String salida = "";
 			while(expr.hasNext())
-				salida = "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
 			
 			if (!salida.isEmpty())
 				return "\\langle" + salida.substring(1) + "\\rangle";
