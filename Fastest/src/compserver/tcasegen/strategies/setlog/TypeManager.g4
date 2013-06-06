@@ -35,9 +35,9 @@ typeManage: type {root = $type.node; /*System.out.println("Root: " + printTree(r
 typeManageNorm: typeNorm {root = $typeNorm.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/};
 
 type returns [DefaultMutableTreeNode node]
-		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
-		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
+		:	UNOP a=type {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}
 		|	a=type '\\cross' b=type {$node = new DefaultMutableTreeNode("\\cross"); $node.add($a.node); $node.add($b.node);}
+		|	a=type BINOP b=type {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
 		|	'(' a=type ')' {$node = new DefaultMutableTreeNode("()"); $node.add($a.node);}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
@@ -47,7 +47,13 @@ type returns [DefaultMutableTreeNode node]
 		;
 
 typeNorm returns [DefaultMutableTreeNode node]
-		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}	
+		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}
+		|	a=typeNorm '\\cross' b=typeNorm
+				{
+					$node = new DefaultMutableTreeNode("\\cross");
+					$node.add($a.node); 
+					$node.add($b.node);
+				}	
 		|	a=typeNorm BINOP b=typeNorm 
 				{
 					$node = new DefaultMutableTreeNode("\\power"); 
@@ -55,12 +61,6 @@ typeNorm returns [DefaultMutableTreeNode node]
 					$node.add(cross);
 					cross.add($a.node); 
 					cross.add($b.node);
-				}
-		|	a=typeNorm '\\cross' b=typeNorm
-				{
-					$node = new DefaultMutableTreeNode("\\cross");
-					$node.add($a.node); 
-					$node.add($b.node);
 				}
 		|	'(' a=typeNorm ')' {$node = $a.node;}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}

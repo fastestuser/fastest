@@ -22,6 +22,9 @@ public interface ExprListener extends ParseTreeListener {
 	void enterExpression(ExprParser.ExpressionContext ctx);
 	void exitExpression(ExprParser.ExpressionContext ctx);
 
+	void enterPost(ExprParser.PostContext ctx);
+	void exitPost(ExprParser.PostContext ctx);
+
 	void enterDeclaration(ExprParser.DeclarationContext ctx);
 	void exitDeclaration(ExprParser.DeclarationContext ctx);
 
@@ -30,9 +33,6 @@ public interface ExprListener extends ParseTreeListener {
 
 	void enterBasic_type(ExprParser.Basic_typeContext ctx);
 	void exitBasic_type(ExprParser.Basic_typeContext ctx);
-
-	void enterPost_fun(ExprParser.Post_funContext ctx);
-	void exitPost_fun(ExprParser.Post_funContext ctx);
 
 	void enterEnumeration_type(ExprParser.Enumeration_typeContext ctx);
 	void exitEnumeration_type(ExprParser.Enumeration_typeContext ctx);
@@ -43,29 +43,14 @@ public interface ExprListener extends ParseTreeListener {
 	void enterEquivalent_type(ExprParser.Equivalent_typeContext ctx);
 	void exitEquivalent_type(ExprParser.Equivalent_typeContext ctx);
 
-	void enterExpression0(ExprParser.Expression0Context ctx);
-	void exitExpression0(ExprParser.Expression0Context ctx);
-
-	void enterExpression1(ExprParser.Expression1Context ctx);
-	void exitExpression1(ExprParser.Expression1Context ctx);
-
-	void enterExpression2(ExprParser.Expression2Context ctx);
-	void exitExpression2(ExprParser.Expression2Context ctx);
-
-	void enterExpression3(ExprParser.Expression3Context ctx);
-	void exitExpression3(ExprParser.Expression3Context ctx);
-
-	void enterExpression4(ExprParser.Expression4Context ctx);
-	void exitExpression4(ExprParser.Expression4Context ctx);
-
 	void enterDeclPart(ExprParser.DeclPartContext ctx);
 	void exitDeclPart(ExprParser.DeclPartContext ctx);
 
 	void enterSchemaText(ExprParser.SchemaTextContext ctx);
 	void exitSchemaText(ExprParser.SchemaTextContext ctx);
 
-	void enterSeq_op(ExprParser.Seq_opContext ctx);
-	void exitSeq_op(ExprParser.Seq_opContext ctx);
+	void enterPre(ExprParser.PreContext ctx);
+	void exitPre(ExprParser.PreContext ctx);
 
 	void enterDeclName(ExprParser.DeclNameContext ctx);
 	void exitDeclName(ExprParser.DeclNameContext ctx);
@@ -73,6 +58,6 @@ public interface ExprListener extends ParseTreeListener {
 	void enterSpecification(ExprParser.SpecificationContext ctx);
 	void exitSpecification(ExprParser.SpecificationContext ctx);
 
-	void enterPre_gen(ExprParser.Pre_genContext ctx);
-	void exitPre_gen(ExprParser.Pre_genContext ctx);
+	void enterRefName(ExprParser.RefNameContext ctx);
+	void exitRefName(ExprParser.RefNameContext ctx);
 }

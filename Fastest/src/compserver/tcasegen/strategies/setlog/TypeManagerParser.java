@@ -155,8 +155,8 @@ public class TypeManagerParser extends Parser {
 		public Token NAME;
 		public Token e1;
 		public Token e2;
-		public Token BINOP;
 		public TypeContext b;
+		public Token BINOP;
 		public TerminalNode NUM(int i) {
 			return getToken(TypeManagerParser.NUM, i);
 		}
@@ -287,9 +287,9 @@ public class TypeManagerParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
 						setState(38);
 						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
-						setState(39); ((TypeContext)_localctx).BINOP = match(BINOP);
+						setState(39); match(6);
 						setState(40); ((TypeContext)_localctx).b = type(9);
-						((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).BINOP!=null?((TypeContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
+						((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\cross"); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
 						}
 						break;
 
@@ -300,9 +300,9 @@ public class TypeManagerParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
 						setState(43);
 						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(44); match(6);
+						setState(44); ((TypeContext)_localctx).BINOP = match(BINOP);
 						setState(45); ((TypeContext)_localctx).b = type(8);
-						((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\cross"); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
+						((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).BINOP!=null?((TypeContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
 						}
 						break;
 					}
@@ -464,14 +464,12 @@ public class TypeManagerParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_typeNorm);
 						setState(77);
 						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
-						setState(78); match(BINOP);
+						setState(78); match(6);
 						setState(79); ((TypeNormContext)_localctx).b = typeNorm(9);
 
-						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\power"); 
-						          					DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
-						          					_localctx.node.add(cross);
-						          					cross.add(((TypeNormContext)_localctx).a.node); 
-						          					cross.add(((TypeNormContext)_localctx).b.node);
+						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\cross");
+						          					_localctx.node.add(((TypeNormContext)_localctx).a.node); 
+						          					_localctx.node.add(((TypeNormContext)_localctx).b.node);
 						          				
 						}
 						break;
@@ -483,12 +481,14 @@ public class TypeManagerParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_typeNorm);
 						setState(82);
 						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(83); match(6);
+						setState(83); match(BINOP);
 						setState(84); ((TypeNormContext)_localctx).b = typeNorm(8);
 
-						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\cross");
-						          					_localctx.node.add(((TypeNormContext)_localctx).a.node); 
-						          					_localctx.node.add(((TypeNormContext)_localctx).b.node);
+						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\power"); 
+						          					DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
+						          					_localctx.node.add(cross);
+						          					cross.add(((TypeNormContext)_localctx).a.node); 
+						          					cross.add(((TypeNormContext)_localctx).b.node);
 						          				
 						}
 						break;
@@ -552,15 +552,15 @@ public class TypeManagerParser extends Parser {
 		"\35\'\b\4\1\2\36\37\7\3\2\2\37\'\b\4\1\2 !\7\13\2\2!\'\b\4\1\2\"#\t\2"+
 		"\2\2#$\7\4\2\2$%\t\3\2\2%\'\b\4\1\2&\20\3\2\2\2&\25\3\2\2\2&\32\3\2\2"+
 		"\2&\34\3\2\2\2&\36\3\2\2\2& \3\2\2\2&\"\3\2\2\2\'\64\3\2\2\2()\6\4\2\3"+
-		")*\7\n\2\2*+\5\6\4\2+,\b\4\1\2,\63\3\2\2\2-.\6\4\3\3./\7\b\2\2/\60\5\6"+
+		")*\7\b\2\2*+\5\6\4\2+,\b\4\1\2,\63\3\2\2\2-.\6\4\3\3./\7\n\2\2/\60\5\6"+
 		"\4\2\60\61\b\4\1\2\61\63\3\2\2\2\62(\3\2\2\2\62-\3\2\2\2\63\66\3\2\2\2"+
 		"\64\62\3\2\2\2\64\65\3\2\2\2\65\7\3\2\2\2\66\64\3\2\2\2\678\b\5\1\289"+
 		"\7\f\2\29:\5\b\5\2:;\b\5\1\2;N\3\2\2\2<=\7\6\2\2=>\5\b\5\2>?\7\5\2\2?"+
 		"@\b\5\1\2@N\3\2\2\2AB\7\7\2\2BN\b\5\1\2CD\7\t\2\2DN\b\5\1\2EF\7\3\2\2"+
 		"FN\b\5\1\2GH\7\13\2\2HN\b\5\1\2IJ\t\4\2\2JK\7\4\2\2KL\t\5\2\2LN\b\5\1"+
 		"\2M\67\3\2\2\2M<\3\2\2\2MA\3\2\2\2MC\3\2\2\2ME\3\2\2\2MG\3\2\2\2MI\3\2"+
-		"\2\2N[\3\2\2\2OP\6\5\4\3PQ\7\n\2\2QR\5\b\5\2RS\b\5\1\2SZ\3\2\2\2TU\6\5"+
-		"\5\3UV\7\b\2\2VW\5\b\5\2WX\b\5\1\2XZ\3\2\2\2YO\3\2\2\2YT\3\2\2\2Z]\3\2"+
+		"\2\2N[\3\2\2\2OP\6\5\4\3PQ\7\b\2\2QR\5\b\5\2RS\b\5\1\2SZ\3\2\2\2TU\6\5"+
+		"\5\3UV\7\n\2\2VW\5\b\5\2WX\b\5\1\2XZ\3\2\2\2YO\3\2\2\2YT\3\2\2\2Z]\3\2"+
 		"\2\2[Y\3\2\2\2[\\\3\2\2\2\\\t\3\2\2\2][\3\2\2\2\b&\62\64MY[";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());

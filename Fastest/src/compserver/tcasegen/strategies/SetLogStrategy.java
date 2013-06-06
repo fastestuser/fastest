@@ -105,7 +105,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 		//Busco los tipos que se utilizan en tClass
 		TypesExtractor extractor = new TypesExtractor();
-		System.out.println("ALEXTRECTOR\n" + SpecUtils.termToLatex(SpecUtils.getAxParaListOfDecl(tClass)));
 		HashSet<String> types = SpecUtils.getAxParaListOfDecl(tClass).accept(extractor);
 		HashSet<String> typesPrinted = new HashSet<String>();
 		Iterator<String> typesIt = types.iterator();
