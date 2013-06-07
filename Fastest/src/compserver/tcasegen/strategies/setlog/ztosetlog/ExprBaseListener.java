@@ -31,6 +31,9 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterDeclaration(ExprParser.DeclarationContext ctx) { }
 	@Override public void exitDeclaration(ExprParser.DeclarationContext ctx) { }
 
+	@Override public void enterEndExpression(ExprParser.EndExpressionContext ctx) { }
+	@Override public void exitEndExpression(ExprParser.EndExpressionContext ctx) { }
+
 	@Override public void enterParagraph(ExprParser.ParagraphContext ctx) { }
 	@Override public void exitParagraph(ExprParser.ParagraphContext ctx) { }
 

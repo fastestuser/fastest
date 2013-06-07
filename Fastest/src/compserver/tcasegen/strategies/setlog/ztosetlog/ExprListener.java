@@ -28,6 +28,9 @@ public interface ExprListener extends ParseTreeListener {
 	void enterDeclaration(ExprParser.DeclarationContext ctx);
 	void exitDeclaration(ExprParser.DeclarationContext ctx);
 
+	void enterEndExpression(ExprParser.EndExpressionContext ctx);
+	void exitEndExpression(ExprParser.EndExpressionContext ctx);
+
 	void enterParagraph(ExprParser.ParagraphContext ctx);
 	void exitParagraph(ExprParser.ParagraphContext ctx);
 

@@ -732,80 +732,7 @@ predicate
 expression
 locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
 	String newVarName1 = "", String newVarName2 = ""]
-	:	e=expression post
-	{
-		String a;
-		a = memory.get($e.text);
-		String op = $post.text;
-		
-		if (memory.get($e.text + op) == null) {
-		
-			String newVarName = newVar();
-		
-			if (op.startsWith("\\inv")){
-				//Si a es una lista, debo convertirla
-				a = convertToSet($e.text, a);
-			
-				print("inv(" + newVarName + "," + a + ")");
-				memory.put($e.text + op, newVarName);
-				String type = types.get($e.text);
-				if (isSequence(getType(type)))
-					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
-				type = invertType(type); 
-				types.put($e.text + op, type);
-				typeInfo(newVarName, type);
-				if (modoSetExpression != 0 )
-					setExpressionVars.put($e.text + op, newVarName);
-			}
-		}
-	}
-	|	e=expression SELECTION (refName | NUM)
-	{
-		String n;
-		if ($refName.text == null)
-			n = $NUM.text;
-		else
-			n = $refName.text;
-			
-		if (memory.get($e.text + "." + n) == null) {
-		
-			String eType = types.get($e.text);
-			if (!eType.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
-				eType = types.get(eType);
-			
-			if (eType.startsWith("SchemaType:")) {
-				String schemaVars = eType.split(":", 3)[2];
-				//Obtengo el indice de la variable e2 dentro de la lista de variables del tipo schema
-				//Primero obtenemos la lista de variables
-				schemaVars = schemaVars.substring(1, schemaVars.length()-1);
-				String[] vars = schemaVars.split(",");
-				//Buscamos la posicion de la variable
-				int position = 1;
-				while (!vars[position-1].contains(n + ":")) //Se resta 1 porque en setlog empiezan en 1, no en 0 como en java
-					position++;
-				//Creamos una nueva variable
-				String newVarName = newVar();
-				//Vemos su tipo
-				String type = vars[position-1].substring(n.length()+1);
-				memory.put($e.text + "." + n, newVarName);
-				if (modoSetExpression != 0 )
-					setExpressionVars.put($e.text + "." + n, newVarName);
-				types.put($e.text + "." + n, type);
-				print("nth1(" + position + "," + memory.get($e.text) + "," + newVarName + ")");
-				
-				typeInfo(newVarName, type);
-				
-			}
-			else { //Se pide el elemento de una tupla
-				String newVarName = newVar();
-				memory.put($e.text + "." + n, newVarName);
-				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
-				types.put($e.text + "." + n, eType); //Arreglar
-				print("nth1(" + n + "," + memory.get($e.text) + "," + newVarName + ")");
-			}
-		}
-	}
-	|	pre e=expression
+	:	pre e=expression
 	{
 		if (memory.get($pre.text + $e.text) == null) {
 		
@@ -968,28 +895,30 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression DECORATION? '(' e2=expression ')'
+	|	e1=expression DECORATION? end=endExpression //se utiliza endExpression en vez de expression, como dice la ISO, porque sino el parser
+	                                               //es left-recursive. Esta idea surge de la gramatica de Spivey, y segun los test, no
+	                                               //limita la aceptacion de expresiones
 	{
 		String a, b;
 		a = memory.get($e1.text);
-		b = memory.get($e2.text);
+		b = memory.get($end.text);
 		String op = "";
 		if ($DECORATION.text != null) op = "~";
 		
 		//Si a es una lista, debo convertirla
 		a = convertToSet($e1.text, a);
 		
-		if (memory.get($e1.text + op + "(" + $e2.text + ")") == null) {
+		if (memory.get($e1.text + op + $end.text) == null) {
 			String newVarName = newVar();
-			memory.put($e1.text + op + "(" + $e2.text + ")", newVarName);
+			memory.put($e1.text + op + $end.text, newVarName);
 			
 			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + op + "(" + $e2.text + ")", newVarName);
+				setExpressionVars.put($e1.text + op + $end.text, newVarName);
 
 			String type1 = types.get($e1.text);
 			//getType(type1);
 			String newVarType = leftAndRightTypes(type1).get(1);
-			types.put($e1.text + op + "(" + $e2.text + ")", newVarType);
+			types.put($e1.text + op + $end.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");
 			
 			//Imprimimos la informacion del tipo de la variable
@@ -1397,7 +1326,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
 		}
 	}
-	|	refName
+	| endExpression
+	;
+
+endExpression
+locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
+	String newVarName1 = "", String newVarName2 = ""]
+	:	refName
 	|	NUM
 	{
 		if (memory.get($NUM.text) == null) {
@@ -1587,6 +1522,79 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			types.put($zName, type);
 		}
 	}
+	|	end=endExpression SELECTION (refName | NUM)
+	{
+		String n;
+		if ($refName.text == null)
+			n = $NUM.text;
+		else
+			n = $refName.text;
+			
+		if (memory.get($end.text + "." + n) == null) {
+		
+			String eType = types.get($end.text);
+			if (!eType.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
+				eType = types.get(eType);
+			
+			if (eType.startsWith("SchemaType:")) {
+				String schemaVars = eType.split(":", 3)[2];
+				//Obtengo el indice de la variable e2 dentro de la lista de variables del tipo schema
+				//Primero obtenemos la lista de variables
+				schemaVars = schemaVars.substring(1, schemaVars.length()-1);
+				String[] vars = schemaVars.split(",");
+				//Buscamos la posicion de la variable
+				int position = 1;
+				while (!vars[position-1].contains(n + ":")) //Se resta 1 porque en setlog empiezan en 1, no en 0 como en java
+					position++;
+				//Creamos una nueva variable
+				String newVarName = newVar();
+				//Vemos su tipo
+				String type = vars[position-1].substring(n.length()+1);
+				memory.put($end.text + "." + n, newVarName);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($end.text + "." + n, newVarName);
+				types.put($end.text + "." + n, type);
+				print("nth1(" + position + "," + memory.get($end.text) + "," + newVarName + ")");
+				
+				typeInfo(newVarName, type);
+				
+			}
+			else { //Se pide el elemento de una tupla
+				String newVarName = newVar();
+				memory.put($end.text + "." + n, newVarName);
+				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
+				types.put($end.text + "." + n, eType); //Arreglar
+				print("nth1(" + n + "," + memory.get($end.text) + "," + newVarName + ")");
+			}
+		}
+	}
+	|	end=endExpression post
+	{
+		String a;
+		a = memory.get($end.text);
+		String op = $post.text;
+		
+		if (memory.get($end.text + op) == null) {
+		
+			String newVarName = newVar();
+		
+			if (op.startsWith("\\inv")){
+				//Si a es una lista, debo convertirla
+				a = convertToSet($end.text, a);
+			
+				print("inv(" + newVarName + "," + a + ")");
+				memory.put($end.text + op, newVarName);
+				String type = types.get($end.text);
+				if (isSequence(getType(type)))
+					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				type = invertType(type); 
+				types.put($end.text + op, type);
+				typeInfo(newVarName, type);
+				if (modoSetExpression != 0 )
+					setExpressionVars.put($end.text + op, newVarName);
+			}
+		}
+	}
 	|	'(' e=expression ')'
 	{
 		String a = memory.get($e.text);
@@ -1616,16 +1624,16 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	}
 	|	'\\nat' '_{1}' 
 	{	
-		printInfo($expression.text, false);	
+		printInfo($endExpression.text, false);	
 	}
 	|	'\\nat' 
 	{	
-		printInfo($expression.text, false);	
+		printInfo($endExpression.text, false);	
 	}
 	|	'\\num'
 	{	
-		printInfo($expression.text, false);	
-	}
+		printInfo($endExpression.text, false);	
+	}	
 	;
 	
 refName
