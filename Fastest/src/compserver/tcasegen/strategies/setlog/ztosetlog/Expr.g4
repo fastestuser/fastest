@@ -100,6 +100,24 @@ grammar Expr;
         return (String) root.getUserObject();
 	}
 	
+	//Metodo para quitar los parentesis exteriores
+	String removeParenthesis(String type) {
+		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root = parser.getRoot();
+        
+        //Elimino parentesis externos
+        while (((String) root.getUserObject()).equals("()")) {
+        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+        }
+        
+        return parser.printTree(root);
+	}
+	
 	//Metodo para la determinacion del tipo de salida o entrada de una funcion.
 	String getChildType(String type, int pos) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
@@ -946,6 +964,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		String unfoldedType = "";
 
 		String exp = $e1.text;
+		
 		$zName = $zName.concat(exp);
 		String expType = types.get(exp);
 		if (isBasic(expType))
@@ -1615,13 +1634,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			if (hasSpecialChar){
 				memory.put("(" + $e.text + ")", "(" + a + ")");
 				if (types.get($e.text) != null) {
-					types.put("(" + $e.text + ")", types.get($e.text));
+					types.put("(" + $e.text + ")", "(" + types.get($e.text) + ")");
 				}
 			}
 			else {
 				memory.put("(" + $e.text + ")", a);
 				if (types.get($e.text) != null) {
-					types.put("(" + $e.text + ")", types.get($e.text));
+					types.put("(" + $e.text + ")", "(" + types.get($e.text) + ")");
 				}
 			}
 		} else  //Si estoy en la parte de declaracion
