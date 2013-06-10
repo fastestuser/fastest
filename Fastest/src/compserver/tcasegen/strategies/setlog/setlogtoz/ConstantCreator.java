@@ -152,6 +152,22 @@ public final class ConstantCreator {
 		if (ct.contains("seq")) 
 			return "[" + cteCanonica(nodo.getChildAt(0),var) + "]";
 
+		if (ct.contains("upto")){
+			String aux[] = var.split("\\\\upto");
+			String l1 = aux[0];
+			if (slVars != null){
+				if (SetLogUtils.esSLVariableSimple(l1)){
+					if (slVars.get(l1)!=null)
+						l1 = slVars.get(l1).toString();
+					else {
+						slVars.put(l1, new StringPointer(this.getNumber()));
+						l1 = this.getNumber();
+					}
+				}
+			} 
+			return l1;
+		}
+
 		String tipoCompleto = tipos.get(ct);
 		if (tipoCompleto.startsWith("SchemaType")){
 			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipoCompleto);

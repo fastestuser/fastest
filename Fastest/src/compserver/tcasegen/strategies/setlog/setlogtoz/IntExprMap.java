@@ -2,17 +2,12 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import javax.swing.tree.DefaultMutableTreeNode;
-import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 
 /*Mapeador de naturales a expresion, por cada numero natural da una expresion y biceversa*/
 public final class IntExprMap {
 	private HashMap<String, String> tipos;
-	private HashMap<String, String> zNames;
 
-
-	//devuelve el numero que corresponde a la posicion, ej bitFromFreeType(FT::=a|b|c , a)
-	// 4 en decimal
 	private int numFromFreeType(String tipo,String elem){
 		String s;
 		String aux[] = tipo.split(":");
@@ -25,6 +20,11 @@ public final class IntExprMap {
 		return 0;
 	}
 
+	private int numFromUptoType(String tipo,String elem){
+		String aux[] = tipo.split("\\\\upto");
+		return Integer.valueOf(elem) - Integer.valueOf(aux[0]) + 1;
+	}
+	
 	private int cardOfFreeType(String tipo){
 		String aux[] = tipo.split(":");
 		aux = aux[2].split(",");
@@ -57,6 +57,12 @@ public final class IntExprMap {
 		s = aux[2].substring(1, aux[2].length()-1);
 		aux = s.split(",");
 		return aux[i-1];
+	}
+
+	private String elemFromUptoType(String tipo, int i){
+		String aux[] = tipo.split("\\\\upto");
+		int s = -1 + Integer.valueOf(aux[0]) + i;
+		return String.valueOf(s);
 	}
 
 	private  class Par{
@@ -148,11 +154,10 @@ public final class IntExprMap {
 
 				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
 			}
-		}else /*si es tipo libre*/{
+		}else if (ct.contains("upto"))
+			salida = elemFromUptoType(ct,num);
+		else/*tipo libre*/ {
 			String tipo = tipos.get(ct);
-			if (num<1){
-				salida ="{}";
-			}
 			salida = elemFromFreeType(tipo,num);	
 		}
 		return salida;
@@ -217,10 +222,13 @@ public final class IntExprMap {
 
 			return intFromPar( f1 , f2, cardinalidadTipoFinito(hijoDer));
 		}
+		else if(ct.contains("upto")){
+			salida = numFromUptoType(ct,expr);
+			salida = (salida == 0)?-1:salida;
+		}
 		else{
 			salida = numFromFreeType(tipos.get(ct),expr);
 			salida = (salida == 0)?-1:salida;
-
 		}
 		return salida;
 	}
