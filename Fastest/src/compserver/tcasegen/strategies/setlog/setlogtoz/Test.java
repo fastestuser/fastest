@@ -137,17 +137,22 @@ public class Test {
 	public static void main(String[] args) {
 		
 
-//		String tipo = "Estado";
-//
-//		
-//		ANTLRInputStream input = new ANTLRInputStream(tipo);
-//		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
-//        TypeManagerLexer lexer = new TypeManagerLexer(input);
-//        CommonTokenStream tokens = new CommonTokenStream(lexer);
-//        TypeManagerParser parser = new TypeManagerParser(tokens);
-//        parser.typeManageNorm();
-//        DefaultMutableTreeNode root =  parser.getRoot();
-//        System.out.println(parser.printTree(root));
+		String tipo = "\\power \\num \\cross \\num";
+
+		
+		ANTLRInputStream input = new ANTLRInputStream(tipo);
+		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root =  parser.getRoot();
+        System.out.println(parser.printTree(root));
+        System.out.println("PADRE " + root.getUserObject());
+        System.out.println("IZQ " + parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
+        System.out.println("DER " + parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
+        
+        
 //        
 //        input = new ANTLRInputStream(tipo);
 //		//ANTLRInputStream input = new ANTLRInputStream(" \\power ((\\power FT) \\cross FT)");
@@ -209,7 +214,7 @@ public class Test {
 //		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
-		String tipo = "2\\upto3";
+		tipo = "2\\upto3";
 		String aux[] = tipo.split("\\\\upto");
 		System.out.println(aux);
 	}

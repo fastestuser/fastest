@@ -597,7 +597,7 @@ predicate
 		
 		print(a + " in " + b);
 	}
-	|	(e1=expression '\\notin' /*(DECORATION)?*/ e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
+	|	(e1=expression '\\notin' e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -608,21 +608,21 @@ predicate
 		
 		print(a + " nin " + b);
 	}
-	|	e1=expression '<' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '<' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " < " + b);
 	}
-	|	e1=expression '>' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '>' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print(a + " > " + b);
 	}
-	|	e1=expression '\\leq' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\leq' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -630,7 +630,7 @@ predicate
 		
 		print(a + " =< " + b);
 	}
-	|	e1=expression '\\geq' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\geq' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -644,7 +644,7 @@ predicate
 		b = memory.get($e2.text);
 		print(a + " = " + b);
 	}
-	|	e1=expression '\\subseteq' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\subseteq' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -657,7 +657,7 @@ predicate
 		
 		print("dsubset(" + a + "," + b + ")");
 	}
-	|	'\\lnot' e1=expression '\\subseteq' /*(DECORATION)?*/ e2=expression
+	|	'\\lnot' e1=expression '\\subseteq' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -670,7 +670,7 @@ predicate
 		
 		print("dnsubset(" + a + "," + b + ")");
 	}
-	|	e1=expression '\\subset' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\subset' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -683,7 +683,7 @@ predicate
 		
 		print("dssubset(" + a + "," + b + ")");
 	}
-	|	'\\lnot' e1=expression '\\subset' /*(DECORATION)?*/ e2=expression
+	|	'\\lnot' e1=expression '\\subset' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -708,7 +708,7 @@ predicate
 		
 		print(c + " neq " + a);
 	}
-	|	e1=expression '\\neq' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\neq' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -724,14 +724,14 @@ predicate
 		
 		print(a + " neq " + b);
 	}
-	|	e1=expression '\\prefix' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\prefix' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		print("prolog_call(append(" + a + ",_," + b + "))");
 	}
-	|	e1=expression '\\suffix' /*(DECORATION)?*/ e2=expression
+	|	e1=expression '\\suffix' e2=expression
 	{
 		String a, b;
 		a = memory.get($e1.text);
@@ -758,7 +758,13 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			a = memory.get($e.text);
 			String newVarName = newVar();
 		
-			if ($pre.text.equals("\\#")){
+			if ($pre.text.equals("\\negate")){
+				memory.put("\\negate" + $e.text, "-" + a);
+				types.put("\\negate" + $e.text, "\\num");
+				if (modoSetExpression != 0 )
+					setExpressionVars.put("\\negate" + $e.text, "-" + a);
+			}
+			else if ($pre.text.equals("\\#")){
 				memory.put("\\#" + $e.text, newVarName);
 				types.put("\\#" + $e.text, "\\nat");
 				if (modoSetExpression != 0 )
@@ -913,7 +919,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 		}
 	}
-	|	e1=expression /*DECORATION?*/ end=endExpression //se utiliza endExpression en vez de expression, como dice la ISO, porque sino el parser
+	|	e1=expression end=endExpression //se utiliza endExpression en vez de expression, como dice la ISO, porque sino el parser
 	                                               //es left-recursive. Esta idea surge de la gramatica de Spivey, y segun los test, no
 	                                               //limita la aceptacion de expresiones
 	{
@@ -921,8 +927,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		a = memory.get($e1.text);
 		b = memory.get($end.text);
 		String op = "";
-		//if ($DECORATION.text != null) op = "~";
-		
+				
 		//Si a es una lista, debo convertirla
 		a = convertToSet($e1.text, a);
 		
@@ -941,14 +946,6 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			
 			//Imprimimos la informacion del tipo de la variable
 			typeInfo(newVarName, newVarType);
-		}
-	}
-	| e1=expression DECORATION
-	{
-		if (memory.get($e1.text + $DECORATION.text) == null) {
-			String a = memory.get($e1.text);
-			memory.put($e1.text + $DECORATION.text, a);
-			types.put($e1.text + $DECORATION.text, types.get($e1.text));
 		}
 	}
 	|	POWER e=expression
@@ -1335,22 +1332,22 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		
 		types.put($a.text + $IN_FUN_5.text + $b.text, aType + $IN_FUN_5.text + bType );
 	}
-	|	e1=expression IMGSTART e2=expression IMGEND (DECORATION)?
+	|	e1=expression IMGSTART e2=expression IMGEND
 	{
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
 		
-		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text) == null) {
+		if (memory.get($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text) == null) {
 			String newVarName = newVar();
 			print("rimg(" + a + "," + b + "," + newVarName + ")");
-			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
+			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
 			String type1 = types.get($e1.text);
 			String type = "\\power(" + getChildType(type1, 1) + ")";
-			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, type);
+			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, type);
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text + $DECORATION.text, newVarName);
+				setExpressionVars.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
 		}
 	}
 	| endExpression
@@ -1461,6 +1458,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				String var = keysIt.next();
 				memory.remove(var);
 				keysIt.remove();
+				zVars.remove(var);
 				//setExpressionVars.remove(var);
 			}
 		}
@@ -1491,7 +1489,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		}
 	}
 	|	//list extension
-		/*(DECORATION)?*/ LISTSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* LISTEND
+		LISTSTART (a=expression {$elements.add($a.text);})? (',' b=expression {$elements.add($b.text);})* LISTEND
 	{	
 		$zName = $zName.concat($LISTSTART.text);
 		String type = new String();
@@ -1676,25 +1674,26 @@ refName
 	;
 
 post
-	:	'\\inv' //(DECORATION)?
+	:	'\\inv'
 	;
 
 pre
-	:	'\\ran' 
+	:	'\\negate'
+	|	'\\ran' 
 	| 	'\\dom' 
-	|	'seq_{1}' //DECORATION
+	|	'seq_{1}'
 	|	'\\seq'
 	|	'\\#'
 	|	'\\bigcup'
 	|	'\\bigcap'	
-	|	'max' //DECORATION
-	|	'min' //DECORATION
-	|	'rev' //DECORATION
-	|	'head' //DECORATION
-	|	'last' //DECORATION
-	|	'tail' //DECORATION
-	|	'front' //DECORATION
-	|	'squash' //DECORATION
+	|	'max'
+	|	'min'
+	|	'rev'
+	|	'head'
+	|	'last'
+	|	'tail'
+	|	'front'
+	|	'squash'
 	;
 
 CROSS:	'\\cross';
@@ -1713,10 +1712,8 @@ SELECTION:	'.';
 NAME:	('a'..'z' | 'A'..'Z' | '\\_ ' | '?' )+ ('a'..'z' | 'A'..'Z' | '\\_ ' | '?' | '0'..'9')*;
 NUM:	'0'..'9'+ ;
 
-DECORATION: '~' {skip();};
-
 NL:	'\r'? '\n' ;
-WS: 	(' '|'\t'|'\r')+ {skip();} ;
+WS: 	(' '|'\t'|'\r'|'~')+ {skip();} ;
 SETSTART: '\\{';
 SETEND: '\\}';
 LISTSTART: '\\langle';
