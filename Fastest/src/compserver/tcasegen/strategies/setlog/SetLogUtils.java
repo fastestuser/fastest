@@ -74,6 +74,7 @@ public final class SetLogUtils {
 
 	public static boolean esSLCteSimple(String expr){
 		char c = expr.charAt(0);
+		if (expr.startsWith("int(")) return false;
 		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
 	}
 	

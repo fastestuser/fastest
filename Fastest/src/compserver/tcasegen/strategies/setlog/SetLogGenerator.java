@@ -33,6 +33,11 @@ public final class SetLogGenerator {
 		String ct = nodo.toString();
 
 
+		if(exprS.startsWith("int(")){
+			String aux[] = exprS.substring(4,exprS.length()-1).split(",");
+			return aux[0] + " \\upto " + aux[1];
+		}
+		
 		if (ct.equals("()")) 
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
 		
@@ -133,7 +138,7 @@ public final class SetLogGenerator {
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
 			varn = setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr);
-			varn = varn.replace("-", "\\neg");
+			varn = varn.replace("-", "\\negate");
 			zVars.put(var,varn);
 		}
 	}

@@ -201,6 +201,26 @@ public final class ConstantCreator {
 		String ct = nodo.toString();
 		String salida = "";
 
+		if (exprS.startsWith("int(")){
+
+			String aux[] = exprS.substring(4,exprS.length()-1).split(",");
+			int a,b;
+			if (Character.isDigit(aux[0].charAt(0)))
+				a = Integer.valueOf(aux[0]);
+			else 
+				a = Integer.valueOf(cte(new DefaultMutableTreeNode("\\num"),aux[0]));
+
+			if (Character.isDigit(aux[1].charAt(0)))
+				b = Integer.valueOf(aux[1]);
+			else 
+				b = Integer.valueOf(cte(new DefaultMutableTreeNode("\\num"),aux[1]));
+
+			if (b<a)
+				return "{}";
+
+			return "int(" + a + "," + b + ")";
+		}
+
 		// si es variable auxiliar de {log} genero
 		if (SetLogUtils.esSLVariableSimple(exprS)) {
 			String cte = null;

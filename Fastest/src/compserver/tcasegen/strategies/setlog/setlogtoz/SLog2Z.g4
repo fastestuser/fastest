@@ -164,13 +164,11 @@ locals [StringPointer valor;]
 seqIgual
 locals [StringPointer valor;]
 @init{$seqIgual::valor = new StringPointer();}
-	:	NAME '=' 'int(-10000000000, 10000000000),'  	 
-	|	NAME '=' 'int(0, 10000000000),'
-	|	(v1=NAME {slvars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slvars.put($v2.text,$seqIgual::valor);} ',')+
+	:	(v1=NAME {slvars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slvars.put($v2.text,$seqIgual::valor);} ',')+
 		{
 			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);
-			if (!tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
+			if ( !zname.startsWith("\\n") && !tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
 			{
 				String var = $v2.valor;
 				$seqIgual::valor.setString(cc.getCte(var,SetLogUtils.toTreeNorm(tipo)));
@@ -182,7 +180,8 @@ locals [StringPointer valor;]
 expr
 returns [String valor]
 	:	CTE {$valor = $CTE.text;}
-	|   NAME {$valor = $NAME.text;} 
+	|   NAME {$valor = $NAME.text;}
+	|   'int' '(' a=(NAME|CTE) ',' b=(NAME|CTE) ')' {$valor = "int(" + $a.text + "," + $b.text + ")";} 
 	|	'{' {$valor = "{";}
 	    ( (','{$valor = $valor + ",";})?  e=expr {$valor = $valor + $e.valor;})*
 	    ('\\' expr)*

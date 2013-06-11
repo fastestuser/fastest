@@ -214,9 +214,8 @@ public class Test {
 //		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));
-		tipo = "2\\upto3";
-		String aux[] = tipo.split("\\\\upto");
-		System.out.println(aux);
+        String exprS = "int(33,XX)";
+        String aux[] = exprS.substring(4,exprS.length()-1).split(",");
 	}
 
 }
