@@ -595,7 +595,11 @@ predicate
 		//Si b es una lista, debo convertirla
 		b = convertToSet($e2.text, b);
 		
-		print(a + " in " + b);
+		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			print("ein(" + a +"," + b + ")");
+		else
+			print(a + " in " + b);
 	}
 	|	(e1=expression '\\notin' e2=expression | '\\lnot' e1=expression '\\in' e2=expression)
 	{

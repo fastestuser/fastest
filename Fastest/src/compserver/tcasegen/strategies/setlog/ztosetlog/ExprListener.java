@@ -58,9 +58,9 @@ public interface ExprListener extends ParseTreeListener {
 	void enterDeclName(ExprParser.DeclNameContext ctx);
 	void exitDeclName(ExprParser.DeclNameContext ctx);
 
-	void enterSpecification(ExprParser.SpecificationContext ctx);
-	void exitSpecification(ExprParser.SpecificationContext ctx);
-
 	void enterRefName(ExprParser.RefNameContext ctx);
 	void exitRefName(ExprParser.RefNameContext ctx);
+
+	void enterSpecification(ExprParser.SpecificationContext ctx);
+	void exitSpecification(ExprParser.SpecificationContext ctx);
 }

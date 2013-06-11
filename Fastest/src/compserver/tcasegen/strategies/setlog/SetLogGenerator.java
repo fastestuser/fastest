@@ -202,7 +202,7 @@ public final class SetLogGenerator {
 			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				System.out.println(s);
-				if (s.equals("false.") || s.equals("_RET = time_out.")) //No encontro solucion
+				if (s.equals("false.") || s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
 					return null;
 				if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");
