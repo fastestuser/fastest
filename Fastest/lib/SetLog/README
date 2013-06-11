@@ -1,0 +1,2 @@
+Por el momento, para que setloglib.slog sea cargado, 
+se debe copiar el contenido del mismo al final de serlogTTF.slog

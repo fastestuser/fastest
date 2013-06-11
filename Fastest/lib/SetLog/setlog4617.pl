@@ -1,5 +1,43 @@
 
-%%% VERSION 4.6.17-11
+%%% VERSION 4.6.17-16
+
+%--- 13
+
+% modificato int_unify/3 per accettare anche intervalli con estremi non specificati
+ 
+%--- 14
+
+% ripristinato intervalli vuoti
+
+% modificato sat_neq per tener conto del caso 
+% intervallo_vuoto/vuoto neq intervallo_vuoto/vuoto
+
+% modificato g_subset, g_equal, g_union, g_inters, g_size, g_sum
+% per tener conto degli intervalli vuoti
+
+% modificato sat_inters caso inters(int(L1,H1),int(L2,H2),t) 
+% per tener conto di intervalli vuoti
+
+% modificato sat_max per eliminare typo in sat_max([smmax(S,_)|_],_,c,_) 
+
+% modifiche a predicati usati in sat_min, sat_max, sat_sum per 
+% sostituire {} con is_empty: add_elem_domain e count_var
+
+% modifiche a predicati sat_min e sat_max per sostituire {} con 
+% is_empty, caso ({},t)
+
+%--- 15
+
+% modificato definizione sat_neq nella parte che tratta intervalli
+
+% corretto bug in neq: int(1,3) neq a --> NO e risitemato definizione di
+% sat_neq_i
+
+%--- 16
+
+% aggiunto eliminazione situazioni insoddisfacibili del tipo
+% int(A,B) = {} & int(A,B) neq {}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                          
@@ -399,6 +437,7 @@ write('   1.  General constraints:'), nl,
 write('   2.  Set/multiset/list constraints:'), nl,
    write('       (''t'' any term, ''s'' either a set or an interval,'), nl,
    write('        ''a'' any aggregate (set, interval, multiset, list)'), nl,
+   write('        ''si'' either an interval or a set of non-negative integers'), nl,
    write('        - t in a (membership)'), nl,
    write('        - t nin a (non-membership)'), nl,   
    write('        - un(s1,s2,s3) (union)'), nl,
@@ -415,9 +454,9 @@ write('   2.  Set/multiset/list constraints:'), nl,
    write('        - ndiff(s1,s2,s3) (not difference)'), nl,
    write('        - sdiff(s1,s2,s3) (symmetric difference)'), nl,
    write('        - size(s,n) (cardinality)'), nl,
-   write('        - sum(s_int,n) (sum all elements - s_int: set of non-negative integers))'), nl,
-   write('        - smin(s_int,n) (minimum element)'), nl,
-   write('        - smax(s_int,n) (maximum element)'), nl,
+   write('        - sum(si,n) (sum all elements)'), nl,
+   write('        - smin(sit,n) (minimum element)'), nl,
+   write('        - smax(si,n) (maximum element)'), nl,
    write('        - set(s) (s is a set)'), nl,  
    write('        - bag(t) (t is a multiset)'), nl, 
    write('        - list(t) (t is a list)'), nl, 
@@ -964,8 +1003,7 @@ context(usr).
 read_loop_np(FileStream):-
         setlog_read(FileStream,Clause), 
         Clause \== end_of_file,!, 
-%NO        setassert(Clause),
-        assert_or_solve(Clause),   %MOD
+        assert_or_solve(Clause),   
         read_loop_np(FileStream).
 read_loop_np(_).
 
@@ -1158,7 +1196,7 @@ atomic_constr(_ > _).
 sat([],[],_) :-!.
 sat(C,SFC,F):- 
       trace_in(C,1),
-      sat_step(C,NewC,R,F),  
+      sat_step(C,NewC,R,F), 
       sat_cont(R,NewC,SFC,F).
 
 sat_cont(R,NewC,SFC,F) :-           %if R=='stop', then no rule has changed the CS in the last 
@@ -1174,7 +1212,6 @@ sat_cont(R,NewC,SFC,F) :-           %if R=='stop', then no rule has changed the 
       ).
 sat_cont(_R,NewC,SFC,F) :-
       sat(NewC,SFC,F).
-
 
 %%%sat_step(InC,_OutC,_Stop,_F):-   %only for debugging purposes
 %%%          write('    >>>>> sat step: '), write(InC),nl,
@@ -1269,10 +1306,20 @@ trace_out(_,_).
 
 %%%%%%%%%%%%%%%%%%%%%% equality (=/2)
 
-sat_eq([T1 = T2|R1],R2,c,F):-                    
+sat_eq([T1 = T2|R1],[T1 = T2|R2],Stop,nf):-     % delayed until final_sat is called  %TEMP
+        nonvar(T1), T1 = int(A,B), var(A), var(B),
+        nonvar(T2), is_empty(T2),!,                        
+        sat_step(R1,R2,Stop,nf).                   
+sat_eq([T1 = T2|R1],[T2 = T1|R2],Stop,nf):-     % delayed until final_sat is called 
+        nonvar(T2), T2 = int(A,B), var(A), var(B),
+        nonvar(T1), is_empty(T1),!,                        
+        sat_step(R1,R2,Stop,nf).                   
+
+sat_eq([T1 = T2|R1],R2,c,F):-    
         sunify(T1,T2,C),
         append(C,R1,R3), 
         sat_step(R3,R2,_,F).
+
 
 %%%%%%%%%%%  Set/Multiset Unification Algorithm  %%%%%%%%%%%%               
          
@@ -1374,15 +1421,22 @@ sunifylist([X|AX],[Y|AY],C):-
 
 %%%%%%%%%%% Interval unification %%%%%%%%%%%%%%%%%
 
+int_unify(int(L,H),S2,[int(L,H) = S2]) :-   %TEMP
+        var(L), var(H), nonvar(S2), is_empty(S2), !.   
+int_unify(S2,int(L,H),[int(L,H) = S2]) :- 
+        var(L), var(H), nonvar(S2), is_empty(S2), !. 
+  
 int_unify(int(L,H),int(L,H),[]) :- !.   % (rule 11.1)
-
-%NO int_unify(T1,T2,[]) :-              % (rule 11.2)
-%NO       is_int(T1,L1,H1), H1 < L1, 
-%NO       is_int(T2,L2,H2), H2 < L2, !.
-%NO int_unify(T1,{},[]) :-              % (rule ...)
-%NO       is_int(T1,L,H), H < L,!.
-%NO int_unify({},T2,[]) :-              % (rule ...)
-%NO       is_int(T2,L,H), H < L,!.
+int_unify(T1,T2,C) :-              % (rule 11.2)
+        nonvar(T1), nonvar(T2), 
+        T1 = int(L1,H1), T2 = int(L2,H2),!,
+        C = [H1 < L1,H2 < L2]. 
+int_unify(T1,{},C) :-              % (rule ...)
+        nonvar(T1), T1 = int(L,H),!,
+        C = [H < L]. 
+int_unify({},T2,C) :-              % (rule ...)
+        nonvar(T2), T2 = int(L,H),!,
+        C = [H < L].
 
 int_unify(T1,T2,C) :-               % {...} = int(L,H) (rule 12)
       (T1 = _ with _, is_int(T2,_,_),!
@@ -1426,23 +1480,53 @@ sat_neq([T1 neq T2|R1],R2,c,F):-                % t neq X  (rule 4)
          sat_neq([T2 neq T1|R1],R2,_,F).                         
 sat_neq([T1 neq T2|R1],R2,R,F):-  
          var(T1), var(T2),!,
-         sat_neq_vv([T1 neq T2|R1],R2,R,F).   
-sat_neq([T1 neq T2|R1],R2,c,F):-  
-         is_int(T1,A1,B1), is_int(T2,A2,B2), !,
-         (A1 \== A2,!
-          ;
-          B1 \== B2),
-         sat_step(R1,R2,_,F).
+         sat_neq_vv([T1 neq T2|R1],R2,R,F).  
+
+sat_neq([T1 neq T2|R1],[T1 neq T2|R2],Stop,nf):-     % delayed until final_sat is called   %TEMP  
+         nonvar(T1), T1 = int(A,B), var(A), var(B),  % (--> Level 3)
+         nonvar(T2), is_empty(T2),!,                            
+         sat_step(R1,R2,Stop,nf).                   
+
+sat_neq([T1 neq T2|R1],R2,R,F):-      %NEW
+         nonvar(T1), T1 = int(_,_), \+ground(T1), !,
+         sat_neq_ui([T1 neq T2|R1],R2,R,F).  
+sat_neq([T1 neq T2|R1],R2,R,F):-      %NEW
+         nonvar(T2), T2 = int(_,_), \+ground(T2), !,
+         sat_neq_ui([T2 neq T1|R1],R2,R,F).  
 sat_neq([T1 neq T2|R1],R2,R,F):-  
-         is_int(T1,_,_), T2 = _ with _, !,
-         sat_neq_i([T1 neq T2|R1],R2,R,F).    
+         nonvar(T1), T1 = int(A,B),!,
+         integer(A), integer(B),
+         sat_neq_i([T1 neq T2|R1],R2,R,F).   
 sat_neq([T1 neq T2|R1],R2,R,F):-  
-         is_int(T2,_,_), T1 = _ with _, !,
-         sat_neq_i([T2 neq T1|R1],R2,R,F).    
+         nonvar(T2), T2 = int(A,B),!,
+         integer(A), integer(B),
+         sat_neq_i([T2 neq T1|R1],R2,R,F).   
 sat_neq([T1 neq T2|R1],R2,R,F):-  
          nonvar(T1), nonvar(T2),!,
-         sat_neq_nn([T1 neq T2|R1],R2,R,F).                         
-
+         sat_neq_nn([T1 neq T2|R1],R2,R,F).   
+                                                %NEW unbounded intervals
+sat_neq_ui([int(A,B) neq T2|R1],R2,c,F):-       %NEW int(A,B) neq empty 
+         nonvar(T2), is_empty(T2),!,
+         sat_step([A =< B|R1],R2,_,F).   
+sat_neq_ui([int(A,B) neq T2|R1],R2,c,F):-       %NEW int(A,B) neq {S|R}
+         nonvar(T2), T2 = _ with _, !,
+         (sat_step([Z >= A, Z =< B, Z nin T2|R1],R2,_,F)
+         ;  
+          sat_step([Z < A, Z in T2|R1],R2,_,F)
+         ;
+          sat_step([Z > B, Z in T2|R1],R2,_,F)
+         ).
+sat_neq_ui([int(A,B) neq T2|R1],R2,c,F):-       %NEW int(A,B) neq int(C,D)
+         nonvar(T2), T2 = int(C,D), !,
+         (sat_step([Z >= A, Z =< B, Z < C|R1],R2,_,F)
+         ;  
+          sat_step([Z >= A, Z =< B, Z > D|R1],R2,_,F)
+         ; 
+          sat_step([Z < A, Z >= C, Z =< D|R1],R2,_,F)
+         ).
+sat_neq_ui([_T1 neq _T2|R1],R2,c,F):-           %NEW int(A,B) neq t  (t non-set term)
+         sat_step(R1,R2,_,F).   
+                  
 sat_neq_vn([X neq T|R1],R2,c,F):-               % X neq t[X] (rule 5)
          is_ker(T),
          occurs(X,T),!,
@@ -1464,6 +1548,7 @@ sat_neq_vn([X neq T|R1],[X neq T|R2],Stop,F):-  % X neq t, t simple integer expr
          sat_step(R1,R2,Stop,F).  
 sat_neq_vn([C|R1],[C|R2],Stop,F):-              % X neq t (irreducible form)
          sat_step(R1,R2,Stop,F).
+
 sat_neq_vv([X neq Y|_],_,_,_F):-                % X neq X (rule 3)
          samevar(X,Y),!,fail.
 sat_neq_vv([X neq Y|R1],[X neq Y|R2],Stop,F):-  % X neq Y, X,Y domain variables  (rule 9)
@@ -1476,15 +1561,32 @@ sat_neq_vv([T1 neq T2|R1],R2,c,F):-             % Y neq X --> X neq Y
          sat_step([T2 neq T1|R1],R2,_,F).                         
 sat_neq_vv([C|R1],[C|R2],Stop,F):-              % X neq Y (irreducible form)
          sat_step(R1,R2,Stop,F).
-sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(A,B) neq {S|R} (special)
+
+sat_neq_i([T1 neq T2|_R1],_R2,_,_F):-           % int(a,b) neq empty
+         nonvar(T1), nonvar(T2), 
+         is_empty(T1),is_empty(T2),!, fail.
+sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(a,b) neq int(c,d)
+         is_int(T1,A1,_B1), is_int(T2,A2,_B2), 
+         A1 \== A2,!,
+         sat_step(R1,R2,_,F).
+sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(a,b) neq int(c,d)
+         is_int(T1,_A1,B1), is_int(T2,_A2,B2), 
+         B1 \== B2,!, 
+         sat_step(R1,R2,_,F).
+sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(a,b) neq {S|R} (special)
          set_length(T2,SetL),
          int_length(T1,IntL),
          SetL < IntL, !,
          sat_step(R1,R2,_,F).
-sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(A,B) neq {S|R} (rule 11(i))
-         sat_step([Z in T1, Z nin T2, integer(Z) | R1],R2,_,F).
-sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(A,B) neq {S|R} (rule 11(ii))
-         sat_step([Z nin T1, Z in T2| R1],R2,_,F).
+sat_neq_i([T1 neq T2|R1],R2,c,F):-              % int(a,b) neq {S|R} 
+         nonvar(T2), T2 = _ with _, !,
+         (sat_step([Z in T1, Z nin T2, integer(Z) | R1],R2,_,F)     % (rule 11(i))
+          ;
+          sat_step([Z nin T1, Z in T2| R1],R2,_,F)                  % (rule 11(ii))
+         ).
+sat_neq_i([_T1 neq _T2|R1],R2,c,F):-            %NEW int(a,b) neq t (t non-set term)
+         sat_step(R1,R2,_,F).   
+
 sat_neq_nn([F neq G|R1],R2,c,Fin):-             % ground case: t1 neq t2
          ground(F),ground(G),!,
          g_neq(F,G),
@@ -1506,6 +1608,7 @@ sat_neq_nn([T1 neq T2|R1],R2,c,F):-             % inequality between sets
 sat_neq_nn([T1 neq T2|R1],R2,c,F):-             % inequality between sets
          T1 = _S with _A, T2 = _R with _B,!,    % {A|S} neq {B|R} (rule 8(ii))
          sat_step([Z in T2, Z nin T1 | R1],R2,_,F).
+
 %%%%%%%%%%%% multisets 
 sat_neq_nn([T1 neq T2|R1],R2,c,F):-             % inequality between multisets
          nonvar(T1),nonvar(T2),                 % with the same tail variables
@@ -1688,9 +1791,9 @@ sat_sub([subset(R with X,I2)|R1],R2,c,F):-           % subset({X|R},int(L,H))
 sat_sub([subset(R with X,S2)|R1],R2,c,F):- !,        % subset({X|R},S2)  
          sunify(S2,N with X,_),
          sat_step([set(N),subset(R,S2)|R1],R2,_,F).
-%NO sat_sub([subset(I,_)|R1],R2,c,F):-               % subset(int(L,H),S2), with L>H
-%NO          is_int(I,L,H),L>H,!,
-%NO          sat_step(R1,R2,_,F). 
+sat_sub([subset(I,_)|R1],R2,c,F):-                   % subset(int(L,H),S2), with L>H   %EInt
+         is_int(I,L,H),L>H,!,             
+         sat_step(R1,R2,_,F). 
 sat_sub([subset(I,I2)|R1],R2,c,F):-                  % subset(int(L,H),int(L2,H2))
          is_int(I,L,H), nonvar(I2), is_int(I2,L2,H2),!,
          L2 =< L, H2 >= H,
@@ -1713,12 +1816,13 @@ sat_inters([inters(S1,S2,S3)|R1],R2,c,F):-              % ground case: inters({.
          sunify(S1_2,S3,C),
          append(C,R1,R3), 
          sat_step(R3,R2,_,F).
-sat_inters([inters(I1,I2,S3)|R1],R2,c,F):-              % inters(int(L1,H1),int(L2,H2),t) (not empty intv)
+sat_inters([inters(I1,I2,S3)|R1],R2,c,F):-              % inters(int(L1,H1),int(L2,H2),t) 
          nonvar(I1), is_int(I1,L1,H1),  
          nonvar(I2), is_int(I2,L2,H2),!,
          g_greater(L1,L2,L3), g_smaller(H1,H2,H3),
          (L3 > H3,!,
-          S3={} 
+          sunify({},S3,C), 
+          append(C,R1,R3)
           ; 
           sunify(int(L3,H3),S3,C),
           append(C,R1,R3)
@@ -1726,12 +1830,14 @@ sat_inters([inters(I1,I2,S3)|R1],R2,c,F):-              % inters(int(L1,H1),int(
          sat_step(R3,R2,_,F).
 sat_inters([inters(_S1,S2,S3)|R1],R2,c,F):-             % inters(t1,empty,t2) or
          nonvar(S2), is_empty(S2),!,
-         sunify(S3,{},_),
-         sat_step(R1,R2,_,F).
+         sunify(S3,{},C),
+         append(C,R1,R3),
+         sat_step(R3,R2,_,F).
 sat_inters([inters(S1,_S2,S3)|R1],R2,c,F):-             % inters(empty,t1,t2) or
          nonvar(S1), is_empty(S1),!,
-         sunify(S3,{},_),
-         sat_step(R1,R2,_,F).
+         sunify(S3,{},C),
+         append(C,R1,R3),
+         sat_step(R3,R2,_,F).
 sat_inters([inters(S1,S2,S3)|R1],R2,c,F):-              % inters(a,{X/R},S3) (a nonvar set/intv, S3 var)
          nonvar(S1),                                    
          nonvar(S2), S2 = RS2 with X,
@@ -1916,11 +2022,11 @@ sat_un_t([un(S,T,X)|R1],R2,c,F):-                    % un(s1,{...},X) (bounded s
          sat_step(R1,R2,_,F).
 
 unify_empty(S) :-
-       var(S), !, S = {}.
+        var(S), !, S = {}.
 unify_empty({}) :- !.
-%NO unify_empty(S) :- !,
-%NO        is_int(S,L,H),
-%NO        L > H.
+unify_empty(S) :- !,   %EInt
+        is_int(S,L,H),
+        L > H.
 
 %%%%%%%%%%%%%%%%%%%%%% disjointness (disj/2)
 
@@ -2045,7 +2151,8 @@ sat_size([size(R with X,T)|R1],R2,c,f):-
          ;
          sat_step([R=N with X,set(N),X nin N,integer(M),size(N,M)|R1],R2,_,f)).
 
-count_var({},0,0).                 
+count_var(T,0,0) :-      % count_var/3 not used at present
+        is_empty(T),!.                
 count_var(R with A,NonVar,Var):-           % var(A)
         var(A),!,     
         count_var(R,NonVar,Var1),
@@ -2132,10 +2239,11 @@ in_order_list(A,[B|_R]) :-
 
 add_elem_domain(R,_):-     
        var(R),!.
-add_elem_domain({},_).
+add_elem_domain(T,_) :-
+       is_empty(T),!.
 add_elem_domain(R with A,N):-                
-        solve_FD(A in int(0,N)),   
-        add_elem_domain(R,N).
+       solve_FD(A in int(0,N)),   
+       add_elem_domain(R,N).
 
 
 %%%%%%%% Under development - to be completed and tested
@@ -2153,7 +2261,7 @@ sat_min([smin(S,_)|_],_,c,_):-         % smin({},t) or smin(int(a,b),t) with a>b
         fail.                       
 sat_min([smin(S,T)|R1],R2,c,F):-       % smin({X},T)                       
         nonvar(S),S=R with X,
-        nonvar(R),R=={},!,
+        nonvar(R),is_empty(R),!,
         T = X,
         simple_integer_expr(T),
         solve_FD(T >= 0),
@@ -2229,12 +2337,12 @@ sat_max([smax(S,N)|R1],
         var(S),var(N),!,              % smax(S,N) (irreducible form)
         solve_FD(N >= 0),           
         sat_step(R1,R2,_,F).
-sat_max([smmax(S,_)|_],_,c,_):-         % smax({},t) or smax(int(a,b),t) with a>b 
+sat_max([smax(S,_)|_],_,c,_) :-        % smax({},t) or smax(int(a,b),t) with a>b 
         nonvar(S),is_empty(S),!,
         fail.                       
 sat_max([smax(S,T)|R1],R2,c,F):-        % smax({X},t)                       
         nonvar(S),S=R with X,
-        nonvar(R),R=={},!,
+        nonvar(R),is_empty(R),!,
         T = X,
         simple_integer_expr(T),
         solve_FD(T >= 0),
@@ -2263,7 +2371,7 @@ sat_max([smax(S,T)|R1],R2,R,f):-        % LEVEL 3: smax(S,k) S var., k nonvar
 sat_max([smax(R with X,T)|R1],[smax(R with X,T)|R2],Stop,nf):- 
         bounded(R with X),!, 
         simple_integer_expr(X),         % smax(s,t), s bounded
-        solve_FD(T >= 0),    
+        solve_FD(T >= 0),  
         mass(R with X,T),       
         sat_step(R1,R2,Stop,nf).  
 sat_max([smax(R with X,T)|R1],[smax(R with X,T)|R2],Stop,nf):-!,  % smax({...|R},t)
@@ -2279,8 +2387,9 @@ sat_max([smax(R with X,T)|R1],R2,_,f) :-        % LEVEL 3: smax({...},t)
 
 mass({},_).
 mass(R with A,N):-
-        simple_integer_expr(A),               
-        solve_FD(A in int(0,N)),
+        simple_integer_expr(A),   
+        solve_FD(A >= 0),
+        solve_FD(A =< N),
         mass(R,N).
 
 g_max(L,X) :-
@@ -2321,7 +2430,8 @@ g_member(X,S):-
         aggr_comps(S,_Y,R),
         g_member(X,R).
 
-g_subset({},_).
+g_subset(T,_) :-
+        is_empty(T).
 g_subset(I,S) :-
         is_int(I,A,A),!,
         g_member(A,S).
@@ -2334,25 +2444,31 @@ g_subset(R with X,S2) :-
         g_member(X,S2),
         g_subset(R,S2).
 
+g_equal(T1,T2) :- 
+        is_empty(T1), is_empty(T2),!.
 g_equal(T1,T2) :-
         T1 = T2,!.
 g_equal(T1,T2) :-
         g_subset(T1,T2),
         g_subset(T2,T1).
 
-g_union({},S,S). 
+g_union(T,S,S) :-
+        is_empty(T),!.              
 g_union(S1 with X,S2,S3 with X) :-
         g_union(S1,S2,S3).
 
-g_inters({},_S,{}) :- !.
-g_inters(_S,{},{}) :- !.
+g_inters(T,_S,{}) :- 
+        is_empty(T),!.
+g_inters(_S,T,{}) :- 
+        is_empty(T),!.
 g_inters(S1 with X,S2,S3 with X) :-
         g_member(X,S2),!,
         g_inters(S1,S2,S3).
 g_inters(S1 with _X,S2,S3) :-
         g_inters(S1,S2,S3).
 
-g_size({},0).
+g_size(T,0) :-
+        is_empty(T),!.            
 g_size(R with A,N):-
         g_member(A,R),!,
         g_size(R,N).
@@ -2360,7 +2476,8 @@ g_size(R with _A,N):-
         solve_FD(N is M+1),
         g_size(R,M).
  
-g_sum({},0).
+g_sum(T,0) :-
+        is_empty(T),!. 
 g_sum(R with A,N):-
         integer(A), A >= 0,         
         g_member(A,R),!,
@@ -2386,10 +2503,10 @@ g_smaller(_X,Y,Y).
 sat_set([set(X)|R1],[set(X)|R2],Stop,F):-        % set(X) (irreducible form)
         var(X),!,
         sat_step(R1,R2,Stop,F).
-%NO sat_set([set(X)|R1],[set(X)|R2],Stop,F):-        % set(int(A,B)) (irreducible form)
-%NO         X=int(A,B),
-%NO         (var(A) ; var(B)),!,
-%NO         sat_step(R1,R2,Stop,F).
+% sat_set([set(X)|R1],[set(X)|R2],Stop,F):-        % set(int(A,B)) (irreducible form)
+%         X=int(A,B),
+%         (var(A) ; var(B)),!,
+%         sat_step(R1,R2,Stop,F).
 sat_set([set(X)|R1],R2,c,F):-                    % set({}) (rule 1)
         X == {}, !,
         sat_step(R1,R2,_,F).
@@ -2399,9 +2516,9 @@ sat_set([set(X)|R1],R2,c,F):-                    % set({...}) (rule 2.a)
 % sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   
 %         is_int(X,_,_),!, 
 %         sat_step(R1,R2,_,F).
-sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   %MOD
+sat_set([set(X)|R1],R2,c,F):-                    % set(int(...)) (rule 2.b)   
         X = int(A,B),!, 
-        sat_step([integer(A),integer(B),A =< B|R1],R2,_,F).
+        sat_step([integer(A),integer(B)|R1],R2,_,F).    
 
 %%%%%%%%%%%%%%%%%%%%%% bag (bag/1)
 
@@ -2527,6 +2644,12 @@ test_final([solved(C,_,_,_)|R1],R2,c,f) :-     % final sat: G is true and not in
      
 
 global_check([],_,[]) :- !.
+
+global_check([T1 = T2|RC],GC,[T1 = T2|NewC]) :-        %TEMP
+    nonvar(T1), T1 = int(A,B), nonvar(T2), is_empty(T2), !,
+    \+find_neq(int(A,B),GC),
+    global_check(RC,GC,NewC).
+
 global_check([C|RC],GC,NewC) :-        % neq: neq and un
     is_neq(C,1,W,T),
     var(W),
@@ -2646,6 +2769,12 @@ mk_new_constr(W,T,OutC):-
         OutC = [N in T,N nin W] ;
         W = {}, OutC = [T neq {}]).
 
+
+find_neq(Int,[I neq E|_]) :-             %TEMP
+       nonvar(E), is_empty(E), I == Int,!.
+find_neq(Int,[_|R]) :- 
+       find_neq(Int,R).
+
 find_un(X,[C|_]) :-          % un(X,Y,Z) or un(Y,X,Z) or un(Y,Z,X) is in the CS?
        is_un(C,_,S1,S2,S3), 
        (X == S1,! ; X == S2,! ; X == S3),!.
@@ -2698,9 +2827,13 @@ find_max(X,[_|R],M) :-
 final_sat([],[]) :-!.
 final_sat(C,SFC):- 
       trace_in(C,3),
-      check_domain(C),                  %force labeling for integer variables;  
-      sat(C,RevC,f),                    %call the constraint solver (in 'final' mode); 
-      final_sat_cont(RevC,C,SFC).
+      sat_empty_intv(C,CC),   %TEMP
+      check_domain(CC),                  %force labeling for integer variables;  
+      sat(CC,RevC,f),                    %call the constraint solver (in 'final' mode); 
+      final_sat_cont(RevC,CC,SFC).
+%      check_domain(C),                  %force labeling for integer variables;  
+%      sat(C,RevC,f),                    %call the constraint solver (in 'final' mode); 
+%      final_sat_cont(RevC,C,SFC).
 
 final_sat_cont(RevC,C,RevC) :-
       RevC == C,!,                      %if C==RevC, then no rewriting has been applied
@@ -2714,6 +2847,18 @@ check_domain(C):-                       %to force labeling (if possible) for int
       check_domain(CRest).
 check_domain(_).
                       
+
+sat_empty_intv([],[]) :- !.              %TEMP
+sat_empty_intv([T1 = T2|R1],[integer(A),integer(B)|R2]) :- 
+      nonvar(T1), T1 = int(A,B), nonvar(T2), is_empty(T2),!,
+      solve_FD(A > B),
+      sat_empty_intv(R1,R2).
+sat_empty_intv([T1 neq T2|R1],[integer(A),integer(B)|R2]) :- 
+      nonvar(T1), T1 = int(A,B), nonvar(T2), is_empty(T2),!,
+      solve_FD(A =< B),
+      sat_empty_intv(R1,R2).
+sat_empty_intv([C|R1],[C|R2]) :- 
+      sat_empty_intv(R1,R2).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3537,8 +3682,8 @@ int_term(T) :-
 is_int(T,A,B) :-              % is_int(I,A,B) is true if I is a term that denotes an interval
        T=int(A,B),
        nonvar(A), nonvar(B),      
-       integer(A), integer(B), 
-       A =< B, !.    
+       integer(A), integer(B),!.     %,   %EInt
+%       A =< B, !.    
 is_int(_T,_A,_B) :-  
 %       write('INSTANTIATION ERROR: interval bounds must be known values'), nl,
        fail.
@@ -3558,10 +3703,10 @@ int_to_set(int(A,B),S with A,R) :-    % of all elements of the interval I
 
 int_length(int(A,B),L) :-
        N is B - A + 1,
-%NO      (N < 0,!, L = 0
-%NO       ;
-       L = N.
-%NO ).       
+      (N < 0,!, L = 0            %EInt
+       ;
+       L = N
+       ).       
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3591,9 +3736,9 @@ empty_aggr(A) :-                  % empty set/multiset/list
        (is_empty(A),! ; A == []).
                                   
 is_empty({}) :- !.                % empty set (also specified as int(L,H) with L>H)
-%NO is_empty(S) :- !,
-%NO        is_int(S,L,H),
-%NO        L > H.
+is_empty(S) :- !,            %EInt
+       is_int(S,L,H),
+       L > H.
 
 aggr_comps(R with X,X,R) :- !.    % set
 aggr_comps(R mwith X,X,R) :- !.   % bag

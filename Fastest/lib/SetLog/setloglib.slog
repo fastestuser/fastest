@@ -1,7 +1,12 @@
-%%% version 4.6.12-2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%setloglib.slog
+%%% version 4.6.12-3
+
 % corretto un bug nella int_to_bag
 % int_to_bag(int(A,A),*{A}) invece di
 % int_to_bag(int(A,A),{A}).
+
+%% aggiunta definizione di ein, enin, esubset, essubset - da completare
+%% usato esubset, essubset nelle dsubset, dssubset
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +58,7 @@ diff1(S,X,S) :-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Improved implementations of primitive set constraints:
-% ìreduce the number of repeated equivalent solutions  
+% ï¿½reduce the number of repeated equivalent solutions  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 xless(S,X,SS) :-               % remove the element X from S, if S is ground
@@ -117,6 +122,7 @@ test(Pred,Res) :-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % improved subset/2
+
  isubset(S1,S2) :-   
     prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
     (R==intint & intint_subset(S1,S2)
@@ -173,16 +179,6 @@ test(Pred,Res) :-
      A3=<B3 & S3=int(A3,B3)
     ).
 
- max(A,B,A) :-
-    A >= B.
- max(A,B,B) :-
-    A < B.
-
- min(A,B,A) :-
-    A =< B.
- min(A,B,B) :-
-    A > B.
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Delayed set operations 
@@ -190,23 +186,22 @@ test(Pred,Res) :-
 
  dint_to_set(A,B,S) :-
     delay(int_to_set(int(A,B),S),nonvar(A) & nonvar(B)).
-%     int_to_set(int(A,B),S).
 
  dsubset(S1,S2) :-     
-    delay(isubset(S1,S2), nonvar(S1)).
-%     isubset(S1,S2).
+%    delay(isubset(S1,S2), nonvar(S1)).
+     esubset(S1,S2).
 
  dnsubset(S1,S2) :-     
-%    delay(insubset(S1,S2), nonvar(S1)).
-     insubset(S1,S2).
+%     delay(insubset(S1,S2), nonvar(S1)).
+     ensubset(S1,S2).
 
  dssubset(S1,S2) :-     
-    delay(issubset(S1,S2), nonvar(S1)).
-%     issubset(S1,S2)
+%    delay(issubset(S1,S2), nonvar(S1)).
+     essubset(S1,S2).
 
  dinters(S1,S2,S3) :-  
-%    delay(iinters(S1,S2,S3), nonvar(S1) & nonvar(S2)).
-     iinters(S1,S2,S3).
+%    delay(iinters(S1,S2,S3), nonvar(S1) & nonvar(S2)).  
+     einters(S1,S2,S3).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Dealing with multisets 
@@ -290,3 +285,174 @@ setlog_lib_help :-
    write('goal consult_lib (provided ''setloglib.slog'' is the name you ') & nl &
    write('give to the library file).') & nl.
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%% Improved {log} set constraints, allowing intervals with
+%%%% unspecified bounds - EXTENDED VERSIONS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+:- prolog_call(op(700,xfx,[ein,enin])).
+
+ T ein S :-
+     prolog_call(
+         (unbounded_int(S),!,R = case1 
+          ; 
+          R = case2
+         )
+     ) &
+     ein(R,T,S).
+
+ ein(case1,T,int(A,B)) :-      % S is an unbounded interval
+     T >= A & T =< B.
+ ein(case2,T,S) :-
+     T in S.
+   
+  
+ T enin S :-
+     prolog_call(
+         (unbounded_int(S),!,R = case1 
+          ; 
+          R = case2
+         )
+     ) &
+     enin(R,T,S).
+
+ enin(case1,T,int(A,B)) :-     % S is an unbounded interval
+     T < A or T > B.
+ enin(case2,T,S) :-
+     T in S.
+
+
+ esubset(S1,S2) :-
+     prolog_call(
+         (nonvar(S1), nonvar(S2), 
+          S1=int(A1,B1), S2=int(A2,B2), \+ground([A1,B1,A2,B2]),!,R = case1 
+          ; 
+          unbounded_int(S1),!,R = case2
+          ;
+          unbounded_int(S2),!,R = case3
+          ;
+          R = case4
+         )
+     ) &
+    esubset(R,S1,S2).
+
+ esubset(case1,int(A1,B1),_) :-           % subset(empty_interval,int)
+     int(A1,B1) = {}.
+ esubset(case1,int(A1,B1),int(A2,B2)) :-  % subset(int,int)
+     int(A1,B1) neq {} & int(A2,B2) neq {} &
+     A1 >= A2 & B1 =< B2.
+ esubset(int(A,B),S) :-                   % subset(empty_interval,set)
+     set(S) & A > B.
+ esubset(case2,int(A,A),S) :-             % subset(singleton_interval,set)
+     set(S) & A in S. 
+ esubset(case2,int(A,B),S) :-             % subset(int,set)
+     set(S) & A < B & 
+     A in S &
+     A1 is A + 1 &
+     esubset(int(A1,B),S).          
+ esubset(case3,{},_).                     % subset({},int)
+ esubset(case3,S,int(A,B)) :-             % subset(set,int)
+     set(S) & S neq {} &
+     smin(S,N) & smax(S,M) &
+     N >= A & M =< B.
+ esubset(case4,S1,S2) :-                  % subset(_AnyOther,_AnyOther)
+     subset(S1,S2).
+ 
+ 
+% essubset(S1,S2)    TO BE COMPLETED!!
+
+ essubset(S1,S2) :-
+     prolog_call(
+         (nonvar(S1), nonvar(S2), 
+          S1=int(A1,B1),S2=int(A2,B2),\+ground([A1,B1,A2,B2]),!,R = case1 
+          ; 
+%          unbounded_int(S1),!,R = case2
+%          ;
+%          unbounded_int(S2),!,R = case3
+%          ;
+          R = case4
+         )
+     ) &
+     essubset(R,S1,S2).
+
+  essubset(case1,int(A1,B1),int(A2,B2)) :-  % ssubset(empty_int,non-empty_int)
+     int(A1,B1) = {} &
+     A2 =< B2.
+  essubset(case1,int(A1,B1),int(A2,B2)) :-  % ssubset(non-empty_int,non-empty_int)
+     int(A1,B1) neq {} & int(A2,B2) neq {} &
+     (A1 > A2 & B1 =< B2 or A1 >= A2 & B1 < B2).
+  essubset(case4,S1,S2) :-                  % nsubset(_AnyOther,_AnyOther)
+     ssubset(S1,S2).
+
+% ensubset(S1,S2)    TO BE COMPLETED!!
+
+ ensubset(S1,S2) :-
+     prolog_call(
+         (nonvar(S1), nonvar(S2), 
+          S1=int(A1,B1),S2=int(A2,B2),\+ground([A1,B1,A2,B2]),!,R = case1 
+          ; 
+%          unbounded_int(S1),!,R = case2
+%          ;
+%          unbounded_int(S2),!,R = case3
+%          ;
+          R = case4
+         )
+     ) &
+     ensubset(R,S1,S2).
+
+ ensubset(case1,int(A1,B1),int(A2,B2)) :-  % nsubset(int,int)
+     int(A1,B1) neq {} & int(A2,B2) neq {} &
+     (A1<A2 or B2<B1).
+ ensubset(case4,S1,S2) :-                  % nsubset(_AnyOther,_AnyOther)
+     nsubset(S1,S2).
+
+
+% einters(S1,S2,S3)  TO BE COMPLETED!!
+
+ einters(S1,S2,S3) :-
+     prolog_call(
+         (nonvar(S1), nonvar(S2),
+          S1=int(A1,B1),S2=int(A2,B2),\+ground([A1,B1,A2,B2]),!,R = case1 
+          ; 
+%          unbounded_int(S1),!,R = case2
+%          ;
+%          unbounded_int(S2),!,R = case3
+%          ;
+          R = case4
+         )
+     ) &
+     einters(R,S1,S2,S3).
+
+ einters(case1,int(A1,B1),int(A2,B2),{}) :-  
+    int(A1,B1) = {}.
+ einters(case1,int(A1,B1),int(A2,B2),{}) :-  
+    int(A2,B2) = {}.
+ einters(case1,int(A1,B1),int(A2,B2),S3) :-  
+    int(A1,B1) neq {} & int(A2,B2) neq {} &
+    max(A1,A2,A3) &
+    min(B1,B2,B3) &
+    (A3>B3 & S3={} 
+     or
+     A3=<B3 & S3=int(A3,B3)
+    ).
+ einters(case4,S1,S2,S3) :-                 % inters(_AnyOther,_AnyOther,S3)
+    inters(S1,S2,S3).
+
+ max(A,B,A) :-
+    A >= B.
+ max(A,B,B) :-
+    A < B.
+
+ min(A,B,A) :-
+    A =< B.
+ min(A,B,B) :-
+    A > B.
+
+ 
+%%%%%%%%%%%%%%% Auxiliary predicates - Prolog code
+
+ setlog_prolog :-
+    prolog_call(assert((user:unbounded_int(I) :- nonvar(I), I=int(A,B), (var(A),! ; var(B)) ))).
+
+:- setlog_prolog.
