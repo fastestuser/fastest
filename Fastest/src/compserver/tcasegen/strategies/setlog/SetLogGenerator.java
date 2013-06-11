@@ -51,7 +51,7 @@ public final class SetLogGenerator {
 			}
 			if (!salida.isEmpty())
 				return "\\{" + salida.substring(1) + "\\}";
-			return "\\{\\}";
+			return "\\emptyset";
 		}
 		
 		if (ct.equals("\\cross")){
@@ -84,7 +84,7 @@ public final class SetLogGenerator {
 			}
 			if (!salida.isEmpty())
 				return "\\{" + salida.substring(1) + "\\}";
-			return "\\{\\}";
+			return "\\emptyset";
 		}
 		
 		if (ct.equals("\\seq")){
