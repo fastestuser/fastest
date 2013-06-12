@@ -419,11 +419,11 @@ public class ExprLexer extends Lexer {
 			if (wantToPrint && (!out.contains(translation + " = int(")) && ((modoSetExpression == 0) || !((setExpressionDecl+setExpressionExpr+setExpressionPred).contains(translation + " = int(")))){ //Chequeo si ya se imprimio informacion del tipo
 				modoSetExpression = 0;
 				if (type.equals("\\num"))
-					print(translation + " = int(-10000000000, 10000000000)");
+					print(translation + " = int(-2147483648, 2147483647)");
 				else if (type.equals("\\nat"))
-					print(translation + " = int(0, 10000000000)");
+					print(translation + " = int(0, 2147483647)");
 				else if (type.equals("\\nat_{1}"))
-					print(translation + " = int(1, 10000000000)");
+					print(translation + " = int(1, 2147483647)");
 				modoSetExpression = modoSetExpressionBk;
 			}
 			
