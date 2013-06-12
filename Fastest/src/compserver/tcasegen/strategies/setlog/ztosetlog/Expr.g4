@@ -596,7 +596,7 @@ predicate
 		b = convertToSet($e2.text, b);
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+		if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 			print(a + " ein " + b);
 		else
 			print(a + " in " + b);
@@ -611,7 +611,7 @@ predicate
 		b = convertToSet($e2.text, b);
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+		if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 			print(a + " enin " + b);
 		else
 			print(a + " nin " + b);
@@ -664,7 +664,7 @@ predicate
 		b = convertToSet($e2.text, b);
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+		if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 			print("esubset(" + a + "," + b + ")");
 		else
 			print("dsubset(" + a + "," + b + ")");
@@ -681,7 +681,7 @@ predicate
 		b = convertToSet($e2.text, b);
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+		if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 			print("ensubset(" + a + "," + b + ")");
 		else
 			print("dnsubset(" + a + "," + b + ")");
@@ -698,7 +698,7 @@ predicate
 		b = convertToSet($e2.text, b);
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+		if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 			print("essubset(" + a + "," + b + ")");
 		else
 			print("dssubset(" + a + "," + b + ")");
@@ -719,7 +719,7 @@ predicate
 			c = newVar();
 			memory.put( $e1.text + "\\cap" + $e2.text, c);
 			//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-			if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 				print("einters(" + a + "," + b + "," + c + ")");
 			else								
 				print("dinters(" + a + "," + b + "," + c + ")");
@@ -1189,7 +1189,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				b = convertToSet($e2.text, b);
 				
 				//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
-				if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+				if ((getType(types.get($e1.text)).contains("\\upto")) || (getType(types.get($e2.text)).contains("\\upto")))
 					print("einters(" + a + "," + b + "," + newVarName + ")");
 				else								
 					print("dinters(" + a + "," + b + "," + newVarName + ")");
