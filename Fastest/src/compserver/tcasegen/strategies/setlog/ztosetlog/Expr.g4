@@ -597,7 +597,7 @@ predicate
 		
 		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
 		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
-			print("ein(" + a +"," + b + ")");
+			print(a + " ein " + b);
 		else
 			print(a + " in " + b);
 	}
@@ -610,7 +610,11 @@ predicate
 		//Si b es una lista, debo convertirla
 		b = convertToSet($e2.text, b);
 		
-		print(a + " nin " + b);
+		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			print(a + " enin " + b);
+		else
+			print(a + " nin " + b);
 	}
 	|	e1=expression '<' e2=expression
 	{
@@ -659,7 +663,11 @@ predicate
 		//Si b es una lista, debo convertirla
 		b = convertToSet($e2.text, b);
 		
-		print("dsubset(" + a + "," + b + ")");
+		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			print("esubset(" + a + "," + b + ")");
+		else
+			print("dsubset(" + a + "," + b + ")");
 	}
 	|	'\\lnot' e1=expression '\\subseteq' e2=expression
 	{
@@ -672,7 +680,11 @@ predicate
 		//Si b es una lista, debo convertirla
 		b = convertToSet($e2.text, b);
 		
-		print("dnsubset(" + a + "," + b + ")");
+		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			print("ensubset(" + a + "," + b + ")");
+		else
+			print("dnsubset(" + a + "," + b + ")");
 	}
 	|	e1=expression '\\subset' e2=expression
 	{
@@ -685,7 +697,11 @@ predicate
 		//Si b es una lista, debo convertirla
 		b = convertToSet($e2.text, b);
 		
-		print("dssubset(" + a + "," + b + ")");
+		//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+		if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+			print("essubset(" + a + "," + b + ")");
+		else
+			print("dssubset(" + a + "," + b + ")");
 	}
 	|	'\\lnot' e1=expression '\\subset' e2=expression
 	{
@@ -702,7 +718,11 @@ predicate
 		if (c == null) {
 			c = newVar();
 			memory.put( $e1.text + "\\cap" + $e2.text, c);
-			print("dinters(" + a + "," + b + "," + c + ")");
+			//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+			if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+				print("einters(" + a + "," + b + "," + c + ")");
+			else								
+				print("dinters(" + a + "," + b + "," + c + ")");
 			String type = types.get($e1.text);
 			if (isSequence(getType(type)))
 				type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
@@ -1167,11 +1187,18 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				a = convertToSet($e1.text, a);
 				//Si b es una lista, debo convertirla
 				b = convertToSet($e2.text, b);
-								
-				print("dinters(" + a + "," + b + "," + newVarName + ")");
+				
+				//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+				if ((getType($e1.text).contains("\\upto")) || (getType($e2.text).contains("\\upto")))
+					print("einters(" + a + "," + b + "," + newVarName + ")");
+				else								
+					print("dinters(" + a + "," + b + "," + newVarName + ")");
+					
 				memory.put($e1.text + "\\cap" + $e2.text, newVarName);
 				String type = types.get($e1.text);
-				if (isSequence(getType(type)))
+				if (getType(type).contains("\\upto"))
+					type = "\\power\\num";
+				else if (isSequence(getType(type)))
 					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 				types.put($e1.text + "\\cap" + $e2.text, type);
 				//typeInfo(newVarName, type);
@@ -1259,10 +1286,12 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				//Si b es una lista, debo convertirla
 				b = convertToSet($e2.text, b);
 				
-				print("dun(" + a + "," + b + "," + newVarName + ")");
+				print("eun(" + a + "," + b + "," + newVarName + ")");
 				memory.put($e1.text + "\\cup" + $e2.text, newVarName);
 				String type = types.get($e1.text);
-				if (isSequence(getType(type)))
+				if (getType(type).contains("\\upto"))
+					type = "\\power\\num";
+				else if (isSequence(getType(type)))
 					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 				types.put($e1.text + "\\cup" + $e2.text, type);
 				typeInfo(newVarName, type);
@@ -1278,7 +1307,9 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("diff(" + a + "," + b + "," + newVarName + ")");
 				memory.put($e1.text + "\\setminus" + $e2.text, newVarName);
 				String type = types.get($e1.text);
-				if (isSequence(getType(type)))
+				if (getType(type).contains("\\upto"))
+					type = "\\power\\num";
+				else if (isSequence(getType(type)))
 					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 				types.put($e1.text + "\\setminus" + $e2.text, type);
 				typeInfo(newVarName, type);
@@ -1385,6 +1416,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			String e = $elements.remove(0);
 			if (type.equals("")) {
 				type = types.get(e);
+				if (getType(type).contains("\\upto"))
+					type = "\\power\\num";
 			}
 			$zName = $zName.concat(e);
 			//guardamos tambien las traducciones del conjunto
@@ -1502,6 +1535,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			String e = $elements.remove(0);
 			if (type.equals("")) {
 				type = types.get(e);
+				if (getType(type).contains("\\upto"))
+					type = "\\power\\num";
 			}
 			$zName = $zName.concat(e);
 			//guardamos tambien las traducciones del conjunto

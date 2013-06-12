@@ -1343,7 +1343,7 @@ public class ExprParser extends Parser {
 						
 						//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
 						if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
-							print("ein(" + a +"," + b + ")");
+							print(a + " ein " + b);
 						else
 							print(a + " in " + b);
 					
@@ -1405,7 +1405,11 @@ public class ExprParser extends Parser {
 						//Si b es una lista, debo convertirla
 						b = convertToSet((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), b);
 						
-						print(a + " nin " + b);
+						//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+						if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
+							print(a + " enin " + b);
+						else
+							print(a + " nin " + b);
 					
 				}
 				break;
@@ -1496,7 +1500,11 @@ public class ExprParser extends Parser {
 						//Si b es una lista, debo convertirla
 						b = convertToSet((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), b);
 						
-						print("dsubset(" + a + "," + b + ")");
+						//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+						if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
+							print("esubset(" + a + "," + b + ")");
+						else
+							print("dsubset(" + a + "," + b + ")");
 					
 				}
 				break;
@@ -1517,7 +1525,11 @@ public class ExprParser extends Parser {
 						//Si b es una lista, debo convertirla
 						b = convertToSet((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), b);
 						
-						print("dnsubset(" + a + "," + b + ")");
+						//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+						if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
+							print("ensubset(" + a + "," + b + ")");
+						else
+							print("dnsubset(" + a + "," + b + ")");
 					
 				}
 				break;
@@ -1537,7 +1549,11 @@ public class ExprParser extends Parser {
 						//Si b es una lista, debo convertirla
 						b = convertToSet((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), b);
 						
-						print("dssubset(" + a + "," + b + ")");
+						//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+						if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
+							print("essubset(" + a + "," + b + ")");
+						else
+							print("dssubset(" + a + "," + b + ")");
 					
 				}
 				break;
@@ -1562,7 +1578,11 @@ public class ExprParser extends Parser {
 						if (c == null) {
 							c = newVar();
 							memory.put( (((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null) + "\\cap" + (((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), c);
-							print("dinters(" + a + "," + b + "," + c + ")");
+							//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+							if ((getType((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null)).contains("\\upto")))
+								print("einters(" + a + "," + b + "," + c + ")");
+							else								
+								print("dinters(" + a + "," + b + "," + c + ")");
 							String type = types.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
 							if (isSequence(getType(type)))
 								type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
@@ -1761,11 +1781,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -2299,11 +2319,18 @@ public class ExprParser extends Parser {
 						          				a = convertToSet((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null), a);
 						          				//Si b es una lista, debo convertirla
 						          				b = convertToSet((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), b);
-						          								
-						          				print("dinters(" + a + "," + b + "," + newVarName + ")");
+						          				
+						          				//Si alguna de las expressiones es de la forma \\upto, se trata de forma distinta
+						          				if ((getType((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null)).contains("\\upto")) || (getType((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null)).contains("\\upto")))
+						          					print("einters(" + a + "," + b + "," + newVarName + ")");
+						          				else								
+						          					print("dinters(" + a + "," + b + "," + newVarName + ")");
+						          					
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				if (isSequence(getType(type)))
+						          				if (getType(type).contains("\\upto"))
+						          					type = "\\power\\num";
+						          				else if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				//typeInfo(newVarName, type);
@@ -2402,10 +2429,12 @@ public class ExprParser extends Parser {
 						          				//Si b es una lista, debo convertirla
 						          				b = convertToSet((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), b);
 						          				
-						          				print("dun(" + a + "," + b + "," + newVarName + ")");
+						          				print("eun(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				if (isSequence(getType(type)))
+						          				if (getType(type).contains("\\upto"))
+						          					type = "\\power\\num";
+						          				else if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2421,7 +2450,9 @@ public class ExprParser extends Parser {
 						          				print("diff(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\setminus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				if (isSequence(getType(type)))
+						          				if (getType(type).contains("\\upto"))
+						          					type = "\\power\\num";
+						          				else if (isSequence(getType(type)))
 						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\setminus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2752,6 +2783,8 @@ public class ExprParser extends Parser {
 							String e = _localctx.elements.remove(0);
 							if (type.equals("")) {
 								type = types.get(e);
+								if (getType(type).contains("\\upto"))
+									type = "\\power\\num";
 							}
 							((EndExpressionContext)_localctx).zName =  _localctx.zName.concat(e);
 							//guardamos tambien las traducciones del conjunto
@@ -2955,6 +2988,8 @@ public class ExprParser extends Parser {
 							String e = _localctx.elements.remove(0);
 							if (type.equals("")) {
 								type = types.get(e);
+								if (getType(type).contains("\\upto"))
+									type = "\\power\\num";
 							}
 							((EndExpressionContext)_localctx).zName =  _localctx.zName.concat(e);
 							//guardamos tambien las traducciones del conjunto
