@@ -93,7 +93,7 @@ public final class SetLogGenerator {
 				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
 			
 			if (!salida.isEmpty())
-				return "\\langle" + salida.substring(1) + "\\rangle";
+				return "\\langle " + salida.substring(1) + "\\rangle";
 			return "\\langle\\rangle";
 		}
 		
