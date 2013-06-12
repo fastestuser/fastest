@@ -22,7 +22,7 @@ public final class IntExprMap {
 
 	private int numFromUptoType(String tipo,String elem){
 		String aux[] = tipo.split("\\\\upto");
-		return Integer.valueOf(elem) - Integer.valueOf(aux[0]) + 1;
+		return new Integer(elem) - new Integer(aux[0]) + 1;
 	}
 	
 	private int cardOfFreeType(String tipo){
@@ -61,8 +61,7 @@ public final class IntExprMap {
 
 	private String elemFromUptoType(String tipo, int i){
 		String aux[] = tipo.split("\\\\upto");
-		int s = -1 + Integer.valueOf(aux[0]) + i;
-		return String.valueOf(s);
+		return String.valueOf(new Integer(aux[0]) +i -1 );
 	}
 
 	private  class Par{

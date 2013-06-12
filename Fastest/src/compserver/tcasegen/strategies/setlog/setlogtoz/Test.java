@@ -210,7 +210,9 @@ public class Test {
 //		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
 //		String s = c.generate();
 //		System.out.println(e + " --> " + s);
-		
+		long a = new Integer("-1000000000");
+		int b = 2147483647;
+		int c = -2147483648;
 //		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
 //		String s2 = "Estado";
 //		System.out.println("" + schemaTypeToExprIterator(s1,s2));

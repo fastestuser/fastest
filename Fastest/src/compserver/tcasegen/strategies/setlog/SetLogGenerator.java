@@ -138,7 +138,7 @@ public final class SetLogGenerator {
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
 			varn = setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr);
-			varn = varn.replace("-", "\\negate");
+			varn = varn.replace("-", "\\negate ");
 			zVars.put(var,varn);
 		}
 	}

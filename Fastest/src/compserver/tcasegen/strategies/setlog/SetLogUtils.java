@@ -78,6 +78,11 @@ public final class SetLogUtils {
 		return (Character.isLowerCase(c) || Character.isDigit(c) || c == '-');
 	}
 	
+	public static boolean esSLNum(String expr){
+		char c = expr.charAt(0);
+		return (Character.isDigit(c) || c == '-');
+	}
+	
 	public static ExprIterator schemaToVarExprIterator(String nomTipo,String tipoCompleto){
 		// ej SchemaType:Estado:[var1:\num,var2:E] -> {var1,var2}
 		// "SchemaType:".length() = 11 + :.lingth()
