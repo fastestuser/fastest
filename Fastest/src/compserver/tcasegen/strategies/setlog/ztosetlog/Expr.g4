@@ -288,7 +288,7 @@ grammar Expr;
 			}
 			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 				if (tipoSchema == 0) {
-					print(var + " in " + printInfo(type, true));
+					print(var + " ein " + printInfo(type, true));
 				}
 			}
 			else if (nodeType.equals("\\power")) {
@@ -800,7 +800,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				else
 					print("size(" + a + "," + newVarName + ")");					
 			
-				print(newVarName + " in " + printInfo("\\nat", true));
+				print(newVarName + " ein " + printInfo("\\nat", true));
 			}
 			else if ($pre.text.equals("\\dom")){
 				memory.put("\\dom" + $e.text, newVarName);
@@ -921,7 +921,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else if ($pre.text.startsWith("front")){
 				String n = newVar();
 				print("prolog_call(length(" + a + "," + n + "))");
-				print(n + " in " + printInfo("\\nat", true));
+				print(n + " ein " + printInfo("\\nat", true));
 				print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
 				memory.put($pre.text + $e.text, newVarName);
 				String type = types.get($e.text);
@@ -1248,7 +1248,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 			
 			if (isNumeric) {
-				print(newVarName + " in " + printInfo("\\num", true));
+				print(newVarName + " ein " + printInfo("\\num", true));
 				types.put($e1.text + $IN_FUN_40.text + $e2.text, "\\num");
 			}
 		}
@@ -1327,7 +1327,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			}
 			
 			if (isNumeric) {
-				print(newVarName + " in " + printInfo("\\num", true));
+				print(newVarName + " ein " + printInfo("\\num", true));
 				types.put($e1.text + $IN_FUN_30.text + $e2.text, "\\num");
 			}
 		}

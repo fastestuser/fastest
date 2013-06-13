@@ -349,7 +349,7 @@ public class ExprParser extends Parser {
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 					if (tipoSchema == 0) {
-						print(var + " in " + printInfo(type, true));
+						print(var + " ein " + printInfo(type, true));
 					}
 				}
 				else if (nodeType.equals("\\power")) {
@@ -1781,11 +1781,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -1864,7 +1864,7 @@ public class ExprParser extends Parser {
 								else
 									print("size(" + a + "," + newVarName + ")");					
 							
-								print(newVarName + " in " + printInfo("\\nat", true));
+								print(newVarName + " ein " + printInfo("\\nat", true));
 							}
 							else if ((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null).equals("\\dom")){
 								memory.put("\\dom" + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
@@ -1985,7 +1985,7 @@ public class ExprParser extends Parser {
 							else if ((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null).startsWith("front")){
 								String n = newVar();
 								print("prolog_call(length(" + a + "," + n + "))");
-								print(n + " in " + printInfo("\\nat", true));
+								print(n + " ein " + printInfo("\\nat", true));
 								print("prolog_call(take(" + n + "-1" + "," + a + "," + newVarName + "))");
 								memory.put((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								String type = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
@@ -2380,7 +2380,7 @@ public class ExprParser extends Parser {
 						          			}
 						          			
 						          			if (isNumeric) {
-						          				print(newVarName + " in " + printInfo("\\num", true));
+						          				print(newVarName + " ein " + printInfo("\\num", true));
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_40!=null?((ExpressionContext)_localctx).IN_FUN_40.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "\\num");
 						          			}
 						          		}
@@ -2470,7 +2470,7 @@ public class ExprParser extends Parser {
 						          			}
 						          			
 						          			if (isNumeric) {
-						          				print(newVarName + " in " + printInfo("\\num", true));
+						          				print(newVarName + " ein " + printInfo("\\num", true));
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + (((ExpressionContext)_localctx).IN_FUN_30!=null?((ExpressionContext)_localctx).IN_FUN_30.getText():null) + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), "\\num");
 						          			}
 						          		}

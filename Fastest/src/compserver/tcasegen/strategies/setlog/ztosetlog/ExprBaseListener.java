@@ -61,11 +61,11 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterDeclName(ExprParser.DeclNameContext ctx) { }
 	@Override public void exitDeclName(ExprParser.DeclNameContext ctx) { }
 
-	@Override public void enterSpecification(ExprParser.SpecificationContext ctx) { }
-	@Override public void exitSpecification(ExprParser.SpecificationContext ctx) { }
-
 	@Override public void enterRefName(ExprParser.RefNameContext ctx) { }
 	@Override public void exitRefName(ExprParser.RefNameContext ctx) { }
+
+	@Override public void enterSpecification(ExprParser.SpecificationContext ctx) { }
+	@Override public void exitSpecification(ExprParser.SpecificationContext ctx) { }
 
 	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	@Override public void exitEveryRule(ParserRuleContext ctx) { }

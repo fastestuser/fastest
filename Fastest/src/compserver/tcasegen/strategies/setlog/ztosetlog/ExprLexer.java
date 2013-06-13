@@ -345,7 +345,7 @@ public class ExprLexer extends Lexer {
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 					if (tipoSchema == 0) {
-						print(var + " in " + printInfo(type, true));
+						print(var + " ein " + printInfo(type, true));
 					}
 				}
 				else if (nodeType.equals("\\power")) {
