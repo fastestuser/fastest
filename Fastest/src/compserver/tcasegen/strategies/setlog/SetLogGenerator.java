@@ -183,17 +183,15 @@ public final class SetLogGenerator {
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
 
-			String antlrOutput = setLogInput;
-
-			String setlogInput = "consult(setlog4617)."
+			String goal = "consult(setlog4617)."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
 					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 					+ "\ntime_out(setlog( \n"
-					+ antlrOutput.substring(0,antlrOutput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
+					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
 					+ "\n,_CONSTR),1000,_RET).";
 
-			out.write(setlogInput.getBytes());
+			out.write(goal.getBytes());
 			out.close();
 
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
