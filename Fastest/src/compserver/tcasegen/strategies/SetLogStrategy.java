@@ -64,11 +64,14 @@ public final class SetLogStrategy implements TCaseStrategy{
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
+		
+		String tClassName = tClass.getSchName();
+		System.out.println("Trying to generate a test case for the class: " + tClassName);
+		
 		//Reemplazamos las definiciones axiomaticas por sus valores
 		if (axDefsValues != null) {
 
 			AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-			String tClassName = tClass.getSchName();
 			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
 			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
 			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
@@ -158,9 +161,9 @@ public final class SetLogStrategy implements TCaseStrategy{
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
 		//antlrInput = "\\begin{schema}{K\\_ DNF\\_ 1}\\\\\nprocs : \\num \\ffun \\nat \\\\\nmaxProcs : \\nat\n\\where\n\\# (\\dom procs) = maxProcs\n\\end{schema}";
-		System.out.println("**********************************************************************************************");
-		System.out.println("ANTLRINPUT\n" + antlrInput);
-		System.out.println("**********************************************************************************************\n");
+		//System.out.println("**********************************************************************************************");
+		//System.out.println("ANTLRINPUT\n" + antlrInput);
+		//System.out.println("**********************************************************************************************\n");
 
 		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput);
 		
@@ -176,15 +179,15 @@ public final class SetLogStrategy implements TCaseStrategy{
 		while (keys.hasNext()) {
 			String varName = keys.next();
 			String value = zVars.get(varName);
-			System.out.println("------ " + varName + " = " + value);
+			//System.out.println("------ " + varName + " = " + value);
 			if (value != null) {
 				RefExpr var;
 				Expr val;
 				try {
 					var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
-					System.out.println("------ " + SpecUtils.termToLatex(var));
+					//System.out.println("------ " + SpecUtils.termToLatex(var));
 					val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-					System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
+					//System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
 					map.put(var, val);
 
 				} catch (IOException e) {

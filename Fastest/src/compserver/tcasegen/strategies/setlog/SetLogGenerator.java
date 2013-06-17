@@ -146,9 +146,9 @@ public final class SetLogGenerator {
 	public static HashMap<String, String> generate(String antlrInput){
 
 		String setLogInput = toSetLog(antlrInput);
-		System.out.println("**********************************************************************************************");
-		System.out.println("Entrada setlog:\n" + setLogInput);
-		System.out.println("**********************************************************************************************\n");
+		//System.out.println("**********************************************************************************************");
+		//System.out.println("Entrada setlog:\n" + setLogInput);
+		//System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 
 		if (setlogOutput == null) //No se encontro caso
@@ -191,17 +191,16 @@ public final class SetLogGenerator {
 					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
 					+ "\n,_CONSTR),10000,_RET).\n";
 
-			System.out.println("GOAL\n" + goal);
 			
 			out.write(goal.getBytes());
 			out.close();
 
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
-			System.out.println("**********************************************************************************************");
-			System.out.println("SETLOG OUT:\n");
+			//System.out.println("**********************************************************************************************");
+			//System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
-				System.out.println(s);
+				//System.out.println(s);
 				if (s.equals("false.") || s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
 					return null;
 				if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
@@ -212,7 +211,7 @@ public final class SetLogGenerator {
 				}
 			}
 			//System.out.println("SETLOG OUT:\n" + setlogOutput);
-			System.out.println("**********************************************************************************************\n");
+			//System.out.println("**********************************************************************************************\n");
 
 		}
 		catch (Exception e){ 

@@ -70,13 +70,13 @@ public class SLog2ZLexer extends Lexer {
 			this.zVars = zVars;
 			
 			
-			System.out.println("\n");
-			System.out.println("zNames: "); 
-			printHashMap(zNames);
-			System.out.println("\n tipos: "); 
-			printHashMap(tipos);
-			System.out.println("\n");
-			System.out.println("\n");
+			//System.out.println("\n");
+			//System.out.println("zNames: "); 
+			//printHashMap(zNames);
+			//System.out.println("\n tipos: "); 
+			//printHashMap(tipos);
+			//System.out.println("\n");
+			//System.out.println("\n");
 			cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
 			
 		}

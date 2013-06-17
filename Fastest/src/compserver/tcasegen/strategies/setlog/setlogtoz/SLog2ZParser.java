@@ -77,13 +77,13 @@ public class SLog2ZParser extends Parser {
 			this.zVars = zVars;
 			
 			
-			System.out.println("\n");
-			System.out.println("zNames: "); 
-			printHashMap(zNames);
-			System.out.println("\n tipos: "); 
-			printHashMap(tipos);
-			System.out.println("\n");
-			System.out.println("\n");
+			//System.out.println("\n");
+			//System.out.println("zNames: "); 
+			//printHashMap(zNames);
+			//System.out.println("\n tipos: "); 
+			//printHashMap(tipos);
+			//System.out.println("\n");
+			//System.out.println("\n");
 			cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
 			
 		}
@@ -183,9 +183,9 @@ public class SLog2ZParser extends Parser {
 			setState(10); ((LineasContext)_localctx).constr = constr();
 			setState(11); match(NL);
 
-						System.out.println("\n valoresProhibidos desigualdades: ");
-						printHashMap(valoresProhibidos);
-						System.out.println("asaaaaaaa" + "\n");
+						//System.out.println("\n valoresProhibidos desigualdades: ");
+						//printHashMap(valoresProhibidos);
+						//System.out.println("asaaaaaaa" + "\n");
 					
 			setState(17); 
 			_errHandler.sync(this);
@@ -209,14 +209,14 @@ public class SLog2ZParser extends Parser {
 				_la = _input.LA(1);
 			} while ( _la==NAME );
 
-						System.out.println("\n**salida SLog2Z**: \n");
-						System.out.println("constraint: " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null) );
-						System.out.println("\nslvars:");
-						printHashMap( slvars );
+						//System.out.println("\n**salida SLog2Z**: \n");
+						//System.out.println("constraint: " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null) );
+						//System.out.println("\nslvars:");
+						//printHashMap( slvars );
 						llenarZVars();
-						System.out.println("\nzVars vacias +++++++++:");
-						printHashMap(zVars);
-						System.out.println("\n**fin SLog2Z**");
+						//System.out.println("\nzVars vacias +++++++++:");
+						//printHashMap(zVars);
+						//System.out.println("\n**fin SLog2Z**");
 						
 					
 			}
@@ -261,7 +261,9 @@ public class SLog2ZParser extends Parser {
 			enterOuterAlt(_localctx, 1);
 			{
 			setState(23); match(11);
-			System.out.println("CONTATNANTOANTs");
+
+				              	//System.out.println("CONTATNANTOANTs");
+				              
 			setState(25); match(10);
 			setState(26); match(6);
 			setState(35);

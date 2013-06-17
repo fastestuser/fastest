@@ -58,7 +58,7 @@ grammar Expr;
 
 	public void print(String c) {
 		if (modoSetExpression == 0 && tipoSchema == 0) { 
-			System.out.println(c + " & ");
+			//System.out.println(c + " & ");
 			out = out.concat(c + " & ");
 		}
 		else if (modoSetExpression == 1)

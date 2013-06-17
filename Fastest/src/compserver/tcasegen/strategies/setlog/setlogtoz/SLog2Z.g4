@@ -38,13 +38,13 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		this.zVars = zVars;
 		
 		
-		System.out.println("\n");
-		System.out.println("zNames: "); 
-		printHashMap(zNames);
-		System.out.println("\n tipos: "); 
-		printHashMap(tipos);
-		System.out.println("\n");
-		System.out.println("\n");
+		//System.out.println("\n");
+		//System.out.println("zNames: "); 
+		//printHashMap(zNames);
+		//System.out.println("\n tipos: "); 
+		//printHashMap(tipos);
+		//System.out.println("\n");
+		//System.out.println("\n");
 		cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
 		
 	}
@@ -104,26 +104,29 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 lineas
 	:	constr NL {
-			System.out.println("\n valoresProhibidos desigualdades: ");
-			printHashMap(valoresProhibidos);
-			System.out.println("asaaaaaaa" + "\n");
+			//System.out.println("\n valoresProhibidos desigualdades: ");
+			//printHashMap(valoresProhibidos);
+			//System.out.println("asaaaaaaa" + "\n");
 		}
 		(seqIgual NL?)+ 
 		{
-			System.out.println("\n**salida SLog2Z**: \n");
-			System.out.println("constraint: " + $constr.text );
-			System.out.println("\nslvars:");
-			printHashMap( slvars );
+			//System.out.println("\n**salida SLog2Z**: \n");
+			//System.out.println("constraint: " + $constr.text );
+			//System.out.println("\nslvars:");
+			//printHashMap( slvars );
 			llenarZVars();
-			System.out.println("\nzVars vacias +++++++++:");
-			printHashMap(zVars);
-			System.out.println("\n**fin SLog2Z**");
+			//System.out.println("\nzVars vacias +++++++++:");
+			//printHashMap(zVars);
+			//System.out.println("\n**fin SLog2Z**");
 			
 		}
 	;
 
 constr
-	:	'_CONSTR' {System.out.println("CONTATNANTOANTs");} '=' '[' (restr(','restr)*)? ']' ','
+	:	'_CONSTR' {
+	              	//System.out.println("CONTATNANTOANTs");
+	              } 
+		'=' '[' (restr(','restr)*)? ']' ','
 	;
 	
 restr

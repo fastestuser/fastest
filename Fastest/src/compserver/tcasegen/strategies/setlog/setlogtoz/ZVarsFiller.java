@@ -75,12 +75,12 @@ public final class ZVarsFiller {
 		//tambien imprime en pantalla
 		SL2ZP.lineas();
 		llenarZVars(SL2ZP.getCC());
-		System.out.println("\nzVars llenas****************\n");
-		SetLogUtils.printHashMap(zVars);
+		//System.out.println("\nzVars llenas****************\n");
+		//SetLogUtils.printHashMap(zVars);
 
-		System.out.println("\n FreeTipos ****************\n");
+		//System.out.println("\n FreeTipos ****************\n");
 		HashMap<String, String> mapaux = llenarFreeTypes(tipos);
-		SetLogUtils.printHashMap(mapaux);
+		//SetLogUtils.printHashMap(mapaux);
 
 	}
 
