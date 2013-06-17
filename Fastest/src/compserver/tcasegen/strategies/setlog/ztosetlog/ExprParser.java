@@ -119,8 +119,8 @@ public class ExprParser extends Parser {
 
 		public void print(String c) {
 			if (modoSetExpression == 0 && tipoSchema == 0) { 
-				System.out.println(c + " &");
-				out = out.concat(c + " &");
+				System.out.println(c + " & ");
+				out = out.concat(c + " & ");
 			}
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
@@ -134,7 +134,7 @@ public class ExprParser extends Parser {
 		//ya que debe ir al final de todo
 		public void printAtEnd(String c) {
 			if (modoSetExpression == 0 && tipoSchema == 0) 
-				functionsOut = functionsOut.concat(c + " &");
+				functionsOut = functionsOut.concat(c + " & ");
 			else if (modoSetExpression == 1)
 				setExpressionDecl = setExpressionDecl.concat(" & " + c);
 			else if (modoSetExpression == 2)
@@ -1781,11 +1781,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }

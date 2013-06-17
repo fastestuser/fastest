@@ -58,8 +58,8 @@ grammar Expr;
 
 	public void print(String c) {
 		if (modoSetExpression == 0 && tipoSchema == 0) { 
-			System.out.println(c + " &");
-			out = out.concat(c + " &");
+			System.out.println(c + " & ");
+			out = out.concat(c + " & ");
 		}
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
@@ -73,7 +73,7 @@ grammar Expr;
 	//ya que debe ir al final de todo
 	public void printAtEnd(String c) {
 		if (modoSetExpression == 0 && tipoSchema == 0) 
-			functionsOut = functionsOut.concat(c + " &");
+			functionsOut = functionsOut.concat(c + " & ");
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)

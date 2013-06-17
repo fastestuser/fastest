@@ -182,15 +182,17 @@ public final class SetLogGenerator {
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
-
-			String goal = "consult(setlog4617)."
+			
+			String goal = "consult('./lib/SetLog/setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
 					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 					+ "\ntime_out(setlog( \n"
 					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
-					+ "\n,_CONSTR),1000,_RET).";
+					+ "\n,_CONSTR),10000,_RET).\n";
 
+			System.out.println("GOAL\n" + goal);
+			
 			out.write(goal.getBytes());
 			out.close();
 
