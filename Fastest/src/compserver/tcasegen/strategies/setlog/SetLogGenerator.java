@@ -11,6 +11,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
@@ -157,7 +158,7 @@ public final class SetLogGenerator {
 		zNames = SetLogUtils.invertHashMap(parser.getMemory());
 		tipos = parser.getTypes();
 		zVars = parser.getZVars();
-
+		//SetLogUtils.printHashMap(zVars);
 
 		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
 		zvf.generar();

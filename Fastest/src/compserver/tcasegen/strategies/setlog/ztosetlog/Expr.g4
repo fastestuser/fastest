@@ -399,7 +399,7 @@ grammar Expr;
 				String newVarName = newVar();
 				print("list_to_rel(" + setlogVar + "," + newVarName + ")");
 				if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
-					setExpressionVars.put(zVar, newVarName);				
+					setExpressionVars.put("list_to_rel(" + zVar + ")", newVarName);				
 				//Hace falta ver el tipo?
 				String seqType = leftAndRightTypes(type).get(1);
 				//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
@@ -554,8 +554,10 @@ locals [ArrayList<String> vars;]
 
 			String var = $declaration::vars.remove(0);
 
-			if (tipoSchema == 0)
+			if ((tipoSchema == 0) && (modoSetExpression!=1)) {
 				zVars.put(var, null); //Marcamos la variable como variable Z, a la cual posiblemente se le deba asignarsele un valor
+				//System.out.println("Agregamos:" + var);	
+			}
 
 			String newVarName = newVar(var);
 			if (tipoSchema == 0)
@@ -813,7 +815,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
 				String type = getType(types.get($e.text));
 				if (isSequence(type))
-					print("ddom_list(" + e + "," + newVarName + ")");
+					print("dom_list(" + e + "," + newVarName + ")");
 				else
 					print("dom(" + e + "," + newVarName + ")");
 			}
@@ -1496,6 +1498,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.remove(var);
 				keysIt.remove();
 				zVars.remove(var);
+				//System.out.println("Sacamos" + var);
 				//setExpressionVars.remove(var);
 			}
 		}
@@ -1706,8 +1709,10 @@ refName
 			String newVarName = newVar($NAME.text);
 			
 			memory.put($NAME.text, newVarName);
-			if (modoSetExpression != 0 )
+			if (modoSetExpression != 0 ) {
 				setExpressionVars.put($NAME.text, newVarName);
+				//System.out.println("Agregamos" + $NAME.text + "---" +  newVarName);
+			}
 		}
 	}
 	;

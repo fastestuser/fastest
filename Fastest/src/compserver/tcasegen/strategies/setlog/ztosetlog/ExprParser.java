@@ -460,7 +460,7 @@ public class ExprParser extends Parser {
 					String newVarName = newVar();
 					print("list_to_rel(" + setlogVar + "," + newVarName + ")");
 					if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
-						setExpressionVars.put(zVar, newVarName);				
+						setExpressionVars.put("list_to_rel(" + zVar + ")", newVarName);				
 					//Hace falta ver el tipo?
 					String seqType = leftAndRightTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
@@ -1208,8 +1208,10 @@ public class ExprParser extends Parser {
 
 						String var = ((DeclarationContext)getInvokingContext(7)).vars.remove(0);
 
-						if (tipoSchema == 0)
+						if ((tipoSchema == 0) && (modoSetExpression!=1)) {
 							zVars.put(var, null); //Marcamos la variable como variable Z, a la cual posiblemente se le deba asignarsele un valor
+							//System.out.println("Agregamos:" + var);	
+						}
 
 						String newVarName = newVar(var);
 						if (tipoSchema == 0)
@@ -1781,11 +1783,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -1877,7 +1879,7 @@ public class ExprParser extends Parser {
 								//Chequeamos si e es una lista, estas son tratadas de forma diferente
 								String type = getType(types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null)));
 								if (isSequence(type))
-									print("ddom_list(" + e + "," + newVarName + ")");
+									print("dom_list(" + e + "," + newVarName + ")");
 								else
 									print("dom(" + e + "," + newVarName + ")");
 							}
@@ -2889,6 +2891,7 @@ public class ExprParser extends Parser {
 								memory.remove(var);
 								keysIt.remove();
 								zVars.remove(var);
+								//System.out.println("Sacamos" + var);
 								//setExpressionVars.remove(var);
 							}
 						}
@@ -3292,8 +3295,10 @@ public class ExprParser extends Parser {
 						String newVarName = newVar((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null));
 						
 						memory.put((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null), newVarName);
-						if (modoSetExpression != 0 )
+						if (modoSetExpression != 0 ) {
 							setExpressionVars.put((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null), newVarName);
+							//System.out.println("Agregamos" + (((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null) + "---" +  newVarName);
+						}
 					}
 				
 			}
