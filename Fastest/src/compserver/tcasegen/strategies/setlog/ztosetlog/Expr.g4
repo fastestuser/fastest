@@ -566,14 +566,15 @@ locals [ArrayList<String> vars;]
 				setExpressionVars.put(var, newVarName);
 			
 			String expType = types.get($expression.text);
-			expType = typeInfo(newVarName, expType);
 			
-			/*
-			//Chequeo si es un tipo basico, ej [ACCNUM], ya que estos no se imprimen en typeInfo
-			String t = types.get(expType);
-			if (t != null && t.startsWith("BasicType"))
-				print(newVarName + " in " + expType);
-			*/
+			//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
+			if (modoSetExpression==1)
+				if (getType(types.get($expression.text)).contains("\\upto"))
+					print(newVarName + " ein " + memory.get($expression.text));
+				else			
+					print(newVarName + " in " + memory.get($expression.text));
+			else
+				expType = typeInfo(newVarName, expType);
 			
 			if (tipoSchema == 0)
 				types.put(var, expType);

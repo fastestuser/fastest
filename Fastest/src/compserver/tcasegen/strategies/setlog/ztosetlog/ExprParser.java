@@ -1220,14 +1220,15 @@ public class ExprParser extends Parser {
 							setExpressionVars.put(var, newVarName);
 						
 						String expType = types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
-						expType = typeInfo(newVarName, expType);
 						
-						/*
-						//Chequeo si es un tipo basico, ej [ACCNUM], ya que estos no se imprimen en typeInfo
-						String t = types.get(expType);
-						if (t != null && t.startsWith("BasicType"))
-							print(newVarName + " in " + expType);
-						*/
+						//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
+						if (modoSetExpression==1)
+							if (getType(types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null))).contains("\\upto"))
+								print(newVarName + " ein " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
+							else			
+								print(newVarName + " in " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
+						else
+							expType = typeInfo(newVarName, expType);
 						
 						if (tipoSchema == 0)
 							types.put(var, expType);
