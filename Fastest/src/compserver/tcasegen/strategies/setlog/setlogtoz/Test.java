@@ -11,9 +11,6 @@ import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
-
-
-
 public class Test {
 	private static ExprIterator schemaTypeToExprIterator(String tipoCompleto,String nomTipo){
 		// ej SchemaType:Estado:[var1:\num,var2:E]

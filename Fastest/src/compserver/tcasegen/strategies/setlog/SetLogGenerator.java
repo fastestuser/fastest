@@ -146,9 +146,9 @@ public final class SetLogGenerator {
 	public static HashMap<String, String> generate(String antlrInput){
 
 		String setLogInput = toSetLog(antlrInput);
-		//System.out.println("**********************************************************************************************");
-		//System.out.println("Entrada setlog:\n" + setLogInput);
-		//System.out.println("**********************************************************************************************\n");
+		System.out.println("**********************************************************************************************");
+		System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
+		System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 
 		if (setlogOutput == null) //No se encontro caso

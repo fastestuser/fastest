@@ -20,14 +20,14 @@ import net.sourceforge.czt.z.ast.AxPara;
  */
 public class RunTCaseClient extends IIComponent {
 
-    /**
-     * Manages an implicit invocation event.
-     * @param event_
-     * @throws java.lang.IllegalArgumentException if event_ is not instance of
-     * PruneTClassRequested
-     */
+	/**
+	 * Manages an implicit invocation event.
+	 * @param event_
+	 * @throws java.lang.IllegalArgumentException if event_ is not instance of
+	 * PruneTClassRequested
+	 */
 	public synchronized void manageEvent(Event_ event_)
-		throws IllegalArgumentException{
+			throws IllegalArgumentException{
 
 		if(event_ instanceof CTCaseRunRequested){
 			CTCaseRunRequested runRequest = (CTCaseRunRequested)event_;
@@ -39,4 +39,4 @@ public class RunTCaseClient extends IIComponent {
 			throw new IllegalArgumentException();
 	}
 }
- 
+

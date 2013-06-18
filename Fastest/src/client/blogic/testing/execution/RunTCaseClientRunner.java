@@ -23,39 +23,39 @@ import client.blogic.management.ii.EventAdmin;
 public class RunTCaseClientRunner implements Runnable
 {
 
-    /**
-     * Creates new instances of TClassPruneClientRunner
-     * @param tClass
-     */
+	/**
+	 * Creates new instances of TClassPruneClientRunner
+	 * @param tClass
+	 */
 	public RunTCaseClientRunner(String runCode, CompilationInfo compilationInfo){
 		this.compilationInfo = compilationInfo;
 		this.runCode = runCode;
 	}
 
-    /**
-     * Requests the running of a concrete test and the subsequent abstraction of 
-     * the output, either to the client itself or to a computation server.
-     *  After a response arrives, it announces a TCaseAbstracted event.
-     */
+	/**
+	 * Requests the running of a concrete test and the subsequent abstraction of 
+	 * the output, either to the client itself or to a computation server.
+	 *  After a response arrives, it announces a TCaseAbstracted event.
+	 */
 	public void run(){
-	// Por ahora no considero el servidor
-	try{
-	// We obtain the working directory
-	String workingDirectory = compilationInfo.getWorkingDirectory();
-	if(!workingDirectory.endsWith(File.separator))
-		workingDirectory += File.separator; 
-	// We run the script test
-	// El executer deberia devolver el status de la ejecucion!!!
-	Executer.execute(runCode, workingDirectory);
-	EventAdmin eventAdmin = EventAdmin.getInstance();
-	RunFinished event = new RunFinished();
-	eventAdmin.announceEvent(event);
+		// Por ahora no considero el servidor
+		try{
+			// We obtain the working directory
+			String workingDirectory = compilationInfo.getWorkingDirectory();
+			if(!workingDirectory.endsWith(File.separator))
+				workingDirectory += File.separator; 
+			// We run the script test
+			// El executer deberia devolver el status de la ejecucion!!!
+			Executer.execute(runCode, workingDirectory);
+			EventAdmin eventAdmin = EventAdmin.getInstance();
+			RunFinished event = new RunFinished();
+			eventAdmin.announceEvent(event);
 
-	}
-	catch(Exception e){
-		e.printStackTrace(System.out);
-	}
-	
+		}
+		catch(Exception e){
+			e.printStackTrace(System.out);
+		}
+
 	}
 	private CompilationInfo compilationInfo;
 	private String runCode;
