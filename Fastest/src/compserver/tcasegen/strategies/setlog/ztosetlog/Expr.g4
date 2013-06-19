@@ -568,12 +568,12 @@ locals [ArrayList<String> vars;]
 			String expType = types.get($expression.text);
 			
 			//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
-			if (modoSetExpression==1)
+			if (modoSetExpression==1) {
 				if (getType(types.get($expression.text)).contains("\\upto"))
 					print(newVarName + " ein " + memory.get($expression.text));
 				else			
 					print(newVarName + " in " + memory.get($expression.text));
-			else
+			} else
 				expType = typeInfo(newVarName, expType);
 			
 			if (tipoSchema == 0)

@@ -536,7 +536,7 @@ public class ExprParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==50 || _la==60 );
-			/*
+			
 				   System.out.println("tablita de tippos");
 				   System.out.println("-------------------");
 				   String key, value;
@@ -563,7 +563,7 @@ public class ExprParser extends Parser {
 			           System.out.println(key + "\t\t| " + value);
 			  	   }
 			     
-				*/
+				
 			}
 		}
 		catch (RecognitionException re) {
