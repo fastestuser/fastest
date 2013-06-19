@@ -84,12 +84,12 @@ public class SLog2ZParser extends Parser {
 			//printHashMap(tipos);
 			//System.out.println("\n");
 			//System.out.println("\n");
-			cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
+			cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
 			
 		}
 		
 		
-		public void printHashMap(HashMap map){
+		private void printHashMap(HashMap map){
 			Iterator iterator = map.keySet().iterator();  
 			String key,value;
 			while (iterator.hasNext()) {  
@@ -122,7 +122,27 @@ public class SLog2ZParser extends Parser {
 			} 
 		}
 		
-		public void llenarZVars(){
+		private void preprocesarConstraint(){
+		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
+			// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
+				if(valoresProhibidos != null){
+				Iterator<String> it = valoresProhibidos.keySet().iterator();
+				String var,tipo;
+				StringPointer valor;
+				while (it.hasNext()) { 
+					var = it.next().toString();
+					if (zNames != null && zNames.get(var)!=null){
+						tipo = tipos.get(zNames.get(var));
+						DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
+						valor = new StringPointer(cc.getCte(var,nodo));
+						if(slvars != null)
+							slvars.put(var, valor);
+						}
+					}
+				}
+		}
+		
+		private void llenarZVars(){
 			Iterator iterator = slvars.keySet().iterator();  
 			String slname,zname,valor;
 			while (iterator.hasNext()) {  
@@ -183,9 +203,10 @@ public class SLog2ZParser extends Parser {
 			setState(10); ((LineasContext)_localctx).constr = constr();
 			setState(11); match(NL);
 
-						//System.out.println("\n valoresProhibidos desigualdades: ");
-						//printHashMap(valoresProhibidos);
+						System.out.println("\n valoresProhibidos desigualdades: \n");
+						printHashMap(valoresProhibidos);
 						//System.out.println("asaaaaaaa" + "\n");
+						preprocesarConstraint();
 					
 			setState(17); 
 			_errHandler.sync(this);
@@ -211,8 +232,8 @@ public class SLog2ZParser extends Parser {
 
 						//System.out.println("\n**salida SLog2Z**: \n");
 						//System.out.println("constraint: " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null) );
-						//System.out.println("\nslvars:");
-						//printHashMap( slvars );
+						System.out.println("\nslvars:");
+						printHashMap( slvars );
 						llenarZVars();
 						//System.out.println("\nzVars vacias +++++++++:");
 						//printHashMap(zVars);

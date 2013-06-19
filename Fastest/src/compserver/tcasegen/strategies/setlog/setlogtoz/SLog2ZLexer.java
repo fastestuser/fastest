@@ -77,12 +77,12 @@ public class SLog2ZLexer extends Lexer {
 			//printHashMap(tipos);
 			//System.out.println("\n");
 			//System.out.println("\n");
-			cc = new ConstantCreator(tipos,slvars,valoresProhibidos,this.zNames);
+			cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
 			
 		}
 		
 		
-		public void printHashMap(HashMap map){
+		private void printHashMap(HashMap map){
 			Iterator iterator = map.keySet().iterator();  
 			String key,value;
 			while (iterator.hasNext()) {  
@@ -115,7 +115,27 @@ public class SLog2ZLexer extends Lexer {
 			} 
 		}
 		
-		public void llenarZVars(){
+		private void preprocesarConstraint(){
+		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
+			// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
+				if(valoresProhibidos != null){
+				Iterator<String> it = valoresProhibidos.keySet().iterator();
+				String var,tipo;
+				StringPointer valor;
+				while (it.hasNext()) { 
+					var = it.next().toString();
+					if (zNames != null && zNames.get(var)!=null){
+						tipo = tipos.get(zNames.get(var));
+						DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
+						valor = new StringPointer(cc.getCte(var,nodo));
+						if(slvars != null)
+							slvars.put(var, valor);
+						}
+					}
+				}
+		}
+		
+		private void llenarZVars(){
 			Iterator iterator = slvars.keySet().iterator();  
 			String slname,zname,valor;
 			while (iterator.hasNext()) {  

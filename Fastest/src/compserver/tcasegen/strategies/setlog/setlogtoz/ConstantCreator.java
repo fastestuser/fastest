@@ -13,14 +13,12 @@ import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 public final class ConstantCreator {
 
-	private DefaultMutableTreeNode arbol;
 	private HashMap<String,String> tipos;
 	private HashMap<String,String> valoresProhibidos;
 	private HashMap<String,StringPointer> slVars;
 	private List<String> basicTypes;
 
 	private int postfijo;
-	private HashMap<String, String> zName;
 	protected String getNumber(){
 		return String.valueOf(postfijo++);
 	}
@@ -289,38 +287,35 @@ public final class ConstantCreator {
 
 	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
 	 * construcciones de tipos finitos. */
-	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos,HashMap<String,String> zName) {
+	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.slVars = slVars;
 		this.valoresProhibidos = valoresProhibidos;
 		this.basicTypes = null;
 		this.postfijo = 1;
-		this.zName = zName;
 	}
 
 	String getCte(String expr, DefaultMutableTreeNode root){
 		expr = expr.replaceAll("\\s+",""); 
-		this.arbol = root;
 
-		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
-		// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
-		if(valoresProhibidos != null){
-			Iterator<String> it = valoresProhibidos.keySet().iterator();
-			String var,tipo;
-			StringPointer valor;
-			while (it.hasNext()) { 
-				var = it.next().toString();
-				if (zName != null && zName.get(var)!=null){
-					tipo = tipos.get(zName.get(var));
-					DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
-					valor = new StringPointer(cteRestringuida(nodo,var));
-					if(slVars != null)
-						slVars.put(var, valor);
-				}
-			}
-		}
+//		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
+//		// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
+//		if(valoresProhibidos != null){
+//			Iterator<String> it = valoresProhibidos.keySet().iterator();
+//			String var,tipo;
+//			StringPointer valor;
+//			while (it.hasNext()) { 
+//				var = it.next().toString();
+//				if (zName != null && zName.get(var)!=null){
+//					tipo = tipos.get(zName.get(var));
+//					DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
+//					valor = new StringPointer(cteRestringuida(nodo,var));
+//					if(slVars != null)
+//				}
+//			}
+//		}
 
-		String s = cte(arbol, expr);
+		String s = cte(root, expr);
 		return s;
 	}
 

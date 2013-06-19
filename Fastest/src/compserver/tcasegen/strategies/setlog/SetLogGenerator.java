@@ -199,7 +199,7 @@ public final class SetLogGenerator {
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
 			//System.out.println("**********************************************************************************************");
-			//System.out.println("SETLOG OUT:\n");
+			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				//System.out.println(s);
 				if (s.equals("false.") || s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
@@ -211,8 +211,8 @@ public final class SetLogGenerator {
 					break;
 				}
 			}
-			//System.out.println("SETLOG OUT:\n" + setlogOutput);
-			//System.out.println("**********************************************************************************************\n");
+			System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
+			System.out.println("**********************************************************************************************\n");
 
 		}
 		catch (Exception e){ 
