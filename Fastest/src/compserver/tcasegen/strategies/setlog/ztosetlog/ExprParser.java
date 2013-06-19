@@ -356,8 +356,11 @@ public class ExprParser extends Parser {
 					//Veo si lo que sigue es un tipo enumerado
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
-					if (childType != null && childType.startsWith("EnumerationType")) {
-						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+					if (childType != null) {
+						if (childType.startsWith("EnumerationType"))
+							if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+						else
+							if (tipoSchema == 0) print(var + " in " + type);
 					}
 				}
 				else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)
@@ -536,7 +539,7 @@ public class ExprParser extends Parser {
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==50 || _la==60 );
-			
+			/*
 				   System.out.println("tablita de tippos");
 				   System.out.println("-------------------");
 				   String key, value;
@@ -563,7 +566,7 @@ public class ExprParser extends Parser {
 			           System.out.println(key + "\t\t| " + value);
 			  	   }
 			     
-				
+				*/
 			}
 		}
 		catch (RecognitionException re) {
@@ -1222,12 +1225,12 @@ public class ExprParser extends Parser {
 						String expType = types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
 						
 						//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
-						if (modoSetExpression==1)
-							if (getType(types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null))).contains("\\upto"))
-								print(newVarName + " ein " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
-							else			
-								print(newVarName + " in " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
-						else
+						//if (modoSetExpression==1) {
+						//	if (getType(types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null))).contains("\\upto"))
+						//		print(newVarName + " ein " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
+						//	else			
+						//		print(newVarName + " in " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
+						//} else
 							expType = typeInfo(newVarName, expType);
 						
 						if (tipoSchema == 0)
@@ -1784,11 +1787,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -3204,6 +3207,7 @@ public class ExprParser extends Parser {
 						          				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
 						          				types.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + "." + n, eType); //Arreglar
 						          				print("nth1(" + n + "," + memory.get((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null)) + "," + newVarName + ")");
+						          				typeInfo(newVarName, eType);
 						          			}
 						          		}
 						          	

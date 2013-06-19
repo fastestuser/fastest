@@ -352,8 +352,11 @@ public class ExprLexer extends Lexer {
 					//Veo si lo que sigue es un tipo enumerado
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
-					if (childType != null && childType.startsWith("EnumerationType")) {
-						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+					if (childType != null) {
+						if (childType.startsWith("EnumerationType"))
+							if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+						else
+							if (tipoSchema == 0) print(var + " in " + type);
 					}
 				}
 				else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)

@@ -295,8 +295,11 @@ grammar Expr;
 				//Veo si lo que sigue es un tipo enumerado
 				String childType = getChildType(type,0);
 				childType = types.get(childType);
-				if (childType != null && childType.startsWith("EnumerationType")) {
-					if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+				if (childType != null) {
+					if (childType.startsWith("EnumerationType"))
+						if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
+					else
+						if (tipoSchema == 0) print(var + " in " + type);
 				}
 			}
 			else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)
@@ -568,12 +571,12 @@ locals [ArrayList<String> vars;]
 			String expType = types.get($expression.text);
 			
 			//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
-			if (modoSetExpression==1) {
-				if (getType(types.get($expression.text)).contains("\\upto"))
-					print(newVarName + " ein " + memory.get($expression.text));
-				else			
-					print(newVarName + " in " + memory.get($expression.text));
-			} else
+			//if (modoSetExpression==1) {
+			//	if (getType(types.get($expression.text)).contains("\\upto"))
+			//		print(newVarName + " ein " + memory.get($expression.text));
+			//	else			
+			//		print(newVarName + " in " + memory.get($expression.text));
+			//} else
 				expType = typeInfo(newVarName, expType);
 			
 			if (tipoSchema == 0)
