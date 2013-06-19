@@ -256,7 +256,7 @@ public class ExprLexer extends Lexer {
 			while (rootType.equals("()")) {
 					root = (DefaultMutableTreeNode) root.getChildAt(0);
 					rootType = (String) root.getUserObject();
-				}
+			}
 			
 			if (rootType.equals("\\power")) {
 				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
