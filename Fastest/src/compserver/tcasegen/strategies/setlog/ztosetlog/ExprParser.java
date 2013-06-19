@@ -86,9 +86,8 @@ public class ExprParser extends Parser {
 		String setExpressionDecl, setExpressionPred, setExpressionExpr;
 		
 		int varNumber = 0;
-		int modoSetExpression = 0; //0 = false, 1 = true
-		int tipoSchema = 0;        //0 = false, 1 = true, esta variable se utiliza para no imprimir ciertas cosas,
-						           //cuando trabajamos en tipos schema
+		int modoSetExpression = 0; //indica en que etapa del conjuntos por comprension estamos trabajando
+		int tipoSchema = 0;        //0 = false, 1 = true, indica si estamos trabajando con tipos esquema
 		
 		HashMap<String,String> schemaTypeVars;
 
@@ -117,6 +116,7 @@ public class ExprParser extends Parser {
 			return zVars;
 		}
 
+		//Metodo para imprimir normalmente una linea de setlog
 		public void print(String c) {
 			if (modoSetExpression == 0 && tipoSchema == 0) { 
 				//System.out.println(c + " & ");
@@ -143,7 +143,8 @@ public class ExprParser extends Parser {
 				setExpressionExpr = setExpressionExpr.concat(" & " + c);
 		}
 		
-		//Metodo para la determinacion del tipo mas externo.
+		//Metodo para la determinacion del typo mas externo de un tipo.
+		//Ej:  type = A \cross B ----> return \cross
 		String getType(String type) {
 			//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 			ANTLRInputStream input = new ANTLRInputStream(type);
@@ -161,7 +162,7 @@ public class ExprParser extends Parser {
 	        return (String) root.getUserObject();
 		}
 		
-		//Metodo para quitar los parentesis exteriores
+		//Metodo para quitar los parentesis exteriores en expresiones de tipo.
 		String removeParenthesis(String type) {
 			//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 			ANTLRInputStream input = new ANTLRInputStream(type);
@@ -179,7 +180,7 @@ public class ExprParser extends Parser {
 	        return parser.printTree(root);
 		}
 		
-		//Metodo para la determinacion del tipo de salida o entrada de una funcion.
+		//Metodo para la determinacion del tipo de un hijo de una expresion.
 		String getChildType(String type, int pos) {
 			//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 			ANTLRInputStream input = new ANTLRInputStream(type);
@@ -202,7 +203,7 @@ public class ExprParser extends Parser {
 	        return parser.printTree(child);
 		}
 		
-		//Metodo para realizar la inversion de un tipo en Z, debe ser una funcion o un \power de \cross.
+		//Metodo para realizar la inversion de un tipo en Z.
 		String invertType(String type) {
 			ANTLRInputStream input = new ANTLRInputStream(type);
 	        TypeManagerLexer lexer = new TypeManagerLexer(input);
@@ -241,7 +242,7 @@ public class ExprParser extends Parser {
 			return invertedType;
 		}
 		
-		//Metodo para obtener los tipos izquierdo y derecho.
+		//Metodo para obtener los tipos de los hijos izquierdo y derecho.
 		//Debe ser una funcion, un \power de \cross o una \seq
 		//EJ: A \pfun B devuelve A y B
 		ArrayList<String> leftAndRightTypes(String type) {
@@ -255,6 +256,12 @@ public class ExprParser extends Parser {
 			ArrayList<String> leftAndRight = new ArrayList<String>();
 			DefaultMutableTreeNode left, right;
 			String rootType = (String) root.getUserObject();
+			
+			while (rootType.equals("()")) {
+					root = (DefaultMutableTreeNode) root.getChildAt(0);
+					rootType = (String) root.getUserObject();
+				}
+			
 			if (rootType.equals("\\power")) {
 				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
 				String childType = (String) child.getUserObject();
@@ -310,7 +317,7 @@ public class ExprParser extends Parser {
 		
 		private String newVar(String zName) {
 			String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
-			if (memory.containsValue(newVarName) /*|| modoSetExpression==1*/) { 
+			if (memory.containsValue(newVarName)) { 
 				newVarName = "VAR" + varNumber;
 				varNumber++;
 			}
@@ -318,6 +325,11 @@ public class ExprParser extends Parser {
 		}
 		
 		private String typeInfo(String var, String type) {
+			return typeInfo(var, type, "");
+		}
+		
+		//Funcion para imprimir la informacion de tipo de una variable.
+		private String typeInfo(String var, String type, String exp) {
 				
 			if (type != null) {
 				if (isBasic(type)) {
@@ -357,10 +369,12 @@ public class ExprParser extends Parser {
 					String childType = getChildType(type,0);
 					childType = types.get(childType);
 					if (childType != null) {
-						if (childType.startsWith("EnumerationType"))
+						if (childType.startsWith("EnumerationType")){
 							if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
-						else
-							if (tipoSchema == 0) print(var + " in " + type);
+						} else
+							if ((tipoSchema == 0) && (exp != null) && (!exp.contains("\\power")))
+							//Si no contiene power, imprimimos, ya que si lo contiene, es realmente una expresion de tipo y no una expresion con valor!
+								 print(var + " in " + exp);
 					}
 				}
 				else if (nodeType.contains("\\upto")) { //En este caso, los hijos pueden ser variables Setlog. (Se podra mejorar?)
@@ -540,7 +554,7 @@ public class ExprParser extends Parser {
 				_la = _input.LA(1);
 			} while ( _la==50 || _la==60 );
 			/*
-				   System.out.println("tablita de tippos");
+				   System.out.println("Tabla Types");
 				   System.out.println("-------------------");
 				   String key, value;
 				   Iterator<String> iterator = types.keySet().iterator();
@@ -549,7 +563,7 @@ public class ExprParser extends Parser {
 				           value = types.get(key);
 				           System.out.println(key + "\t\t| " + value);
 				   }
-				   System.out.println("\ntablita de memory");
+				   System.out.println("\nTabla Memory");
 				   System.out.println("-------------------");
 				   iterator = memory.keySet().iterator();
 				   while (iterator.hasNext()) {
@@ -557,7 +571,7 @@ public class ExprParser extends Parser {
 				           value = memory.get(key);
 				           System.out.println(key + "\t\t| " + value);
 				   }
-				   System.out.println("\ntablita de zVars");
+				   System.out.println("\nTabla zVars");
 				   System.out.println("-------------------");
 				   iterator = zVars.keySet().iterator();
 				   while (iterator.hasNext()) {
@@ -1223,15 +1237,7 @@ public class ExprParser extends Parser {
 							setExpressionVars.put(var, newVarName);
 						
 						String expType = types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null));
-						
-						//Si estoy en la declaracion de un conjunto por extension, si o si imprimo "in", sino depende del tipo
-						//if (modoSetExpression==1) {
-						//	if (getType(types.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null))).contains("\\upto"))
-						//		print(newVarName + " ein " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
-						//	else			
-						//		print(newVarName + " in " + memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
-						//} else
-							expType = typeInfo(newVarName, expType);
+						expType = typeInfo(newVarName, expType, memory.get((((DeclarationContext)_localctx).expression!=null?_input.getText(((DeclarationContext)_localctx).expression.start,((DeclarationContext)_localctx).expression.stop):null)));
 						
 						if (tipoSchema == 0)
 							types.put(var, expType);
@@ -3207,7 +3213,6 @@ public class ExprParser extends Parser {
 						          				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
 						          				types.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + "." + n, eType); //Arreglar
 						          				print("nth1(" + n + "," + memory.get((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null)) + "," + newVarName + ")");
-						          				typeInfo(newVarName, eType);
 						          			}
 						          		}
 						          	
