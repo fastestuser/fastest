@@ -2019,8 +2019,8 @@ public class ExprParser extends Parser {
 								print("squash(" + a + "," + newVarName + ")");
 								memory.put((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								String type = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
-								ArrayList<String> leftAndRight = childsTypes(type);
-								type = "\\seq(" + leftAndRight.get(1) + ")";
+								ArrayList<String> childsTypes = childsTypes(type);
+								type = "\\seq(" + childsTypes.get(1) + ")";
 								types.put((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), type);
 								typeInfo(newVarName, type);
 								if (modoSetExpression != 0 )
@@ -2153,8 +2153,8 @@ public class ExprParser extends Parser {
 						          				print("dres(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\dres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type2 = types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          				ArrayList<String> leftAndRight = childsTypes(type2);
-						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+						          				ArrayList<String> childsTypes = childsTypes(type2);
+						          				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\dres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2164,8 +2164,8 @@ public class ExprParser extends Parser {
 						          				print("ndres(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\ndres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type2 = types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          				ArrayList<String> leftAndRight = childsTypes(type2);
-						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+						          				ArrayList<String> childsTypes = childsTypes(type2);
+						          				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\ndres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2203,8 +2203,8 @@ public class ExprParser extends Parser {
 						          				print("rres(" + b + "," + a + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\rres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				ArrayList<String> leftAndRight = childsTypes(type1);
-						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+						          				ArrayList<String> childsTypes = childsTypes(type1);
+						          				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\rres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2214,8 +2214,8 @@ public class ExprParser extends Parser {
 						          				print("nrres(" + b + "," + a + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\nrres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				ArrayList<String> leftAndRight = childsTypes(type1);
-						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+						          				ArrayList<String> childsTypes = childsTypes(type1);
+						          				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\nrres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2252,8 +2252,8 @@ public class ExprParser extends Parser {
 						          			print("oplus(" + a + "," + b + "," + newVarName + ")");
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\oplus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          			ArrayList<String> leftAndRight = childsTypes(type1);
-						          			String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+						          			ArrayList<String> childsTypes = childsTypes(type1);
+						          			String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\oplus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          			typeInfo(newVarName, type);
 						          			if (modoSetExpression != 0 )

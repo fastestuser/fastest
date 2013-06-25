@@ -146,10 +146,17 @@ public final class SetLogGenerator {
 
 	public static HashMap<String, String> generate(String antlrInput){
 
-		String setLogInput = toSetLog(antlrInput);
-		System.out.println("**********************************************************************************************");
-		System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
-		System.out.println("**********************************************************************************************\n");
+		String setLogInput;
+		try {
+			setLogInput = toSetLog(antlrInput);
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error when translating to Setlog: " + e.toString());
+			return null;
+		}
+		//System.out.println("**********************************************************************************************");
+		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
+		//System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput);
 
 		if (setlogOutput == null) //No se encontro caso
@@ -170,7 +177,8 @@ public final class SetLogGenerator {
 		return zVars;
 	}
 
-	private static String toSetLog(String antlrInput){
+	private static String toSetLog(String antlrInput) throws Exception{
+	
 		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
 		ExprLexer lexer = new ExprLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -201,7 +209,7 @@ public final class SetLogGenerator {
 			boolean pruneClass = false;
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
-			//System.out.println("**********************************************************************************************");
+			System.out.println("**********************************************************************************************");
 			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				//System.out.println(s);
