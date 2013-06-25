@@ -181,10 +181,9 @@ grammar Expr;
 		return invertedType;
 	}
 	
-	//Metodo para obtener los tipos de los hijos izquierdo y derecho.
-	//Debe ser una funcion, un \power de \cross o una \seq
+	//Metodo para obtener los tipos de los hijos.
 	//EJ: A \pfun B devuelve A y B
-	ArrayList<String> leftAndRightTypes(String type) {
+	ArrayList<String> childsTypes(String type) {
 		ANTLRInputStream input = new ANTLRInputStream(type);
         TypeManagerLexer lexer = new TypeManagerLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -192,8 +191,8 @@ grammar Expr;
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
         
-		ArrayList<String> leftAndRight = new ArrayList<String>();
-		DefaultMutableTreeNode left, right;
+		ArrayList<String> childsTypes = new ArrayList<String>();
+		DefaultMutableTreeNode aux;
 		String rootType = (String) root.getUserObject();
 		
 		while (rootType.equals("()")) {
@@ -210,42 +209,52 @@ grammar Expr;
 				childType = (String) child.getUserObject();
 			}
 			
-			if (childType.equals("\\cross")) {
-				left = (DefaultMutableTreeNode) child.getChildAt(0);
-				while (((String) left.getUserObject()).equals("()"))
-					left = (DefaultMutableTreeNode) left.getChildAt(0);
-				right = (DefaultMutableTreeNode) child.getChildAt(1);
-				while (((String) right.getUserObject()).equals("()"))
-					right = (DefaultMutableTreeNode) right.getChildAt(0);
-				
-				leftAndRight.add(parser.printTree(left));
-				leftAndRight.add(parser.printTree(right));
+			if (childType.equals("\\cross")) { //Cambiar para multiples cross
+				int childsAmount = child.getChildCount();
+				for (int i = 0; i < childsAmount; i++) {
+					aux = (DefaultMutableTreeNode) child.getChildAt(i);
+					while (((String) aux.getUserObject()).equals("()"))
+						aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+					childsTypes.add(parser.printTree(aux));
+				}
 			}
 		
 		}
 		else if (isSequence(rootType)) { //Entonces empieza con pfun, rel etc
 
-			leftAndRight.add("\\nat");
-			right = (DefaultMutableTreeNode) root.getChildAt(0);
-			while (((String) right.getUserObject()).equals("()"))
-				right = (DefaultMutableTreeNode) right.getChildAt(0);
-			leftAndRight.add(parser.printTree(right));
+			childsTypes.add("\\nat");
+			aux = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			childsTypes.add(parser.printTree(aux));
 
 		}
-		else { //Entonces empieza con pfun, rel etc
-
-		left = (DefaultMutableTreeNode) root.getChildAt(0);
-		while (((String) left.getUserObject()).equals("()"))
-			left = (DefaultMutableTreeNode) left.getChildAt(0);
-		right = (DefaultMutableTreeNode) root.getChildAt(1);
-		while (((String) right.getUserObject()).equals("()"))
-			right = (DefaultMutableTreeNode) right.getChildAt(0);
-			
-		leftAndRight.add(parser.printTree(left));
-		leftAndRight.add(parser.printTree(right));
+		else if (rootType.equals("\\cross")) {
+		
+			int childsAmount = root.getChildCount();
+			for (int i = 0; i < childsAmount; i++) {
+				aux = (DefaultMutableTreeNode) root.getChildAt(i);
+				while (((String) aux.getUserObject()).equals("()"))
+					aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				childsTypes.add(parser.printTree(aux));
+			}
 		}
 		
-		return leftAndRight;
+		else { //Entonces empieza con pfun, rel etc
+
+		aux = (DefaultMutableTreeNode) root.getChildAt(0);
+		while (((String) aux.getUserObject()).equals("()"))
+			aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+		childsTypes.add(parser.printTree(aux));
+		
+		aux = (DefaultMutableTreeNode) root.getChildAt(1);
+		while (((String) aux.getUserObject()).equals("()"))
+			aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			
+		childsTypes.add(parser.printTree(aux));
+		}
+		
+		return childsTypes;
 	}
 	
 	private String newVar() {
@@ -418,7 +427,7 @@ grammar Expr;
 				if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
 					setExpressionVars.put("list_to_rel(" + zVar + ")", newVarName);				
 				//Hace falta ver el tipo?
-				String seqType = leftAndRightTypes(type).get(1);
+				String seqType = childsTypes(type).get(1);
 				//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
 				types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 				memory.put("list_to_rel(" + zVar + ")", newVarName);
@@ -737,7 +746,7 @@ predicate
 				print("dinters(" + a + "," + b + "," + c + ")");
 			String type = types.get($e1.text);
 			if (isSequence(getType(type)))
-				type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+				type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 			types.put($e1.text + "\\cap" + $e2.text, type);
 			//typeInfo(c, type);
 		}
@@ -946,8 +955,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("squash(" + a + "," + newVarName + ")");
 				memory.put($pre.text + $e.text, newVarName);
 				String type = types.get($e.text);
-				ArrayList<String> leftAndRight = leftAndRightTypes(type);
-				type = "\\seq(" + leftAndRight.get(1) + ")";
+				ArrayList<String> childsTypes = childsTypes(type);
+				type = "\\seq(" + childsTypes.get(1) + ")";
 				types.put($pre.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -976,7 +985,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 
 			String type1 = types.get($e1.text);
 			//getType(type1);
-			String newVarType = leftAndRightTypes(type1).get(1);
+			String newVarType = childsTypes(type1).get(1);
 			types.put($e1.text + op + $end.text, newVarType);
 			print("apply(" + a + "," + b + "," + newVarName + ")");
 			
@@ -1056,8 +1065,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("dres(" + a + "," + b + "," + newVarName + ")");
 				memory.put($e1.text + "\\dres" + $e2.text, newVarName);
 				String type2 = types.get($e2.text);
-				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
-				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				ArrayList<String> childsTypes = childsTypes(type2);
+				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 				types.put($e1.text + "\\dres" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1067,8 +1076,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("ndres(" + a + "," + b + "," + newVarName + ")");
 				memory.put($e1.text + "\\ndres" + $e2.text, newVarName);
 				String type2 = types.get($e2.text);
-				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
-				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				ArrayList<String> childsTypes = childsTypes(type2);
+				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 				types.put($e1.text + "\\ndres" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1095,8 +1104,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("rres(" + b + "," + a + "," + newVarName + ")");
 				memory.put($e1.text + "\\rres" + $e2.text, newVarName);
 				String type1 = types.get($e1.text);
-				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				ArrayList<String> childsTypes = childsTypes(type1);
+				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 				types.put($e1.text + "\\rres" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1106,8 +1115,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("nrres(" + b + "," + a + "," + newVarName + ")");
 				memory.put($e1.text + "\\nrres" + $e2.text, newVarName);
 				String type1 = types.get($e1.text);
-				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+				ArrayList<String> childsTypes = childsTypes(type1);
+				String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 				types.put($e1.text + "\\nrres" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1133,8 +1142,8 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			print("oplus(" + a + "," + b + "," + newVarName + ")");
 			memory.put($e1.text + "\\oplus" + $e2.text, newVarName);
 			String type1 = types.get($e1.text);
-			ArrayList<String> leftAndRight = leftAndRightTypes(type1);
-			String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
+			ArrayList<String> childsTypes = childsTypes(type1);
+			String type = "\\power((" + childsTypes.get(0) + ")\\cross(" + childsTypes.get(1) + "))";
 			types.put($e1.text + "\\oplus" + $e2.text, type);
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
@@ -1211,7 +1220,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				if (getType(type).contains("\\upto"))
 					type = "\\power\\num";
 				else if (isSequence(getType(type)))
-					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 				types.put($e1.text + "\\cap" + $e2.text, type);
 				//typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1227,7 +1236,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put($e1.text + "\\comp" + $e2.text, newVarName);
 				String type1 = types.get($e1.text);
 				String type2 = types.get($e2.text);
-				String type = "\\power((" + leftAndRightTypes(type1).get(0) + ")\\cross(" + leftAndRightTypes(type2).get(1) + "))";
+				String type = "\\power((" + childsTypes(type1).get(0) + ")\\cross(" + childsTypes(type2).get(1) + "))";
 				types.put($e1.text + "\\comp" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1242,7 +1251,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				print("circ(" + a + "," + b + "," + newVarName + ")");
 				memory.put($e1.text + "\\circ" + $e2.text, newVarName);
 				String type1 = types.get($e1.text);
-				type1 = leftAndRightTypes(type1).get(1);
+				type1 = childsTypes(type1).get(1);
 				String type = "\\power((" + type1 + ")\\cross(" + type1 + "))";
 				types.put($e1.text + "\\circ" + $e2.text, type);
 				typeInfo(newVarName, type);
@@ -1304,7 +1313,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				if (getType(type).contains("\\upto"))
 					type = "\\power\\num";
 				else if (isSequence(getType(type)))
-					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 				types.put($e1.text + "\\cup" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1322,7 +1331,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				if (getType(type).contains("\\upto"))
 					type = "\\power\\num";
 				else if (isSequence(getType(type)))
-					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 				types.put($e1.text + "\\setminus" + $e2.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1637,7 +1646,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else { //Se pide el elemento de una tupla
 				String newVarName = newVar();
 				memory.put($end.text + "." + n, newVarName);
-				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
+				eType = childsTypes(eType).get(Integer.parseInt(n)-1);
 				types.put($end.text + "." + n, eType); //Arreglar
 				print("nth1(" + n + "," + memory.get($end.text) + "," + newVarName + ")");
 			}
@@ -1661,7 +1670,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put($end.text + op, newVarName);
 				String type = types.get($end.text);
 				if (isSequence(getType(type)))
-					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 				type = invertType(type); 
 				types.put($end.text + op, type);
 				typeInfo(newVarName, type);

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import client.blogic.management.Controller;
+
 
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.z.ParseUtils;
@@ -41,6 +43,7 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.TypesExtractor;
+import compserver.prunning.TreePruner;
 import compserver.tcasegen.strategies.setlog.*;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
@@ -51,16 +54,18 @@ public final class SetLogStrategy implements TCaseStrategy{
 	private Map<RefExpr, Expr> axDefsValues;
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
-	private List<String> basicTypeNames; 
+	private List<String> basicTypeNames;
+	private Controller controller; 
 
 
 	
 
-	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames) {
+	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames, Controller controller) {
 		this.axDefsValues = axDefsValues;
 		this.basicAxDefs = basicAxDefs;
 		this.freeParas = freeParas;
 		this.basicTypeNames = basicTypeNames;
+		this.controller = controller;
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
@@ -169,7 +174,11 @@ public final class SetLogStrategy implements TCaseStrategy{
 		
 		if (zVars == null) //No encontro caso
 			return null;
-
+		else if (zVars.isEmpty()) { //Dio False
+			boolean result = (new TreePruner(controller)).pruneFalseNode(tClassName);
+			return null;
+		}
+		
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
 		//Map<String, String> zVars = parser2.getZVars();

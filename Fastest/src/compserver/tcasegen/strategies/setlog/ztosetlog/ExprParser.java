@@ -242,10 +242,9 @@ public class ExprParser extends Parser {
 			return invertedType;
 		}
 		
-		//Metodo para obtener los tipos de los hijos izquierdo y derecho.
-		//Debe ser una funcion, un \power de \cross o una \seq
+		//Metodo para obtener los tipos de los hijos.
 		//EJ: A \pfun B devuelve A y B
-		ArrayList<String> leftAndRightTypes(String type) {
+		ArrayList<String> childsTypes(String type) {
 			ANTLRInputStream input = new ANTLRInputStream(type);
 	        TypeManagerLexer lexer = new TypeManagerLexer(input);
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -253,8 +252,8 @@ public class ExprParser extends Parser {
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
 	        
-			ArrayList<String> leftAndRight = new ArrayList<String>();
-			DefaultMutableTreeNode left, right;
+			ArrayList<String> childsTypes = new ArrayList<String>();
+			DefaultMutableTreeNode aux;
 			String rootType = (String) root.getUserObject();
 			
 			while (rootType.equals("()")) {
@@ -271,42 +270,52 @@ public class ExprParser extends Parser {
 					childType = (String) child.getUserObject();
 				}
 				
-				if (childType.equals("\\cross")) {
-					left = (DefaultMutableTreeNode) child.getChildAt(0);
-					while (((String) left.getUserObject()).equals("()"))
-						left = (DefaultMutableTreeNode) left.getChildAt(0);
-					right = (DefaultMutableTreeNode) child.getChildAt(1);
-					while (((String) right.getUserObject()).equals("()"))
-						right = (DefaultMutableTreeNode) right.getChildAt(0);
-					
-					leftAndRight.add(parser.printTree(left));
-					leftAndRight.add(parser.printTree(right));
+				if (childType.equals("\\cross")) { //Cambiar para multiples cross
+					int childsAmount = child.getChildCount();
+					for (int i = 0; i < childsAmount; i++) {
+						aux = (DefaultMutableTreeNode) child.getChildAt(i);
+						while (((String) aux.getUserObject()).equals("()"))
+							aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+						childsTypes.add(parser.printTree(aux));
+					}
 				}
 			
 			}
 			else if (isSequence(rootType)) { //Entonces empieza con pfun, rel etc
 
-				leftAndRight.add("\\nat");
-				right = (DefaultMutableTreeNode) root.getChildAt(0);
-				while (((String) right.getUserObject()).equals("()"))
-					right = (DefaultMutableTreeNode) right.getChildAt(0);
-				leftAndRight.add(parser.printTree(right));
+				childsTypes.add("\\nat");
+				aux = (DefaultMutableTreeNode) root.getChildAt(0);
+				while (((String) aux.getUserObject()).equals("()"))
+					aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				childsTypes.add(parser.printTree(aux));
 
 			}
-			else { //Entonces empieza con pfun, rel etc
-
-			left = (DefaultMutableTreeNode) root.getChildAt(0);
-			while (((String) left.getUserObject()).equals("()"))
-				left = (DefaultMutableTreeNode) left.getChildAt(0);
-			right = (DefaultMutableTreeNode) root.getChildAt(1);
-			while (((String) right.getUserObject()).equals("()"))
-				right = (DefaultMutableTreeNode) right.getChildAt(0);
-				
-			leftAndRight.add(parser.printTree(left));
-			leftAndRight.add(parser.printTree(right));
+			else if (rootType.equals("\\cross")) {
+			
+				int childsAmount = root.getChildCount();
+				for (int i = 0; i < childsAmount; i++) {
+					aux = (DefaultMutableTreeNode) root.getChildAt(i);
+					while (((String) aux.getUserObject()).equals("()"))
+						aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+					childsTypes.add(parser.printTree(aux));
+				}
 			}
 			
-			return leftAndRight;
+			else { //Entonces empieza con pfun, rel etc
+
+			aux = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			childsTypes.add(parser.printTree(aux));
+			
+			aux = (DefaultMutableTreeNode) root.getChildAt(1);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				
+			childsTypes.add(parser.printTree(aux));
+			}
+			
+			return childsTypes;
 		}
 		
 		private String newVar() {
@@ -479,7 +488,7 @@ public class ExprParser extends Parser {
 					if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
 						setExpressionVars.put("list_to_rel(" + zVar + ")", newVarName);				
 					//Hace falta ver el tipo?
-					String seqType = leftAndRightTypes(type).get(1);
+					String seqType = childsTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
 					types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 					memory.put("list_to_rel(" + zVar + ")", newVarName);
@@ -1597,7 +1606,7 @@ public class ExprParser extends Parser {
 								print("dinters(" + a + "," + b + "," + c + ")");
 							String type = types.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
 							if (isSequence(getType(type)))
-								type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+								type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 							types.put((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null) + "\\cap" + (((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null), type);
 							//typeInfo(c, type);
 						}
@@ -1793,11 +1802,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -2010,7 +2019,7 @@ public class ExprParser extends Parser {
 								print("squash(" + a + "," + newVarName + ")");
 								memory.put((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), newVarName);
 								String type = types.get((((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null));
-								ArrayList<String> leftAndRight = leftAndRightTypes(type);
+								ArrayList<String> leftAndRight = childsTypes(type);
 								type = "\\seq(" + leftAndRight.get(1) + ")";
 								types.put((((ExpressionContext)_localctx).pre!=null?_input.getText(((ExpressionContext)_localctx).pre.start,((ExpressionContext)_localctx).pre.stop):null) + (((ExpressionContext)_localctx).e!=null?_input.getText(((ExpressionContext)_localctx).e.start,((ExpressionContext)_localctx).e.stop):null), type);
 								typeInfo(newVarName, type);
@@ -2144,7 +2153,7 @@ public class ExprParser extends Parser {
 						          				print("dres(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\dres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type2 = types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
+						          				ArrayList<String> leftAndRight = childsTypes(type2);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\dres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2155,7 +2164,7 @@ public class ExprParser extends Parser {
 						          				print("ndres(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\ndres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type2 = types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          				ArrayList<String> leftAndRight = leftAndRightTypes(type2);
+						          				ArrayList<String> leftAndRight = childsTypes(type2);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\ndres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2194,7 +2203,7 @@ public class ExprParser extends Parser {
 						          				print("rres(" + b + "," + a + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\rres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+						          				ArrayList<String> leftAndRight = childsTypes(type1);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\rres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2205,7 +2214,7 @@ public class ExprParser extends Parser {
 						          				print("nrres(" + b + "," + a + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\nrres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+						          				ArrayList<String> leftAndRight = childsTypes(type1);
 						          				String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\nrres" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2243,7 +2252,7 @@ public class ExprParser extends Parser {
 						          			print("oplus(" + a + "," + b + "," + newVarName + ")");
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\oplus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          			ArrayList<String> leftAndRight = leftAndRightTypes(type1);
+						          			ArrayList<String> leftAndRight = childsTypes(type1);
 						          			String type = "\\power((" + leftAndRight.get(0) + ")\\cross(" + leftAndRight.get(1) + "))";
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\oplus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          			typeInfo(newVarName, type);
@@ -2343,7 +2352,7 @@ public class ExprParser extends Parser {
 						          				if (getType(type).contains("\\upto"))
 						          					type = "\\power\\num";
 						          				else if (isSequence(getType(type)))
-						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+						          					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cap" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				//typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2359,7 +2368,7 @@ public class ExprParser extends Parser {
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\comp" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          				String type2 = types.get((((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null));
-						          				String type = "\\power((" + leftAndRightTypes(type1).get(0) + ")\\cross(" + leftAndRightTypes(type2).get(1) + "))";
+						          				String type = "\\power((" + childsTypes(type1).get(0) + ")\\cross(" + childsTypes(type2).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\comp" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2374,7 +2383,7 @@ public class ExprParser extends Parser {
 						          				print("circ(" + a + "," + b + "," + newVarName + ")");
 						          				memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\circ" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), newVarName);
 						          				String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          				type1 = leftAndRightTypes(type1).get(1);
+						          				type1 = childsTypes(type1).get(1);
 						          				String type = "\\power((" + type1 + ")\\cross(" + type1 + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\circ" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
@@ -2447,7 +2456,7 @@ public class ExprParser extends Parser {
 						          				if (getType(type).contains("\\upto"))
 						          					type = "\\power\\num";
 						          				else if (isSequence(getType(type)))
-						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+						          					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\cup" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2465,7 +2474,7 @@ public class ExprParser extends Parser {
 						          				if (getType(type).contains("\\upto"))
 						          					type = "\\power\\num";
 						          				else if (isSequence(getType(type)))
-						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+						          					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + "\\setminus" + (((ExpressionContext)_localctx).e2!=null?_input.getText(((ExpressionContext)_localctx).e2.start,((ExpressionContext)_localctx).e2.stop):null), type);
 						          				typeInfo(newVarName, type);
 						          				if (modoSetExpression != 0 )
@@ -2584,7 +2593,7 @@ public class ExprParser extends Parser {
 
 						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          			//getType(type1);
-						          			String newVarType = leftAndRightTypes(type1).get(1);
+						          			String newVarType = childsTypes(type1).get(1);
 						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarType);
 						          			print("apply(" + a + "," + b + "," + newVarName + ")");
 						          			
@@ -3210,7 +3219,7 @@ public class ExprParser extends Parser {
 						          			else { //Se pide el elemento de una tupla
 						          				String newVarName = newVar();
 						          				memory.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + "." + n, newVarName);
-						          				eType = leftAndRightTypes(eType).get(Integer.parseInt(n)-1);
+						          				eType = childsTypes(eType).get(Integer.parseInt(n)-1);
 						          				types.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + "." + n, eType); //Arreglar
 						          				print("nth1(" + n + "," + memory.get((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null)) + "," + newVarName + ")");
 						          			}
@@ -3244,7 +3253,7 @@ public class ExprParser extends Parser {
 						          				memory.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + op, newVarName);
 						          				String type = types.get((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null));
 						          				if (isSequence(getType(type)))
-						          					type = "\\power(\\nat\\cross(" + leftAndRightTypes(type).get(1) + "))";
+						          					type = "\\power(\\nat\\cross(" + childsTypes(type).get(1) + "))";
 						          				type = invertType(type); 
 						          				types.put((((EndExpressionContext)_localctx).end!=null?_input.getText(((EndExpressionContext)_localctx).end.start,((EndExpressionContext)_localctx).end.stop):null) + op, type);
 						          				typeInfo(newVarName, type);

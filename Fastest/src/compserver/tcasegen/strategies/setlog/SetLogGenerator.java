@@ -154,6 +154,8 @@ public final class SetLogGenerator {
 
 		if (setlogOutput == null) //No se encontro caso
 			return null;
+		else if (setlogOutput.equals("FALSE"))
+			return new HashMap<String, String>() ;
 
 		zNames = SetLogUtils.invertHashMap(parser.getMemory());
 		tipos = parser.getTypes();
@@ -196,15 +198,20 @@ public final class SetLogGenerator {
 			out.write(goal.getBytes());
 			out.close();
 
+			boolean pruneClass = false;
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
 			//System.out.println("**********************************************************************************************");
 			System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				//System.out.println(s);
-				if (s.equals("false.") || s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
+				if (s.equals("false.")) {
+					pruneClass = true;
+					break;
+				}
+				else if (s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
 					return null;
-				if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
+				else if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");
 				}else if(s.startsWith("_CONSTR")){
 					setlogOutput = s +"\n"+ setlogOutput;
@@ -213,6 +220,10 @@ public final class SetLogGenerator {
 			}
 			System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
 			System.out.println("**********************************************************************************************\n");
+			
+			if (pruneClass) {
+				return "FALSE";
+			}
 
 		}
 		catch (Exception e){ 

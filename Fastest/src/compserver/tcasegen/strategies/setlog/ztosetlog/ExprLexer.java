@@ -238,10 +238,9 @@ public class ExprLexer extends Lexer {
 			return invertedType;
 		}
 		
-		//Metodo para obtener los tipos de los hijos izquierdo y derecho.
-		//Debe ser una funcion, un \power de \cross o una \seq
+		//Metodo para obtener los tipos de los hijos.
 		//EJ: A \pfun B devuelve A y B
-		ArrayList<String> leftAndRightTypes(String type) {
+		ArrayList<String> childsTypes(String type) {
 			ANTLRInputStream input = new ANTLRInputStream(type);
 	        TypeManagerLexer lexer = new TypeManagerLexer(input);
 	        CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -249,8 +248,8 @@ public class ExprLexer extends Lexer {
 	        parser.typeManage();
 	        DefaultMutableTreeNode root = parser.getRoot();
 	        
-			ArrayList<String> leftAndRight = new ArrayList<String>();
-			DefaultMutableTreeNode left, right;
+			ArrayList<String> childsTypes = new ArrayList<String>();
+			DefaultMutableTreeNode aux;
 			String rootType = (String) root.getUserObject();
 			
 			while (rootType.equals("()")) {
@@ -267,42 +266,52 @@ public class ExprLexer extends Lexer {
 					childType = (String) child.getUserObject();
 				}
 				
-				if (childType.equals("\\cross")) {
-					left = (DefaultMutableTreeNode) child.getChildAt(0);
-					while (((String) left.getUserObject()).equals("()"))
-						left = (DefaultMutableTreeNode) left.getChildAt(0);
-					right = (DefaultMutableTreeNode) child.getChildAt(1);
-					while (((String) right.getUserObject()).equals("()"))
-						right = (DefaultMutableTreeNode) right.getChildAt(0);
-					
-					leftAndRight.add(parser.printTree(left));
-					leftAndRight.add(parser.printTree(right));
+				if (childType.equals("\\cross")) { //Cambiar para multiples cross
+					int childsAmount = child.getChildCount();
+					for (int i = 0; i < childsAmount; i++) {
+						aux = (DefaultMutableTreeNode) child.getChildAt(i);
+						while (((String) aux.getUserObject()).equals("()"))
+							aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+						childsTypes.add(parser.printTree(aux));
+					}
 				}
 			
 			}
 			else if (isSequence(rootType)) { //Entonces empieza con pfun, rel etc
 
-				leftAndRight.add("\\nat");
-				right = (DefaultMutableTreeNode) root.getChildAt(0);
-				while (((String) right.getUserObject()).equals("()"))
-					right = (DefaultMutableTreeNode) right.getChildAt(0);
-				leftAndRight.add(parser.printTree(right));
+				childsTypes.add("\\nat");
+				aux = (DefaultMutableTreeNode) root.getChildAt(0);
+				while (((String) aux.getUserObject()).equals("()"))
+					aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				childsTypes.add(parser.printTree(aux));
 
 			}
-			else { //Entonces empieza con pfun, rel etc
-
-			left = (DefaultMutableTreeNode) root.getChildAt(0);
-			while (((String) left.getUserObject()).equals("()"))
-				left = (DefaultMutableTreeNode) left.getChildAt(0);
-			right = (DefaultMutableTreeNode) root.getChildAt(1);
-			while (((String) right.getUserObject()).equals("()"))
-				right = (DefaultMutableTreeNode) right.getChildAt(0);
-				
-			leftAndRight.add(parser.printTree(left));
-			leftAndRight.add(parser.printTree(right));
+			else if (rootType.equals("\\cross")) {
+			
+				int childsAmount = root.getChildCount();
+				for (int i = 0; i < childsAmount; i++) {
+					aux = (DefaultMutableTreeNode) root.getChildAt(i);
+					while (((String) aux.getUserObject()).equals("()"))
+						aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+					childsTypes.add(parser.printTree(aux));
+				}
 			}
 			
-			return leftAndRight;
+			else { //Entonces empieza con pfun, rel etc
+
+			aux = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			childsTypes.add(parser.printTree(aux));
+			
+			aux = (DefaultMutableTreeNode) root.getChildAt(1);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				
+			childsTypes.add(parser.printTree(aux));
+			}
+			
+			return childsTypes;
 		}
 		
 		private String newVar() {
@@ -475,7 +484,7 @@ public class ExprLexer extends Lexer {
 					if (modoSetExpression != 0 ) //Si estoy dentro de un conjunto
 						setExpressionVars.put("list_to_rel(" + zVar + ")", newVarName);				
 					//Hace falta ver el tipo?
-					String seqType = leftAndRightTypes(type).get(1);
+					String seqType = childsTypes(type).get(1);
 					//typeInfo(newVarName, "\\power(\\nat\\cross(" + seqType + "))");
 					types.put("list_to_rel(" + zVar + ")", "\\power(\\nat\\cross(" + seqType + "))");
 					memory.put("list_to_rel(" + zVar + ")", newVarName);

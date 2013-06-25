@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.visitors.TTreeFromPruner;
 import client.blogic.testing.ttree.visitors.TTreeBelowPruner;
@@ -143,5 +144,33 @@ public class TreePruner {
 		ResultPrune resultPrune = new ResultPrune(tClassName, theoremName, params, result);
 		return resultPrune;
 
+	}
+	
+	/*This method is called when  anode is found false when genalltca is called
+	 * 
+	 * 
+	 */
+	public boolean pruneFalseNode(String tClassName)
+	{
+		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+		Boolean result = new Boolean(false);
+		TTreeFromPruner tTreeFromPruner = new TTreeFromPruner(tClassName, true);
+		while(iterator.hasNext() && !result.booleanValue()){
+			Map.Entry<String, TClassNode> mapEntry = iterator.next();
+			TClassNode opTTreeRoot = mapEntry.getValue();
+			TClassNode dadNode = opTTreeRoot.getDadNode();
+			result = opTTreeRoot.acceptVisitor(tTreeFromPruner);
+			if (dadNode != null) { //Mi padre no es el VIS
+				AbstractRepository<? extends TTreeNode> childs = dadNode.getChildren();
+				if (!childs.createIterator().hasNext()) { //is empty
+					System.out.println("HAY QUE HACER GENALLTCA DEL PADREEEE");	
+				}
+				
+			}
+		}          
+
+		return result.booleanValue();
 	}
 }

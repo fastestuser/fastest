@@ -82,13 +82,13 @@ public class TCaseGenClient extends IIComponent {
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());
                 //MODIFICADO AtomicPredTCaseStrategy por SetLogStrategy
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
-            	tCaseStrategy = new SetLogStrategy(axDefsValues,basicAxDefs,freeParas,basicTypeNames);
+            	tCaseStrategy = new SetLogStrategy(axDefsValues,basicAxDefs,freeParas,basicTypeNames, controller);
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new ZeroIntFiniteModel(12), new ZeroNatFiniteModel(12), mapTTree);
             }
                 
             if(spec==null)
                 return;
-                (new Thread(new TCaseGenClientRunner(spec, opName, tClass, tCaseStrategy))).start();
+            (new Thread(new TCaseGenClientRunner(spec, opName, tClass, tCaseStrategy))).start();
             }
             else if(event_ instanceof TCaseStrategySelected){
                 TCaseStrategySelected tCaseStrategySelected = (TCaseStrategySelected)event_;

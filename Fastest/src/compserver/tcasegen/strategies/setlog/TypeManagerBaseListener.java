@@ -15,6 +15,9 @@ public class TypeManagerBaseListener implements TypeManagerListener {
 	@Override public void enterTypeManage(TypeManagerParser.TypeManageContext ctx) { }
 	@Override public void exitTypeManage(TypeManagerParser.TypeManageContext ctx) { }
 
+	@Override public void enterTypeCross(TypeManagerParser.TypeCrossContext ctx) { }
+	@Override public void exitTypeCross(TypeManagerParser.TypeCrossContext ctx) { }
+
 	@Override public void enterTypeManageNorm(TypeManagerParser.TypeManageNormContext ctx) { }
 	@Override public void exitTypeManageNorm(TypeManagerParser.TypeManageNormContext ctx) { }
 
