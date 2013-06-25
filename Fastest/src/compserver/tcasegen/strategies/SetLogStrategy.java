@@ -9,6 +9,12 @@ import java.util.Map;
 import java.util.Set;
 
 import client.blogic.management.Controller;
+import client.blogic.management.ii.EventAdmin;
+import client.blogic.management.ii.events.TCaseRequested;
+import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.TTreeNode;
+import client.presentation.ClientTextUI;
+import client.presentation.ClientUI;
 
 
 import net.sourceforge.czt.animation.eval.ZLive;
@@ -32,6 +38,9 @@ import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
+import common.fastest.FastestUtils;
+import common.repository.AbstractIterator;
+import common.repository.AbstractRepository;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
@@ -42,6 +51,7 @@ import common.z.czt.UniqueZLive;
 
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
+import common.z.czt.visitors.TClassNodeUnfolder;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.prunning.TreePruner;
 import compserver.tcasegen.strategies.setlog.*;
@@ -55,17 +65,17 @@ public final class SetLogStrategy implements TCaseStrategy{
 	private Map<String, List<String>> basicAxDefs;
 	private List<FreePara> freeParas;
 	private List<String> basicTypeNames;
-	private Controller controller; 
+	private ClientUI clientUI; 
 
 
 	
 
-	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames, Controller controller) {
+	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames, ClientUI clientUI) {
 		this.axDefsValues = axDefsValues;
 		this.basicAxDefs = basicAxDefs;
 		this.freeParas = freeParas;
 		this.basicTypeNames = basicTypeNames;
-		this.controller = controller;
+		this.clientUI = clientUI;
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
@@ -175,7 +185,54 @@ public final class SetLogStrategy implements TCaseStrategy{
 		if (zVars == null) //No encontro caso
 			return null;
 		else if (zVars.isEmpty()) { //Dio False
-			boolean result = (new TreePruner(controller)).pruneFalseNode(tClassName);
+			Controller controller = clientUI.getMyController();
+			boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
+			//Pruneado el nodo, debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
+			
+			//Agregado Joa, ver donde va
+			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+			TTreeNode tClassNode = FastestUtils.getTTreeNode(controller, tClassName);
+            TClassNode dadNode = tClassNode.getDadNode();
+            if (dadNode != null) {
+            	AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
+            	AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
+            	Boolean allChildsPruned = new Boolean(true);
+				while(childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
+					TTreeNode child = childsNodeIt.next();
+					if (child instanceof TClassNode) {
+						allChildsPruned = ((TClassNode) child).isPruned();
+					}
+				}
+				if (allChildsPruned) {
+					System.out.println("Hay que generar para " + dadNode.getValue().getSchName());
+					EventAdmin eventAdmin = null;
+					try {
+						eventAdmin = EventAdmin.getInstance();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					}
+					//TClassNode tClassNode = tClassNodeIt.next();
+                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, controller);
+                    dadNode.acceptVisitor(tClassNodeUnfolder);
+                    TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
+                    //System.out.println("Eschemas:\n" + SpecUtils.termToLatex(tClass.getMyAxPara()));                    
+                    TCaseRequested tCaseRequested = new TCaseRequested(dadClass.getSchName(), dadClass, controller.getMaxEval());
+                    eventAdmin.announceEvent(tCaseRequested);
+                    /*synchronized (clientUI) {
+                    	try {
+							clientUI.wait();
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+                    }*/
+				}
+            }
+            /////////////////////////////
+			
+			
+			
+			
+			
 			return null;
 		}
 		

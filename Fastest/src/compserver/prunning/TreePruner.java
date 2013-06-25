@@ -160,15 +160,17 @@ public class TreePruner {
 		while(iterator.hasNext() && !result.booleanValue()){
 			Map.Entry<String, TClassNode> mapEntry = iterator.next();
 			TClassNode opTTreeRoot = mapEntry.getValue();
-			TClassNode dadNode = opTTreeRoot.getDadNode();
+			//TClassNode dadNode = opTTreeRoot.getDadNode();
 			result = opTTreeRoot.acceptVisitor(tTreeFromPruner);
-			if (dadNode != null) { //Mi padre no es el VIS
-				AbstractRepository<? extends TTreeNode> childs = dadNode.getChildren();
-				if (!childs.createIterator().hasNext()) { //is empty
-					System.out.println("HAY QUE HACER GENALLTCA DEL PADREEEE");	
-				}
+			
+			
+			//if (dadNode != null) { //Mi padre no es el VIS
+			//	AbstractRepository<? extends TTreeNode> childs = dadNode.getChildren();
+			//	if (!childs.createIterator().hasNext()) { //is empty
+			//		System.out.println("HAY QUE HACER GENALLTCA DEL PADREEEE");	
+			//	}
 				
-			}
+			//}
 		}          
 
 		return result.booleanValue();
