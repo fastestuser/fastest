@@ -28,7 +28,7 @@ public final class SetLogGenerator {
 	}
 
 	//cambia los caracteres de setlog [] por langlerangle, etc...
-	private static String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS){
+	private static String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS) throws Exception{
 		ExprIterator expr = new ExprIterator(exprS);
 
 		String ct = nodo.toString();
@@ -56,26 +56,14 @@ public final class SetLogGenerator {
 		}
 		
 		if (ct.equals("\\cross")){
-			
 			String salida = "";
-			ExprIterator eAux = new ExprIterator(expr.next());
-			DefaultMutableTreeNode izq = (DefaultMutableTreeNode) nodo.getChildAt(0);
-			DefaultMutableTreeNode der = (DefaultMutableTreeNode) nodo.getChildAt(1);
-			String coma = ",";
-			if (izq.toString().equals("\\cross"))
-				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(0),eAux.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq.getChildAt(1),eAux.next()); 
-			else {
-				coma = "\\mapsto ";
-				salida = setLogToLatexCharsReplacer((DefaultMutableTreeNode) izq,eAux.toString());
+			String coma = nodo.getChildCount()>2?",":" \\mapsto ";
+			int i = 0;
+			while(expr.hasNext()){
+				salida += coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(i),expr.next());
+				i++;
 			}
-			eAux = new ExprIterator(expr.next());
-						
-			if (der.toString().equals("\\cross"))
-				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der.getChildAt(0),eAux.next()) + "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der.getChildAt(1),eAux.next()); 
-			else{
-				salida += coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) der,eAux.toString());
-			}
-			return "(" + salida + ")";
+			return "(" + salida.substring(1) + ")";
 		}
 		
 		if (ct.equals("\\power")){
@@ -129,7 +117,7 @@ public final class SetLogGenerator {
 		return exprS;
 	}
 
-	private static void setLogToLatexCharsReplacer(){
+	private static void setLogToLatexCharsReplacer() throws Exception{
 		postfijo=0;
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
@@ -151,7 +139,7 @@ public final class SetLogGenerator {
 			setLogInput = toSetLog(antlrInput);
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Error when translating to Setlog: " + e.toString());
+			System.out.println("Error when translating to {log}: " + e.toString());
 			return null;
 		}
 		//System.out.println("**********************************************************************************************");
@@ -170,10 +158,17 @@ public final class SetLogGenerator {
 		//SetLogUtils.printHashMap(zVars);
 
 		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
-		zvf.generar();
-
-		setLogToLatexCharsReplacer();
-
+		
+		try{
+			zvf.generar();
+			setLogToLatexCharsReplacer();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("Error when translating from {log}: " + e.toString());
+			return null;
+		}
+		
 		return zVars;
 	}
 

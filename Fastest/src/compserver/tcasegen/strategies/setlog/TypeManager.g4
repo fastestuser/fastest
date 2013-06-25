@@ -58,14 +58,21 @@ typeCross returns [DefaultMutableTreeNode node]
 		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
 		;
 
+typeNormCross returns [DefaultMutableTreeNode node]
+		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}
+		|	a=typeNorm BINOP b=typeNorm {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
+		|	'(' a=typeNorm ')' {$node = new DefaultMutableTreeNode("()"); $node.add($a.node);}
+		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
+		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
+		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}
+		|	NAME {$node = new DefaultMutableTreeNode($NAME.text);}
+		| 	e1=(NUM|NAME) '\\upto' e2=(NUM|NAME) {$node = new DefaultMutableTreeNode($e1.text + "\\upto" + $e2.text);}
+		;
+
 typeNorm returns [DefaultMutableTreeNode node]
 		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}
-		|	a=typeNorm '\\cross' b=typeNorm
-				{
-					$node = new DefaultMutableTreeNode("\\cross");
-					$node.add($a.node); 
-					$node.add($b.node);
-				}	
+		|	a=typeNorm {$node = new DefaultMutableTreeNode("\\cross"); $node.add($a.node);}
+		    ('\\cross' c=typeNormCross {$node.add($c.node);})+ 	
 		|	a=typeNorm BINOP b=typeNorm 
 				{
 					$node = new DefaultMutableTreeNode("\\power"); 

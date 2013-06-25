@@ -1802,11 +1802,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }

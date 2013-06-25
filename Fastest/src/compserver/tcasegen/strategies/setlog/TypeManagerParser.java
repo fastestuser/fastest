@@ -28,9 +28,10 @@ public class TypeManagerParser extends Parser {
 	};
 	public static final int
 		RULE_typeManage = 0, RULE_typeManageNorm = 1, RULE_type = 2, RULE_typeCross = 3, 
-		RULE_typeNorm = 4;
+		RULE_typeNormCross = 4, RULE_typeNorm = 5;
 	public static final String[] ruleNames = {
-		"typeManage", "typeManageNorm", "type", "typeCross", "typeNorm"
+		"typeManage", "typeManageNorm", "type", "typeCross", "typeNormCross", 
+		"typeNorm"
 	};
 
 	@Override
@@ -93,7 +94,7 @@ public class TypeManagerParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(10); ((TypeManageContext)_localctx).type = type(0);
+			setState(12); ((TypeManageContext)_localctx).type = type(0);
 			root = ((TypeManageContext)_localctx).type.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/
 			}
 		}
@@ -133,7 +134,7 @@ public class TypeManagerParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(13); ((TypeManageNormContext)_localctx).typeNorm = typeNorm(0);
+			setState(15); ((TypeManageNormContext)_localctx).typeNorm = typeNorm(0);
 			root = ((TypeManageNormContext)_localctx).typeNorm.node; /*System.out.println("Root: " + printTree(root)); System.out.println("Node1: " + getReturnNodeType(0));*/
 			}
 		}
@@ -209,64 +210,64 @@ public class TypeManagerParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38);
+			setState(40);
 			switch ( getInterpreter().adaptivePredict(_input,0,_ctx) ) {
 			case 1:
 				{
-				setState(17); ((TypeContext)_localctx).UNOP = match(UNOP);
-				setState(18); ((TypeContext)_localctx).a = type(9);
+				setState(19); ((TypeContext)_localctx).UNOP = match(UNOP);
+				setState(20); ((TypeContext)_localctx).a = type(9);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).UNOP!=null?((TypeContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 
 			case 2:
 				{
-				setState(21); match(4);
-				setState(22); ((TypeContext)_localctx).a = type(0);
-				setState(23); match(3);
+				setState(23); match(4);
+				setState(24); ((TypeContext)_localctx).a = type(0);
+				setState(25); match(3);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeContext)_localctx).a.node);
 				}
 				break;
 
 			case 3:
 				{
-				setState(26); match(5);
+				setState(28); match(5);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
 				}
 				break;
 
 			case 4:
 				{
-				setState(28); match(7);
+				setState(30); match(7);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\nat_{1}");
 				}
 				break;
 
 			case 5:
 				{
-				setState(30); match(1);
+				setState(32); match(1);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\nat");
 				}
 				break;
 
 			case 6:
 				{
-				setState(32); ((TypeContext)_localctx).NAME = match(NAME);
+				setState(34); ((TypeContext)_localctx).NAME = match(NAME);
 				((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).NAME!=null?((TypeContext)_localctx).NAME.getText():null));
 				}
 				break;
 
 			case 7:
 				{
-				setState(34);
+				setState(36);
 				((TypeContext)_localctx).e1 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
 					((TypeContext)_localctx).e1 = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(35); match(2);
-				setState(36);
+				setState(37); match(2);
+				setState(38);
 				((TypeContext)_localctx).e2 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
@@ -278,7 +279,7 @@ public class TypeManagerParser extends Parser {
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(57);
+			setState(59);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
@@ -286,17 +287,17 @@ public class TypeManagerParser extends Parser {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(55);
+					setState(57);
 					switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 					case 1:
 						{
 						_localctx = new TypeContext(_parentctx, _parentState, _p);
 						_localctx.a = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
-						setState(40);
+						setState(42);
 						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(41); ((TypeContext)_localctx).BINOP = match(BINOP);
-						setState(42); ((TypeContext)_localctx).b = type(8);
+						setState(43); ((TypeContext)_localctx).BINOP = match(BINOP);
+						setState(44); ((TypeContext)_localctx).b = type(8);
 						((TypeContext)_localctx).node =  new DefaultMutableTreeNode((((TypeContext)_localctx).BINOP!=null?((TypeContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeContext)_localctx).a.node); _localctx.node.add(((TypeContext)_localctx).b.node);
 						}
 						break;
@@ -306,10 +307,10 @@ public class TypeManagerParser extends Parser {
 						_localctx = new TypeContext(_parentctx, _parentState, _p);
 						_localctx.a = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_type);
-						setState(45);
+						setState(47);
 						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
 						((TypeContext)_localctx).node =  new DefaultMutableTreeNode("\\cross"); _localctx.node.add(((TypeContext)_localctx).a.node);
-						setState(51); 
+						setState(53); 
 						_errHandler.sync(this);
 						_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 						do {
@@ -317,8 +318,8 @@ public class TypeManagerParser extends Parser {
 							case 1:
 								{
 								{
-								setState(47); match(6);
-								setState(48); ((TypeContext)_localctx).c = typeCross();
+								setState(49); match(6);
+								setState(50); ((TypeContext)_localctx).c = typeCross();
 								_localctx.node.add(((TypeContext)_localctx).c.node);
 								}
 								}
@@ -326,7 +327,7 @@ public class TypeManagerParser extends Parser {
 							default:
 								throw new NoViableAltException(this);
 							}
-							setState(53); 
+							setState(55); 
 							_errHandler.sync(this);
 							_alt = getInterpreter().adaptivePredict(_input,1,_ctx);
 						} while ( _alt!=2 && _alt!=-1 );
@@ -335,7 +336,7 @@ public class TypeManagerParser extends Parser {
 					}
 					} 
 				}
-				setState(59);
+				setState(61);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,3,_ctx);
 			}
@@ -396,13 +397,13 @@ public class TypeManagerParser extends Parser {
 		enterRule(_localctx, 6, RULE_typeCross);
 		int _la;
 		try {
-			setState(86);
+			setState(88);
 			switch ( getInterpreter().adaptivePredict(_input,4,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(60); ((TypeCrossContext)_localctx).UNOP = match(UNOP);
-				setState(61); ((TypeCrossContext)_localctx).a = type(0);
+				setState(62); ((TypeCrossContext)_localctx).UNOP = match(UNOP);
+				setState(63); ((TypeCrossContext)_localctx).a = type(0);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeCrossContext)_localctx).UNOP!=null?((TypeCrossContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeCrossContext)_localctx).a.node);
 				}
 				break;
@@ -410,9 +411,9 @@ public class TypeManagerParser extends Parser {
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(64); ((TypeCrossContext)_localctx).a = type(0);
-				setState(65); ((TypeCrossContext)_localctx).BINOP = match(BINOP);
-				setState(66); ((TypeCrossContext)_localctx).b = type(0);
+				setState(66); ((TypeCrossContext)_localctx).a = type(0);
+				setState(67); ((TypeCrossContext)_localctx).BINOP = match(BINOP);
+				setState(68); ((TypeCrossContext)_localctx).b = type(0);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeCrossContext)_localctx).BINOP!=null?((TypeCrossContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeCrossContext)_localctx).a.node); _localctx.node.add(((TypeCrossContext)_localctx).b.node);
 				}
 				break;
@@ -420,9 +421,9 @@ public class TypeManagerParser extends Parser {
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(69); match(4);
-				setState(70); ((TypeCrossContext)_localctx).a = type(0);
-				setState(71); match(3);
+				setState(71); match(4);
+				setState(72); ((TypeCrossContext)_localctx).a = type(0);
+				setState(73); match(3);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeCrossContext)_localctx).a.node);
 				}
 				break;
@@ -430,7 +431,7 @@ public class TypeManagerParser extends Parser {
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(74); match(5);
+				setState(76); match(5);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
 				}
 				break;
@@ -438,7 +439,7 @@ public class TypeManagerParser extends Parser {
 			case 5:
 				enterOuterAlt(_localctx, 5);
 				{
-				setState(76); match(7);
+				setState(78); match(7);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\nat_{1}");
 				}
 				break;
@@ -446,7 +447,7 @@ public class TypeManagerParser extends Parser {
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
-				setState(78); match(1);
+				setState(80); match(1);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\nat");
 				}
 				break;
@@ -454,7 +455,7 @@ public class TypeManagerParser extends Parser {
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(80); ((TypeCrossContext)_localctx).NAME = match(NAME);
+				setState(82); ((TypeCrossContext)_localctx).NAME = match(NAME);
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeCrossContext)_localctx).NAME!=null?((TypeCrossContext)_localctx).NAME.getText():null));
 				}
 				break;
@@ -462,15 +463,15 @@ public class TypeManagerParser extends Parser {
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
-				setState(82);
+				setState(84);
 				((TypeCrossContext)_localctx).e1 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
 					((TypeCrossContext)_localctx).e1 = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(83); match(2);
-				setState(84);
+				setState(85); match(2);
+				setState(86);
 				((TypeCrossContext)_localctx).e2 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
@@ -478,6 +479,147 @@ public class TypeManagerParser extends Parser {
 				}
 				consume();
 				((TypeCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeCrossContext)_localctx).e1!=null?((TypeCrossContext)_localctx).e1.getText():null) + "\\upto" + (((TypeCrossContext)_localctx).e2!=null?((TypeCrossContext)_localctx).e2.getText():null));
+				}
+				break;
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class TypeNormCrossContext extends ParserRuleContext {
+		public DefaultMutableTreeNode node;
+		public Token UNOP;
+		public TypeNormContext a;
+		public Token BINOP;
+		public TypeNormContext b;
+		public Token NAME;
+		public Token e1;
+		public Token e2;
+		public TerminalNode NUM(int i) {
+			return getToken(TypeManagerParser.NUM, i);
+		}
+		public TerminalNode UNOP() { return getToken(TypeManagerParser.UNOP, 0); }
+		public List<TerminalNode> NAME() { return getTokens(TypeManagerParser.NAME); }
+		public TypeNormContext typeNorm(int i) {
+			return getRuleContext(TypeNormContext.class,i);
+		}
+		public TerminalNode BINOP() { return getToken(TypeManagerParser.BINOP, 0); }
+		public TerminalNode NAME(int i) {
+			return getToken(TypeManagerParser.NAME, i);
+		}
+		public List<TypeNormContext> typeNorm() {
+			return getRuleContexts(TypeNormContext.class);
+		}
+		public List<TerminalNode> NUM() { return getTokens(TypeManagerParser.NUM); }
+		public TypeNormCrossContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_typeNormCross; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof TypeManagerListener ) ((TypeManagerListener)listener).enterTypeNormCross(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof TypeManagerListener ) ((TypeManagerListener)listener).exitTypeNormCross(this);
+		}
+	}
+
+	public final TypeNormCrossContext typeNormCross() throws RecognitionException {
+		TypeNormCrossContext _localctx = new TypeNormCrossContext(_ctx, getState());
+		enterRule(_localctx, 8, RULE_typeNormCross);
+		int _la;
+		try {
+			setState(116);
+			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			case 1:
+				enterOuterAlt(_localctx, 1);
+				{
+				setState(90); ((TypeNormCrossContext)_localctx).UNOP = match(UNOP);
+				setState(91); ((TypeNormCrossContext)_localctx).a = typeNorm(0);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormCrossContext)_localctx).UNOP!=null?((TypeNormCrossContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeNormCrossContext)_localctx).a.node);
+				}
+				break;
+
+			case 2:
+				enterOuterAlt(_localctx, 2);
+				{
+				setState(94); ((TypeNormCrossContext)_localctx).a = typeNorm(0);
+				setState(95); ((TypeNormCrossContext)_localctx).BINOP = match(BINOP);
+				setState(96); ((TypeNormCrossContext)_localctx).b = typeNorm(0);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormCrossContext)_localctx).BINOP!=null?((TypeNormCrossContext)_localctx).BINOP.getText():null)); _localctx.node.add(((TypeNormCrossContext)_localctx).a.node); _localctx.node.add(((TypeNormCrossContext)_localctx).b.node);
+				}
+				break;
+
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(99); match(4);
+				setState(100); ((TypeNormCrossContext)_localctx).a = typeNorm(0);
+				setState(101); match(3);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeNormCrossContext)_localctx).a.node);
+				}
+				break;
+
+			case 4:
+				enterOuterAlt(_localctx, 4);
+				{
+				setState(104); match(5);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
+				}
+				break;
+
+			case 5:
+				enterOuterAlt(_localctx, 5);
+				{
+				setState(106); match(7);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\nat_{1}");
+				}
+				break;
+
+			case 6:
+				enterOuterAlt(_localctx, 6);
+				{
+				setState(108); match(1);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode("\\nat");
+				}
+				break;
+
+			case 7:
+				enterOuterAlt(_localctx, 7);
+				{
+				setState(110); ((TypeNormCrossContext)_localctx).NAME = match(NAME);
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormCrossContext)_localctx).NAME!=null?((TypeNormCrossContext)_localctx).NAME.getText():null));
+				}
+				break;
+
+			case 8:
+				enterOuterAlt(_localctx, 8);
+				{
+				setState(112);
+				((TypeNormCrossContext)_localctx).e1 = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !(_la==NAME || _la==NUM) ) {
+					((TypeNormCrossContext)_localctx).e1 = (Token)_errHandler.recoverInline(this);
+				}
+				consume();
+				setState(113); match(2);
+				setState(114);
+				((TypeNormCrossContext)_localctx).e2 = _input.LT(1);
+				_la = _input.LA(1);
+				if ( !(_la==NAME || _la==NUM) ) {
+					((TypeNormCrossContext)_localctx).e2 = (Token)_errHandler.recoverInline(this);
+				}
+				consume();
+				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormCrossContext)_localctx).e1!=null?((TypeNormCrossContext)_localctx).e1.getText():null) + "\\upto" + (((TypeNormCrossContext)_localctx).e2!=null?((TypeNormCrossContext)_localctx).e2.getText():null));
 				}
 				break;
 			}
@@ -502,8 +644,12 @@ public class TypeManagerParser extends Parser {
 		public Token e1;
 		public Token e2;
 		public TypeNormContext b;
+		public TypeNormCrossContext c;
 		public TerminalNode NUM(int i) {
 			return getToken(TypeManagerParser.NUM, i);
+		}
+		public TypeNormCrossContext typeNormCross(int i) {
+			return getRuleContext(TypeNormCrossContext.class,i);
 		}
 		public TerminalNode UNOP() { return getToken(TypeManagerParser.UNOP, 0); }
 		public List<TerminalNode> NAME() { return getTokens(TypeManagerParser.NAME); }
@@ -513,6 +659,9 @@ public class TypeManagerParser extends Parser {
 		public TerminalNode BINOP() { return getToken(TypeManagerParser.BINOP, 0); }
 		public TerminalNode NAME(int i) {
 			return getToken(TypeManagerParser.NAME, i);
+		}
+		public List<TypeNormCrossContext> typeNormCross() {
+			return getRuleContexts(TypeNormCrossContext.class);
 		}
 		public List<TypeNormContext> typeNorm() {
 			return getRuleContexts(TypeNormContext.class);
@@ -539,71 +688,71 @@ public class TypeManagerParser extends Parser {
 		int _parentState = getState();
 		TypeNormContext _localctx = new TypeNormContext(_ctx, _parentState, _p);
 		TypeNormContext _prevctx = _localctx;
-		int _startState = 8;
+		int _startState = 10;
 		enterRecursionRule(_localctx, RULE_typeNorm);
 		int _la;
 		try {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(110);
-			switch ( getInterpreter().adaptivePredict(_input,5,_ctx) ) {
+			setState(140);
+			switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
 			case 1:
 				{
-				setState(89); ((TypeNormContext)_localctx).UNOP = match(UNOP);
-				setState(90); ((TypeNormContext)_localctx).a = typeNorm(9);
+				setState(119); ((TypeNormContext)_localctx).UNOP = match(UNOP);
+				setState(120); ((TypeNormContext)_localctx).a = typeNorm(9);
 				((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormContext)_localctx).UNOP!=null?((TypeNormContext)_localctx).UNOP.getText():null)); _localctx.node.add(((TypeNormContext)_localctx).a.node);
 				}
 				break;
 
 			case 2:
 				{
-				setState(93); match(4);
-				setState(94); ((TypeNormContext)_localctx).a = typeNorm(0);
-				setState(95); match(3);
+				setState(123); match(4);
+				setState(124); ((TypeNormContext)_localctx).a = typeNorm(0);
+				setState(125); match(3);
 				((TypeNormContext)_localctx).node =  ((TypeNormContext)_localctx).a.node;
 				}
 				break;
 
 			case 3:
 				{
-				setState(98); match(5);
+				setState(128); match(5);
 				((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\num");
 				}
 				break;
 
 			case 4:
 				{
-				setState(100); match(7);
+				setState(130); match(7);
 				((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\nat_{1}");
 				}
 				break;
 
 			case 5:
 				{
-				setState(102); match(1);
+				setState(132); match(1);
 				((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\nat");
 				}
 				break;
 
 			case 6:
 				{
-				setState(104); ((TypeNormContext)_localctx).NAME = match(NAME);
+				setState(134); ((TypeNormContext)_localctx).NAME = match(NAME);
 				((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode((((TypeNormContext)_localctx).NAME!=null?((TypeNormContext)_localctx).NAME.getText():null));
 				}
 				break;
 
 			case 7:
 				{
-				setState(106);
+				setState(136);
 				((TypeNormContext)_localctx).e1 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
 					((TypeNormContext)_localctx).e1 = (Token)_errHandler.recoverInline(this);
 				}
 				consume();
-				setState(107); match(2);
-				setState(108);
+				setState(137); match(2);
+				setState(138);
 				((TypeNormContext)_localctx).e2 = _input.LT(1);
 				_la = _input.LA(1);
 				if ( !(_la==NAME || _la==NUM) ) {
@@ -615,42 +764,25 @@ public class TypeManagerParser extends Parser {
 				break;
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(124);
+			setState(159);
 			_errHandler.sync(this);
-			_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+			_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			while ( _alt!=2 && _alt!=-1 ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(122);
-					switch ( getInterpreter().adaptivePredict(_input,6,_ctx) ) {
+					setState(157);
+					switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
 					case 1:
 						{
 						_localctx = new TypeNormContext(_parentctx, _parentState, _p);
 						_localctx.a = _prevctx;
 						pushNewRecursionContext(_localctx, _startState, RULE_typeNorm);
-						setState(112);
-						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
-						setState(113); match(6);
-						setState(114); ((TypeNormContext)_localctx).b = typeNorm(9);
-
-						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\cross");
-						          					_localctx.node.add(((TypeNormContext)_localctx).a.node); 
-						          					_localctx.node.add(((TypeNormContext)_localctx).b.node);
-						          				
-						}
-						break;
-
-					case 2:
-						{
-						_localctx = new TypeNormContext(_parentctx, _parentState, _p);
-						_localctx.a = _prevctx;
-						pushNewRecursionContext(_localctx, _startState, RULE_typeNorm);
-						setState(117);
+						setState(142);
 						if (!(7 >= _localctx._p)) throw new FailedPredicateException(this, "7 >= $_p");
-						setState(118); match(BINOP);
-						setState(119); ((TypeNormContext)_localctx).b = typeNorm(8);
+						setState(143); match(BINOP);
+						setState(144); ((TypeNormContext)_localctx).b = typeNorm(8);
 
 						          					((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\power"); 
 						          					DefaultMutableTreeNode cross = new DefaultMutableTreeNode("\\cross");
@@ -660,12 +792,44 @@ public class TypeManagerParser extends Parser {
 						          				
 						}
 						break;
+
+					case 2:
+						{
+						_localctx = new TypeNormContext(_parentctx, _parentState, _p);
+						_localctx.a = _prevctx;
+						pushNewRecursionContext(_localctx, _startState, RULE_typeNorm);
+						setState(147);
+						if (!(8 >= _localctx._p)) throw new FailedPredicateException(this, "8 >= $_p");
+						((TypeNormContext)_localctx).node =  new DefaultMutableTreeNode("\\cross"); _localctx.node.add(((TypeNormContext)_localctx).a.node);
+						setState(153); 
+						_errHandler.sync(this);
+						_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+						do {
+							switch (_alt) {
+							case 1:
+								{
+								{
+								setState(149); match(6);
+								setState(150); ((TypeNormContext)_localctx).c = typeNormCross();
+								_localctx.node.add(((TypeNormContext)_localctx).c.node);
+								}
+								}
+								break;
+							default:
+								throw new NoViableAltException(this);
+							}
+							setState(155); 
+							_errHandler.sync(this);
+							_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+						} while ( _alt!=2 && _alt!=-1 );
+						}
+						break;
 					}
 					} 
 				}
-				setState(126);
+				setState(161);
 				_errHandler.sync(this);
-				_alt = getInterpreter().adaptivePredict(_input,7,_ctx);
+				_alt = getInterpreter().adaptivePredict(_input,9,_ctx);
 			}
 			}
 		}
@@ -684,15 +848,15 @@ public class TypeManagerParser extends Parser {
 		switch (ruleIndex) {
 		case 2: return type_sempred((TypeContext)_localctx, predIndex);
 
-		case 4: return typeNorm_sempred((TypeNormContext)_localctx, predIndex);
+		case 5: return typeNorm_sempred((TypeNormContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean typeNorm_sempred(TypeNormContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 2: return 8 >= _localctx._p;
+		case 2: return 7 >= _localctx._p;
 
-		case 3: return 7 >= _localctx._p;
+		case 3: return 8 >= _localctx._p;
 		}
 		return true;
 	}
@@ -706,39 +870,54 @@ public class TypeManagerParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3\16\u0082\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\3\2\3\2\3\2\3\3"+
-		"\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4)\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
-		"\4\3\4\3\4\6\4\66\n\4\r\4\16\4\67\7\4:\n\4\f\4\16\4=\13\4\3\5\3\5\3\5"+
+		"\2\3\16\u00a5\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\3\2\3\2"+
+		"\3\2\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4+\n\4\3\4\3\4\3\4\3\4\3\4\3\4\3"+
+		"\4\3\4\3\4\3\4\3\4\6\48\n\4\r\4\16\49\7\4<\n\4\f\4\16\4?\13\4\3\5\3\5"+
 		"\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3\5\3"+
-		"\5\3\5\3\5\3\5\3\5\3\5\5\5Y\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\5\6q\n\6\3\6\3\6\3"+
-		"\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\7\6}\n\6\f\6\16\6\u0080\13\6\3\6\2\7\2"+
-		"\4\6\b\n\2\b\4\13\13\r\r\4\13\13\r\r\4\13\13\r\r\4\13\13\r\r\4\13\13\r"+
-		"\r\4\13\13\r\r\u0094\2\f\3\2\2\2\4\17\3\2\2\2\6(\3\2\2\2\bX\3\2\2\2\n"+
-		"p\3\2\2\2\f\r\5\6\4\2\r\16\b\2\1\2\16\3\3\2\2\2\17\20\5\n\6\2\20\21\b"+
-		"\3\1\2\21\5\3\2\2\2\22\23\b\4\1\2\23\24\7\f\2\2\24\25\5\6\4\2\25\26\b"+
-		"\4\1\2\26)\3\2\2\2\27\30\7\6\2\2\30\31\5\6\4\2\31\32\7\5\2\2\32\33\b\4"+
-		"\1\2\33)\3\2\2\2\34\35\7\7\2\2\35)\b\4\1\2\36\37\7\t\2\2\37)\b\4\1\2 "+
-		"!\7\3\2\2!)\b\4\1\2\"#\7\13\2\2#)\b\4\1\2$%\t\2\2\2%&\7\4\2\2&\'\t\3\2"+
-		"\2\')\b\4\1\2(\22\3\2\2\2(\27\3\2\2\2(\34\3\2\2\2(\36\3\2\2\2( \3\2\2"+
-		"\2(\"\3\2\2\2($\3\2\2\2);\3\2\2\2*+\6\4\2\3+,\7\n\2\2,-\5\6\4\2-.\b\4"+
-		"\1\2.:\3\2\2\2/\60\6\4\3\3\60\65\b\4\1\2\61\62\7\b\2\2\62\63\5\b\5\2\63"+
-		"\64\b\4\1\2\64\66\3\2\2\2\65\61\3\2\2\2\66\67\3\2\2\2\67\65\3\2\2\2\67"+
-		"8\3\2\2\28:\3\2\2\29*\3\2\2\29/\3\2\2\2:=\3\2\2\2;9\3\2\2\2;<\3\2\2\2"+
-		"<\7\3\2\2\2=;\3\2\2\2>?\7\f\2\2?@\5\6\4\2@A\b\5\1\2AY\3\2\2\2BC\5\6\4"+
-		"\2CD\7\n\2\2DE\5\6\4\2EF\b\5\1\2FY\3\2\2\2GH\7\6\2\2HI\5\6\4\2IJ\7\5\2"+
-		"\2JK\b\5\1\2KY\3\2\2\2LM\7\7\2\2MY\b\5\1\2NO\7\t\2\2OY\b\5\1\2PQ\7\3\2"+
-		"\2QY\b\5\1\2RS\7\13\2\2SY\b\5\1\2TU\t\4\2\2UV\7\4\2\2VW\t\5\2\2WY\b\5"+
-		"\1\2X>\3\2\2\2XB\3\2\2\2XG\3\2\2\2XL\3\2\2\2XN\3\2\2\2XP\3\2\2\2XR\3\2"+
-		"\2\2XT\3\2\2\2Y\t\3\2\2\2Z[\b\6\1\2[\\\7\f\2\2\\]\5\n\6\2]^\b\6\1\2^q"+
-		"\3\2\2\2_`\7\6\2\2`a\5\n\6\2ab\7\5\2\2bc\b\6\1\2cq\3\2\2\2de\7\7\2\2e"+
-		"q\b\6\1\2fg\7\t\2\2gq\b\6\1\2hi\7\3\2\2iq\b\6\1\2jk\7\13\2\2kq\b\6\1\2"+
-		"lm\t\6\2\2mn\7\4\2\2no\t\7\2\2oq\b\6\1\2pZ\3\2\2\2p_\3\2\2\2pd\3\2\2\2"+
-		"pf\3\2\2\2ph\3\2\2\2pj\3\2\2\2pl\3\2\2\2q~\3\2\2\2rs\6\6\4\3st\7\b\2\2"+
-		"tu\5\n\6\2uv\b\6\1\2v}\3\2\2\2wx\6\6\5\3xy\7\n\2\2yz\5\n\6\2z{\b\6\1\2"+
-		"{}\3\2\2\2|r\3\2\2\2|w\3\2\2\2}\u0080\3\2\2\2~|\3\2\2\2~\177\3\2\2\2\177"+
-		"\13\3\2\2\2\u0080~\3\2\2\2\n(\679;Xp|~";
+		"\5\3\5\3\5\3\5\3\5\3\5\3\5\5\5[\n\5\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3"+
+		"\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6\3\6"+
+		"\5\6w\n\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7"+
+		"\3\7\3\7\3\7\3\7\3\7\3\7\3\7\5\7\u008f\n\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7"+
+		"\3\7\3\7\3\7\3\7\6\7\u009c\n\7\r\7\16\7\u009d\7\7\u00a0\n\7\f\7\16\7\u00a3"+
+		"\13\7\3\7\2\b\2\4\6\b\n\f\2\n\4\13\13\r\r\4\13\13\r\r\4\13\13\r\r\4\13"+
+		"\13\r\r\4\13\13\r\r\4\13\13\r\r\4\13\13\r\r\4\13\13\r\r\u00be\2\16\3\2"+
+		"\2\2\4\21\3\2\2\2\6*\3\2\2\2\bZ\3\2\2\2\nv\3\2\2\2\f\u008e\3\2\2\2\16"+
+		"\17\5\6\4\2\17\20\b\2\1\2\20\3\3\2\2\2\21\22\5\f\7\2\22\23\b\3\1\2\23"+
+		"\5\3\2\2\2\24\25\b\4\1\2\25\26\7\f\2\2\26\27\5\6\4\2\27\30\b\4\1\2\30"+
+		"+\3\2\2\2\31\32\7\6\2\2\32\33\5\6\4\2\33\34\7\5\2\2\34\35\b\4\1\2\35+"+
+		"\3\2\2\2\36\37\7\7\2\2\37+\b\4\1\2 !\7\t\2\2!+\b\4\1\2\"#\7\3\2\2#+\b"+
+		"\4\1\2$%\7\13\2\2%+\b\4\1\2&\'\t\2\2\2\'(\7\4\2\2()\t\3\2\2)+\b\4\1\2"+
+		"*\24\3\2\2\2*\31\3\2\2\2*\36\3\2\2\2* \3\2\2\2*\"\3\2\2\2*$\3\2\2\2*&"+
+		"\3\2\2\2+=\3\2\2\2,-\6\4\2\3-.\7\n\2\2./\5\6\4\2/\60\b\4\1\2\60<\3\2\2"+
+		"\2\61\62\6\4\3\3\62\67\b\4\1\2\63\64\7\b\2\2\64\65\5\b\5\2\65\66\b\4\1"+
+		"\2\668\3\2\2\2\67\63\3\2\2\289\3\2\2\29\67\3\2\2\29:\3\2\2\2:<\3\2\2\2"+
+		";,\3\2\2\2;\61\3\2\2\2<?\3\2\2\2=;\3\2\2\2=>\3\2\2\2>\7\3\2\2\2?=\3\2"+
+		"\2\2@A\7\f\2\2AB\5\6\4\2BC\b\5\1\2C[\3\2\2\2DE\5\6\4\2EF\7\n\2\2FG\5\6"+
+		"\4\2GH\b\5\1\2H[\3\2\2\2IJ\7\6\2\2JK\5\6\4\2KL\7\5\2\2LM\b\5\1\2M[\3\2"+
+		"\2\2NO\7\7\2\2O[\b\5\1\2PQ\7\t\2\2Q[\b\5\1\2RS\7\3\2\2S[\b\5\1\2TU\7\13"+
+		"\2\2U[\b\5\1\2VW\t\4\2\2WX\7\4\2\2XY\t\5\2\2Y[\b\5\1\2Z@\3\2\2\2ZD\3\2"+
+		"\2\2ZI\3\2\2\2ZN\3\2\2\2ZP\3\2\2\2ZR\3\2\2\2ZT\3\2\2\2ZV\3\2\2\2[\t\3"+
+		"\2\2\2\\]\7\f\2\2]^\5\f\7\2^_\b\6\1\2_w\3\2\2\2`a\5\f\7\2ab\7\n\2\2bc"+
+		"\5\f\7\2cd\b\6\1\2dw\3\2\2\2ef\7\6\2\2fg\5\f\7\2gh\7\5\2\2hi\b\6\1\2i"+
+		"w\3\2\2\2jk\7\7\2\2kw\b\6\1\2lm\7\t\2\2mw\b\6\1\2no\7\3\2\2ow\b\6\1\2"+
+		"pq\7\13\2\2qw\b\6\1\2rs\t\6\2\2st\7\4\2\2tu\t\7\2\2uw\b\6\1\2v\\\3\2\2"+
+		"\2v`\3\2\2\2ve\3\2\2\2vj\3\2\2\2vl\3\2\2\2vn\3\2\2\2vp\3\2\2\2vr\3\2\2"+
+		"\2w\13\3\2\2\2xy\b\7\1\2yz\7\f\2\2z{\5\f\7\2{|\b\7\1\2|\u008f\3\2\2\2"+
+		"}~\7\6\2\2~\177\5\f\7\2\177\u0080\7\5\2\2\u0080\u0081\b\7\1\2\u0081\u008f"+
+		"\3\2\2\2\u0082\u0083\7\7\2\2\u0083\u008f\b\7\1\2\u0084\u0085\7\t\2\2\u0085"+
+		"\u008f\b\7\1\2\u0086\u0087\7\3\2\2\u0087\u008f\b\7\1\2\u0088\u0089\7\13"+
+		"\2\2\u0089\u008f\b\7\1\2\u008a\u008b\t\b\2\2\u008b\u008c\7\4\2\2\u008c"+
+		"\u008d\t\t\2\2\u008d\u008f\b\7\1\2\u008ex\3\2\2\2\u008e}\3\2\2\2\u008e"+
+		"\u0082\3\2\2\2\u008e\u0084\3\2\2\2\u008e\u0086\3\2\2\2\u008e\u0088\3\2"+
+		"\2\2\u008e\u008a\3\2\2\2\u008f\u00a1\3\2\2\2\u0090\u0091\6\7\4\3\u0091"+
+		"\u0092\7\n\2\2\u0092\u0093\5\f\7\2\u0093\u0094\b\7\1\2\u0094\u00a0\3\2"+
+		"\2\2\u0095\u0096\6\7\5\3\u0096\u009b\b\7\1\2\u0097\u0098\7\b\2\2\u0098"+
+		"\u0099\5\n\6\2\u0099\u009a\b\7\1\2\u009a\u009c\3\2\2\2\u009b\u0097\3\2"+
+		"\2\2\u009c\u009d\3\2\2\2\u009d\u009b\3\2\2\2\u009d\u009e\3\2\2\2\u009e"+
+		"\u00a0\3\2\2\2\u009f\u0090\3\2\2\2\u009f\u0095\3\2\2\2\u00a0\u00a3\3\2"+
+		"\2\2\u00a1\u009f\3\2\2\2\u00a1\u00a2\3\2\2\2\u00a2\r\3\2\2\2\u00a3\u00a1"+
+		"\3\2\2\2\f*9;=Zv\u008e\u009d\u009f\u00a1";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

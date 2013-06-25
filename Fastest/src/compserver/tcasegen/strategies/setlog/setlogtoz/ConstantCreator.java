@@ -236,12 +236,19 @@ public final class ConstantCreator {
 		} 
 		if (ct.equals("\\cross")){
 			//caso [X,Y]
-			salida = cte((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()) + ","; 
-			if (expr.hasNext())
-				salida += cte((DefaultMutableTreeNode) nodo.getChildAt(1),expr.next());
-			else
-				salida += cte((DefaultMutableTreeNode) nodo.getChildAt(1),"X"); 
-			return "[" + salida + "]";
+			int i = 0;
+			while (expr.hasNext()){
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(i),expr.next());
+				i++;
+			}
+			while (i<nodo.getChildCount()){
+				salida += "," + cte((DefaultMutableTreeNode) nodo.getChildAt(i),"X" + i);
+				i++;
+			}
+			
+			if (!salida.isEmpty())
+				return "(" + salida.substring(1) + ")";
+			return "()";
 		}
 		if (ct.equals("\\power") ) {
 			//es por que el tipo \\powe(\\num\\pfun\\A) es equivalente a \\seq A

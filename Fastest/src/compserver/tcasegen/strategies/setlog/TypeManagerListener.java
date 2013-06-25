@@ -21,6 +21,9 @@ public interface TypeManagerListener extends ParseTreeListener {
 	void enterTypeNorm(TypeManagerParser.TypeNormContext ctx);
 	void exitTypeNorm(TypeManagerParser.TypeNormContext ctx);
 
+	void enterTypeNormCross(TypeManagerParser.TypeNormCrossContext ctx);
+	void exitTypeNormCross(TypeManagerParser.TypeNormCrossContext ctx);
+
 	void enterType(TypeManagerParser.TypeContext ctx);
 	void exitType(TypeManagerParser.TypeContext ctx);
 }
