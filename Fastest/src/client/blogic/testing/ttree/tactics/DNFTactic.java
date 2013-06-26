@@ -117,7 +117,7 @@ public class DNFTactic extends AbstractTactic {
 
         }
 
-        System.out.println();
+        //System.out.println();
         if (showCounter) 
             System.out.println();
         

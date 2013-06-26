@@ -141,6 +141,8 @@ public class Controller extends IIComponent {
     private int maxDNFPredsToMultiply;
     // 
     private int maxPredsToAnalize;
+    //
+    private int setlogTimeout = 10000; //Default value
 
     /** Creates a new instance of Controller */
     public Controller() {
@@ -195,7 +197,9 @@ public class Controller extends IIComponent {
                         maxDNFPredsToMultiply = Integer.decode(lineParts[1]);
                     } else if (lineParts[0].equals("MAX_PREDS_TO_ANALIZE")) {
                         maxPredsToAnalize = Integer.decode(lineParts[1]);
-                    }                   
+                    } else if (lineParts[0].equals("SETLOG_TIMEOUT")) {
+                        setlogTimeout = Integer.decode(lineParts[1]);
+                    }                  
                 }
             }
 
@@ -1168,6 +1172,10 @@ public class Controller extends IIComponent {
     
     public int getMaxPredsToAnalize(){
         return maxPredsToAnalize;        
+    }
+    
+    public int getSetlogTimeout(){
+        return setlogTimeout;        
     }
 
 	public List<String> getBasicTypeNames() {

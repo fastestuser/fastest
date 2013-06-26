@@ -179,21 +179,24 @@ public final class SetLogStrategy implements TCaseStrategy{
 		//System.out.println("**********************************************************************************************");
 		//System.out.println("ANTLRINPUT\n" + antlrInput);
 		//System.out.println("**********************************************************************************************\n");
-
-		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput);
+		Controller controller = clientUI.getMyController();
+		
+		int setlogTimeout = controller.getSetlogTimeout();
+		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogTimeout);
 		
 		if (zVars == null) //No encontro caso
 			return null;
 		else if (zVars.isEmpty()) { //Dio False
-			Controller controller = clientUI.getMyController();
-			boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
-			//Pruneado el nodo, debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
 			
 			//Agregado Joa, ver donde va
 			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
 			TTreeNode tClassNode = FastestUtils.getTTreeNode(controller, tClassName);
             TClassNode dadNode = tClassNode.getDadNode();
-            if (dadNode != null) {
+            if (dadNode != null) { //Si el hijo no es el VIS
+            	//Pruneamos el nodo
+            	boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
+            	
+    			//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
             	AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
             	AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
             	Boolean allChildsPruned = new Boolean(true);
@@ -204,7 +207,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 					}
 				}
 				if (allChildsPruned) {
-					System.out.println("Hay que generar para " + dadNode.getValue().getSchName());
+					System.out.println("Trying to generate a test case for the class: " + tClassName);
 					EventAdmin eventAdmin = null;
 					try {
 						eventAdmin = EventAdmin.getInstance();
@@ -227,11 +230,6 @@ public final class SetLogStrategy implements TCaseStrategy{
                     }*/
 				}
             }
-            /////////////////////////////
-			
-			
-			
-			
 			
 			return null;
 		}

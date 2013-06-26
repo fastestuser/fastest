@@ -132,7 +132,7 @@ public final class SetLogGenerator {
 		}
 	}
 
-	public static HashMap<String, String> generate(String antlrInput){
+	public static HashMap<String, String> generate(String antlrInput, int timeout){
 
 		String setLogInput;
 		try {
@@ -145,7 +145,7 @@ public final class SetLogGenerator {
 		//System.out.println("**********************************************************************************************");
 		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
 		//System.out.println("**********************************************************************************************\n");
-		String setlogOutput = runSetLog(setLogInput);
+		String setlogOutput = runSetLog(setLogInput, timeout);
 
 		if (setlogOutput == null) //No se encontro caso
 			return null;
@@ -182,7 +182,7 @@ public final class SetLogGenerator {
 		return parser.getSalida();
 	}
 
-	private static String runSetLog(String setLogInput){
+	private static String runSetLog(String setLogInput, int timeout){
 		String setlogOutput = "";
 		try{
 			String[] cmd = {"prolog" , "-q"};
@@ -195,7 +195,7 @@ public final class SetLogGenerator {
 					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
 					+ "\ntime_out(setlog( \n"
 					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
-					+ "\n,_CONSTR),10000,_RET).\n";
+					+ "\n,_CONSTR)," + timeout + ",_RET).\n";
 
 			
 			out.write(goal.getBytes());
@@ -204,8 +204,8 @@ public final class SetLogGenerator {
 			boolean pruneClass = false;
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
-			System.out.println("**********************************************************************************************");
-			System.out.println("SETLOG OUT:\n");
+			//System.out.println("**********************************************************************************************");
+			//System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				//System.out.println(s);
 				if (s.equals("false.")) {
@@ -221,8 +221,8 @@ public final class SetLogGenerator {
 					break;
 				}
 			}
-			System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
-			System.out.println("**********************************************************************************************\n");
+			//System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
+			//System.out.println("**********************************************************************************************\n");
 			
 			if (pruneClass) {
 				return "FALSE";
