@@ -1,6 +1,8 @@
 // Generated from SLog2Z.g4 by ANTLR 4.0
 
 package compserver.tcasegen.strategies.setlog.setlogtoz;
+	import java.util.LinkedList;
+	import java.util.List;
 	import java.util.HashMap;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
@@ -54,7 +56,13 @@ public class SLog2ZLexer extends Lexer {
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
 		HashMap<String,String> valoresProhibidos = new HashMap();
+		List<String> varNoGenerar = new LinkedList<String>();
 		ConstantCreator cc;
+		
+		public HashMap<String,StringPointer> getSlvars(){
+			return slvars;
+		}
+		
 		public HashMap<String,String> getZVars(){
 			return zVars;
 		}

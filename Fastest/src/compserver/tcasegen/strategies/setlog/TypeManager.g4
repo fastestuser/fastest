@@ -81,7 +81,7 @@ typeNorm returns [DefaultMutableTreeNode node]
 typeNormCross returns [DefaultMutableTreeNode node]
 		:	UNOP a=typeNorm {$node = new DefaultMutableTreeNode($UNOP.text); $node.add($a.node);}
 		|	a=typeNorm BINOP b=typeNorm {$node = new DefaultMutableTreeNode($BINOP.text); $node.add($a.node); $node.add($b.node);}
-		|	'(' a=typeNorm ')' {$node = new DefaultMutableTreeNode("()"); $node.add($a.node);}
+		|	'(' a=typeNorm ')' {$node = $a.node;}
 		|	'\\num' {$node = new DefaultMutableTreeNode("\\num");}
 		|	'\\nat_{1}' {$node = new DefaultMutableTreeNode("\\nat_{1}");}
 		|	'\\nat' {$node = new DefaultMutableTreeNode("\\nat");}

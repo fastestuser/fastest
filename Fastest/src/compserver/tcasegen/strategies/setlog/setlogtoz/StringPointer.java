@@ -4,7 +4,9 @@ public final class  StringPointer{
 	
 	private String valor;
 	
-	public StringPointer(){}
+	public StringPointer(){
+		valor = "";
+	}
 	public StringPointer(String s){
 		valor = s;
 	}

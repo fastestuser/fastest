@@ -2,6 +2,8 @@ grammar SLog2Z;
 
 @header {
 package compserver.tcasegen.strategies.setlog.setlogtoz;
+	import java.util.LinkedList;
+	import java.util.List;
 	import java.util.HashMap;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
@@ -22,7 +24,13 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
 	HashMap<String,String> valoresProhibidos = new HashMap();
+	List<String> varNoGenerar = new LinkedList<String>();
 	ConstantCreator cc;
+	
+	public HashMap<String,StringPointer> getSlvars(){
+		return slvars;
+	}
+	
 	public HashMap<String,String> getZVars(){
 		return zVars;
 	}
@@ -156,32 +164,44 @@ locals [StringPointer valor;]
 	: 'set(' expr ')' {$restr::valor.setString("{}"); slvars.put($expr.text,$restr::valor);}
 	| 'list(' expr ')' {$restr::valor.setString("[]"); slvars.put($expr.text,$restr::valor);}
 	| 'integer(' expr ')' {$restr::valor.setString(cc.getNumber()); slvars.put($expr.text,$restr::valor);}
-	| (NAME 'neq' expr | expr 'neq' NAME) 
+	| (a = NAME 'neq' b = NAME)
+		{
+			String var1 = $a.text;
+			String var2 = $b.text;
+			String s = valoresProhibidos.get(var1);
+			 
+			if (s!=null && !s.contains(var2)) 
+				valoresProhibidos.put(var1,s.concat("," + var2));
+			else{
+				s = new String(var2);
+				valoresProhibidos.put(var1, s);
+				}
+				
+			s = valoresProhibidos.get(var2);
+			if (s!=null && !s.contains(var1)) 
+				valoresProhibidos.put(var2,s.concat("," + var1));
+			else{
+				s = new String(var1);
+				valoresProhibidos.put(var2, s);
+				}
+		}
+	| (NAME 'neq' exprCte | exprCte 'neq' NAME) 
 		{
 			String var = $NAME.text;
-			String cte = $expr.text;
+			String cte = $exprCte.text;
 			String s = valoresProhibidos.get(var);
-			 
 			if (s!=null && !s.contains(cte)) 
 				valoresProhibidos.put(var,s.concat("," + cte));
 			else{
 				s = new String(cte);
 				valoresProhibidos.put(var, s);
 				}
-				
-			s = valoresProhibidos.get(cte);
-			if (SetLogUtils.esSLVariableSimple(cte)) {
-				
-				if (s!=null && !s.contains(var)) 
-					valoresProhibidos.put(cte,s.concat("," + var));
-				else{
-					s = new String(var);
-					valoresProhibidos.put(cte, s);
-				}
-			}
-			
 		}
-		
+	| (NAME 'neq' expr | expr 'neq' NAME)
+		{
+			varNoGenerar.add($NAME.text);	
+			slvars.put($NAME.text,new StringPointer("ValueNotAssigned"));
+		}	
 	
 	;
 
@@ -192,11 +212,12 @@ locals [StringPointer valor;]
 		{
 			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);
-			if ( !zname.startsWith("\\n") && !tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
-			{
-				String var = $v2.valor;
+			String var = $v2.valor;
+			if (varNoGenerar.contains(var) || varNoGenerar.contains($v1.text)){
+				$seqIgual::valor.setString("ValueNotAssigned");
+				}			
+			else if ( !$seqIgual::valor.contains("ValueNotAssigned") && !varNoGenerar.contains(var) && !zname.startsWith("\\n") && !tipo.startsWith("BasicType") && !tipo.startsWith("EnumerationType") && !tipo.startsWith("SchemaType") )
 				$seqIgual::valor.setString(cc.getCte(var,SetLogUtils.toTreeNorm(tipo)));
-			}
 			 	
 		 }
 	;
@@ -216,6 +237,22 @@ returns [String valor]
 	    ']' {$valor = $valor + "]";} 
 	|	'-' expr {$valor = "-" + $valor ;}
 	;
+
+exprCte
+returns [String valor]
+	:	CTE {$valor = $CTE.text;}
+	|   'int' '(' a=(NAME|CTE) ',' b=(NAME|CTE) ')' {$valor = "int(" + $a.text + "," + $b.text + ")";} 
+	|	'{' {$valor = "{";}
+	    ( (','{$valor = $valor + ",";})?  e=exprCte {$valor = $valor + $e.valor;})*
+	    ('\\' exprCte)*
+	    '}' {$valor = $valor + "}";}
+	|   '[' {$valor = "[";}
+	    ( (','{$valor = $valor + ",";})?  e=exprCte {$valor = $valor + $e.valor;})*
+	    ('|' exprCte)*
+	    ']' {$valor = $valor + "]";} 
+	|	'-' exprCte {$valor = "-" + $valor ;}
+	;
+		
       
 NAME:	('_'|'A'..'Z' ) ('a'..'z' | 'A'..'Z' |'0'..'9')*;
 CTE:    ('-'|'a'..'z' |'0'..'9') ('a'..'z' | 'A'..'Z' |'0'..'9')*;

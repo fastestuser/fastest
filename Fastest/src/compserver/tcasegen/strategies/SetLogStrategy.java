@@ -186,7 +186,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 		
 		if (zVars == null) //No encontro caso
 			return null;
-		else if (zVars.isEmpty()) { //Dio False
+		else if (zVars.isEmpty()) { //No hay caso, dio False {log}
 			
 			//Agregado Joa, ver donde va
 			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
@@ -245,15 +245,15 @@ public final class SetLogStrategy implements TCaseStrategy{
 		while (keys.hasNext()) {
 			String varName = keys.next();
 			String value = zVars.get(varName);
-			//System.out.println("------ " + varName + " = " + value);
+			System.out.println("------ " + varName + " = " + value);
 			if (value != null) {
 				RefExpr var;
 				Expr val;
 				try {
 					var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
-					//System.out.println("------ " + SpecUtils.termToLatex(var));
+					System.out.println("------ " + SpecUtils.termToLatex(var));
 					val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-					//System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
+					System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
 					map.put(var, val);
 
 				} catch (IOException e) {

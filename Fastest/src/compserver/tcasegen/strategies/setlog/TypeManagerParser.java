@@ -773,7 +773,7 @@ public class TypeManagerParser extends Parser {
 				setState(143); match(4);
 				setState(144); ((TypeNormCrossContext)_localctx).a = typeNorm(0);
 				setState(145); match(3);
-				((TypeNormCrossContext)_localctx).node =  new DefaultMutableTreeNode("()"); _localctx.node.add(((TypeNormCrossContext)_localctx).a.node);
+				((TypeNormCrossContext)_localctx).node =  ((TypeNormCrossContext)_localctx).a.node;
 				}
 				break;
 

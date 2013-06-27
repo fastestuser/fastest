@@ -1,6 +1,8 @@
 // Generated from SLog2Z.g4 by ANTLR 4.0
 
 package compserver.tcasegen.strategies.setlog.setlogtoz;
+	import java.util.LinkedList;
+	import java.util.List;
 	import java.util.HashMap;
 	import java.util.ArrayList;
 	import java.util.regex.Matcher;
@@ -21,6 +23,9 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ErrorNode;
 
 public class SLog2ZBaseListener implements SLog2ZListener {
+	@Override public void enterExprCte(SLog2ZParser.ExprCteContext ctx) { }
+	@Override public void exitExprCte(SLog2ZParser.ExprCteContext ctx) { }
+
 	@Override public void enterSeqIgual(SLog2ZParser.SeqIgualContext ctx) { }
 	@Override public void exitSeqIgual(SLog2ZParser.SeqIgualContext ctx) { }
 

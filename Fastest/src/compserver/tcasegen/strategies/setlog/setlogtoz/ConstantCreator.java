@@ -212,22 +212,18 @@ public final class ConstantCreator {
 		if (SetLogUtils.esSLVariableSimple(exprS)) {
 			String cte = null;
 			StringPointer sp;
-
 			if (slVars!=null){
 				sp = slVars.get(exprS);
 				//no cambiar el orden de la conjuncion, para que pueda chequear el lado derecho, el izquierdo debe ser falso
+				if (sp != null && sp.toString() != null && sp.toString().equals("ValueNotAssigned"))
+					return exprS;
 				if (sp != null && sp.toString() != null)
-					cte = sp.toString();
-				else
-					cte = cteRestringuida(nodo,exprS);
+					return sp.toString();
 			}
-			else
-				cte = cteRestringuida(nodo,exprS);
-
+			cte = cteRestringuida(nodo,exprS);
 			if (slVars!=null)
 				slVars.put(exprS, new StringPointer(cte));
-			salida = cte;//la longitud que va es la original, no la inventada
-			//porque siempre me muevo en el string expr original
+			salida = cte;
 			return salida;
 		}
 		// si es constante la meto
@@ -308,26 +304,7 @@ public final class ConstantCreator {
 
 	String getCte(String expr, DefaultMutableTreeNode root){
 		expr = expr.replaceAll("\\s+",""); 
-
-//		// por que pueden venir variables Z, que solo aparezcan en constraint, no hay que llenarlas en ZVarFiller
-//		// por que ahi ya pueden tener valor erroneor ej constraint [V neq [], list(V)], con list V se le da valors
-//		if(valoresProhibidos != null){
-//			Iterator<String> it = valoresProhibidos.keySet().iterator();
-//			String var,tipo;
-//			StringPointer valor;
-//			while (it.hasNext()) { 
-//				var = it.next().toString();
-//				if (zName != null && zName.get(var)!=null){
-//					tipo = tipos.get(zName.get(var));
-//					DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
-//					valor = new StringPointer(cteRestringuida(nodo,var));
-//					if(slVars != null)
-//				}
-//			}
-//		}
-
-		String s = cte(root, expr);
-		return s;
+		return cte(root, expr);
 	}
 
 }
