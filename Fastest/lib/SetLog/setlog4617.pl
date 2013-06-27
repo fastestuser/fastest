@@ -1,42 +1,6 @@
 
-%%% VERSION 4.6.17-16
+%%% VERSION 4.6.17-20
 
-%--- 13
-
-% modificato int_unify/3 per accettare anche intervalli con estremi non specificati
- 
-%--- 14
-
-% ripristinato intervalli vuoti
-
-% modificato sat_neq per tener conto del caso 
-% intervallo_vuoto/vuoto neq intervallo_vuoto/vuoto
-
-% modificato g_subset, g_equal, g_union, g_inters, g_size, g_sum
-% per tener conto degli intervalli vuoti
-
-% modificato sat_inters caso inters(int(L1,H1),int(L2,H2),t) 
-% per tener conto di intervalli vuoti
-
-% modificato sat_max per eliminare typo in sat_max([smmax(S,_)|_],_,c,_) 
-
-% modifiche a predicati usati in sat_min, sat_max, sat_sum per 
-% sostituire {} con is_empty: add_elem_domain e count_var
-
-% modifiche a predicati sat_min e sat_max per sostituire {} con 
-% is_empty, caso ({},t)
-
-%--- 15
-
-% modificato definizione sat_neq nella parte che tratta intervalli
-
-% corretto bug in neq: int(1,3) neq a --> NO e risitemato definizione di
-% sat_neq_i
-
-%--- 16
-
-% aggiunto eliminazione situazioni insoddisfacibili del tipo
-% int(A,B) = {} & int(A,B) neq {}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -455,7 +419,7 @@ write('   2.  Set/multiset/list constraints:'), nl,
    write('        - sdiff(s1,s2,s3) (symmetric difference)'), nl,
    write('        - size(s,n) (cardinality)'), nl,
    write('        - sum(si,n) (sum all elements)'), nl,
-   write('        - smin(sit,n) (minimum element)'), nl,
+   write('        - smin(si,n) (minimum element)'), nl,
    write('        - smax(si,n) (maximum element)'), nl,
    write('        - set(s) (s is a set)'), nl,  
    write('        - bag(t) (t is a multiset)'), nl, 
@@ -1333,7 +1297,14 @@ sunify(X,Y,C) :-                    % T = Y  (rule 2)
       var(Y),!,
       sunify(Y,X,C).  
 sunify(T1,T2,C) :-                  % intervals (rules 11 and 12)
-       int_unify(T1,T2,C), !. 
+      int_term(T1),int_term(T2),!,
+      intint_unify(T1,T2,C). 
+sunify(T1,T2,C) :-                  % intervals (rules 11 and 12)
+      int_term(T1), set_term(T2),!,
+      int_unify(T1,T2,C). 
+sunify(T1,T2,C) :-                  % intervals (rules 11 and 12)
+      int_term(T2), set_term(T1),!,
+      int_unify(T2,T1,C). 
 sunify(R,S,C) :-                    % {...} = {...}  (rules 9 and 10)                     
       tail(R,TR),
       tail(S,TS),!,
@@ -1421,28 +1392,50 @@ sunifylist([X|AX],[Y|AY],C):-
 
 %%%%%%%%%%% Interval unification %%%%%%%%%%%%%%%%%
 
-int_unify(int(L,H),S2,[int(L,H) = S2]) :-   %TEMP
-        var(L), var(H), nonvar(S2), is_empty(S2), !.   
-int_unify(S2,int(L,H),[int(L,H) = S2]) :- 
-        var(L), var(H), nonvar(S2), is_empty(S2), !. 
-  
-int_unify(int(L,H),int(L,H),[]) :- !.   % (rule 11.1)
-int_unify(T1,T2,C) :-              % (rule 11.2)
-        nonvar(T1), nonvar(T2), 
-        T1 = int(L1,H1), T2 = int(L2,H2),!,
-        C = [H1 < L1,H2 < L2]. 
-int_unify(T1,{},C) :-              % (rule ...)
-        nonvar(T1), T1 = int(L,H),!,
-        C = [H < L]. 
-int_unify({},T2,C) :-              % (rule ...)
-        nonvar(T2), T2 = int(L,H),!,
-        C = [H < L].
+intint_unify(int(L,H),T2,[int(L,H) = T2]) :-            % int(A,B) = int(a,b), a > b
+        var(L), var(H), is_empty_int(T2), !.    
+intint_unify(T2,int(L,H),[int(L,H) = T2]) :-            % int(a,b) = int(A,B), a > b
+        var(L), var(H), is_empty_int(T2), !.    
+intint_unify(int(L,H),T2,C) :-                          % int(t1,t2) = int(a,b), a > b
+        is_empty_int(T2), !,
+        C = [integer(H), integer(L), H < L]. 
+intint_unify(T2,int(L,H),C) :-                          % int(a,b) = int(t1,t2), a > b
+        is_empty_int(T2), !,
+        C = [integer(H), integer(L), H < L]. 
+intint_unify(int(L1,H1),int(L2,H2),[]) :-               % int(t1,t2) = int(a,b), a =< b                      ground(int(L2,H2)), L2 =< H2,!,
+        L1 = L2, H1 = H2.
+intint_unify(int(L1,H1),int(L2,H2),[]) :-               % int(a,b) = int(t1,t2), a =< b             
+        ground(int(L1,H1)), L1 =< H1,!,
+        L1 = L2, H1 = H2.
+intint_unify(T1,T2,C) :-                                % int(t1,t2) = int(s1,s2)
+        T1 = int(L1,H1), T2 = int(L2,H2),
+        \+ground(T1), \+ground(T2), !,
+        (C = [T1 neq {}, T2 neq {}, L1 = L2, H1 = H2]
+         ;
+         C = [T1 = {}, T2 = {}] 
+        ).
 
-int_unify(T1,T2,C) :-               % {...} = int(L,H) (rule 12)
-      (T1 = _ with _, is_int(T2,_,_),!
-       ;
-       T2 = _ with _, is_int(T1,_,_)),
-       C = [subset(T1,T2),subset(T2,T1)].   % to be improved for the ground case
+is_empty_int(int(A,B)) :-             
+       integer(A), integer(B),
+       A > B.
+
+int_unify(int(L,H),S2,[int(L,H) = S2]) :-            % int(A,B) = {}
+        var(L), var(H), nonvar(S2), S2 = {}, !.   
+%int_unify(S2,int(L,H),[int(L,H) = S2]) :-            % {} = int(A,B)
+%        var(L), var(H), is_empty(S2), !. 
+int_unify(int(L,H),T2,C) :-                          % int(t1,t2) = {}
+        T2 = {}, !,
+        C = [integer(H), integer(L), H < L]. 
+%int_unify(T1,int(L,H),C) :-                          % {} = int(t1,t2)
+%        is_empty(T1), !,
+%        C = [integer(H), integer(L), H < L].
+int_unify(T1,T2,C) :-                                % {...} = int(L,H) (rule 12)
+%      (T1 = _ with _, is_int(T2,_,_),!
+%       ;
+%       T2 = _ with _, is_int(T1,_,_)),
+        T2 = _ with _, is_int(T1,_,_),   
+        C = [subset(T1,T2),subset(T2,T1)].   % to be improved for the ground case
+
 
 %%%%%%%%%%% Multiset unification %%%%%%%%%%%%%%%%%
 
@@ -1488,18 +1481,18 @@ sat_neq([T1 neq T2|R1],[T1 neq T2|R2],Stop,nf):-     % delayed until final_sat i
          sat_step(R1,R2,Stop,nf).                   
 
 sat_neq([T1 neq T2|R1],R2,R,F):-      %NEW
-         nonvar(T1), T1 = int(_,_), \+ground(T1), !,
+         nonvar(T1), int_term(T1), \+ground(T1), !,
          sat_neq_ui([T1 neq T2|R1],R2,R,F).  
 sat_neq([T1 neq T2|R1],R2,R,F):-      %NEW
-         nonvar(T2), T2 = int(_,_), \+ground(T2), !,
+         nonvar(T2), int_term(T2), \+ground(T2), !,
          sat_neq_ui([T2 neq T1|R1],R2,R,F).  
 sat_neq([T1 neq T2|R1],R2,R,F):-  
-         nonvar(T1), T1 = int(A,B),!,
-         integer(A), integer(B),
+         nonvar(T1), T1 = int(A,B),
+         integer(A), integer(B),!,
          sat_neq_i([T1 neq T2|R1],R2,R,F).   
 sat_neq([T1 neq T2|R1],R2,R,F):-  
-         nonvar(T2), T2 = int(A,B),!,
-         integer(A), integer(B),
+         nonvar(T2), T2 = int(A,B),
+         integer(A), integer(B),!,
          sat_neq_i([T2 neq T1|R1],R2,R,F).   
 sat_neq([T1 neq T2|R1],R2,R,F):-  
          nonvar(T1), nonvar(T2),!,
@@ -2831,9 +2824,6 @@ final_sat(C,SFC):-
       check_domain(CC),                  %force labeling for integer variables;  
       sat(CC,RevC,f),                    %call the constraint solver (in 'final' mode); 
       final_sat_cont(RevC,CC,SFC).
-%      check_domain(C),                  %force labeling for integer variables;  
-%      sat(C,RevC,f),                    %call the constraint solver (in 'final' mode); 
-%      final_sat_cont(RevC,C,SFC).
 
 final_sat_cont(RevC,C,RevC) :-
       RevC == C,!,                      %if C==RevC, then no rewriting has been applied
@@ -2960,28 +2950,30 @@ add_FDc([integer(X)|SETc],FDc,Warning) :-
 
 isetlog((true :- true),sys).
 isetlog((less(A,X,C) :- 
-         A = C with X & X nin C & set(C) & true),sys).
+         A = C with X & set(C) & X nin C & true),sys).
 isetlog((nsubset(A,B) :- 
-         X in A & X nin B & set(B) & true),sys).
+         set(A) & set(B) & X in A & X nin B & true),sys).
 isetlog((ssubset(A,B) :- 
-         A neq B & subset(A,B) & true),sys).
+         set(A) & set(B) & A neq B & subset(A,B) & true),sys).
 %isetlog((inters(A,B,C) :- 
 %         un(D,C,A) & un(E,C,B) & disj(D,E) & 
 %         set(A) & set(B) & set(C) & true),sys).
 isetlog((ninters(A,B,C) :- 
-         X in C & set(C) & set(A) & set(B) &
+         set(A) & set(B) & set(C) & X in C &
          (X nin A & true or X nin B & true) & true),sys).
 isetlog((diff(A,B,C) :- 
-         subset(C,A) & un(B,C,D) & subset(A,D) & disj(B,C) & 
-         set(B) & true),sys).
+         set(A) & set(B) & set(C) &
+         subset(C,A) & un(B,C,D) & subset(A,D) & disj(B,C) & true),sys).
 %%% alternative implementation 
 %%% subset(C,A) & disj(B,C) & 
 %%% size(C,NC) & size(A,NA) & size(B,NB) & NC >= NA - NB
 
 isetlog((ndiff(A,B,C) :- 
-         diff(A,B,D) & D neq C & set(C) & true),sys).
+         set(A) & set(B) & set(C) &
+         diff(A,B,D) & D neq C & true),sys).
 isetlog((sdiff(A,B,C) :- 
-         diff(A,B,D) & diff(B,A,E) & un(D,E,C) & set(C) & true),sys).
+         set(A) & set(B) & set(C) &
+         diff(A,B,D) & diff(B,A,E) & un(D,E,C) & true),sys).
 
 isetlog((A =:= B :- 
          X is A & Y is B & X = Y & true),sys).
