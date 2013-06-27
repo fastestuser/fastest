@@ -195,6 +195,9 @@ public final class SetLogStrategy implements TCaseStrategy{
             if (dadNode != null) { //Si el hijo no es el VIS
             	//Pruneamos el nodo
             	boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
+            	if (result) {
+            		System.out.println("Node pruned: " + tClassName);
+            	}
             	
     			//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
             	AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
@@ -207,7 +210,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 					}
 				}
 				if (allChildsPruned) {
-					System.out.println("Trying to generate a test case for the class: " + tClassName);
 					EventAdmin eventAdmin = null;
 					try {
 						eventAdmin = EventAdmin.getInstance();
