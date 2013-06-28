@@ -4,14 +4,10 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
@@ -21,9 +17,6 @@ public final class SetLogGenerator {
 	private static HashMap<String,String> tipos;
 	private static HashMap<String, String> zNames;
 	private static HashMap<String, String> zVars;
-	
-
-	
 
 	public static HashMap<String, String> generate(String antlrInput, int timeout){
 

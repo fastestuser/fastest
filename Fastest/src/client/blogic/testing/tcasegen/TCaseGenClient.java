@@ -80,9 +80,8 @@ public class TCaseGenClient extends IIComponent {
             TCaseStrategy tCaseStrategy = tCaseStrategyMap.get(tClassName);
             if(tCaseStrategy == null){
                 //tCaseStrategy = new IterativeTCaseStrategy(3, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel());
-                //MODIFICADO AtomicPredTCaseStrategy por SetLogStrategy
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new GivenIntFiniteModel(), new GivenNatFiniteModel(), mapTTree);
-            	tCaseStrategy = new SetLogStrategy(axDefsValues,basicAxDefs,freeParas,basicTypeNames, myClientUI);
+            	tCaseStrategy = new SetLogStrategy(myClientUI);
             	//tCaseStrategy = new AtomicPredTCaseStrategy(fmSize, maxEval, axDefsValues, basicAxDefs, new ZeroIntFiniteModel(12), new ZeroNatFiniteModel(12), mapTTree);
             }
                 
@@ -94,8 +93,6 @@ public class TCaseGenClient extends IIComponent {
                 TCaseStrategySelected tCaseStrategySelected = (TCaseStrategySelected)event_;
                 String tClassName = tCaseStrategySelected.getTClassName();
                 TCaseStrategy tCaseStrategy = tCaseStrategySelected.getTCaseStrategy();
-		//if(tCaseStrategy==null)
-		//System.out.println("Va a agregar a: "+tClassName);
                 tCaseStrategyMap.put(tClassName, tCaseStrategy);
             }
             else if(event_ instanceof FastestResetted){

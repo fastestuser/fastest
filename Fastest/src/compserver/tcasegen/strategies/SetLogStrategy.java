@@ -13,7 +13,6 @@ import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
-import client.presentation.ClientTextUI;
 import client.presentation.ClientUI;
 
 
@@ -61,20 +60,10 @@ import compserver.tcasegen.strategies.setlog.*;
  */
 public final class SetLogStrategy implements TCaseStrategy{
 
-	private Map<RefExpr, Expr> axDefsValues;
-	private Map<String, List<String>> basicAxDefs;
-	private List<FreePara> freeParas;
-	private List<String> basicTypeNames;
 	private ClientUI clientUI; 
-
-
 	
 
-	public SetLogStrategy(Map<RefExpr, Expr> axDefsValues, Map<String, List<String>> basicAxDefs,List<FreePara> freeParas,List<String> basicTypeNames, ClientUI clientUI) {
-		this.axDefsValues = axDefsValues;
-		this.basicAxDefs = basicAxDefs;
-		this.freeParas = freeParas;
-		this.basicTypeNames = basicTypeNames;
+	public SetLogStrategy(ClientUI clientUI) {
 		this.clientUI = clientUI;
 	}
 
@@ -83,6 +72,12 @@ public final class SetLogStrategy implements TCaseStrategy{
 		String tClassName = tClass.getSchName();
 		System.out.println("Trying to generate a test case for the class: " + tClassName);
 		
+		Controller controller = clientUI.getMyController();
+        Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
+        List<FreePara> freeParas = controller.getFreeParas();
+        List<String> basicTypeNames = controller.getBasicTypeNames();
+		
+		//Primero trabajamos con las definiciones axiomaticas
 		//Reemplazamos las definiciones axiomaticas por sus valores
 		if (axDefsValues != null) {
 
@@ -121,7 +116,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 		Iterator<FreePara> freeParasIt = freeParas.iterator();
 
-		//Busco los tipos que se utilizan en tClass
+		//Buscamos los tipos que se utilizan en tClass
 		TypesExtractor extractor = new TypesExtractor();
 		HashSet<String> types = SpecUtils.getAxParaListOfDecl(tClass).accept(extractor);
 		HashSet<String> typesPrinted = new HashSet<String>();
@@ -173,22 +168,18 @@ public final class SetLogStrategy implements TCaseStrategy{
 			}
 		}
 
+		//Armamos la entrada para el parser
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
-		//antlrInput = "\\begin{schema}{K\\_ DNF\\_ 1}\\\\\nprocs : \\num \\ffun \\nat \\\\\nmaxProcs : \\nat\n\\where\n\\# (\\dom procs) = maxProcs\n\\end{schema}";
-		//System.out.println("**********************************************************************************************");
-		//System.out.println("ANTLRINPUT\n" + antlrInput);
-		//System.out.println("**********************************************************************************************\n");
-		Controller controller = clientUI.getMyController();
-		
+
 		int setlogTimeout = controller.getSetlogTimeout();
+		//Generamos el caso de prueba
 		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogTimeout);
 		
 		if (zVars == null) //No encontro caso
 			return null;
-		else if (zVars.isEmpty()) { //No hay caso, dio False {log}
+		else if (zVars.isEmpty()) { //No hay caso de prueba, dio False {log}
 			
-			//Agregado Joa, ver donde va
 			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
 			TTreeNode tClassNode = FastestUtils.getTTreeNode(controller, tClassName);
             TClassNode dadNode = tClassNode.getDadNode();
@@ -245,15 +236,15 @@ public final class SetLogStrategy implements TCaseStrategy{
 		while (keys.hasNext()) {
 			String varName = keys.next();
 			String value = zVars.get(varName);
-			System.out.println("------ " + varName + " = " + value);
+			//System.out.println("------ " + varName + " = " + value);
 			if (value != null) {
 				RefExpr var;
 				Expr val;
 				try {
 					var = (RefExpr) ParseUtils.parseExpr(new StringSource(varName), zLive.getCurrentSection(), zLive.getSectionManager());
-					System.out.println("------ " + SpecUtils.termToLatex(var));
+					//System.out.println("------ " + SpecUtils.termToLatex(var));
 					val = ParseUtils.parseExpr(new StringSource(value), zLive.getCurrentSection(), zLive.getSectionManager());
-					System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
+					//System.out.println("------ " + SpecUtils.termToLatex(var) + " = " + SpecUtils.termToLatex(val));
 					map.put(var, val);
 
 				} catch (IOException e) {
@@ -265,8 +256,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 		}
 
 		AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(tClass.getMyAxPara(), tClass.getSchName(), map);
-
 		return abstractTCase;
-
 	}
 }
