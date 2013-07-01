@@ -65,8 +65,7 @@ public class AxDefsClassifier implements AxParaVisitor<Void>,
             // (var, val) del pred de la def axiomatica
             ZSchText zSchText = axPara.getZSchText();
             Pred axDefPred = zSchText.getPred();
-            Map<String, Expr> assignedValues =
-                    SpecUtils.getAssignedValues(axDefPred);
+            Map<String, Expr> assignedValues = SpecUtils.getAssignedValues(axDefPred);
             DeclList declList = zSchText.getDeclList();
             if (declList instanceof ZDeclList) {
                 ZFactory zFactory = new ZFactoryImpl();
@@ -123,16 +122,16 @@ public class AxDefsClassifier implements AxParaVisitor<Void>,
 
                                     noBasicAxDefVars.add(varRefExpr);
 
-                                    if (strCategory.equals("freeNatOrNum")
-                                            && varValue != null) {
-                                        // If the variable type is free or \nat or
+                                    if (/*strCategory.equals("freeNatOrNum") &&*/ varValue != null) {
+                                    	// If the variable type is free or \nat or
                                         // \num and it has a value assigned within
                                         // the predicate we add its name to the
                                         // map of variable values
+                                    	
+                                    	//Se modifico para que tome valores fuera de freeNatOrNum
                                         axDefsValues.put(varRefExpr, varValue);
 
-                                    } else if (strCategory.equals("freeNatOrNum")
-                                            || strCategory.equals("other")) {
+                                    } else if (strCategory.equals("freeNatOrNum") || strCategory.equals("other")) {
                                         // If the variable type is free or \nat or
                                         // \num and it has not a value assigned within
                                         // the predicate we add its name to the
