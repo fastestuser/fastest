@@ -218,8 +218,8 @@ public class LoadSpecCommand implements Command {
             System.out.println("\t* " + varNameList.get(i));
             }
             }
-
-             */
+			*/
+             
 
             spec = (Spec) spec.accept(new EmptySetReplacer());
             controller.setBasicTypeNames(basicTypeNames);

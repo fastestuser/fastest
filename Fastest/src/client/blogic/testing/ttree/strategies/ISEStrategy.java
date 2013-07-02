@@ -21,7 +21,7 @@ import net.sourceforge.czt.util.Visitor;
 
 import common.z.SpecUtils;
 import common.repository.AbstractRepository;
-import common.z.czt.visitors.ISEExpresionExtractor;
+import common.z.czt.visitors.ISEExpressionExtractor;
 import common.z.czt.visitors.SchemeUnfolder;
 
 
@@ -79,7 +79,7 @@ public class ISEStrategy{
 			}
 		}
 
-		Visitor<Map<Term, String>> searcher = new ISEExpresionExtractor();
+		Visitor<Map<Term, String>> searcher = new ISEExpressionExtractor();
 		Map<Term, String> expressions;
 		expressions = axPara.accept(searcher);
 		Iterator<Term> expressionsIt = expressions.keySet().iterator();

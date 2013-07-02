@@ -14,11 +14,11 @@ import common.z.SpecUtils;
  * A visitor that obtains all the needed predicates to use in the ISE tactic when using an strategy
  */
 
-public class ISEExpresionExtractor
+public class ISEExpressionExtractor
 implements TermVisitor<Map<Term,String>>, MemPredVisitor<Map<Term,String>>
 {
 
-	public ISEExpresionExtractor(){
+	public ISEExpressionExtractor(){
 	}
 
 	public Map<Term,String> visitTerm(Term term)

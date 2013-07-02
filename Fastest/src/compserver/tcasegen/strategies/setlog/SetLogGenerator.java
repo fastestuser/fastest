@@ -28,9 +28,9 @@ public final class SetLogGenerator {
 			System.out.println("Error when translating to {log}: " + e.toString());
 			return null;
 		}
-		//System.out.println("**********************************************************************************************");
-		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
-		//System.out.println("**********************************************************************************************\n");
+		System.out.println("**********************************************************************************************");
+		System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
+		System.out.println("**********************************************************************************************\n");
 		String setlogOutput = runSetLog(setLogInput, timeout);
 
 		if (setlogOutput == null) //No se encontro caso
