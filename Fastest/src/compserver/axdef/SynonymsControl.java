@@ -12,14 +12,14 @@ import compserver.prunning.Theorem;
  */
 public class SynonymsControl implements AbstractRepository<Theorem>{
     
-    private static SynonymsControl theoremsControl;
+    private static SynonymsControl synonymsControl;
     private AbstractRepository<Theorem> repository;
     private int maxCard;
     
     
     
     /**
-     * Creates intances of TheoremsControl.
+     * Creates intances of SynonymsControl.
      */
 	private SynonymsControl(){
 		repository = new ConcreteRepository<Theorem>();
@@ -30,9 +30,9 @@ public class SynonymsControl implements AbstractRepository<Theorem>{
      * @return
      */
 	public static SynonymsControl getInstance(){	
-		if(theoremsControl==null)
-			theoremsControl = new SynonymsControl();
-		return theoremsControl;
+		if(synonymsControl==null)
+			synonymsControl = new SynonymsControl();
+		return synonymsControl;
 	}
 
     

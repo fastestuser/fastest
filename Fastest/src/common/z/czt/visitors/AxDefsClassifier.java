@@ -6,6 +6,8 @@ package common.z.czt.visitors;
 
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
+import compserver.axdef.SynonymsLoader;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +68,7 @@ public class AxDefsClassifier implements AxParaVisitor<Void>,
             ZSchText zSchText = axPara.getZSchText();
             Pred axDefPred = zSchText.getPred();
             Map<String, Expr> assignedValues = SpecUtils.getAssignedValues(axDefPred);
+            SynonymsLoader.loadSynonyms(axDefPred); //For thoose axiomatic definitions that use \forall
             DeclList declList = zSchText.getDeclList();
             if (declList instanceof ZDeclList) {
                 ZFactory zFactory = new ZFactoryImpl();
@@ -102,8 +105,7 @@ public class AxDefsClassifier implements AxParaVisitor<Void>,
                             for (int k = 0; k < zNameListImpl.size(); k++) {
                                 Name name = zNameListImpl.get(k);
                                 ZExprList auxZExprList = zFactory.createZExprList();
-                                RefExpr varRefExpr = zFactory.createRefExpr(name, auxZExprList,
-                                        Boolean.TRUE, Boolean.TRUE);
+                                RefExpr varRefExpr = zFactory.createRefExpr(name, auxZExprList,Boolean.TRUE, Boolean.TRUE);
                                 String varName = varRefExpr.getName().toString();
 
                                 Expr varValue = assignedValues.get(varName);

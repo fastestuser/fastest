@@ -26,6 +26,10 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AndPredClausesExtractor2;
 import common.z.czt.visitors.OrPredClausesExtractor;
 import common.z.czt.visitors.PredInOrVerifier;
+import compserver.axdef.SynonymsControl;
+import compserver.axdef.SynonymsLoader;
+import compserver.prunning.Theorem;
+import compserver.prunning.Variable;
 import net.sourceforge.czt.z.ast.*;
 
 /**

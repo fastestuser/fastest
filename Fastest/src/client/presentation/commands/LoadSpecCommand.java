@@ -31,6 +31,8 @@ import common.z.czt.visitors.EmptySetReplacer;
 import common.z.czt.visitors.FreeTypeNamesExtractor;
 import common.z.czt.visitors.OpNamesExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
+import compserver.axdef.SynonymsControl;
+import compserver.prunning.Theorem;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import java.util.List;
@@ -159,8 +161,7 @@ public class LoadSpecCommand implements Command {
             Map<String, List<Pred>> axDefsRequiredPreds = new HashMap<String, List<Pred>>();
 
             Map<Pred, List<String>> axDefsPredVars =  new HashMap<Pred, List<String>>();
-
-
+            
             spec.accept(new AxDefPredsExtractor(axDefsRequiredPreds,axDefsPredVars, noBasicAxDefVars));
 
             spec.accept(new ParenthesisRemover());

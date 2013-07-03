@@ -240,11 +240,11 @@ public class TheoremsLoader {
 		theorem.setReservedWords(reservedWords);
 		theorem.setDefinition(auxDefinition);
 		theorem.setPredicatesToMatch(auxPredicate);
-                theorem.setName(theoremName);
-                theorem.setFormalParamList(formalParamList);
+        theorem.setName(theoremName);
+        theorem.setFormalParamList(formalParamList);
 		theorem.setZDeclList(zDeclList);
 		theorem.setRegEx(patterns);
-                theoremsControl.addElement(theorem);
+        theoremsControl.addElement(theorem);
 		}
             }
 
