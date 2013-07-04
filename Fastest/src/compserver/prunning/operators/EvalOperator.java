@@ -22,10 +22,10 @@ public class EvalOperator implements Operator
 	public EvalOperator()
 	{
 	}
-    /**
-     * Returns a boolean value that indicates the result of the constants comparation
-     * @param line
-     */
+	/**
+	 * Returns a boolean value that indicates the result of the constants comparation
+	 * @param line
+	 */
 	public static boolean process(String line, SpecInfo specInfo)
 	{
 		ZLive zLive = UniqueZLive.getInstance();
@@ -39,18 +39,18 @@ public class EvalOperator implements Operator
 
 		// Reemplazamos los valores seteados de las definiciones axiomaticas
 		if (axDefsValues != null) {
-		Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-		Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
 
-		while (iterator.hasNext()) {
-			Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-			RefExpr refExpr = mapEntry.getKey();
-			Expr expr = mapEntry.getValue();
-			String strRefExpr = SpecUtils.termToLatex(refExpr);
-			String strExpr = SpecUtils.termToLatex(expr);
-			strExpr = RegExUtils.addEscapeCharacters(strExpr);
-			line = PruneUtils.replaceAllOccurrences(line, strRefExpr, strExpr);
-		}
+			while (iterator.hasNext()) {
+				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+				RefExpr refExpr = mapEntry.getKey();
+				Expr expr = mapEntry.getValue();
+				String strRefExpr = SpecUtils.termToLatex(refExpr);
+				String strExpr = SpecUtils.termToLatex(expr);
+				strExpr = RegExUtils.addEscapeCharacters(strExpr);
+				line = PruneUtils.replaceAllOccurrences(line, strRefExpr, strExpr);
+			}
 		}
 
 		// Reemplazamos los nombres de los tipos libres por un conjunto con sus elementos
@@ -72,17 +72,17 @@ public class EvalOperator implements Operator
 
 					//if(line.substring(6,line.length()-1).startsWith(freeTypeName+" ")){
 					if(line.contains(" "+freeTypeName+" ")){
-					found = true;
-					BranchList branchList = freetype.getBranchList();
-					if(branchList instanceof ZBranchList){
-					ZBranchList zBranchList = (ZBranchList) branchList;
-					for(int k=0;k<zBranchList.size();k++){
-						Branch branch = zBranchList.get(k);
-						Name branchName = branch.getName();
-						RefExpr refExpr = zFactory.createRefExpr(branchName, zFactory.createZExprList(),false,false);
-						zExprList.add(refExpr);
-					}
-					}
+						found = true;
+						BranchList branchList = freetype.getBranchList();
+						if(branchList instanceof ZBranchList){
+							ZBranchList zBranchList = (ZBranchList) branchList;
+							for(int k=0;k<zBranchList.size();k++){
+								Branch branch = zBranchList.get(k);
+								Name branchName = branch.getName();
+								RefExpr refExpr = zFactory.createRefExpr(branchName, zFactory.createZExprList(),false,false);
+								zExprList.add(refExpr);
+							}
+						}
 					}
 				}
 			}
@@ -95,12 +95,12 @@ public class EvalOperator implements Operator
 		Pred pred = null;
 		StringToNumReplacer stringToNumReplacer = new StringToNumReplacer();
 		try{
-		pred = ParseUtils.parsePred(new StringSource(line.substring(6,line.length()-1)),zLive.getCurrentSection(), zLive.getSectionManager());
-		pred = (Pred) pred.accept(stringToNumReplacer);
-		Term result = zLive.evalPred(pred);
-		String strResult = SpecUtils.termToLatex(result);
-		Boolean b = new Boolean(strResult);
-		return b.booleanValue();
+			pred = ParseUtils.parsePred(new StringSource(line.substring(6,line.length()-1)),zLive.getCurrentSection(), zLive.getSectionManager());
+			pred = (Pred) pred.accept(stringToNumReplacer);
+			Term result = zLive.evalPred(pred);
+			String strResult = SpecUtils.termToLatex(result);
+			Boolean b = new Boolean(strResult);
+			return b.booleanValue();
 		}
 		catch(Exception e)
 		{
@@ -109,11 +109,11 @@ public class EvalOperator implements Operator
 			return false;
 		}
 	}
-    /**
-     * Replace a line with a \eval operator for an alternative one with the regular
-     * expression corresponding to this operator
-     * @param originalPred The original atomic predicate
-     */
+	/**
+	 * Replace a line with a \eval operator for an alternative one with the regular
+	 * expression corresponding to this operator
+	 * @param originalPred The original atomic predicate
+	 */
 	public String addSemantic(String originalPred)
 	{
 		return originalPred;

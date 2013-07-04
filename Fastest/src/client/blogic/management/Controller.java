@@ -142,7 +142,7 @@ public class Controller extends IIComponent {
     // 
     private int maxPredsToAnalize;
     //
-    private int setlogTimeout = 10000; //Default value
+    private int setlogTimeout = 100; //Default value
 
     /** Creates a new instance of Controller */
     public Controller() {

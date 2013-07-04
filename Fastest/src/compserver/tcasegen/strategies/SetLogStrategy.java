@@ -61,7 +61,6 @@ import compserver.tcasegen.strategies.setlog.*;
 public final class SetLogStrategy implements TCaseStrategy{
 
 	private ClientUI clientUI; 
-	
 
 	public SetLogStrategy(ClientUI clientUI) {
 		this.clientUI = clientUI;

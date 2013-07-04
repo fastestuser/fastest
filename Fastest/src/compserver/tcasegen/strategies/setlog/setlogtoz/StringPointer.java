@@ -1,5 +1,10 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
+
+/* Usado por setlogtoz, para permitir a varias variables setlog 
+ * apuntar a un StringPointer y ahorrar mantener la invariante 
+ * de igualdad de la secuencias de igualdades si se usara solo String.
+ * */
 public final class  StringPointer{
 	
 	private String valor;

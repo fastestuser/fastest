@@ -1,15 +1,20 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-
-import net.sourceforge.czt.z.ast.ZName;
-
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
+
+/* La diferencia entre cte() , cteCanonica() , cteRestringuida() y getCteDesigual().
+ * cte() -> cteRestringuida() -> { cteCanonica() , getCteDesigual() }
+ * cte() toma expresiones con estructura (ej: {[A,14],Y}), que respeta para generar una cte, 
+ * en cambio el resto la expresion es un VARNAME (ej: X), es decir crea una cte armando la estructura, 
+ * si esta en constraint y es de tipo finito se usa getCteDesigual() si no cteCanonica().
+ * */
 
 public final class ConstantCreator {
 
@@ -23,8 +28,8 @@ public final class ConstantCreator {
 		return String.valueOf(postfijo++);
 	}
 
-	//llena la estructura freeTypes, la cual se usa para saber el tipo de una variabla
-	//que no figura en slvars, a partir de un elemento que esta en desigualdad en contraint
+	/* llena la estructura basicTypes, la cual se usa para saber si una expresion
+	 * tiene como parte de su tipo un tipo basico, el cual entonces no es finito */
 	private void llenarBasicTypes(){
 		basicTypes = new LinkedList<String>();
 		Iterator<String> iterator = tipos.keySet().iterator();
@@ -39,7 +44,8 @@ public final class ConstantCreator {
 	}
 
 
-
+	/* mantiene el invariante de valoresProhibidos. Reemplaza en todos los values la 
+	 * variable por la expresion instanciada. */
 	private void refrescarValoresProhibidos(String var, String expr){
 		Iterator<String> it = valoresProhibidos.keySet().iterator();
 		String key,value;
@@ -50,7 +56,8 @@ public final class ConstantCreator {
 			valoresProhibidos.put(key, value);
 		}
 	}
-
+	
+	/* Determina si un nodo solo tiene nodos de tipo finito o no */
 	private boolean soloTipoFinito(DefaultMutableTreeNode nodo){
 		String tipo = TypeManagerParser.printTree(nodo);
 		if(tipo.contains("num") || tipo.contains("nat"))
@@ -67,7 +74,14 @@ public final class ConstantCreator {
 		return true;
 	}
 
-	//devuelve una cte distinta a todos 
+	/* instancia un valor para var, de tal manera que respete las desigualdades de valoresProhibidos
+	 * esto es, no darle ningun valor que este como value en valoresProhibidos, para la key var
+	 * los valores que esquiva son los que corresponden a ctes, las variables las ignora.
+	 *  ej: valoresProhibidos: var -> A,B,{1,2,3},{1,2},
+	 *  se tiene que generar un valor para var distinto a A,B,{1,2,3} y {1,2}. como A y B no estan 
+	 *  instanciados los ignora, mapea {1,2,3} y {1,2} a un numero y genera un numero distinto,
+	 *  el menor posible distinto a los mapeos de esos dos, despues lo transforma a una expresion
+	 * */
 	private String getCteDesigual(DefaultMutableTreeNode nodo,String var){
 		String salida = null;
 		ExprIterator exprs = new ExprIterator("{"+valoresProhibidos.get(var)+"}");
@@ -86,14 +100,14 @@ public final class ConstantCreator {
 		String tipo = nodo.toString();
 
 		//el 0 de tipo power y seq es {},el resto de los tipos empieza en 1
-		int varNat = 0 ;
+		int varNat = 0 ; // int que sera transformado a una expresion
 		if (!tipo.equals("\\power") && !tipo.equals("\\seq")){
 			varNat = 1;
 		}
 
-		//m es la cantidad de constantes que fueron mapeadas a nat, y  a las cuales var debe ser distinta.
-		int m = i;
-		i = 0;
+		//consigo el valor final para varNat. buscando el minimo posible
+		int m = i; //m es la cantidad de constantes que fueron mapeadas a nat, y a las cuales var debe ser distinta.
+		i = 0; //ahora i se usa como iterador comun.
 		while (i<m){
 			if(varNat==nats[i]){
 				varNat++;
@@ -110,8 +124,9 @@ public final class ConstantCreator {
 
 
 
-	/* Dado un tipo y una variable, crea un terminal del tipo y se lo asigna a la variable
-	 * Refresca valoresProhibidos, reemplaza el nombre de la variable por el valor cte generado*/
+	/* Dado un tipo y una variable, instsancia una variable del tipo y se lo asigna a la variable
+	 * Si está en valoresProhibidos y es de tipo finito, respeta y los refresca. Si no
+	 * genera una cte generica */
 	private String cteRestringuida(DefaultMutableTreeNode nodo, String var){
 		String salida = null;
 
@@ -165,7 +180,7 @@ public final class ConstantCreator {
 			} 
 			return l1;
 		}
-
+		//Si el tipo es hecho por el usuario, tengo que ir a buscar el tipo unfoldeado a tipos.
 		String tipoCompleto = tipos.get(ct);
 		if (tipoCompleto.startsWith("SchemaType")){
 			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipoCompleto);
@@ -185,6 +200,7 @@ public final class ConstantCreator {
 			String[] aux = tipoCompleto.split("[{,]");
 			return aux[1];
 		}
+		// si es basico
 		return var;
 	}
 
@@ -292,8 +308,9 @@ public final class ConstantCreator {
 
 
 
-	/*No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. Es decir no genera conjuntos donde los valores del mismo es solo
-	 * construcciones de tipos finitos. */
+	/* No resulve el siguiente estilo de casos {a,C} donde el tipo es \power FT. 
+	 * Es decir no genera CONJUNTOS donde los valores del mismo es solo 
+	 * construcciones de tipos finitos. Esto no deberia ser necesario. */
 	ConstantCreator(HashMap<String, String> tipos,HashMap<String,StringPointer> slVars,HashMap<String,String> valoresProhibidos) {
 		this.tipos = tipos;
 		this.slVars = slVars;
@@ -303,7 +320,7 @@ public final class ConstantCreator {
 	}
 
 	String getCte(String expr, DefaultMutableTreeNode root){
-		expr = expr.replaceAll("\\s+",""); 
+		expr = expr.replaceAll("\\s+",""); //quita los espacios en blanco.
 		return cte(root, expr);
 	}
 

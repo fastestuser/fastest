@@ -132,8 +132,8 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 lineas
 	:	constr NL {
-			System.out.println("\n valoresProhibidos desigualdades: \n");
-			printHashMap(valoresProhibidos);
+			//System.out.println("\n valoresProhibidos desigualdades: \n");
+			//printHashMap(valoresProhibidos);
 			//System.out.println("asaaaaaaa" + "\n");
 			preprocesarConstraint();
 		}
@@ -141,8 +141,8 @@ lineas
 		{
 			//System.out.println("\n**salida SLog2Z**: \n");
 			//System.out.println("constraint: " + $constr.text );
-			System.out.println("\nslvars:");
-			printHashMap( slvars );
+			//System.out.println("\nslvars:");
+			//printHashMap( slvars );
 			llenarZVars();
 			//System.out.println("\nzVars vacias +++++++++:");
 			//printHashMap(zVars);

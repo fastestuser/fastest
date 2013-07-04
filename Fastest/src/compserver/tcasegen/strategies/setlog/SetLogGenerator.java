@@ -8,6 +8,7 @@ import java.util.HashMap;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
@@ -28,9 +29,10 @@ public final class SetLogGenerator {
 			System.out.println("Error when translating to {log}: " + e.toString());
 			return null;
 		}
-		System.out.println("**********************************************************************************************");
+		//System.out.println("**********************************************************************************************");
 		System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
 		System.out.println("**********************************************************************************************\n");
+
 		String setlogOutput = runSetLog(setLogInput, timeout);
 
 		if (setlogOutput == null) //No se encontro caso
@@ -89,8 +91,8 @@ public final class SetLogGenerator {
 			boolean pruneClass = false;
 			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 			String s;
-			System.out.println("**********************************************************************************************");
-			System.out.println("SETLOG OUT:\n");
+			//System.out.println("**********************************************************************************************");
+			//System.out.println("SETLOG OUT:\n");
 			while ((s = stdError.readLine()) != null) {
 				//System.out.println(s);
 				if (s.equals("false.")) {
@@ -102,12 +104,13 @@ public final class SetLogGenerator {
 				else if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");
 				}else if(s.startsWith("_CONSTR")){
-					setlogOutput = s +"\n"+ setlogOutput;
+					//setlogOutput = s +"\n"+ setlogOutput;
+					setlogOutput = setlogOutput  + "\n" + s;
 					break;
 				}
 			}
-			System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
-			System.out.println("**********************************************************************************************\n");
+			//System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
+			//System.out.println("**********************************************************************************************\n");
 			
 			if (pruneClass) {
 				return "FALSE";

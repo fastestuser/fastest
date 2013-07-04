@@ -2,7 +2,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.Iterator;
 
-/*Dada una expresion permite iterar sobre sus elementos
+/* Dada una expresion permite iterar sobre sus elementos
  * ej: expr = {ccc,[XXX],dsad3,{{}{}},dsda} entonces cada elemento es ccc, [XXX], etc....*/
 public final class ExprIterator implements Iterator<String>{
 	private int posActual,posPrev;
@@ -82,7 +82,7 @@ public final class ExprIterator implements Iterator<String>{
 			expr = String.valueOf(open) + String.valueOf(cierre);
 		posActual = 0;
 	}
-	
+	//remueve el elemento
 	public void remove(String elem){
 		int backup = posActual;
 

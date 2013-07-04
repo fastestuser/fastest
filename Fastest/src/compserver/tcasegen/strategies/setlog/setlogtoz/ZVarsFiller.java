@@ -201,8 +201,8 @@ public final class ZVarsFiller {
 		this.slvars = SL2ZP.getSlvars();
 		llenarZVars(SL2ZP.getCC());
 		setLogToLatexCharsReplacer();
-		System.out.println("\nzVars llenas****************\n");
-		SetLogUtils.printHashMap(zVars);
+		//System.out.println("\nzVars llenas****************\n");
+		//SetLogUtils.printHashMap(zVars);
 
 		//System.out.println("\n FreeTipos ****************\n");
 		HashMap<String, String> mapaux = llenarFreeTypes(tipos);

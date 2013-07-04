@@ -62,196 +62,197 @@ import compserver.prunning.operators.*;
  * Also, load the list of Fastest's operators used in theorems.
  */
 public class TheoremsLoader {
-    
-    private String theoremsFileName;
-    private String operatorsFileName;
-    private String defTheorem;
-    private ZLive zLive;
-    private int maxCard;
-    private List<String> operatorsList;
 
-    
-    /**
-     * Creates instaces of TheoremsLoader.
-     * @param theoremsFileName the file where the theorems are defined.
-     * @param operatorsFileName the file where the Fastest's operators are defined.
-     */
-    public TheoremsLoader(String theoremsFileName, String operatorsFileName){
-        this.operatorsFileName = operatorsFileName;
-	this.theoremsFileName = theoremsFileName;
-	maxCard = 0;
-	operatorsList = new ArrayList<String>();
-    }
-    
-    
-    
-    /**
-     * Load the theorems from the file into the unique instance of
-     * TheoremsControl.
-     */
+	private String theoremsFileName;
+	private String operatorsFileName;
+	private String defTheorem;
+	private ZLive zLive;
+	private int maxCard;
+	private List<String> operatorsList;
+
+
+	/**
+	 * Creates instaces of TheoremsLoader.
+	 * @param theoremsFileName the file where the theorems are defined.
+	 * @param operatorsFileName the file where the Fastest's operators are defined.
+	 */
+	public TheoremsLoader(String theoremsFileName, String operatorsFileName){
+		this.operatorsFileName = operatorsFileName;
+		this.theoremsFileName = theoremsFileName;
+		maxCard = 0;
+		operatorsList = new ArrayList<String>();
+	}
+
+
+
+	/**
+	 * Load the theorems from the file into the unique instance of
+	 * TheoremsControl.
+	 */
 	public void loadTheorems(){
 
-        TheoremsControl theoremsControl = TheoremsControl.getInstance();
-	
-	try{
-		System.out.println("Loading pruning theorems...");
-		// We load the operators
-    		BufferedReader inOp = new BufferedReader(new FileReader(operatorsFileName));
-		String line;
-            	String ops = "";
-		while((line = inOp.readLine())!= null)
-                	operatorsList.add(line);
-		// We obtain the rewrite rules for easy manipulation
-		RWRulesControl rwRulesControl = RWRulesControl.getInstance();
-		List<RWRuleOperator> rulesOperator = new ArrayList<RWRuleOperator>();
-		List<RWRuleLaw> rulesLaw = new ArrayList<RWRuleLaw>();
-		AbstractIterator<RWRule> itRules = rwRulesControl.createIterator();
-		while(itRules.hasNext()){
-			RWRule rwRule = itRules.next();
-			if(rwRule instanceof RWRuleOperator)
-				rulesOperator.add((RWRuleOperator) rwRule);
-			else if(rwRule instanceof RWRuleLaw)
-				rulesLaw.add((RWRuleLaw) rwRule);
-		}
+		TheoremsControl theoremsControl = TheoremsControl.getInstance();
 
-		// We load the theorems
-    		BufferedReader in = new BufferedReader(new FileReader(theoremsFileName));
-            	String text = "";
-		while((line = in.readLine())!= null)
-                	text += line+"\n";
-
-		// We split the string to separate the theorems's definitions
-		String theoremsArr[] = text.split("end");
-            
-            
-            	zLive = UniqueZLive.getInstance();
-            	TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
-            	PrintWriter printWriter = new PrintWriter(System.out, true);
-            	for(int i=0; i< theoremsArr.length-1; i++){
-                String thmDefinition = theoremsArr[i];
-                Theorem theorem = new Theorem();
-
-               	// We separate the i-th theorem definition  in lines
-               	String theoremLines[] = thmDefinition.split("\r\n|\r|\n");
-
-		String auxDefinition="";
-		String auxPredicate="";
-		String finalString="";
-		//String regExpr ="";
-		boolean firstTime = true;
-		String theoremName = "";
-		List<Variable> formalParamList = null;
-		//Map<String, List<Integer>> ids = new HashMap<String,List<Integer>>();
-		boolean isATheorem = false;
-		ZDeclList zDeclList = null;
-                for(int j=0; j< theoremLines.length-1; j++)
-		{
-		    if(!theoremLines[j].startsWith("%") && !theoremLines[j].equals("") && !theoremLines[j].equals("{theorem}")){
-			if(theoremLines[j].endsWith("\\\\"))
-			{
-				theoremLines[j] = theoremLines[j].substring(0,theoremLines[j].length()-3);
-			}
-			// We extract all the information in the header
-			if(firstTime){ 
-				String theoremHeader = theoremLines[j].trim();
-				theoremName = extractTheoremName(theoremHeader);
-				//System.out.println("Teorema: "+theoremName);
-				formalParamList = extractTheoremParams(theoremHeader);
-				if(formalParamList.size()>maxCard)
-					maxCard = formalParamList.size();
-				zDeclList = extractTheoremDeclList(theoremHeader);
-				isATheorem = true;
-				firstTime = false;
-			}
-			else{
-		    	auxDefinition+=theoremLines[j]+"\n";
-
-			boolean lawFounded = false;
-			boolean specialLine = false;
-			int x=0;
-			for(int k=0; k<operatorsList.size() && !specialLine; k++)
-				if(theoremLines[j].contains(operatorsList.get(k)))
-					specialLine =true;
-			if(!specialLine){	
-			// We apply the rewrite rules
-			for(x=0;x<rulesLaw.size() && !lawFounded;x++){
-				if(rulesLaw.get(x).match(theoremLines[j])){
-					List<String> strNames = rulesLaw.get(x).getStrExpr();
-					List<Expr> types = rulesLaw.get(x).getTypes();
-					boolean isCorrect = true;
-					for(int index=0;index<types.size() && isCorrect; index++){
-					String strName = strNames.get(index);
-					Expr type = types.get(index);
-					isCorrect =isCorrectType(strName, type, zDeclList);
-					}
-					if(isCorrect){
-					theoremLines[j] = rulesLaw.get(x).rewrite(theoremLines[j]);
-					lawFounded = true;
-					}
-					
-				}
-			}
-			if(lawFounded){
-				theoremLines[j] = deleteExtraParenthesis(theoremLines[j]);
-			}
-			else
-				theoremLines[j] = deleteExtraParenthesis(theoremLines[j]);
-			}
-			// We apply the commutativity rewrite rules
-			for(int k=0;k<rulesOperator.size();k++)
-				if(theoremLines[j].indexOf(rulesOperator.get(k).getOperator())>-1 && !theoremLines[j].contains("\\eval")){
-					// Reemplazamos los operadores Fastest por nombres intermedios para poder parsear
-					theoremLines[j] = FastestOperatorReplacer.replace(theoremLines[j]);
-					theoremLines[j] = rulesOperator.get(k).rewrite(theoremLines[j]);
-					// Reestablecemos los operadores Fastest
-					theoremLines[j] = FastestOperatorReplacer.recover(theoremLines[j]);
+		try{
+			System.out.println("Loading pruning theorems...");
+			// We load the operators
+			BufferedReader inOp = new BufferedReader(new FileReader(operatorsFileName));
+			String line;
+			String ops = "";
+			while((line = inOp.readLine())!= null)
+				operatorsList.add(line);
+			// We obtain the rewrite rules for easy manipulation
+			RWRulesControl rwRulesControl = RWRulesControl.getInstance();
+			List<RWRuleOperator> rulesOperator = new ArrayList<RWRuleOperator>();
+			List<RWRuleLaw> rulesLaw = new ArrayList<RWRuleLaw>();
+			AbstractIterator<RWRule> itRules = rwRulesControl.createIterator();
+			while(itRules.hasNext()){
+				RWRule rwRule = itRules.next();
+				if(rwRule instanceof RWRuleOperator)
+					rulesOperator.add((RWRuleOperator) rwRule);
+				else if(rwRule instanceof RWRuleLaw)
+					rulesLaw.add((RWRuleLaw) rwRule);
 			}
 
-			if(lawFounded){
-			theoremLines[j] = rulesLaw.get(x-1).addRegExValues(theoremLines[j]);
-			}
-			// We check if the line contains the \eval operator
-			boolean special = false;
-			//for(int k=0; k<operatorsList.size() && !special; k++)
-				if(theoremLines[j].indexOf("\\eval")>-1)
+			// We load the theorems
+			BufferedReader in = new BufferedReader(new FileReader(theoremsFileName));
+			String text = "";
+			while((line = in.readLine())!= null)
+				text += line+"\n";
+
+			// We split the string to separate the theorems's definitions
+			String theoremsArr[] = text.split("end");
+
+
+			zLive = UniqueZLive.getInstance();
+			TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+			PrintWriter printWriter = new PrintWriter(System.out, true);
+			for(int i=0; i< theoremsArr.length-1; i++){
+				String thmDefinition = theoremsArr[i];
+				Theorem theorem = new Theorem();
+
+				// We separate the i-th theorem definition  in lines
+				String theoremLines[] = thmDefinition.split("\r\n|\r|\n");
+
+				String auxDefinition="";
+				String auxPredicate="";
+				String finalString="";
+				//String regExpr ="";
+				boolean firstTime = true;
+				String theoremName = "";
+				List<Variable> formalParamList = null;
+				//Map<String, List<Integer>> ids = new HashMap<String,List<Integer>>();
+				boolean isATheorem = false;
+				ZDeclList zDeclList = null;
+				for(int j=0; j< theoremLines.length-1; j++)
 				{
-					special =true;
-					theorem.setSpecialLine("\\eval", theoremLines[j], theoremName);
-				}
-				/*else if(theoremLines[j].indexOf("\\se")>-1)
+					if(!theoremLines[j].startsWith("%") && !theoremLines[j].equals("") && !theoremLines[j].equals("{theorem}")){
+						if(theoremLines[j].endsWith("\\\\"))
+						{
+							theoremLines[j] = theoremLines[j].substring(0,theoremLines[j].length()-3);
+						}
+						// We extract all the information in the header
+						if(firstTime){ 
+							String theoremHeader = theoremLines[j].trim();
+							theoremName = extractTheoremName(theoremHeader);
+							//System.out.println("Teorema: "+theoremName);
+							formalParamList = extractTheoremParams(theoremHeader);
+							if(formalParamList.size()>maxCard)
+								maxCard = formalParamList.size();
+							zDeclList = extractTheoremDeclList(theoremHeader);
+							isATheorem = true;
+							firstTime = false;
+						}
+						else{
+							auxDefinition+=theoremLines[j]+"\n";
+
+							boolean lawFounded = false;
+							boolean specialLine = false;
+							int x=0;
+							for(int k=0; k<operatorsList.size() && !specialLine; k++)
+								if(theoremLines[j].contains(operatorsList.get(k)))
+									specialLine =true;
+							if(!specialLine){	
+								// We apply the rewrite rules
+								for(x=0;x<rulesLaw.size() && !lawFounded;x++){
+									if(rulesLaw.get(x).match(theoremLines[j])){
+										List<String> strNames = rulesLaw.get(x).getStrExpr();
+										List<Expr> types = rulesLaw.get(x).getTypes();
+										boolean isCorrect = true;
+										for(int index=0;index<types.size() && isCorrect; index++){
+											String strName = strNames.get(index);
+											Expr type = types.get(index);
+											isCorrect =isCorrectType(strName, type, zDeclList);
+										}
+										if(isCorrect){
+											theoremLines[j] = rulesLaw.get(x).rewrite(theoremLines[j]);
+											lawFounded = true;
+										}
+
+									}
+								}
+								if(lawFounded){
+									theoremLines[j] = deleteExtraParenthesis(theoremLines[j]);
+								}
+								else
+									theoremLines[j] = deleteExtraParenthesis(theoremLines[j]);
+							}
+							// We apply the commutativity rewrite rules
+							for(int k=0;k<rulesOperator.size();k++)
+								if(theoremLines[j].indexOf(rulesOperator.get(k).getOperator())>-1 && !theoremLines[j].contains("\\eval")){
+									// Reemplazamos los operadores Fastest por nombres intermedios para poder parsear
+									theoremLines[j] = FastestOperatorReplacer.replace(theoremLines[j]);
+									theoremLines[j] = rulesOperator.get(k).rewrite(theoremLines[j]);
+									// Reestablecemos los operadores Fastest
+									theoremLines[j] = FastestOperatorReplacer.recover(theoremLines[j]);
+								}
+
+							if(lawFounded){
+								theoremLines[j] = rulesLaw.get(x-1).addRegExValues(theoremLines[j]);
+							}
+							// We check if the line contains the \eval operator
+							boolean special = false;
+							//for(int k=0; k<operatorsList.size() && !special; k++)
+							if(theoremLines[j].indexOf("\\eval")>-1)
+							{
+								special =true;
+								theorem.setSpecialLine("\\eval", theoremLines[j], theoremName);
+							}
+							/*else if(theoremLines[j].indexOf("\\se")>-1)
 				{
 					special =true;
 					theorem.setSpecialLine("\\se", theoremLines[j], theoremName);
 				}*/
-			if(!special)
-				auxPredicate+=theoremLines[j]+"\n";
+							if(!special)
+								auxPredicate+=theoremLines[j]+"\n";
 
-			finalString+= theoremLines[j]+"\n";
+							finalString+= theoremLines[j]+"\n";
+						}
+					}
+				}
+				if(isATheorem){
+					List<List<List<String>>> reservedWords = extractReservedWords(finalString);
+
+					List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
+					List<List<Pattern>> patterns = createRegExpr(auxPredicate, formalParamList, mapGroups);
+
+					theorem.setVarRegExGroups(mapGroups);
+					theorem.setReservedWords(reservedWords);
+					theorem.setDefinition(auxDefinition);
+					theorem.setPredicatesToMatch(auxPredicate);
+					theorem.setName(theoremName);
+					theorem.setFormalParamList(formalParamList);
+					theorem.setZDeclList(zDeclList);
+					theorem.setRegEx(patterns);
+					theoremsControl.addElement(theorem);
+				}
 			}
-		}
-                }
-		if(isATheorem){
-		List<List<List<String>>> reservedWords = extractReservedWords(finalString);
 
-		List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
-		List<List<Pattern>> patterns = createRegExpr(auxPredicate, formalParamList, mapGroups);
 
-		theorem.setVarRegExGroups(mapGroups);
-		theorem.setReservedWords(reservedWords);
-		theorem.setDefinition(auxDefinition);
-		theorem.setPredicatesToMatch(auxPredicate);
-        theorem.setName(theoremName);
-        theorem.setFormalParamList(formalParamList);
-		theorem.setZDeclList(zDeclList);
-		theorem.setRegEx(patterns);
-        theoremsControl.addElement(theorem);
-		}
-            }
+			// We set the max cardinality of the loaded theorems
+			theoremsControl.setMaxCardinality(maxCard);
 
-		// We set the max cardinality of the loaded theorems
-		theoremsControl.setMaxCardinality(maxCard);
-
-		/*String regular = "^[ ]*(.+) \\notin \\{.*? (.+) .*\\}[ ]*";
+			/*String regular = "^[ ]*(.+) \\notin \\{.*? (.+) .*\\}[ ]*";
 		regular = RegExUtils.addEscapeCharacters(regular);
 		String frase = "x \\notin \\{ y1 , y2 , y3 \\}";
 		System.out.println("La expresion regular:\n"+regular);
@@ -272,18 +273,18 @@ public class TheoremsLoader {
 		}
 		catch(FileNotFoundException e){
 			System.out.println("The theorems' configuration file " +
-                    "could not be found.");
+					"could not be found.");
 			System.exit(0);
 		}	
 		catch(IOException e){
 			System.out.println("IOException");
 			System.exit(0);
-        
-        }
-        catch(Exception e){
-	    System.out.println("Exception!!!");
-            e.printStackTrace(System.out);
-        }
+
+		}
+		catch(Exception e){
+			System.out.println("Exception!!!");
+			e.printStackTrace(System.out);
+		}
 	}
 
 	private String extractTheoremName(String line)
@@ -363,7 +364,7 @@ public class TheoremsLoader {
 
 		Term parsedTerm = null;
 		try{
-		parsedTerm = ParseUtils.parse(new StringSource(defTheorem), zLive.getSectionManager());
+			parsedTerm = ParseUtils.parse(new StringSource(defTheorem), zLive.getSectionManager());
 		}
 		catch(Exception e){
 			System.out.println("Exception");
@@ -441,47 +442,47 @@ public class TheoremsLoader {
 			String line = lines[i].trim();
 			if(!line.contains("\\eval")){
 
-			List<List<String>> alternatives = new ArrayList<List<String>>();
+				List<List<String>> alternatives = new ArrayList<List<String>>();
 
-			String[] subLine = line.split(";");
-			for(int x=0;x<subLine.length;x++){
-			List<String> subList = new ArrayList<String>(); 
-			Set<String> reservedSet = new HashSet<String>();
-			String[] parts = subLine[x].split(" ");
-			for(int j=0;j<parts.length;j++)
-				// We analyze expressions that starts with a "\"
-				if(parts[j].startsWith("\\")){
-				// We check if the string is a Fastest's operator
-				boolean special = false;
-				for(int k=0; k<operatorsList.size() && !special; k++)
-					if(parts[j].contains(operatorsList.get(k)))
-						special =true;
-				// We check if the string is the empty set
-				boolean empty = false;
-				if(parts[j].equals("\\{")){
-					if(parts[j+1].equals("\\}")){
-					empty = true;
-					reservedSet.add(parts[j]+" "+parts[j+1]);
-					j++;
-					}
-				} // We check if the string is the empty sequence
-				else if(parts[j].equals("\\langle")){
-					if(parts[j+1].equals("\\rangle")){
-					empty = true;
-					reservedSet.add(parts[j]+" "+parts[j+1]);
-					j++;
-					}
-				}
-				else if(!special && !parts[j].equals("\\}") && !parts[j].equals("\\rangle"))
-					reservedSet.add(parts[j]);
-				}
-				else if(parts[j].matches("\\+|\\-|\\*|=|>|<"))
-					reservedSet.add(parts[j]);
+				String[] subLine = line.split(";");
+				for(int x=0;x<subLine.length;x++){
+					List<String> subList = new ArrayList<String>(); 
+					Set<String> reservedSet = new HashSet<String>();
+					String[] parts = subLine[x].split(" ");
+					for(int j=0;j<parts.length;j++)
+						// We analyze expressions that starts with a "\"
+						if(parts[j].startsWith("\\")){
+							// We check if the string is a Fastest's operator
+							boolean special = false;
+							for(int k=0; k<operatorsList.size() && !special; k++)
+								if(parts[j].contains(operatorsList.get(k)))
+									special =true;
+							// We check if the string is the empty set
+							boolean empty = false;
+							if(parts[j].equals("\\{")){
+								if(parts[j+1].equals("\\}")){
+									empty = true;
+									reservedSet.add(parts[j]+" "+parts[j+1]);
+									j++;
+								}
+							} // We check if the string is the empty sequence
+							else if(parts[j].equals("\\langle")){
+								if(parts[j+1].equals("\\rangle")){
+									empty = true;
+									reservedSet.add(parts[j]+" "+parts[j+1]);
+									j++;
+								}
+							}
+							else if(!special && !parts[j].equals("\\}") && !parts[j].equals("\\rangle"))
+								reservedSet.add(parts[j]);
+						}
+						else if(parts[j].matches("\\+|\\-|\\*|=|>|<"))
+							reservedSet.add(parts[j]);
 
-				subList.addAll(reservedSet);
-				alternatives.add(subList);
-			}
-			reservedsList.add(alternatives);
+					subList.addAll(reservedSet);
+					alternatives.add(subList);
+				}
+				reservedsList.add(alternatives);
 			}
 		}
 		return reservedsList;
@@ -501,14 +502,14 @@ public class TheoremsLoader {
 			String newPred = lines.get(i);
 			//System.out.println("Predicado original:\n"+newPred);
 			for(int j=0;j<vars.size();j++){
-			String name = vars.get(j).getName();
-			Pattern regex = RegExUtils.createVarRegEx(name);
-			Matcher matcher = regex.matcher(newPred);
-			while(matcher.find()){
-				String pattern = matcher.group();
-				String newPattern = pattern.replaceAll(name, "(.+)");
-				newPred = newPred.replaceAll(pattern, newPattern);
-			}
+				String name = vars.get(j).getName();
+				Pattern regex = RegExUtils.createVarRegEx(name);
+				Matcher matcher = regex.matcher(newPred);
+				while(matcher.find()){
+					String pattern = matcher.group();
+					String newPattern = pattern.replaceAll(name, "(.+)");
+					newPred = newPred.replaceAll(pattern, newPattern);
+				}
 			}
 
 			for(int x=0; x<operatorsList.size(); x++)
@@ -516,14 +517,14 @@ public class TheoremsLoader {
 					String operator = operatorsList.get(x);
 					operator = operator.substring(1,2).toUpperCase()+operator.substring(2);
 					try{
-					Class operatorClass = Class.forName("compserver.prunning.operators." + operator + "Operator");
-					Object object = operatorClass.newInstance();
-					if (object instanceof Operator){
-					Operator op = (Operator) object;
-					//System.out.println("newPred antes: "+newPred);
-					newPred = op.addSemantic(newPred);
-					//System.out.println("newPred despues: "+newPred);
-					}
+						Class operatorClass = Class.forName("compserver.prunning.operators." + operator + "Operator");
+						Object object = operatorClass.newInstance();
+						if (object instanceof Operator){
+							Operator op = (Operator) object;
+							//System.out.println("newPred antes: "+newPred);
+							newPred = op.addSemantic(newPred);
+							//System.out.println("newPred despues: "+newPred);
+						}
 
 					}
 					catch(Exception e){
@@ -567,8 +568,8 @@ public class TheoremsLoader {
 			for(int j=0;j<partsAux.length;j++){
 
 
-			partsAux[j] = partsAux[j].replaceAll("\\\\sw\\( (.*) \\)", "$1");
-			partsAux[j] = partsAux[j].replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
+				partsAux[j] = partsAux[j].replaceAll("\\\\sw\\( (.*) \\)", "$1");
+				partsAux[j] = partsAux[j].replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
 
 
 
@@ -577,12 +578,12 @@ public class TheoremsLoader {
 				Pattern auxRegex = Pattern.compile(auxPatterns[j],Pattern.MULTILINE);
 				Matcher auxMatcher = auxRegex.matcher(partsAux[j]);
 				while(auxMatcher.find()){
-				for(int x=1;x<auxMatcher.groupCount()+1;x++){
-					if(auxMatcher.group(x)!=null && auxMatcher.group(x)!=""){
-						//System.out.println("Grupo "+(x+groupCount)+": "+auxMatcher.group(x));
-						groups.put(new Integer(x+groupCount), auxMatcher.group(x));
+					for(int x=1;x<auxMatcher.groupCount()+1;x++){
+						if(auxMatcher.group(x)!=null && auxMatcher.group(x)!=""){
+							//System.out.println("Grupo "+(x+groupCount)+": "+auxMatcher.group(x));
+							groups.put(new Integer(x+groupCount), auxMatcher.group(x));
+						}
 					}
-				}
 				}
 				groupCount+=auxMatcher.groupCount();
 				singlePattern.add(auxRegex);
@@ -628,7 +629,7 @@ public class TheoremsLoader {
 		definition += parts[parts.length -1]+"\n\\end{schema}";
 		Term parsedTerm = null;
 		try{
-		parsedTerm = ParseUtils.parse(new StringSource(definition), zLive.getSectionManager());
+			parsedTerm = ParseUtils.parse(new StringSource(definition), zLive.getSectionManager());
 		}
 		catch(Exception e){
 			System.out.println("Excepcion");
@@ -653,11 +654,11 @@ public class TheoremsLoader {
 		}
 
 		try{
-		ZLive zLive = UniqueZLive.getInstance();
-		List<? extends ErrorAnn> errors = 
-				TypeCheckUtils.typecheck(axPara, zLive.getSectionManager(), false, zLive.getCurrentSection());
-		if(errors.size() >0)
-			System.out.println("Errores:\n"+errors.toString());
+			ZLive zLive = UniqueZLive.getInstance();
+			List<? extends ErrorAnn> errors = 
+					TypeCheckUtils.typecheck(axPara, zLive.getSectionManager(), false, zLive.getCurrentSection());
+			if(errors.size() >0)
+				System.out.println("Errores:\n"+errors.toString());
 		}
 		catch(Exception e){
 			System.out.println("Typechecking errors!!!");
@@ -683,36 +684,36 @@ public class TheoremsLoader {
 		if(typeRule instanceof PowerExpr)
 			return true;
 		if(typeRule instanceof RefExpr){
-		RefExpr refRule = (RefExpr) typeRule;
-		if(!refRule.getMixfix() && !refRule.getExplicit())
-			return true;
-		else if(refRule.getMixfix() && refRule.getExplicit()){
-		String ruleTypeSymbol = refRule.getZName().getWord().toString();
-		boolean varFounded = false;
-		for(int i=0;i<zDeclList.size() && !varFounded;i++){
-			Decl decl = zDeclList.get(i);
-			if(decl instanceof VarDecl){
-				VarDecl varDecl = (VarDecl) decl;
-				Name name = varDecl.getZNameList().get(0);
-				if(name instanceof ZName){
-				ZName zName = (ZName) name;
-				String formalName = zName.getWord().toString();
-				if(formalName.equals(strName)){
-					varFounded = true;
-					Expr expr = varDecl.getExpr();
-					if(expr instanceof RefExpr){
-						RefExpr refExpr = (RefExpr) expr;
-						String theoremTypeSymbol = refExpr.getZName().getWord().toString();
-						if(SubTyping.isSubType(ruleTypeSymbol, theoremTypeSymbol))
-							return true;
-						else
-							return false;
+			RefExpr refRule = (RefExpr) typeRule;
+			if(!refRule.getMixfix() && !refRule.getExplicit())
+				return true;
+			else if(refRule.getMixfix() && refRule.getExplicit()){
+				String ruleTypeSymbol = refRule.getZName().getWord().toString();
+				boolean varFounded = false;
+				for(int i=0;i<zDeclList.size() && !varFounded;i++){
+					Decl decl = zDeclList.get(i);
+					if(decl instanceof VarDecl){
+						VarDecl varDecl = (VarDecl) decl;
+						Name name = varDecl.getZNameList().get(0);
+						if(name instanceof ZName){
+							ZName zName = (ZName) name;
+							String formalName = zName.getWord().toString();
+							if(formalName.equals(strName)){
+								varFounded = true;
+								Expr expr = varDecl.getExpr();
+								if(expr instanceof RefExpr){
+									RefExpr refExpr = (RefExpr) expr;
+									String theoremTypeSymbol = refExpr.getZName().getWord().toString();
+									if(SubTyping.isSubType(ruleTypeSymbol, theoremTypeSymbol))
+										return true;
+									else
+										return false;
+								}
+							}
+						}
 					}
 				}
-				}
 			}
-		}
-		}
 		}
 		return true;
 	}

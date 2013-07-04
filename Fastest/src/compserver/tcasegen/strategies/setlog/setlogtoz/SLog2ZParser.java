@@ -212,8 +212,8 @@ public class SLog2ZParser extends Parser {
 			setState(12); ((LineasContext)_localctx).constr = constr();
 			setState(13); match(NL);
 
-						System.out.println("\n valoresProhibidos desigualdades: \n");
-						printHashMap(valoresProhibidos);
+						//System.out.println("\n valoresProhibidos desigualdades: \n");
+						//printHashMap(valoresProhibidos);
 						//System.out.println("asaaaaaaa" + "\n");
 						preprocesarConstraint();
 					
@@ -241,8 +241,8 @@ public class SLog2ZParser extends Parser {
 
 						//System.out.println("\n**salida SLog2Z**: \n");
 						//System.out.println("constraint: " + (((LineasContext)_localctx).constr!=null?_input.getText(((LineasContext)_localctx).constr.start,((LineasContext)_localctx).constr.stop):null) );
-						System.out.println("\nslvars:");
-						printHashMap( slvars );
+						//System.out.println("\nslvars:");
+						//printHashMap( slvars );
 						llenarZVars();
 						//System.out.println("\nzVars vacias +++++++++:");
 						//printHashMap(zVars);
