@@ -255,8 +255,7 @@ public class LoadSpecCommand implements Command {
                     String errorStr = errors.get(i).toString();
                     int fstQuoteIndex = errorStr.indexOf("\"");
                     int sndQuoteIndex = errorStr.indexOf("\"", fstQuoteIndex + 1);
-                    errorStr = errorStr.substring(0, fstQuoteIndex + 1)
-                            + texFileName + errorStr.substring(sndQuoteIndex);
+                    errorStr = errorStr.substring(0, fstQuoteIndex + 1) + texFileName + errorStr.substring(sndQuoteIndex);
                     output.println(errorStr + "\n");
                 }
 
