@@ -858,7 +858,7 @@ sys_special(assert(Clause),[]):-       %% assert
 
 sys_special(consult_lib,[]):-          %% stores clauses contained in the {log} library file into                       
       !,rem_clause(lib), rem_clause(tmp(lib)),       %% the current program in the library ctxt        
-      setlog_open('setloglib.slog',read,FileStream), %% (removing all clauses possibly stored 
+      setlog_open('/home/jcuenca/workspace/Fastest/lib/setlog/setloglib.slog',read,FileStream), %% (removing all clauses possibly stored 
       switch_ctxt(lib,OldCtxt),                      %% in the same ctxt) 
       read_loop_np(FileStream),
       switch_ctxt(OldCtxt,_),

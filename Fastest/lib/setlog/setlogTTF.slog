@@ -302,4 +302,3 @@ squash0(Rel,[N|List],NewList) :-
     prolog_call(assert((user:dom_all_known(S) :- S = (PFun with [X,_]), nonvar(X), dom_all_known(PFun)))).
 
 :- setlogTTF_prolog.
-

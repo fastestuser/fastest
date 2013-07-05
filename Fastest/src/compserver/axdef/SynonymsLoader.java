@@ -72,7 +72,7 @@ public class SynonymsLoader {
 
 
 				Theorem theorem = new Theorem();
-				System.out.println("Cargandooooo " + SpecUtils.termToLatex(forAllPred));
+				//System.out.println("Cargandooooo " + SpecUtils.termToLatex(forAllPred));
 				String synonym = SpecUtils.termToLatex(forAllPred);
 				List<Variable> formalParamList = SynonymsLoader.extractSynonymsParams(synonym);
 				String predicatesToMatch = SynonymsLoader.extractPredicates(synonym);

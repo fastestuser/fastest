@@ -3,6 +3,8 @@ package compserver.tcasegen.strategies.setlog;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -30,8 +32,8 @@ public final class SetLogGenerator {
 			return null;
 		}
 		//System.out.println("**********************************************************************************************");
-		System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
-		System.out.println("**********************************************************************************************\n");
+		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
+		//System.out.println("**********************************************************************************************\n");
 
 		String setlogOutput = runSetLog(setLogInput, timeout);
 
@@ -76,10 +78,19 @@ public final class SetLogGenerator {
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
 			
-			String goal = "consult('./lib/SetLog/setlog4617.pl')."
+			URL location = SetLogGenerator.class.getProtectionDomain().getCodeSource().getLocation();
+			String path = location.getFile();
+			if (path.endsWith("/")) //Al correrlo desde eclipse, el path termina en /bin/, con lo cual se elimina primero la ultima /
+				path = path.substring(0, path.lastIndexOf("/"));
+			path = path.substring(0, path.lastIndexOf("/")); //Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
+			path = path + "/lib/setlog/"; //Por ultimo agregamos la direccion de setlog
+			path = URLDecoder.decode(path, "UTF-8");
+			//System.out.println("DIRECTORIO: " + path + "setlog4617.pl");
+			
+			String goal = "consult('" + path + "setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
-					+ "\nsetlog_consult('./lib/SetLog/setlogTTF.slog')."
+					+ "\nsetlog_consult('" + path + "setlogTTF.slog')."
 					+ "\ntime_out(setlog( \n"
 					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
 					+ "\n,_CONSTR)," + timeout + ",_RET).\n";
@@ -118,7 +129,8 @@ public final class SetLogGenerator {
 
 		}
 		catch (Exception e){ 
-			e.printStackTrace(); 
+			e.printStackTrace();
+			return null;
 		}
 		return setlogOutput;
 	}

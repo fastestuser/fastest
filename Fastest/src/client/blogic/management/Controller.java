@@ -144,6 +144,7 @@ public class Controller extends IIComponent {
 	//
 	private int setlogTimeout = 100; //Default value
 
+
 	/** Creates a new instance of Controller */
 	public Controller() {
 		loadedOpsRep = new ConcreteRepository<String>();
@@ -172,8 +173,8 @@ public class Controller extends IIComponent {
 		File configFile = null;
 		try {
 			//
-			//            URL url = ClientTextUI.class.getResource("ClientTextUI.class");
-			//            String urlStr = url.toString();
+			//URL url = ClientTextUI.class.getResource("ClientTextUI.class");
+			//String urlStr = url.toString();
 			String currentDir = "";
 			configFile = new File(currentDir + "lib/conf/fastest.conf");
 			BufferedReader in = new BufferedReader(new FileReader(configFile));
