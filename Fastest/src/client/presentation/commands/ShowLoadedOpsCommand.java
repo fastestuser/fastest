@@ -33,7 +33,9 @@ public class ShowLoadedOpsCommand implements Command{
 		}
 		else{
 			Controller controller = clientTextUI.getMyController();
-			Spec spec = controller.getUnfoldedSpec();
+			Spec spec = null;
+			if (controller.getOriginalSpec() != null)
+				spec = controller.getUnfoldedSpec();
 			
 			if (spec == null)
 				output.println("There is not any specification loaded.");
