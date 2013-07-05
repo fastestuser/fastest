@@ -47,29 +47,21 @@ public class ReplaceAxDefCommand implements Command{
 		{
 			if (sect instanceof ZSect)
 			{
-				ZSect                 zSect                = (ZSect)sect;
-				ParaList        paraList        = zSect.getParaList();
-
+				ZSect zSect = (ZSect)sect;
+				ParaList paraList = zSect.getParaList();
 				if (paraList instanceof ZParaList){
-
 					ZParaList zParaList = (ZParaList) paraList;
-
 					for(int i = 0; i < zParaList.size(); i++){
-
 						Para para = zParaList.get(i);
-
 						if(para instanceof AxPara)
 						{    
-							AxPara axPara        = (AxPara) para;
-							String strBox        = (axPara.getBox()).name();
-
+							AxPara axPara  = (AxPara) para;
+							String strBox  = (axPara.getBox()).name();
 							if (strBox.equals("SchBox")){
 								TClassImpl tc = new TClassImpl(axPara,SpecUtils.getAxParaName(axPara));
 								ResultMatchAxDef r = pruneTree(tc,sInfo);
 								r.getResult();
 							}
-							//System.out.println(SpecUtils.termToLatex(axPara));
-							//CztPrinter.printAxPara(axPara, 0, 0);
 						}
 					}
 				}
