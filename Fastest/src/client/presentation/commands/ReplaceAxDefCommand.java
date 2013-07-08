@@ -120,10 +120,4 @@ public class ReplaceAxDefCommand implements Command{
 		ResultMatchAxDef resultMatchAxDef = new ResultMatchAxDef(tClassName, synonymName, params, result);
 		return resultMatchAxDef;
 	}
-
-
-
-
 }
-
-

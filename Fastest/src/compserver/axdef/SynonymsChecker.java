@@ -8,6 +8,8 @@ import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.Pred;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern; 
+import java.util.regex.PatternSyntaxException;
+
 import common.regex.RegExUtils;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;

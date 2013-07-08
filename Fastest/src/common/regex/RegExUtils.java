@@ -25,7 +25,7 @@ public class RegExUtils
 	public static Pattern createVarRegEx(String varName)
 	{
 		//Pattern regex = Pattern.compile("^[ ]*"+varName+" | "+varName+"[ ]*$| "+varName+" | "+varName+";"+varName+" | "+varName+";|;"+varName+" | "+varName+"~|~"+varName+" ", Pattern.MULTILINE);
-		Pattern regex = Pattern.compile("^[ ]*"+varName+" | "+varName+"[ ]*$|~"+varName+"[ ]*$| "+varName+" | "+varName+";"+varName+" | "+varName+";|;"+varName+" | "+varName+"~|~"+varName+" ", Pattern.MULTILINE);
+		Pattern regex = Pattern.compile("^[ ]*"+varName+" | "+varName+"[ ]*$|~"+varName+"[ ]*$| "+varName+" | "+varName+";"+varName+" | "+varName+";|;"+varName+" |"+varName+"~|~"+varName+" ", Pattern.MULTILINE);
 		return regex;
 	}
 }
