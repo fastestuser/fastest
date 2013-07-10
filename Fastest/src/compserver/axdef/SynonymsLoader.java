@@ -202,7 +202,7 @@ public class SynonymsLoader {
 				Matcher matcher = regex.matcher(newPred);
 				while(matcher.find()){
 					String pattern = matcher.group();
-					String newPattern = pattern.replaceAll(name, "(.+)");
+					String newPattern = pattern.replaceAll(name, "([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
 					newPred = newPred.replaceAll(pattern, newPattern);
 				}
 			}
@@ -213,10 +213,10 @@ public class SynonymsLoader {
 			for(int x=0;x<parts.length-1;x++){
 				/*auxPred+="^[ ]*"+parts[x]+"[ ]*$|";*/auxPred+=parts[x].trim()+"|";
 			}
-			/*auxPred+="^(.*)"+parts[parts.length-1]+"(.*)$";*/auxPred+=parts[parts.length-1].trim();
-			//auxPred+="jojojo(~)(.+)";
+			///*auxPred+="^(.*)"+parts[parts.length-1]+"(.*)$";*/auxPred+=parts[parts.length-1].trim();
+			auxPred+="jacinto~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))";
 			if(auxPred.contains("~")){
-			//	auxPred = auxPred.replace("~","(~)");
+			//	auxPred = auxPred.replace("~","(~?)");
 			}
 			if(auxPred.contains("(.*)~(.*)")){
 				//auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
