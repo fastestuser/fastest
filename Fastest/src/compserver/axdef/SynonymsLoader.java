@@ -9,17 +9,31 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.sourceforge.czt.animation.eval.ZLive;
+import net.sourceforge.czt.base.ast.Term;
+import net.sourceforge.czt.parser.z.ParseUtils;
+import net.sourceforge.czt.session.StringSource;
+import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.ForallPred;
 import net.sourceforge.czt.z.ast.MemPred;
+import net.sourceforge.czt.z.ast.Para;
+import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.SetExpr;
+import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZExprList;
+import net.sourceforge.czt.z.ast.ZParaList;
+import net.sourceforge.czt.z.ast.ZSect;
 import common.regex.RegExUtils;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.SpecUtils;
+import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AndPredClausesExtractor;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
@@ -77,16 +91,14 @@ public class SynonymsLoader {
 				ForallPred forAllPred = (ForallPred) auxPred;
 
 
-				Theorem theorem = new Theorem();
 				//System.out.println("Cargandooooo " + SpecUtils.termToLatex(forAllPred));
+				Theorem theorem = new Theorem();
 				String synonym = SpecUtils.termToLatex(forAllPred);
+				String theoremName = extractSynonymName(synonym).trim();
+				ZDeclList zDeclList = extractTheoremDeclList(synonym);
 				List<Variable> formalParamList = SynonymsLoader.extractSynonymsParams(synonym);
 				String predicatesToMatch = SynonymsLoader.extractPredicates(synonym);
-				
-				//String theoremName = formalParamList.get(formalParamList.size()-1).getName();
-				
 				List<List<List<String>>> reservedWords = extractReservedWords(predicatesToMatch);
-
 				List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
 				List<List<Pattern>> patterns = createRegExpr(predicatesToMatch, formalParamList, mapGroups);
 
@@ -94,13 +106,27 @@ public class SynonymsLoader {
 				theorem.setPredicatesToMatch(predicatesToMatch);
 				theorem.setReservedWords(reservedWords);
 				theorem.setVarRegExGroups(mapGroups);
-				//theorem.setDefinition(auxDefinition);
-				theorem.setName("jojojo");
-				//theorem.setZDeclList(zDeclList);
+				theorem.setName(theoremName);
+				theorem.setZDeclList(zDeclList);
 				theorem.setRegEx(patterns);
+				//theorem.setDefinition(auxDefinition);
 				SynonymsControl.getInstance().addElement(theorem);
 			}
 		}
+	}
+
+	private static String extractSynonymName(String line) {
+		int beginIndex = line.indexOf("@");
+		int endIndex = line.indexOf('~');
+		String SynonymName;
+		if ((beginIndex != -1) && (endIndex != -1)) {
+			SynonymName = line.substring(beginIndex+1, endIndex);
+		}
+		else {
+			int random = (int)(Math.random()*1000000);
+			SynonymName = "Synonym" + random;
+		}
+		return SynonymName;
 	}
 
 	private static String extractPredicates(String line) {
@@ -231,4 +257,85 @@ public class SynonymsLoader {
 		}
 		return patterns;
 	}
+	
+	private static ZDeclList extractTheoremDeclList(String line)
+	{
+		List<String> nonReserved = new ArrayList<String>();
+		List<String> declarations = new ArrayList<String>();
+		line = line.substring(line.indexOf("\\forall")+7, line.indexOf('@'));
+		String types[] = line.split(";");
+		String auxType;
+		for(int i=0;i<types.length;i++)
+		{
+			auxType = types[i];
+			String parts[] = auxType.split(":",2);
+			String varNames[] = parts[0].split(",");
+			String type = parts[1].trim();
+			extractNonReservedWords(type, nonReserved);
+			for(int j=0;j<varNames.length;j++)
+			{
+				String name = varNames[j].trim();
+				if(name.startsWith("\\const")){
+					name = name.substring(7);
+					declarations.add(name+": "+"CONST"+type);
+				}
+				else
+					declarations.add(name+": "+type);
+			}
+		}
+		int random = (int)(Math.random()*1000000);
+		String defTheorem = "\\begin{schema}{NAME"+random+"}[";	
+		for(int i=0;i<nonReserved.size()-1;i++){
+			defTheorem=defTheorem+nonReserved.get(i)+", ";
+		}
+		if(nonReserved.size()>0)
+			defTheorem=defTheorem+nonReserved.get(nonReserved.size()-1)+"]";
+		else
+			defTheorem=defTheorem+"X]";
+		for(int i=0;i<declarations.size()-1;i++){
+			defTheorem=defTheorem+declarations.get(i)+" \\\\ ";
+		}
+		defTheorem=defTheorem+declarations.get(declarations.size()-1)+" \\end{schema}";
+
+		Term parsedTerm = null;
+		try{
+			ZLive zLive = UniqueZLive.getInstance();
+			parsedTerm = ParseUtils.parse(new StringSource(defTheorem), zLive.getSectionManager());
+		}
+		catch(Exception e){
+			System.out.println("Exception");
+			e.printStackTrace();
+			System.out.println(defTheorem);
+		}
+		//System.out.println("Parseado:\n"+SpecUtils.termToLatex((Spec)parsedTerm));
+		Spec spec = (Spec) parsedTerm;
+		AxPara axPara = null;
+		for (Sect sect : spec.getSect()) {
+			if (sect instanceof ZSect) {
+				ParaList paraList = ((ZSect) sect).getParaList();
+				if (paraList instanceof ZParaList) {
+					for(int i=0; i < ((ZParaList)paraList).size(); i++){
+						Para para = ((ZParaList)paraList).get(i);
+						if (para instanceof AxPara){
+							axPara = (AxPara) para;
+						}
+					}
+				}
+			}
+		}
+		DeclList declList = SpecUtils.getAxParaListOfDecl(axPara);
+		ZDeclList zDeclList = null;
+		if(declList instanceof ZDeclList)
+			zDeclList = (ZDeclList) declList;
+		return zDeclList;
+	}
+	
+	private static void extractNonReservedWords(String type, List<String> nonReserved)
+	{
+		String[] parts = type.split(" ");
+		for(int i=0;i<parts.length;i++)
+			if(!parts[i].startsWith("\\") && !nonReserved.contains(parts[i]))
+				nonReserved.add(parts[i]);
+	}
+
 }
