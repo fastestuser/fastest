@@ -1,13 +1,27 @@
+
 \begin{zed}
 NCTA == \num \\
 SALDO == \num
 \end{zed}
 
+\begin{axdef}
+failed: \power (\num \cross \nat) \\
+jojo: \power (\num) \\
+xconstante:\num
+\where
+\forall x:\nat @ (x,78) \in failed \iff x \neq xconstante \\
+\forall j:\num @ j \notin jojo \iff j > 65
+\end{axdef}
+
 \begin{schema}{Extraer\_ SP\_ 29}\\
  cajas, cajas' : NCTA \pfun SALDO \\
  num? : NCTA \\
- m? : SALDO 
+ m? : SALDO \\
+ a :\num
 \where
+ (a, 78) \in failed \\
+ 45 \neq 78 \\
+ 85 \notin jojo \\
  m? > cajas~num? \\
  num? \in \dom cajas \\
  cajas \neq \{ \} \\

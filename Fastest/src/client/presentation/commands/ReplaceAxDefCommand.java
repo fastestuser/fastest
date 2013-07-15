@@ -1,11 +1,13 @@
 package client.presentation.commands;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.sourceforge.czt.parser.circus.ParseUtils;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
@@ -42,7 +44,6 @@ public class ReplaceAxDefCommand implements Command{
 
 		Spec spec = controller.getOriginalSpec();
 
-
 		for (Sect sect : spec.getSect())
 		{
 			if (sect instanceof ZSect)
@@ -77,15 +78,16 @@ public class ReplaceAxDefCommand implements Command{
 		List<String> params = new ArrayList<String>();
 		boolean result = false;
 
+		synonymsChecker.info = new HashMap<String,List<Map<String,String>>>();
 		Map<String, List<Map<String,String>>> matches = synonymsChecker.findParameters();
-		while(matches.size()>0 && !result){
+		while(matches.size()>0){
 			Set<Map.Entry<String, List<Map<String,String>>>> set = matches.entrySet();
 			Iterator<Map.Entry<String, List<Map<String,String>>>> iterator = set.iterator();
-			while(iterator.hasNext() && !result){
+			while(iterator.hasNext()){
 				Map.Entry<String, List<Map<String,String>>> mapEntry = iterator.next();
 				synonymName = mapEntry.getKey();
 				List<Map<String,String>> listMatches = mapEntry.getValue();
-				for(int i=0;i<listMatches.size() && !result;i++){
+				for(int i=0;i<listMatches.size();i++){
 					// Deberia ir tras el chequeo y el eval
 					params.clear();
 					result = true;

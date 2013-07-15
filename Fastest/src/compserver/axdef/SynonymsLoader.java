@@ -52,11 +52,11 @@ public class SynonymsLoader {
 		line = line.substring(line.indexOf("\\forall")+7, line.indexOf('@'));
 		String types[] = line.split(";");
 		String auxType;
-		
+
 		//if (theoremName != null) { //La agregamos como variable especial
 		//	params.add(new Variable(theoremName, "generic"));
 		//}
-		
+
 		for(int i=0;i<types.length;i++)
 		{
 			auxType = types[i];
@@ -102,6 +102,10 @@ public class SynonymsLoader {
 				List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
 				List<List<Pattern>> patterns = createRegExpr(predicatesToMatch, formalParamList, mapGroups);
 
+				//Prueba
+				String replacement = SynonymsLoader.extractReplacement(synonym);
+				theorem.setDefinition(replacement);
+				
 				theorem.setFormalParamList(formalParamList);
 				theorem.setPredicatesToMatch(predicatesToMatch);
 				theorem.setReservedWords(reservedWords);
@@ -109,10 +113,16 @@ public class SynonymsLoader {
 				theorem.setName(theoremName);
 				theorem.setZDeclList(zDeclList);
 				theorem.setRegEx(patterns);
-				//theorem.setDefinition(auxDefinition);
+				
 				SynonymsControl.getInstance().addElement(theorem);
 			}
 		}
+	}
+
+	private static String extractReplacement(String synonym) {
+		String predicates = new String();
+		predicates = synonym.substring(synonym.indexOf("\\iff")+5);
+		return predicates;
 	}
 
 	private static String extractSynonymName(String line) {
@@ -131,7 +141,7 @@ public class SynonymsLoader {
 
 	private static String extractPredicates(String line) {
 		String predicates = new String();
-		predicates = line.substring(line.indexOf('@')+1, line.indexOf('='));
+		predicates = line.substring(line.indexOf('@')+1, line.indexOf("\\iff"));
 		return predicates;
 	}
 
@@ -187,6 +197,7 @@ public class SynonymsLoader {
 
 	private static List<List<Pattern>> createRegExpr(String originalPred, List<Variable> vars, List<Map<Integer,String>> mapGroups)
 	{
+		//List<Pattern> patterns = new ArrayList<Pattern>();
 		List<List<Pattern>> patterns = new ArrayList<List<Pattern>>();
 		String[] predLines = originalPred.split("\n");
 		List<String> lines = new ArrayList<String>();
@@ -196,54 +207,66 @@ public class SynonymsLoader {
 		for(int i=0;i<lines.size();i++){
 			Map<Integer,String> groups = new HashMap<Integer,String>();
 			String newPred = lines.get(i);
+			//System.out.println("Predicado original:\n"+newPred);
 			for(int j=0;j<vars.size();j++){
 				String name = vars.get(j).getName();
 				Pattern regex = RegExUtils.createVarRegEx(name);
 				Matcher matcher = regex.matcher(newPred);
 				while(matcher.find()){
 					String pattern = matcher.group();
-					String newPattern = pattern.replaceAll(name, "([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+					String newPattern = pattern.replaceAll(name, "(.+)");
 					newPred = newPred.replaceAll(pattern, newPattern);
 				}
 			}
 
 			newPred = RegExUtils.addEscapeCharacters(newPred);
+			//System.out.println("Despues newPred:\n"+newPred);
 			String[] parts = newPred.split(";");
 			String auxPred = "";
 			for(int x=0;x<parts.length-1;x++){
-				/*auxPred+="^[ ]*"+parts[x]+"[ ]*$|";*/auxPred+=parts[x].trim()+"|";
+				auxPred+="^[ ]*"+parts[x].trim()+"[ ]*$|";
 			}
-			///*auxPred+="^(.*)"+parts[parts.length-1]+"(.*)$";*/auxPred+=parts[parts.length-1].trim();
-			auxPred+="jacinto~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))";
-			if(auxPred.contains("~")){
-			//	auxPred = auxPred.replace("~","(~?)");
-			}
+			auxPred+="^[ ]*"+parts[parts.length-1].trim()+"[ ]*$";
 			if(auxPred.contains("(.*)~(.*)")){
-				//auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
-
+				auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
 			}
 			else if(auxPred.contains("(.+)~(.+)")){
-				//auxPred = auxPred.replace("(.+)~(.+)","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				//auxPred = auxPred.replace("(.+)~(.+)","([^ ]+)~([^ ]+)");
+				auxPred = auxPred.replace("(.+)~(.+)","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				//"([^ ]+|(?:[(][^()]*[)])|(?:[(](?:[^ ]+|(?:[(][^()]*[)]))[)]))"
+
+				//auxPred = auxPred.replace("(.+)~(.+)","([^ ]+)~([^ ]+)");
 			}
 			else if(auxPred.contains("(.+)~.*")){
-				//auxPred = auxPred.replace("(.+)~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				auxPred = auxPred.replace("(.+)~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
 			}
+			//System.out.println("El auxPred:\n"+auxPred);
 			String[] auxPatterns = auxPred.split("\\|");
+			//System.out.println("El tamaño es: "+auxPatterns.length);
+			//Pattern regex = Pattern.compile(auxPred,Pattern.MULTILINE);
+			//System.out.println("PAtron:\n"+regex);
 			String aux = lines.get(i);
+			//aux = aux.replaceAll("\\\\sw\\( (.*) \\)", "$1");
+			//aux = aux.replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
 			String[] partsAux = aux.split(";");
 			int groupCount=0;
 			List<Pattern> singlePattern = new ArrayList<Pattern>();
 			for(int j=0;j<partsAux.length;j++){
 
+
 				partsAux[j] = partsAux[j].replaceAll("\\\\sw\\( (.*) \\)", "$1");
 				partsAux[j] = partsAux[j].replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
 
+
+
 				auxPatterns[j] = auxPatterns[j].replace("\t","|");
+				//System.out.println("El patron:\n"+auxPatterns[j]);
 				Pattern auxRegex = Pattern.compile(auxPatterns[j],Pattern.MULTILINE);
 				Matcher auxMatcher = auxRegex.matcher(partsAux[j]);
 				while(auxMatcher.find()){
 					for(int x=1;x<auxMatcher.groupCount()+1;x++){
 						if(auxMatcher.group(x)!=null && auxMatcher.group(x)!=""){
+							//System.out.println("Grupo "+(x+groupCount)+": "+auxMatcher.group(x));
 							groups.put(new Integer(x+groupCount), auxMatcher.group(x));
 						}
 					}
@@ -257,7 +280,7 @@ public class SynonymsLoader {
 		}
 		return patterns;
 	}
-	
+
 	private static ZDeclList extractTheoremDeclList(String line)
 	{
 		List<String> nonReserved = new ArrayList<String>();
@@ -329,7 +352,7 @@ public class SynonymsLoader {
 			zDeclList = (ZDeclList) declList;
 		return zDeclList;
 	}
-	
+
 	private static void extractNonReservedWords(String type, List<String> nonReserved)
 	{
 		String[] parts = type.split(" ");

@@ -1,6 +1,7 @@
 package compserver.axdef;
 
 import java.util.*;
+
 import common.repository.AbstractIterator;
 import common.z.TClass;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -10,9 +11,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern; 
 import java.util.regex.PatternSyntaxException;
 
+import javax.swing.tree.DefaultMutableTreeNode;
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+
 import common.regex.RegExUtils;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
+import compserver.prunning.typechecking.TypeChecker;
 
 /**
  * Obtains all the information of the expressions in a test class that match with the
@@ -60,9 +67,6 @@ public class SynonymsChecker
 			System.out.println("Debuggeando!");
 			}*/
 
-			info = new HashMap<String,List<Map<String,String>>>();
-
-
 			List<List<List<String>>> reservedWords = theSynonym.getReservedWords();
 			boolean reservedsInPredicate = true; 
 			// We check if the necessary operators are present in the predicate
@@ -94,14 +98,14 @@ public class SynonymsChecker
 					return findParameters();
 				else{
 					info.put(theoremName, matches);
-					return info;
+					return findParameters();
 				}
 			}
 			else
 				return findParameters();
 		}
 		else
-			return new HashMap<String,List<Map<String,String>>>();
+			return info;
 	}
 
 	private List<Map<String,String>> analyzePatterns(Theorem theSynonym, Map<String,String> mapFR, List<Map<String,String>> matches, int startIndex)
@@ -110,6 +114,9 @@ public class SynonymsChecker
 			strPred = originalPred;
 			currentSynonym = theSynonym.getName();
 		}
+
+		String finalPred;
+
 		String[] partsPredicate = theSynonym.getPredicatesToMatch().split("\n");
 		//strPred = originalPred;
 		List<List<Pattern>> patterns = theSynonym.getRegEx();
@@ -131,42 +138,28 @@ public class SynonymsChecker
 		}*/
 			matcher = matcher.reset(strPred);
 			matcher = matcher.usePattern(auxPattern);
+
 			while(matcher.find()){
-				/*if(debug){
-			System.out.println("Loopea el nivel: "+startIndex);
-			System.out.println("Regular expresion:\n"+auxPattern);
-			System.out.println("Matcheo el grupo:\n"+matcher.group());
-			}*/
+
+				finalPred = theSynonym.getDefinition();
+
 				boolean contradiction = false;
 				Map<String,String> mapFRCopy = new HashMap<String,String>();
 				mapFRCopy.putAll(mapFR);
 				match = true;
-				/*if(debug)
-				System.out.println("Grupos: "+matcher.groupCount());*/
 				for(int j=1;j<matcher.groupCount()+1 && !contradiction;j++){
 					if(matcher.group(j)!=null && matcher.group(j)!=""){
-						/*if(debug)
-					System.out.println("Grupo: "+(j+groupCount));*/
 						String captured = matcher.group(j).trim();
 						String formal = groups.get(j+groupCount).trim();
 						if(captured.endsWith(" "))
 							captured = captured.substring(0, captured.length()-1);
 						else if(captured.endsWith(" ="))
 							captured = captured.substring(0, captured.length()-2);
-						/*if(debug){
-				System.out.println("Formal:"+formal);
-				System.out.println("Real:"+captured);
-				}*/
 
 						if(captured.contains(",") /*&& !captured.contains(")") && !captured.contains("(")*/ && partsPredicate[startIndex].contains("\\se( "+formal+" )")){
-							//System.out.println("SubExtension:\n"+ partsPredicate[startIndex]);
 							String auxNewVar = captured.substring(captured.lastIndexOf(",")+1).trim();
-							//System.out.println("La nueva variable: "+auxNewVar);
-							//System.out.println("Antes de reemplazar:\n"+strPred);
 							strPred = strPred.replaceFirst(RegExUtils.addEscapeCharacters(captured), captured.substring(0, captured.lastIndexOf(",")-1));
-							//String auxStrPred = matcher.toString().replaceFirst(RegExUtils.addEscapeCharacters(captured), captured.substring(0, captured.lastIndexOf(",")-1));
 
-							//System.out.println("Despues de reemplazar:\n"+strPred);
 							captured = auxNewVar;
 							matcher.reset(strPred);
 						}
@@ -179,8 +172,9 @@ public class SynonymsChecker
 						}
 						else{
 							// If the formal parameter is not present in the map and the captured value is not present in the map we add this entry to the map
-							if(!mapFRCopy.containsValue(captured))
+							if(!mapFRCopy.containsValue(captured)) {
 								mapFRCopy.put(formal,captured);
+							}
 							else{
 								// If the formal parameter is not present in the map and the captured value is present in the map we check if the corresponding formal parameter is a constant or a variable. The constants must be differents
 								List<Variable> vars = theSynonym.getFormalParamList();
@@ -213,8 +207,10 @@ public class SynonymsChecker
 								}
 								if(repeat)
 									contradiction = true;
-								else
+								else {
 									mapFRCopy.put(formal,captured);
+								}
+
 							}
 						}
 					}
@@ -228,6 +224,39 @@ public class SynonymsChecker
 					}
 					else{
 						matches.add(mapFRCopy);
+
+						//Chequear los tipos del map y si esta bien hacer lo que sigue:
+						//Por cada variable en el map: finalPred = finalPred.replaceAll(formal, captured);
+						//y despues
+
+						//Hace falta chequear que tipe? o ya debe tipar si es que paso por loadspec
+						/*boolean result = true;
+
+						//We extract the real parameters in the correct order
+						List<Variable> formalParameters = theSynonym.getFormalParamList();
+						List<String> params = new ArrayList<String>();
+						for(int j=0;j<formalParameters.size();j++){
+							Variable formalVar = formalParameters.get(j);
+							String formalName = formalVar.getName();
+							String realName = mapFRCopy.get(formalName);
+							//System.out.println("Formal: "+formalName);
+							//System.out.println("Real: "+realName);
+							params.add(realName);
+						}
+						TypeChecker typeChecker = new TypeChecker();
+						result = typeChecker.checkParametersTypes(theSynonym, tClass, params);
+
+						if (result) {*/
+						Iterator<String> mapIt = mapFRCopy.keySet().iterator();
+						while (mapIt.hasNext()) {
+							String formal = mapIt.next();
+							finalPred = finalPred.replaceAll(formal, mapFRCopy.get(formal)); //Reemplazar como dios manda
+						}
+
+						String originalPattern = auxPattern.pattern();
+						originalPattern = originalPattern.substring(1, originalPattern.length()-1);
+						strPred = strPred.replaceAll(originalPattern, finalPred);
+						//}
 					}
 				}
 			}
@@ -246,6 +275,6 @@ public class SynonymsChecker
 	private String strPred;
 	private String originalPred;
 	private String currentSynonym;
-	private Map<String,List<Map<String,String>>> info;
+	public Map<String,List<Map<String,String>>> info;
 	private boolean debug;
 }
