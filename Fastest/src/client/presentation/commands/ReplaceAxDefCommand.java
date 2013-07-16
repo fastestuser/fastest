@@ -1,36 +1,21 @@
 package client.presentation.commands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import net.sourceforge.czt.parser.circus.ParseUtils;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.Type;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
-import compserver.axdef.AxDefUtils;
 import compserver.axdef.ResultMatchAxDef;
 import compserver.axdef.SynonymsChecker;
 import compserver.prunning.SpecInfo;
-import compserver.prunning.Theorem;
-import compserver.prunning.Variable;
-import compserver.prunning.operators.OperatorAnalizer;
-import compserver.prunning.operators.SpecialLine;
-import compserver.prunning.typechecking.TypeChecker;
-
 import client.blogic.management.Controller;
-import client.blogic.testing.ttree.TClassNode;
 import client.presentation.ClientTextUI;
 
 public class ReplaceAxDefCommand implements Command{
@@ -78,7 +63,7 @@ public class ReplaceAxDefCommand implements Command{
 		List<String> params = new ArrayList<String>();
 		boolean result = false;
 
-		synonymsChecker.info = new HashMap<String,List<Map<String,String>>>();
+		//synonymsChecker.info = new HashMap<String,List<Map<String,String>>>();
 		String pred = synonymsChecker.replacedPred();
 		
 		ResultMatchAxDef resultMatchAxDef = new ResultMatchAxDef(tClassName, synonymName, params, result);

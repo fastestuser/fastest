@@ -9,17 +9,9 @@ import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.Pred;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern; 
-import java.util.regex.PatternSyntaxException;
-
-import javax.swing.tree.DefaultMutableTreeNode;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-
 import common.regex.RegExUtils;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
-import compserver.prunning.typechecking.TypeChecker;
 
 /**
  * Obtains all the information of the expressions in a test class that match with the
@@ -27,6 +19,13 @@ import compserver.prunning.typechecking.TypeChecker;
  */
 public class SynonymsChecker
 {
+	
+	private AbstractIterator<Theorem> synonymsIt;
+	private String strPred;
+	private String originalPred;
+	private String currentSynonym;
+	//public Map<String,List<Map<String,String>>> info;
+	
 	/**
 	 * Creates instaces of TheoremsChecker.
 	 * @param tClass the test class under analysis
@@ -35,7 +34,6 @@ public class SynonymsChecker
 	{
 		SynonymsControl synonymsControl = SynonymsControl.getInstance();
 		synonymsIt = synonymsControl.createIterator();
-		this.tClass = tClass;
 		AxPara axParaAux = tClass.getMyAxPara();
 		Pred tClassPred = SpecUtils.getAxParaPred(axParaAux);
 		strPred = SpecUtils.termToLatex(tClassPred);
@@ -59,13 +57,7 @@ public class SynonymsChecker
 
 		if(synonymsIt.hasNext()){
 			Theorem theSynonym = synonymsIt.next();
-			String theoremName = theSynonym.getName();
-
-			debug = false;
-			/*if(tClass.getSchName().equals("DetectReferenceEvent_NR_179") && theoremName.equals("Nuevo")){
-			debug = true;
-			System.out.println("Debuggeando!");
-			}*/
+			//String theoremName = theSynonym.getName();
 
 			List<List<List<String>>> reservedWords = theSynonym.getReservedWords();
 			boolean reservedsInPredicate = true; 
@@ -86,20 +78,18 @@ public class SynonymsChecker
 				if(!someAlternative)
 					reservedsInPredicate = false;
 			}
-			/*if(debug)
-			System.out.println("Llega hasta aca!");*/
 
 			// If the operators are present we do the analysis
 			if(reservedsInPredicate){
 				Map<String,String> mapFR = new HashMap<String,String>();
 				List<Map<String,String>> matches = new ArrayList<Map<String,String>>();
-				matches = analyzePatterns(theSynonym, mapFR, matches, 0);
-				if(matches==null || matches.size()==0)
+				/*matches = */analyzePatterns(theSynonym, mapFR, matches, 0);
+				//if(matches==null || matches.size()==0)
+				//	return replacedPred();
+				//else{
+					//info.put(theoremName, matches);
 					return replacedPred();
-				else{
-					info.put(theoremName, matches);
-					return replacedPred();
-				}
+				//}
 			}
 			else
 				return replacedPred();
@@ -111,7 +101,7 @@ public class SynonymsChecker
 	private List<Map<String,String>> analyzePatterns(Theorem theSynonym, Map<String,String> mapFR, List<Map<String,String>> matches, int startIndex)
 	{
 		if(currentSynonym!=theSynonym.getName()){
-			strPred = originalPred;
+			//strPred = originalPred;
 			currentSynonym = theSynonym.getName();
 		}
 
@@ -156,10 +146,9 @@ public class SynonymsChecker
 						else if(captured.endsWith(" ="))
 							captured = captured.substring(0, captured.length()-2);
 
-						if(captured.contains(",") /*&& !captured.contains(")") && !captured.contains("(")*/ && partsPredicate[startIndex].contains("\\se( "+formal+" )")){
+						if(captured.contains(",") && partsPredicate[startIndex].contains("\\se( "+formal+" )")){
 							String auxNewVar = captured.substring(captured.lastIndexOf(",")+1).trim();
 							strPred = strPred.replaceFirst(RegExUtils.addEscapeCharacters(captured), captured.substring(0, captured.lastIndexOf(",")-1));
-
 							captured = auxNewVar;
 							matcher.reset(strPred);
 						}
@@ -198,9 +187,7 @@ public class SynonymsChecker
 													if(auxName.equals(auxFormal) && auxType.startsWith("\\const")){
 														repeat = true;
 													}
-
 												}
-
 											}
 										}
 									}
@@ -210,7 +197,6 @@ public class SynonymsChecker
 								else {
 									mapFRCopy.put(formal,captured);
 								}
-
 							}
 						}
 					}
@@ -255,7 +241,7 @@ public class SynonymsChecker
 
 						String originalPattern = auxPattern.pattern();
 						originalPattern = originalPattern.substring(1, originalPattern.length()-1);
-						strPred = strPred.replaceAll(originalPattern, finalPred);
+						strPred = strPred.replaceFirst(originalPattern, finalPred);
 						//}
 					}
 				}
@@ -267,14 +253,4 @@ public class SynonymsChecker
 
 		return matches;
 	}
-
-
-
-	private AbstractIterator<Theorem> synonymsIt;
-	private TClass tClass;
-	private String strPred;
-	private String originalPred;
-	private String currentSynonym;
-	public Map<String,List<Map<String,String>>> info;
-	private boolean debug;
 }
