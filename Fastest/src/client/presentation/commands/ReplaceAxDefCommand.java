@@ -79,46 +79,8 @@ public class ReplaceAxDefCommand implements Command{
 		boolean result = false;
 
 		synonymsChecker.info = new HashMap<String,List<Map<String,String>>>();
-		Map<String, List<Map<String,String>>> matches = synonymsChecker.findParameters();
-		while(matches.size()>0){
-			Set<Map.Entry<String, List<Map<String,String>>>> set = matches.entrySet();
-			Iterator<Map.Entry<String, List<Map<String,String>>>> iterator = set.iterator();
-			while(iterator.hasNext()){
-				Map.Entry<String, List<Map<String,String>>> mapEntry = iterator.next();
-				synonymName = mapEntry.getKey();
-				List<Map<String,String>> listMatches = mapEntry.getValue();
-				for(int i=0;i<listMatches.size();i++){
-					// Deberia ir tras el chequeo y el eval
-					params.clear();
-					result = true;
-					Map<String, String> mapFR = listMatches.get(i);
-
-					//We extract the real parameters in the correct order
-					Theorem theSynonym = AxDefUtils.getSynonym(synonymName);
-					List<Variable> formalParameters = theSynonym.getFormalParamList();
-					for(int j=0;j<formalParameters.size();j++){
-						Variable formalVar = formalParameters.get(j);
-						String formalName = formalVar.getName();
-						String realName = mapFR.get(formalName);
-						//System.out.println("Formal: "+formalName);
-						//System.out.println("Real: "+realName);
-						params.add(realName);
-					}
-					TypeChecker typeChecker = new TypeChecker();
-					result = typeChecker.checkParametersTypes(theSynonym, tClass, params);
-					if(result){
-						List<SpecialLine> specialLines = theSynonym.getSpecialLines();
-						if(specialLines.size()>0){
-							Map<String,Type> mapFormalReal = typeChecker.getMapFR();
-							String pred = AxDefUtils.replaceParameters(synonymName, params,"SpecialPredicates", mapFormalReal);
-							result = (new OperatorAnalizer()).analize(specialLines, pred, tClass, specInfo);
-						}
-					}
-				}
-			}
-			if(!result)
-				matches = synonymsChecker.findParameters();
-		}
+		String pred = synonymsChecker.replacedPred();
+		
 		ResultMatchAxDef resultMatchAxDef = new ResultMatchAxDef(tClassName, synonymName, params, result);
 		return resultMatchAxDef;
 	}

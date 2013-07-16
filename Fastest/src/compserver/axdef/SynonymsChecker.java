@@ -55,7 +55,7 @@ public class SynonymsChecker
 	 * predicate as key and the asignation to the parametes of the theorem as value
 	 * @param tClass the test class under analysis
 	 */
-	public Map<String, List<Map<String,String>>> findParameters(){
+	public String replacedPred(){
 
 		if(synonymsIt.hasNext()){
 			Theorem theSynonym = synonymsIt.next();
@@ -95,17 +95,17 @@ public class SynonymsChecker
 				List<Map<String,String>> matches = new ArrayList<Map<String,String>>();
 				matches = analyzePatterns(theSynonym, mapFR, matches, 0);
 				if(matches==null || matches.size()==0)
-					return findParameters();
+					return replacedPred();
 				else{
 					info.put(theoremName, matches);
-					return findParameters();
+					return replacedPred();
 				}
 			}
 			else
-				return findParameters();
+				return replacedPred();
 		}
 		else
-			return info;
+			return strPred;
 	}
 
 	private List<Map<String,String>> analyzePatterns(Theorem theSynonym, Map<String,String> mapFR, List<Map<String,String>> matches, int startIndex)
