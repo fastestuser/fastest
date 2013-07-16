@@ -237,9 +237,9 @@ public class SynonymsChecker
 						while (mapIt.hasNext()) {
 							String formal = mapIt.next();
 							String formalPattern = "(\\W|^)" + formal + "(\\W|$)";
-							finalPred = finalPred.replaceAll(formalPattern, "$1"+mapFRCopy.get(formal)+"$2"); //Reemplazar como dios manda
+							finalPred = finalPred.replaceAll(formalPattern, "$1"+mapFRCopy.get(formal)+"$2");
 						}
-
+						finalPred = finalPred.replace("\\", "\\\\");
 						String originalPattern = auxPattern.pattern();
 						originalPattern = originalPattern.substring(1, originalPattern.length()-1);
 						strPred = strPred.replaceFirst(originalPattern, finalPred);
