@@ -90,7 +90,7 @@ public class Theorem{
      * @return
      */
     public List<List<Pattern>> getRegEx(){
-        return regex;
+        return regex; //MIRANDO
     }
 
     /**

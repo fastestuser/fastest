@@ -88,14 +88,14 @@ public class SynonymsChecker
 				//	return replacedPred();
 				//else{
 					//info.put(theoremName, matches);
-					return replacedPred();
+					return replacedPred() ;
 				//}
 			}
 			else
-				return replacedPred();
+				return replacedPred() ;
 		}
 		else
-			return strPred;
+			return strPred ;
 	}
 
 	private List<Map<String,String>> analyzePatterns(Theorem theSynonym, Map<String,String> mapFR, List<Map<String,String>> matches, int startIndex)
@@ -242,6 +242,7 @@ public class SynonymsChecker
 						finalPred = finalPred.replace("\\", "\\\\");
 						String originalPattern = auxPattern.pattern();
 						originalPattern = originalPattern.substring(1, originalPattern.length()-1);
+
 						strPred = strPred.replaceFirst(originalPattern, finalPred);
 						//}
 					}

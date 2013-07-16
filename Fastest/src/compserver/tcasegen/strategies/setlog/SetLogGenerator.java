@@ -21,6 +21,7 @@ public final class SetLogGenerator {
 	private static HashMap<String, String> zNames;
 	private static HashMap<String, String> zVars;
 
+	
 	public static HashMap<String, String> generate(String antlrInput, int timeout){
 
 		String setLogInput;
