@@ -22,7 +22,7 @@ public class SynonymsChecker
 	
 	private AbstractIterator<Theorem> synonymsIt;
 	private String strPred;
-	private String originalPred;
+	//private String originalPred;
 	private String currentSynonym;
 	//public Map<String,List<Map<String,String>>> info;
 	
@@ -45,7 +45,7 @@ public class SynonymsChecker
 			auxPred+=parts[i];
 		}
 		strPred = auxPred;
-		originalPred = auxPred;
+		//originalPred = auxPred;
 		currentSynonym = "";
 	}
 	/**
@@ -236,7 +236,8 @@ public class SynonymsChecker
 						Iterator<String> mapIt = mapFRCopy.keySet().iterator();
 						while (mapIt.hasNext()) {
 							String formal = mapIt.next();
-							finalPred = finalPred.replaceAll(formal, mapFRCopy.get(formal)); //Reemplazar como dios manda
+							String formalPattern = "(\\W|^)" + formal + "(\\W|$)";
+							finalPred = finalPred.replaceAll(formalPattern, "$1"+mapFRCopy.get(formal)+"$2"); //Reemplazar como dios manda
 						}
 
 						String originalPattern = auxPattern.pattern();
