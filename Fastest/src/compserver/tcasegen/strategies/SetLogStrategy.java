@@ -6,28 +6,21 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.presentation.ClientUI;
-
-
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
-
-
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
-import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Sect;
@@ -36,7 +29,6 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-
 import common.fastest.FastestUtils;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
@@ -44,12 +36,7 @@ import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
 import common.z.TClass;
-import common.z.TClassImpl;
-
 import common.z.czt.UniqueZLive;
-
-import common.z.czt.visitors.CZTCloner;
-import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.TClassNodeUnfolder;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.prunning.TreePruner;
@@ -72,32 +59,32 @@ public final class SetLogStrategy implements TCaseStrategy{
 		System.out.println("Trying to generate a test case for the class: " + tClassName);
 		
 		Controller controller = clientUI.getMyController();
-        Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
+       // Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
         List<FreePara> freeParas = controller.getFreeParas();
         List<String> basicTypeNames = controller.getBasicTypeNames();
 		
 		//Primero trabajamos con las definiciones axiomaticas
 		//Reemplazamos las definiciones axiomaticas por sus valores
-		if (axDefsValues != null) {
-
-			AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
-			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-			CZTReplacer replaceVisitor = new CZTReplacer();
-
-			while (iterator.hasNext()) {
-				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-				RefExpr refExpr = mapEntry.getKey();
-				Expr expr = mapEntry.getValue();
-				replaceVisitor.setOrigTerm(refExpr);
-				replaceVisitor.setNewTerm(expr);
-				pred = (Pred) pred.accept(replaceVisitor);
-			}
-
-			SpecUtils.setAxParaPred(tClassAxPara, pred);
-			tClass = new TClassImpl(tClassAxPara, tClassName);
-		}
+//		if (axDefsValues != null) {
+//
+//			AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
+//			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
+//			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+//			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+//			CZTReplacer replaceVisitor = new CZTReplacer();
+//
+//			while (iterator.hasNext()) {
+//				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+//				RefExpr refExpr = mapEntry.getKey();
+//				Expr expr = mapEntry.getValue();
+//				replaceVisitor.setOrigTerm(refExpr);
+//				replaceVisitor.setNewTerm(expr);
+//				pred = (Pred) pred.accept(replaceVisitor);
+//			}
+//
+//			SpecUtils.setAxParaPred(tClassAxPara, pred);
+//			tClass = new TClassImpl(tClassAxPara, tClassName);
+//		}
 
 		//Buscamos los tipos que aparecen en tClass, para incluir
 		//su informacion en la entrada del parser

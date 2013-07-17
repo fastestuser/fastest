@@ -15,18 +15,13 @@ import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.DeclList;
-import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.ForallPred;
-import net.sourceforge.czt.z.ast.MemPred;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
-import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Sect;
-import net.sourceforge.czt.z.ast.SetExpr;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
-import net.sourceforge.czt.z.ast.ZExprList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import common.regex.RegExUtils;
@@ -37,7 +32,6 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AndPredClausesExtractor;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
-import compserver.prunning.operators.Operator;
 
 /**
  * Instances of this class have the functionality of parsing the axiomatic definitions
@@ -165,17 +159,14 @@ public class SynonymsLoader {
 						if(parts[j].startsWith("\\")){
 							// We check if the string is a Fastest's operator
 							boolean special = false;
-							boolean empty = false;
 							if(parts[j].equals("\\{")){
 								if(parts[j+1].equals("\\}")){
-									empty = true;
 									reservedSet.add(parts[j]+" "+parts[j+1]);
 									j++;
 								}
 							} // We check if the string is the empty sequence
 							else if(parts[j].equals("\\langle")){
 								if(parts[j+1].equals("\\rangle")){
-									empty = true;
 									reservedSet.add(parts[j]+" "+parts[j+1]);
 									j++;
 								}
@@ -195,7 +186,7 @@ public class SynonymsLoader {
 		return reservedsList;
 	}
 
-	private static List<List<Pattern>> createRegExpr(String originalPred, List<Variable> vars, List<Map<Integer,String>> mapGroups)
+	protected static List<List<Pattern>> createRegExpr(String originalPred, List<Variable> vars, List<Map<Integer,String>> mapGroups)
 	{
 		//List<Pattern> patterns = new ArrayList<Pattern>();
 		List<List<Pattern>> patterns = new ArrayList<List<Pattern>>();

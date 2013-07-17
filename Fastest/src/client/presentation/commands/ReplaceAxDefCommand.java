@@ -1,8 +1,7 @@
 package client.presentation.commands;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -10,7 +9,6 @@ import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.circus.ParseUtils;
 import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.StringSource;
-import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.Para;
@@ -22,31 +20,28 @@ import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import common.z.SpecUtils;
-import common.z.TClass;
-import common.z.TClassImpl;
 import common.z.czt.UniqueZLive;
-import compserver.axdef.AxDefUtils;
-import compserver.axdef.ResultMatchAxDef;
+import common.z.czt.visitors.CZTReplacer;
 import compserver.axdef.SynonymsChecker;
-import compserver.prunning.SpecInfo;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 
 public class ReplaceAxDefCommand implements Command{
-
 	
-
+	private static Controller controller;
+	private static ZLive zLive;
+	
 	public void run(ClientTextUI clientTextUI, String args) {
 
-		Controller controller = clientTextUI.getMyController();
-		ZLive zLive = UniqueZLive.getInstance();
+		controller = clientTextUI.getMyController();
+		zLive = UniqueZLive.getInstance();
 		
-		SpecInfo sInfo = new SpecInfo();
-		sInfo.setAxDefsValues(controller.getAxDefsValues());
-		sInfo.setFreeParaList(controller.getFreeParas());
+		//SpecInfo sInfo = new SpecInfo();
+		//sInfo.setAxDefsValues(controller.getAxDefsValues());
+		//sInfo.setFreeParaList(controller.getFreeParas());
 
+		//Para cada schema box, hacemos un replace
 		Spec spec = controller.getOriginalSpec();
-
 		for (Sect sect : spec.getSect())
 		{
 			if (sect instanceof ZSect)
@@ -62,12 +57,13 @@ public class ReplaceAxDefCommand implements Command{
 							AxPara axPara  = (AxPara) para;
 							String strBox  = (axPara.getBox()).name();
 							if (strBox.equals("SchBox")){
-								TClassImpl tc = new TClassImpl(axPara,SpecUtils.getAxParaName(axPara));
 								try{
-									remplazarPred(tc,zLive);
+									Pred pred = SpecUtils.getAxParaPred(axPara);
+									pred = replaceAxDefsInPred(pred);
+									SpecUtils.setAxParaPred(axPara, pred);
 								}
 								catch (Exception e) {
-									System.out.println("error en remlazo de pred");
+									System.out.println("Error while replacing an axiomatic definition.");
 								}
 							}
 						}
@@ -81,18 +77,35 @@ public class ReplaceAxDefCommand implements Command{
 
 	}
 
-	private void remplazarPred(TClass tClass,ZLive zLive) throws IOException, CommandException{
+	public static Pred replaceAxDefsInPred(Pred pred) throws IOException, CommandException{
 		// ver de pasar AxPara en vez de tClass
-		SynonymsChecker synonymsChecker = new SynonymsChecker(tClass);
-		String pred1 = synonymsChecker.replacedPred();
-		pred1 = pred1.replace("\n", "\\\\\n");
-		Pred p = ParseUtils.parsePred(new StringSource(pred1),zLive.getCurrentSection(), zLive.getSectionManager());
-		p = SpecUtils.simplifyAndPred(p);
 		
-		String pred2 = SpecUtils.termToLatex(p);
+		//Reemplazamos las definiciones axiomaticas de tipo "Synonyms" de tipo constante,
+		//y aquellas que ya tienen un valor (mediante setaxdef)
+		Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
+		if (axDefsValues != null) {
+
+			
+			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+			CZTReplacer replaceVisitor = new CZTReplacer();
+
+			while (iterator.hasNext()) {
+				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+				RefExpr refExpr = mapEntry.getKey();
+				Expr expr = mapEntry.getValue();
+				replaceVisitor.setOrigTerm(refExpr);
+				replaceVisitor.setNewTerm(expr);
+				pred = (Pred) pred.accept(replaceVisitor);
+			}
+		}
 		
-		SpecUtils.setAxParaPred(tClass.getMyAxPara(), p);
+		//Reemplazamos las definiciones axiomaticas de tipo "Equivalences"
+		SynonymsChecker synonymsChecker = new SynonymsChecker(pred);
+		String strPred = synonymsChecker.replacedPred();
+		strPred = strPred.replace("\n", "\\\\\n");
+		pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
+		pred = SpecUtils.simplifyAndPred(pred);
+		return pred;
 	}
-	
-	
 }
