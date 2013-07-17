@@ -110,7 +110,7 @@ public class SynonymsChecker
 		//strPred = originalPred;
 		List<List<Pattern>> patterns = theSynonym.getRegEx();
 		
-		//Pattern with axdefs replaced
+		//Pattern with axdefs replaced (falta terminar)
 		/*
 		String strPred2 = theSynonym.getPredicatesToMatch();
 		ZLive zLive = UniqueZLive.getInstance();
@@ -133,10 +133,6 @@ public class SynonymsChecker
 		boolean nonContradiction = false;
 		for(int i=0;i<auxPatterns.size();i++){
 			Pattern auxPattern = auxPatterns.get(i);
-			/*if(debug){
-		System.out.println("El patron es:\n"+auxPattern);
-		System.out.println("El pred:\n"+strPred);
-		}*/
 			matcher = matcher.reset(strPred);
 			matcher = matcher.usePattern(auxPattern);
 

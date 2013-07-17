@@ -96,10 +96,8 @@ public class SynonymsLoader {
 				List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
 				List<List<Pattern>> patterns = createRegExpr(predicatesToMatch, formalParamList, mapGroups);
 
-				//Prueba
 				String replacement = SynonymsLoader.extractReplacement(synonym);
 				theorem.setDefinition(replacement);
-				
 				theorem.setFormalParamList(formalParamList);
 				theorem.setPredicatesToMatch(predicatesToMatch);
 				theorem.setReservedWords(reservedWords);

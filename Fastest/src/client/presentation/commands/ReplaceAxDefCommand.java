@@ -4,13 +4,17 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.sourceforge.czt.animation.eval.ZLive;
+import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.parser.circus.ParseUtils;
 import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.MemPred;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
@@ -36,10 +40,6 @@ public class ReplaceAxDefCommand implements Command{
 		controller = clientTextUI.getMyController();
 		zLive = UniqueZLive.getInstance();
 		
-		//SpecInfo sInfo = new SpecInfo();
-		//sInfo.setAxDefsValues(controller.getAxDefsValues());
-		//sInfo.setFreeParaList(controller.getFreeParas());
-
 		//Para cada schema box, hacemos un replace
 		Spec spec = controller.getOriginalSpec();
 		for (Sect sect : spec.getSect())
@@ -72,33 +72,14 @@ public class ReplaceAxDefCommand implements Command{
 			} 
 		}
 		System.out.println(SpecUtils.termToLatex(spec));
-
-
-
 	}
-
+	
 	public static Pred replaceAxDefsInPred(Pred pred) throws IOException, CommandException{
 		// ver de pasar AxPara en vez de tClass
 		
 		//Reemplazamos las definiciones axiomaticas de tipo "Synonyms" de tipo constante,
 		//y aquellas que ya tienen un valor (mediante setaxdef)
-		Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
-		if (axDefsValues != null) {
-
-			
-			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-			CZTReplacer replaceVisitor = new CZTReplacer();
-
-			while (iterator.hasNext()) {
-				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-				RefExpr refExpr = mapEntry.getKey();
-				Expr expr = mapEntry.getValue();
-				replaceVisitor.setOrigTerm(refExpr);
-				replaceVisitor.setNewTerm(expr);
-				pred = (Pred) pred.accept(replaceVisitor);
-			}
-		}
+		pred = (Pred) replaceAxDefValues(pred);
 		
 		//Reemplazamos las definiciones axiomaticas de tipo "Equivalences"
 		SynonymsChecker synonymsChecker = new SynonymsChecker(pred);
@@ -108,4 +89,40 @@ public class ReplaceAxDefCommand implements Command{
 		pred = SpecUtils.simplifyAndPred(pred);
 		return pred;
 	}
+	
+	private static Term replaceAxDefValues(Term term){
+		
+		Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
+		if (axDefsValues != null) {
+
+			
+			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
+			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
+			CZTReplacer replaceVisitor = new CZTReplacer();
+			String strTerm = SpecUtils.termToLatex(term);
+			
+			while (iterator.hasNext()) {
+				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
+				RefExpr refExpr = mapEntry.getKey();
+				
+				String refExprPattern = "(\\W|^)" + refExpr.getZName() + "(\\W|$)";
+				strTerm = SpecUtils.termToLatex(term);
+				
+				Pattern pattern = Pattern.compile(refExprPattern);
+				Matcher matcher = pattern.matcher(strTerm);
+				if (matcher.find()) { //Contiene la definicion axiomatica
+					Term expr = mapEntry.getValue();
+					expr = replaceAxDefValues(expr);
+					
+					replaceVisitor.setNewTerm(expr);
+					replaceVisitor.setOrigTerm(refExpr);
+					term =  term.accept(replaceVisitor);
+					strTerm = SpecUtils.termToLatex(term);
+				}
+			}
+			return term;
+		}
+		return null;
+	}
+	
 }
