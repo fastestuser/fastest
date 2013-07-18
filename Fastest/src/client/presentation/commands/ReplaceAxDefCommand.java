@@ -125,4 +125,16 @@ public class ReplaceAxDefCommand implements Command{
 		return null;
 	}
 	
+	private static String marcarPred(String pred, String nomvar, int argc){
+		String salida = "";
+		
+		int cantParentesis = 0;
+		
+		pred = pred.substring(nomvar.length());
+		
+		
+		
+		return salida;
+	}
+	
 }
