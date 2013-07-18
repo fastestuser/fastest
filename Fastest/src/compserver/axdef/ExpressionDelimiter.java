@@ -4,13 +4,16 @@ public class ExpressionDelimiter {
 
 
 	private static boolean finDeArg( int cantP, String pred, int i){
-		char c1 = pred.charAt(i), c2 = pred.charAt(i+1);
-		return ( cantP == 0 && (c1 != '~' || c1 != ' ')  && (c2 == ' ' || c2 =='~') );
+		char c1 = pred.charAt(i); 
+		char c2 = i+1>=pred.length()?' ':pred.charAt(i+1);
+		return ( cantP == 0 && c1 != '~' && c1 != ' '  && (c2 == ' ' || c2 =='~') );
 	}
 	
 	private static boolean prinDeArg(int cantP, String pred, int i){
-		char c1 = pred.charAt(i), c2 = pred.charAt(i+1);
-		return ( cantP == 0 && (c1 == '~' || c1 == ' ') && (c2 != ' ' || c2 !='~') );
+		char c1 = pred.charAt(i); 
+		char c2 = i+1>=pred.length()?' ':pred.charAt(i+1);
+		
+		return ( cantP == 0 && (c1 == '~' || c1 == ' ') && c2 != ' ' && c2 !='~' );
 	}
 	
 	private static class SPrima{
@@ -30,7 +33,7 @@ public class ExpressionDelimiter {
 		char c ; 
 		for ( i=0; i<length && argcint>0 ; i++){
 			c = pred.charAt(i);
-			if (pred.substring(i).startsWith(nomvar)){
+			if ( pred.substring(i).startsWith(nomvar) && prima.isEmpty() ){
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				prima =  pred.substring(prinArg,i) +  sp.salida ;
 				iprimaf = i + sp.i + nomvar.length()-1;
@@ -78,7 +81,7 @@ public class ExpressionDelimiter {
 		for ( i=0; i<length && argcint>0 ; i++){
 			c = pred.charAt(i);
 			
-			if (pred.substring(i).startsWith(nomvar)){
+			if ( pred.substring(i).startsWith(nomvar) && prima.isEmpty() ){
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				prima =  pred.substring(prinArg,i) +  sp.salida ;
 				iprimaf = i + sp.i + nomvar.length()-1;
@@ -110,12 +113,11 @@ public class ExpressionDelimiter {
 			}
 		}
 		
-				
 		return "°" + nomvar + salida + "°" + pred.substring(i,pred.length());
 	}
 	
 	public static void main(String[] args) {
-		String s = marcarPred("fun~aa (dd + fun (fun hh xx rr) ss 33) ww sd ((da)~+ (sd)) as as ","fun",3);
+		String s = marcarPred("f ~ a (ggg) d","f",3);
 		System.out.println(s);
 	}
 
