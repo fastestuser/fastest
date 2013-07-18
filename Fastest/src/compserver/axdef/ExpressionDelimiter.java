@@ -69,55 +69,77 @@ public class ExpressionDelimiter {
 		return sps;
 	}
 	
-	private static String marcarPred(String pred, String nomvar, int argc){
-		int argcint = argc; 
-		int length = pred.length();
-		int cantP = 0;
-		pred = pred.substring(nomvar.length());
-		String salida = "", prima = "";
-		int i,prinArg=0,iprimaf = 0;
+//	private static String marcarUnPred(String pred, String nomvar, int argc){
+//		int argcint = argc; 
+//		int length = pred.length();
+//		int cantP = 0;
+//		pred = pred.substring(nomvar.length());
+//		String salida = "", prima = "";
+//		int i,prinArg=0,iprimaf = 0;
+//		SPrima sp = new SPrima();
+//		char c ; 
+//		for ( i=0; i<length && argcint>0 ; i++){
+//			c = pred.charAt(i);
+//			
+//			if ( pred.substring(i).startsWith(nomvar) && prima.isEmpty() ){
+//				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
+//				prima =  pred.substring(prinArg,i) +  sp.salida ;
+//				iprimaf = i + sp.i + nomvar.length()-1;
+//			}
+//			
+//			if (c == '(' )
+//				cantP++;
+//			if (c == ')' )
+//				cantP--;
+//
+//			if (cantP < 0){
+//				salida += pred.substring(prinArg,i) + "¬" ;
+//				argcint--;
+//			}
+//			
+//			if (prinDeArg(cantP,pred,i)){
+//				salida += "¬"; 
+//				prinArg = i+1;
+//			}
+//			
+//			if (finDeArg(cantP,pred,i) ){
+//				if (!prima.isEmpty()){
+//					salida +=  prima + pred.substring(iprimaf,i+1) + "¬" ;
+//					prima = "";
+//				}
+//				else
+//					salida += pred.substring(prinArg,i+1) + "¬" ;
+//				argcint--;
+//			}
+//		}
+//		
+//		return "°" + nomvar + salida + "°" + pred.substring(i,pred.length());
+//	}
+	
+	public static String marcarPred(String pred, String nomvar, int argc){
+		int length = pred.length(),iprimaf=0;
 		SPrima sp = new SPrima();
-		char c ; 
-		for ( i=0; i<length && argcint>0 ; i++){
-			c = pred.charAt(i);
-			
-			if ( pred.substring(i).startsWith(nomvar) && prima.isEmpty() ){
-				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
-				prima =  pred.substring(prinArg,i) +  sp.salida ;
-				iprimaf = i + sp.i + nomvar.length()-1;
-			}
-			
-			if (c == '(' )
-				cantP++;
-			if (c == ')' )
-				cantP--;
-
-			if (cantP < 0){
-				salida += pred.substring(prinArg,i) + "¬" ;
-				argcint--;
-			}
-			
-			if (prinDeArg(cantP,pred,i)){
-				salida += "¬"; 
-				prinArg = i+1;
-			}
-			
-			if (finDeArg(cantP,pred,i) ){
-				if (!prima.isEmpty()){
-					salida +=  prima + pred.substring(iprimaf,i+1) + "¬" ;
-					prima = "";
-				}
-				else
-					salida += pred.substring(prinArg,i+1) + "¬" ;
-				argcint--;
-			}
-		}
+		sp.salida = "";
+		String salida = "",pedazo="";
+		int c=0,f=0;
+		int i;
+		for (i = 0;i<length;i++){
 		
-		return "°" + nomvar + salida + "°" + pred.substring(i,pred.length());
+			if(pred.substring(i).startsWith(nomvar)){
+				f = i;
+				pedazo = pred.substring(c, f);
+				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
+				c = i + sp.i + nomvar.length();
+				i = c;
+				salida += pedazo + sp.salida ;
+			}
+			
+		}
+		return salida + pred.substring(c,pred.length());
 	}
 	
 	public static void main(String[] args) {
-		String s = marcarPred("f ~ a (ggg) d","f",3);
+		String s = marcarPred("f~x~(f g h) d f a b","f",2);
 		System.out.println(s);
 	}
 
