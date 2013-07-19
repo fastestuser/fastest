@@ -5,24 +5,25 @@ SALDO == \num
 \end{zed}
 
 \begin{axdef}
-failed: \power (\num \cross \nat) \\
-jojo: \power (\num) \\
-xconstante:\num
+f: \num \pfun \num \pfun (\num \cross \num) \\
+garibaldi: \num \pfun \num \pfun \num \\
+failed: \power (\num \cross \num) \\
+constante : \num
 \where
-\forall x:\nat @ (x,78) \in failed \iff x \neq xconstante \\
-\forall j:\num @ j \notin jojo \iff j > 65
+constante = 123456789 \\
+\forall x,y:\num @ f~x~y = (x,y) \\
+\forall x,y:\num @ x + y > 0 \iff f~x~y \neq (garibaldi~constante~constante, 888) \\
+\forall x,y:\num @ garibaldi~x~y = x+y
 \end{axdef}
 
 \begin{schema}{Extraer\_ SP\_ 29}\\
  cajas, cajas' : NCTA \pfun SALDO \\
  num? : NCTA \\
  m? : SALDO \\
- a :\num
+ a, b :\num
 \where
- (a, 78) \in failed \\
- 45 \neq 78 \\
- 85 \notin jojo \\
- m? > cajas~num? \\
+ (garibaldi~1~2) > 0 \\
+ 555 > 666 \\
  num? \in \dom cajas \\
  cajas \neq \{ \} \\
  \{ num? \mapsto ( ( cajas~num? ) - m? ) \} \neq \{ \} \\
