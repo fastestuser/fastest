@@ -40,7 +40,7 @@ public class ExpressionDelimiter {
 			if ( prinFun(pred,nomvar,i) && prima.isEmpty() ){
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				prima =  pred.substring(prinArg,i) +  sp.salida ;
-				iprimaf = i + sp.i + nomvar.length()-1;
+				iprimaf = i + sp.i + nomvar.length();
 			}
 			
 			if (c == '(' )
@@ -105,16 +105,9 @@ public class ExpressionDelimiter {
 	
 	public static void main(String[] args) {
 		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
-		String s = marcarPred(" gargibaldi~(gargibaldi~1~2)~3","gargibaldi",2);
+		String s = marcarPred("garibaldi ( garibaldi~1~2 ) 3 = 7","garibaldi",2);
 		System.out.println(s);
-		s = marcarPred("g x (g a b)","g",2);
-		System.out.println(s);
-		s = marcarPred("(g x ((g a (b))))","g",2);
-		System.out.println(s);
-		s = marcarPred("(g x (g a b)) pppp (g a b) ppp (g a (g a b))","g",2);
-		System.out.println(s);
-		s = marcarPred("ssss (g x (g a b)) ccccccc","g",2);
-		System.out.println(s);
+		
 	}
 
 }
