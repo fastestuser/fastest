@@ -71,7 +71,7 @@ public class ExpressionDelimiter {
 			}
 		}
 		SPrima sps = new SPrima();
-		sps.i = i; sps.salida = "°" + nomvar + salida + "°";
+		sps.i = i; sps.salida = /*"°" + */nomvar + salida /*+ "°"*/;
 		return sps;
 	}
 	private static boolean prinFun(String pred, String nomvar, int i){

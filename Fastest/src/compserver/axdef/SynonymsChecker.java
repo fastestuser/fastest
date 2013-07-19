@@ -133,6 +133,13 @@ public class SynonymsChecker
 		boolean nonContradiction = false;
 		for(int i=0;i<auxPatterns.size();i++){
 			Pattern auxPattern = auxPatterns.get(i);
+			String functionName = null;
+			if (currentSynonym.startsWith("Synonym")){
+				functionName = currentSynonym.split("_")[1];
+			}
+			if (functionName != null)
+				strPred = ExpressionDelimiter.marcarPred(strPred, functionName, theSynonym.getFormalParamList().size());
+			
 			matcher = matcher.reset(strPred);
 			matcher = matcher.usePattern(auxPattern);
 
@@ -146,7 +153,7 @@ public class SynonymsChecker
 				match = true;
 				for(int j=1;j<matcher.groupCount()+1 && !contradiction;j++){
 					if(matcher.group(j)!=null && matcher.group(j)!=""){
-						String captured = matcher.group(j).trim();
+						String captured = matcher.group(j);
 						String formal = groups.get(j+groupCount).trim();
 						if(captured.endsWith(" "))
 							captured = captured.substring(0, captured.length()-1);
@@ -266,8 +273,9 @@ public class SynonymsChecker
 
 						finalStrPred = finalStrPred.replace("\\", "\\\\");
 						String originalPattern = auxPattern.pattern();
-						originalPattern = originalPattern.substring(1, originalPattern.length()-1);
+						//originalPattern = originalPattern.substring(1, originalPattern.length()-1);
 						strPred = strPred.replaceFirst(originalPattern, finalStrPred);
+						matcher = matcher.reset(strPred);
 						//}
 					}
 				}
