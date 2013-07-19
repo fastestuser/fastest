@@ -48,8 +48,8 @@ public class ExpressionDelimiter {
 			if (c == ')' )
 				cantP--;
 
-			if (cantP < 0){
-				salida += pred.substring(prinArg,i) + "¬" ;
+			if (cantP < 0 ){ //agregado prima.isEmpty()
+				salida += pred.substring(prinArg,i) + "¬"  ; // ")" agregado
 				argcint--;
 			}
 			
@@ -74,53 +74,6 @@ public class ExpressionDelimiter {
 		sps.i = i; sps.salida = "°" + nomvar + salida + "°";
 		return sps;
 	}
-	
-//	private static String marcarUnPred(String pred, String nomvar, int argc){
-//		int argcint = argc; 
-//		int length = pred.length();
-//		int cantP = 0;
-//		pred = pred.substring(nomvar.length());
-//		String salida = "", prima = "";
-//		int i,prinArg=0,iprimaf = 0;
-//		SPrima sp = new SPrima();
-//		char c ; 
-//		for ( i=0; i<length && argcint>0 ; i++){
-//			c = pred.charAt(i);
-//			
-//			if ( pred.substring(i).startsWith(nomvar) && prima.isEmpty() ){
-//				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
-//				prima =  pred.substring(prinArg,i) +  sp.salida ;
-//				iprimaf = i + sp.i + nomvar.length()-1;
-//			}
-//			
-//			if (c == '(' )
-//				cantP++;
-//			if (c == ')' )
-//				cantP--;
-//
-//			if (cantP < 0){
-//				salida += pred.substring(prinArg,i) + "¬" ;
-//				argcint--;
-//			}
-//			
-//			if (prinDeArg(cantP,pred,i)){
-//				salida += "¬"; 
-//				prinArg = i+1;
-//			}
-//			
-//			if (finDeArg(cantP,pred,i) ){
-//				if (!prima.isEmpty()){
-//					salida +=  prima + pred.substring(iprimaf,i+1) + "¬" ;
-//					prima = "";
-//				}
-//				else
-//					salida += pred.substring(prinArg,i+1) + "¬" ;
-//				argcint--;
-//			}
-//		}
-//		
-//		return "°" + nomvar + salida + "°" + pred.substring(i,pred.length());
-//	}
 	private static boolean prinFun(String pred, String nomvar, int i){
 		char csig = i+nomvar.length()<pred.length()?pred.charAt(i+nomvar.length()):' ';
 		return pred.substring(i).startsWith(nomvar) && (csig == ' ' || csig == '~');
@@ -151,7 +104,16 @@ public class ExpressionDelimiter {
 	} 
 	
 	public static void main(String[] args) {
-		String s = marcarPred("f~aa bb faild ~ (f aa dd) bb","f",2);
+		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
+		String s = marcarPred(" g~(g~1~2)~3","g",2);
+		System.out.println(s);
+		s = marcarPred("g x (g a b)","g",2);
+		System.out.println(s);
+		s = marcarPred("(g x ((g a (b))))","g",2);
+		System.out.println(s);
+		s = marcarPred("(g x (g a b)) pppp (g a b) ppp (g a (g a b))","g",2);
+		System.out.println(s);
+		s = marcarPred("ssss (g x (g a b)) ccccccc","g",2);
 		System.out.println(s);
 	}
 
