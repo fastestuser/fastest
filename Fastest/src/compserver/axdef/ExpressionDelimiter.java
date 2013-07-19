@@ -55,7 +55,7 @@ public class ExpressionDelimiter {
 			
 			if (prinDeArg(cantP,pred,i)){
 				salida += "¬"; 
-				prinArg = i;
+				prinArg = i+1;
 				//entrearg = false;
 			}
 			
@@ -151,7 +151,7 @@ public class ExpressionDelimiter {
 	} 
 	
 	public static void main(String[] args) {
-		String s = marcarPred("f aa bb faild ~ (f aa dd) bb","f",2);
+		String s = marcarPred("f~aa bb faild ~ (f aa dd) bb","f",2);
 		System.out.println(s);
 	}
 
