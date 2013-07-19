@@ -105,7 +105,7 @@ public class ExpressionDelimiter {
 	
 	public static void main(String[] args) {
 		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
-		String s = marcarPred(" g~(g~1~2)~3","g",2);
+		String s = marcarPred(" gargibaldi~(gargibaldi~1~2)~3","gargibaldi",2);
 		System.out.println(s);
 		s = marcarPred("g x (g a b)","g",2);
 		System.out.println(s);
