@@ -9,13 +9,17 @@
 	import java.util.regex.Pattern;
 	import java.util.Collection;
 	import java.util.Iterator;
-import java.util.List;
 	import java.util.Set;
 	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.rmi.CORBA.Util;
+	import java.util.List;
 	
 
+import org.antlr.v4.runtime.Lexer;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -108,7 +112,7 @@ public class ExprLexer extends Lexer {
 					while(itlist.hasNext()){
 						cte = itlist.next().toString();
 						memory.put(cte,cte);
-						types.put(cte,"BasicType:" + key);
+						types.put(cte,"BasicConstant:" + key);
 					}
 				}
 			} 

@@ -116,7 +116,7 @@ public class ExprParser extends Parser {
 					while(itlist.hasNext()){
 						cte = itlist.next().toString();
 						memory.put(cte,cte);
-						types.put(cte,"BasicType:" + key);
+						types.put(cte,"BasicConstant:" + key);
 					}
 				}
 			} 
@@ -1824,11 +1824,11 @@ public class ExprParser extends Parser {
 		public TerminalNode IN_FUN_60() { return getToken(ExprParser.IN_FUN_60, 0); }
 		public TerminalNode IN_FUN_10() { return getToken(ExprParser.IN_FUN_10, 0); }
 		public TerminalNode IN_FUN_40() { return getToken(ExprParser.IN_FUN_40, 0); }
+		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public PreContext pre() {
 			return getRuleContext(PreContext.class,0);
 		}
 		public TerminalNode IN_FUN_30() { return getToken(ExprParser.IN_FUN_30, 0); }
-		public TerminalNode IN_FUN_20() { return getToken(ExprParser.IN_FUN_20, 0); }
 		public TerminalNode IN_FUN_45() { return getToken(ExprParser.IN_FUN_45, 0); }
 		public TerminalNode CROSS() { return getToken(ExprParser.CROSS, 0); }
 		public TerminalNode IMGEND() { return getToken(ExprParser.IMGEND, 0); }
@@ -3339,6 +3339,11 @@ public class ExprParser extends Parser {
 						if (modoSetExpression != 0 ) {
 							setExpressionVars.put((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null), newVarName);
 							//System.out.println("Agregamos" + (((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null) + "---" +  newVarName);
+						}
+					} else if (types.get((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null)).startsWith("BasicConstant:")) { //Es una constante basica
+						String line = (((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null) + " in " + (types.get((((RefNameContext)_localctx).NAME!=null?((RefNameContext)_localctx).NAME.getText():null)).split(":",2)[1]);
+						if (!out.contains(line)) {
+							print(line);
 						}
 					}
 				

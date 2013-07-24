@@ -71,7 +71,7 @@ public class ReplaceAxDefCommand implements Command{
 				}
 			} 
 		}
-		System.out.println(SpecUtils.termToLatex(spec));
+		//System.out.println(SpecUtils.termToLatex(spec));
 	}
 	
 	public static Pred replaceAxDefsInPred(Pred pred) throws IOException, CommandException{
@@ -85,7 +85,6 @@ public class ReplaceAxDefCommand implements Command{
 		SynonymsChecker synonymsChecker = new SynonymsChecker(pred);
 		String strPred = synonymsChecker.replacedPred();
 		strPred = strPred.replace("\n", "\\\\\n");
-		System.out.println("PREDDDD:\n" + strPred);
 		pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
 		pred = SpecUtils.simplifyAndPred(pred);
 		return pred;

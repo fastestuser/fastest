@@ -55,7 +55,7 @@ grammar Expr;
 				while(itlist.hasNext()){
 					cte = itlist.next().toString();
 					memory.put(cte,cte);
-					types.put(cte,"BasicType:" + key);
+					types.put(cte,"BasicConstant:" + key);
 				}
 			}
 		} 
@@ -1753,6 +1753,11 @@ refName
 			if (modoSetExpression != 0 ) {
 				setExpressionVars.put($NAME.text, newVarName);
 				//System.out.println("Agregamos" + $NAME.text + "---" +  newVarName);
+			}
+		} else if (types.get($NAME.text).startsWith("BasicConstant:")) { //Es una constante basica
+			String line = $NAME.text + " in " + (types.get($NAME.text).split(":",2)[1]);
+			if (!out.contains(line)) {
+				print(line);
 			}
 		}
 	}

@@ -257,7 +257,7 @@ public class SynonymsChecker
 						ZLive zLive = UniqueZLive.getInstance();
 						finalStrPred = finalStrPred.replace("\n", "\\\\\n");
 						Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
-						finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred);
+						//finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred);
 						finalStrPred = SpecUtils.termToLatex(finalPred);
 
 						String[] parts = finalStrPred.split("\n");
@@ -275,7 +275,17 @@ public class SynonymsChecker
 						String originalPattern = auxPattern.pattern();
 						//originalPattern = originalPattern.substring(1, originalPattern.length()-1);
 						strPred = strPred.replaceFirst(originalPattern, finalStrPred);
-						matcher = matcher.reset(strPred);
+						
+						//Corremos el replace para el nuevo pred, si no hay mas matches de este teorema
+						if (!strPred.contains("¬")) {
+							strPred = strPred.replace("\n", "\\\\\n");
+							Pred pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
+							pred = ReplaceAxDefCommand.replaceAxDefsInPred(pred);
+							strPred = SpecUtils.termToLatex(pred);
+							strPred = strPred.replace("\\\\\n", "\n");
+						}
+							
+						//matcher = matcher.reset(strPred);
 						//}
 					}
 				}
