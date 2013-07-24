@@ -1,12 +1,17 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+
+import client.blogic.management.Controller;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 public final class ZVarsFiller {
@@ -20,7 +25,22 @@ public final class ZVarsFiller {
 	private String getNumber(){
 		return String.valueOf(postfijo++);
 	}
+	private Controller controller;
 
+		private boolean esAxDef(String cte){
+			Map<String, List<String>> basicAxDefs = controller.getBasicAxDefs();
+			Iterator<String> itmap = basicAxDefs.keySet().iterator();
+			List<String> constantsList;
+			String nom;
+			while (itmap.hasNext()){
+				nom = itmap.next();
+				constantsList = basicAxDefs.get(nom);
+				if(constantsList != null && constantsList.contains(cte))
+						return true;
+			}
+			return false;
+		}
+	
 	
 	//cambia los caracteres de setlog [] por langlerangle, etc...
 		private String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS) throws Exception{
@@ -111,6 +131,9 @@ public final class ZVarsFiller {
 				if (tipocompleto.startsWith("EnumerationType"))
 					return zNames.get(exprS);
 
+				if (tipocompleto.startsWith("BasicConstant"))
+					return exprS;
+				
 				if (tipocompleto.startsWith("BasicType")){
 					String salida = zNames.get(exprS);
 					salida = ct.toLowerCase() + (salida!=null?salida:getNumber());
@@ -210,10 +233,11 @@ public final class ZVarsFiller {
 
 	}
 
-	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames,String setlogOutput){
+	public ZVarsFiller(HashMap<String,String> zVars, HashMap<String,String> tipos, HashMap<String,String> zNames,String setlogOutput,Controller controller){
 		this.zVars = zVars;
 		this.tipos = tipos;
 		this.zNames = zNames;
 		this.setlogOutput = setlogOutput;
+		this.controller = controller;
 	}
 }

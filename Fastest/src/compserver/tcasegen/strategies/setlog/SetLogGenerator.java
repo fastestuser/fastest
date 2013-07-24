@@ -57,7 +57,7 @@ public final class SetLogGenerator {
 		zVars = parser.getZVars();
 		//SetLogUtils.printHashMap(zVars);
 
-		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
+		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput,clientUI.getMyController());
 
 		try{
 			zvf.generar();
