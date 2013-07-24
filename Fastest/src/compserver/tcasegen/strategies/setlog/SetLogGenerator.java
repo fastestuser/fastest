@@ -6,9 +6,15 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+
+import client.blogic.management.Controller;
+import client.presentation.ClientUI;
 
 import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
@@ -20,13 +26,16 @@ public final class SetLogGenerator {
 	private static HashMap<String,String> tipos;
 	private static HashMap<String, String> zNames;
 	private static HashMap<String, String> zVars;
+	private static ClientUI clientUI;
 
-	
-	public static HashMap<String, String> generate(String antlrInput, int timeout){
+	public static HashMap<String, String> generate(String antlrInput, int timeout,ClientUI cUI){
 
+		clientUI = cUI;
 		String setLogInput;
+		Controller controller = clientUI.getMyController();
+		Map<String, List<String>> basicAxDef = controller.getBasicAxDefs();
 		try {
-			setLogInput = toSetLog(antlrInput);
+			setLogInput = toSetLog(antlrInput,basicAxDef);
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Error when translating to {log}: " + e.toString());
@@ -49,7 +58,7 @@ public final class SetLogGenerator {
 		//SetLogUtils.printHashMap(zVars);
 
 		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
-		
+
 		try{
 			zvf.generar();
 		}
@@ -58,16 +67,16 @@ public final class SetLogGenerator {
 			System.out.println("Error when translating from {log}: " + e.toString());
 			return null;
 		}
-		
+
 		return zVars;
 	}
 
-	private static String toSetLog(String antlrInput) throws Exception{
-	
+	private static String toSetLog(String antlrInput,Map<String, List<String>> basicAxDef) throws Exception{
 		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
 		ExprLexer lexer = new ExprLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		parser = new ExprParser(tokens);
+		parser.setBasicAxDef((HashMap<String, List<String>>)basicAxDef);
 		parser.specification();
 		return parser.getSalida();
 	}
@@ -78,7 +87,7 @@ public final class SetLogGenerator {
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
-			
+
 			URL location = SetLogGenerator.class.getProtectionDomain().getCodeSource().getLocation();
 			String path = location.getFile();
 			if (path.endsWith("/")) //Al correrlo desde eclipse, el path termina en /bin/, con lo cual se elimina primero la ultima /
@@ -87,7 +96,7 @@ public final class SetLogGenerator {
 			path = path + "/lib/setlog/"; //Por ultimo agregamos la direccion de setlog
 			path = URLDecoder.decode(path, "UTF-8");
 			//System.out.println("DIRECTORIO: " + path + "setlog4617.pl");
-			
+
 			String goal = "consult('" + path + "setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
@@ -96,7 +105,7 @@ public final class SetLogGenerator {
 					+ setLogInput.substring(0,setLogInput.lastIndexOf('&')) //quitamos el ultimo '&' el cual no corresponde
 					+ "\n,_CONSTR)," + timeout + ",_RET).\n";
 
-			
+
 			out.write(goal.getBytes());
 			out.close();
 
@@ -123,7 +132,7 @@ public final class SetLogGenerator {
 			}
 			//System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
 			//System.out.println("**********************************************************************************************\n");
-			
+
 			if (pruneClass) {
 				return "FALSE";
 			}

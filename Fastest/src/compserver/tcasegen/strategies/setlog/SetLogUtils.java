@@ -53,8 +53,8 @@ public final class SetLogUtils {
 		return nodo.toString();
 	}
 	
-	public static void printHashMap(HashMap<String, String> map){
-		Iterator<String> iterator = map.keySet().iterator();
+	public static void printHashMap(HashMap map){
+		Iterator iterator = map.keySet().iterator();
 		
 		String key,value;
 		while (iterator.hasNext()) {  

@@ -17,6 +17,7 @@ grammar Expr;
 	import java.lang.String;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.rmi.CORBA.Util;
+	import java.util.List;
 	
 }
 
@@ -38,6 +39,27 @@ grammar Expr;
 	
 	String out = new String();
 	String functionsOut = new String();
+	
+	public void setBasicAxDef(HashMap<String, List<String>> basicAxDef){
+		Iterator<String> itmap = basicAxDef.keySet().iterator();
+		Iterator<String> itlist = basicAxDef.keySet().iterator();
+		String key,cte;
+		List<String> value ;
+		while (itmap.hasNext()) {  
+			key = itmap.next().toString();
+			value =  basicAxDef.get(key);
+			if (value == null)
+				cte = "nullc";
+			else{ 
+				itlist = value.iterator();
+				while(itlist.hasNext()){
+					cte = itlist.next().toString();
+					memory.put(cte,cte);
+					types.put(cte,"BasicType:" + key);
+				}
+			}
+		} 
+	}
 	
 	public String getSalida() {
 		return out.concat(functionsOut);

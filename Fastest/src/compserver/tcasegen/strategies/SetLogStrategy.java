@@ -160,7 +160,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 		int setlogTimeout = controller.getSetlogTimeout();
 		//Generamos el caso de prueba
-		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogTimeout);
+		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogTimeout,clientUI);
 		
 		if (zVars == null) //No encontro caso
 			return null;
