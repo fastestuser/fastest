@@ -1,5 +1,16 @@
 package compserver.axdef;
 
+import java.io.IOException;
+
+import common.z.SpecUtils;
+import common.z.czt.UniqueZLive;
+
+import net.sourceforge.czt.animation.eval.ZLive;
+import net.sourceforge.czt.parser.oz.ParseUtils;
+import net.sourceforge.czt.session.CommandException;
+import net.sourceforge.czt.session.StringSource;
+import net.sourceforge.czt.z.ast.Pred;
+
 public class ExpressionDelimiter {
 
 	//dice si es el principio de un argumento
@@ -34,29 +45,28 @@ public class ExpressionDelimiter {
 		int i,prinArg=0,iprimaf = 0;
 		SPrima sp = new SPrima();
 		char c ;
-		//boolean entrearg = true;
 		for ( i=0; i<length && argcint>0 ; i++){
 			c = pred.charAt(i);
 			if ( prinFun(pred,nomvar,i) && prima.isEmpty() ){
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				prima =  pred.substring(prinArg,i) +  sp.salida ;
 				iprimaf = i + sp.i + nomvar.length();
+				i = iprimaf -1 ;
 			}
 			
-			if (c == '(' )
+			if (c == '(' || c == '{' || c == '[')
 				cantP++;
-			if (c == ')' )
+			if (c == ')' || c == '}' || c == ']')
 				cantP--;
 
-			if (cantP < 0 ){ //agregado prima.isEmpty()
-				salida += pred.substring(prinArg,i) + "¬"  ; // ")" agregado
+			if (cantP < 0 ){ 
+				salida += pred.substring(prinArg,i) + "¬" ;
 				argcint--;
 			}
 			
 			if (prinDeArg(cantP,pred,i)){
 				salida += "¬"; 
 				prinArg = i+1;
-				//entrearg = false;
 			}
 			
 			if (finDeArg(cantP,pred,i) ){
@@ -67,7 +77,6 @@ public class ExpressionDelimiter {
 				else
 					salida += pred.substring(prinArg,i+1) + "¬" ;
 				argcint--;
-				//entrearg = true;
 			}
 		}
 		SPrima sps = new SPrima();
@@ -78,7 +87,23 @@ public class ExpressionDelimiter {
 		char csig = i+nomvar.length()<pred.length()?pred.charAt(i+nomvar.length()):' ';
 		return pred.substring(i).startsWith(nomvar) && (csig == ' ' || csig == '~');
 	}
+	
+	/* 
+	 * dado un string que tenga la funcion llamada nomvar varias veces, marca los argumentos.
+	 * el string tiene que estar normalizado, es decir no haber dos espacios seguidos, los parentesis
+	 * separados de los no parentesis por un espacio. 
+	 */
 	public static String marcarPred(String pred, String nomvar, int argc){
+		
+		pred = pred.replace("\\langle", "[");
+		pred = pred.replace("\\rangle", "]");
+		pred = pred.replace("\\{", "$");
+		pred = pred.replace("$", "{");
+		pred = pred.replace("\\}", "$");
+		pred = pred.replace("$", "}");
+		
+		
+		
 		int length = pred.length();
 		SPrima sp = new SPrima();
 		sp.salida = "";
@@ -100,12 +125,26 @@ public class ExpressionDelimiter {
 			}
 			
 		}
-		return salida + pred.substring(c,pred.length());
+		
+		salida = salida + pred.substring(c,pred.length());
+		salida = salida.replace("{", "$");
+		salida = salida.replace("$", "\\{");
+		salida = salida.replace("}", "$");
+		salida = salida.replace("$", "\\}");
+		salida = salida.replace("[", "\\langle");
+		salida = salida.replace("]", "\\rangle");
+		
+		
+		return salida ;
 	} 
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, CommandException {
 		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
-		String s = marcarPred("garibaldi ( garibaldi~1~2 ) 3 = 7","garibaldi",2);
+		String predstr = "g~a~b";
+		ZLive zLive = UniqueZLive.getInstance();
+		Pred pred = ParseUtils.parsePred(new StringSource(predstr),zLive.getCurrentSection(), zLive.getSectionManager());
+		String predstr2 = SpecUtils.termToLatex(pred);
+		String s = marcarPred(predstr2,"g",2);
 		System.out.println(s);
 		
 	}
