@@ -32,8 +32,6 @@ import common.z.czt.visitors.EmptySetReplacer;
 import common.z.czt.visitors.FreeTypeNamesExtractor;
 import common.z.czt.visitors.OpNamesExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
-import compserver.axdef.SynonymsControl;
-import compserver.prunning.Theorem;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import java.util.List;
@@ -152,7 +150,6 @@ public class LoadSpecCommand implements Command {
             // The specification is traverse to identify the free types
             List<String> freeTypeNames = spec.accept(new FreeTypeNamesExtractor());
 
-
             Map<RefExpr, Expr> axDefsValues = new HashMap<RefExpr, Expr>();
             Map<String, Expr> axDefsRequired = new HashMap<String, Expr>();
             Map<String, List<String>> basicAxDefs = new HashMap<String, List<String>>();
@@ -168,62 +165,6 @@ public class LoadSpecCommand implements Command {
             spec.accept(new AxDefPredsExtractor(axDefsRequiredPreds,axDefsPredVars, noBasicAxDefVars));
 
             spec.accept(new ParenthesisRemover());
-
-
-            /*
-            System.out.println("\nVariables de tipo básico:");
-            Set<Map.Entry<String, List<String>>> set3 = basicAxDefs.entrySet();
-            Iterator<Map.Entry<String, List<String>>> it3 = set3.iterator();
-            while(it3.hasNext()){
-            Map.Entry<String, List<String>> entry = it3.next();
-            List<String> list = entry.getValue();
-            for(int i = 0; i<list.size(); i++){
-            System.out.println(list.get(i));
-            }
-            }
-
-            System.out.println("\nVariables para las que se espera valor," +
-            " junto con los predicados que las restringen :");
-            Set<Map.Entry<String, Expr>> set1 = axDefsRequired.entrySet();
-            Iterator<Map.Entry<String, Expr>> it1 = set1.iterator();
-            while(it1.hasNext()){
-            Map.Entry<String, Expr> entry = it1.next();
-            String varName = entry.getKey();
-            System.out.println("* " + varName);
-            List<Pred> predList = axDefsRequiredPreds.get(varName);
-            for(int i=0; i< predList.size(); i++){
-            System.out.println("\t* " + SpecUtils.termToLatex(predList.get(i)));
-            }
-            }
-
-            System.out.println("\nVariables con valores dados en la spec");
-            Set<Map.Entry<RefExpr, Expr>> set2 = axDefsValues.entrySet();  
-            Iterator<Map.Entry<RefExpr, Expr>> it2 = set2.iterator();
-            while(it2.hasNext()){
-            Map.Entry<RefExpr, Expr> entry = it2.next();
-            RefExpr refExpr = entry.getKey();
-            System.out.println(refExpr.getName());
-            }
-
-
-
-            System.out.println("\nVariables por predicado");
-            Set<Map.Entry<Pred, List<String>>> set5 = axDefsPredVars.entrySet();
-            Iterator<Map.Entry<Pred, List<String>>> it5 = set5.iterator();
-            while(it5.hasNext()){
-            Map.Entry<Pred, List<String>> entry = it5.next();
-            Pred pred = entry.getKey();
-            if(pred == null)
-            System.out.println("* " + "true");
-            else
-            System.out.println("* " + SpecUtils.termToLatex(pred));
-            List<String> varNameList = entry.getValue();
-            for(int i=0; i< varNameList.size(); i++){
-            System.out.println("\t* " + varNameList.get(i));
-            }
-            }
-			*/
-             
 
             spec = (Spec) spec.accept(new EmptySetReplacer());
             controller.setBasicTypeNames(basicTypeNames);
