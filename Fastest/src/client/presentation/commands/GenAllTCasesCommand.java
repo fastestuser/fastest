@@ -4,6 +4,9 @@ import java.io.*;
 import java.util.*;
 
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ZDeclList;
 
 import client.presentation.ClientTextUI;
@@ -29,26 +32,26 @@ import common.z.czt.visitors.TClassNodeUnfolder;
  */
 public class GenAllTCasesCommand implements Command {
 
-    /**
-     * Runs this command.
-     * @param clientTextUI
-     * @param args
-     */
-    @Override
-    public void run(ClientTextUI clientTextUI, String args) {
-        PrintWriter output = clientTextUI.getOutput();
-        try {
+	/**
+	 * Runs this command.
+	 * @param clientTextUI
+	 * @param args
+	 */
+	@Override
+	public void run(ClientTextUI clientTextUI, String args) {
+		PrintWriter output = clientTextUI.getOutput();
+		try {
 
-            if (!args.equals("")) {
-                output.println("Invalid parameters. Try 'help'.");
-                return;
-            }
+			if (!args.equals("")) {
+				output.println("Invalid parameters. Try 'help'.");
+				return;
+			}
 
-            Controller controller = clientTextUI.getMyController();
+			Controller controller = clientTextUI.getMyController();
 
-            /*
-             * The following piece of commented code implements the checking
-             * that all axiomatic definitions have a value assigned to them
+			/*
+			 * The following piece of commented code implements the checking
+			 * that all axiomatic definitions have a value assigned to them
             Map<String,Expr> axDefsRequired = controller.getAxDefsRequired();
             Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
 
@@ -86,58 +89,58 @@ public class GenAllTCasesCommand implements Command {
             output.println(".");
             return;
             }
-             */
-            EventAdmin eventAdmin = EventAdmin.getInstance();
-            Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-            Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
-            Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-            int maxEval = controller.getMaxEval();
-            
-            Iterator<ZDeclList> it = controller.getAuxiliarDecls().values().iterator();
-            while (it.hasNext())
-            	System.out.println(SpecUtils.termToLatex(it.next()));	
-            
-            boolean someEventAnnounced = false;
-            while (iterator.hasNext()) {
-                Map.Entry<String, TClassNode> mapEntry = iterator.next();
-                String opName = mapEntry.getKey();
-                TClassNode opTTreeRoot = mapEntry.getValue();
+			 */
+			EventAdmin eventAdmin = EventAdmin.getInstance();
+			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+			Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+			Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+			int maxEval = controller.getMaxEval();
 
-                
-                // Extracts all the TCLassNodes that are leaves of the tClassNode test tree
-                // except for those leaves that are descendants of pruned test classes.
-                AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
-                AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
-                while (tClassNodeIt.hasNext()) {
-                    someEventAnnounced = true;
-                    TClassNode tClassNode = tClassNodeIt.next();
-                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
-                    tClassNode.acceptVisitor(tClassNodeUnfolder);
-                    TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
-                    //System.out.println("Eschemas:\n" + SpecUtils.termToLatex(tClass.getMyAxPara()));                    
-                    TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
-                    eventAdmin.announceEvent(tCaseRequested);
-                }
+			Iterator<ZDeclList> it = controller.getAuxiliarDecls().values().iterator();
+			while (it.hasNext())
+				System.out.println(SpecUtils.termToLatex(it.next()));	
+
+			boolean someEventAnnounced = false;
+			while (iterator.hasNext()) {
+				Map.Entry<String, TClassNode> mapEntry = iterator.next();
+				String opName = mapEntry.getKey();
+				TClassNode opTTreeRoot = mapEntry.getValue();
 
 
-            }
+				// Extracts all the TCLassNodes that are leaves of the tClassNode test tree
+				// except for those leaves that are descendants of pruned test classes.
+				AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
+				AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
+				while (tClassNodeIt.hasNext()) {
+					TClassNode tClassNode = tClassNodeIt.next();
+					TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
+					tClassNode.acceptVisitor(tClassNodeUnfolder);
+					TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
+
+					someEventAnnounced = true;
+					TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
+					eventAdmin.announceEvent(tCaseRequested);
+				}
 
 
-            if (someEventAnnounced) {
-                synchronized (clientTextUI) {
-                    clientTextUI.wait();
-                }
-            }
-
-            // Quitamos las seleccion de las operaciones elegidas
-            controller.setOpsToTestRep(new ConcreteRepository<String>());
-            controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
-            controller.setTacticMap(new HashMap<String, List<Tactic>>());
+			}
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+			if (someEventAnnounced) {
+				synchronized (clientTextUI) {
+					clientTextUI.wait();
+				}
+			}
 
-    }
+			// Quitamos las seleccion de las operaciones elegidas
+			controller.setOpsToTestRep(new ConcreteRepository<String>());
+			controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
+			controller.setTacticMap(new HashMap<String, List<Tactic>>());
+
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
 }

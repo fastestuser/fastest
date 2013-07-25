@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
@@ -55,11 +57,38 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
 		
+		Controller controller = clientUI.getMyController();
 		String tClassName = tClass.getSchName();
+		
+		//We check to see if all the non basic axDefs in the TClass has been replaced,
+		//if not, the case cannot be generated
+		String strPred = SpecUtils.termToLatex(SpecUtils.getAxParaPred(tClass.getMyAxPara()));
+		Set<String> axDefsRequired = controller.getAxDefsRequired().keySet();
+		Iterator<String> axDefsRequiredIt = axDefsRequired.iterator();
+		boolean containsAxDef = false;
+		String axDef = null;
+		while (axDefsRequiredIt.hasNext() && (!containsAxDef)) {
+			axDef = axDefsRequiredIt.next();
+			if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+				containsAxDef = true;
+			}
+		}
+		Set<RefExpr> axDefsValues = controller.getAxDefsValues().keySet();
+		Iterator<RefExpr> axDefsValuesIt = axDefsValues.iterator();
+		while (axDefsValuesIt.hasNext() && (!containsAxDef)) {
+			axDef = axDefsValuesIt.next().getZName().getWord();
+			if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+				containsAxDef = true;
+			}
+		}
+		
+		if (containsAxDef) {
+			System.out.println("Missing value for " + axDef + " in " + tClassName);
+			return null;
+		}
+			
 		System.out.println("Trying to generate a test case for the class: " + tClassName);
 		
-		Controller controller = clientUI.getMyController();
-       // Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
         List<FreePara> freeParas = controller.getFreeParas();
         List<String> basicTypeNames = controller.getBasicTypeNames();
 		

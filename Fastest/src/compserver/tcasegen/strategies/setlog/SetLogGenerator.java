@@ -95,8 +95,6 @@ public final class SetLogGenerator {
 			path = path.substring(0, path.lastIndexOf("/")); //Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
 			path = path + "/lib/setlog/"; //Por ultimo agregamos la direccion de setlog
 			path = URLDecoder.decode(path, "UTF-8");
-			//System.out.println("DIRECTORIO: " + path + "setlog4617.pl");
-			System.out.println("SETLOG:\n" + setLogInput);
 
 			String goal = "consult('" + path + "setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."

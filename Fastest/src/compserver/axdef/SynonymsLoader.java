@@ -39,7 +39,7 @@ import compserver.prunning.Variable;
 
 public class SynonymsLoader {
 
-	public static void loadSynonyms(Pred pred) {
+	public static void loadSynonyms(Pred pred, ArrayList<String> axDefVars) {
 		if (pred == null) {
 			return;
 		}
@@ -47,30 +47,32 @@ public class SynonymsLoader {
 		AbstractIterator<Pred> predClausesIt = predClauses.createIterator();
 		while (predClausesIt.hasNext()) {
 			Pred auxPred = predClausesIt.next();
-			if (auxPred instanceof ForallPred) { //Axiomatic definitions with forall (Synonyms)
+			if (auxPred instanceof ForallPred) { //Axiomatic definitions with forall
 				ForallPred forAllPred = (ForallPred) auxPred;
 
-				Theorem theorem = new Theorem();
 				String synonym = SpecUtils.termToLatex(forAllPred);
 				String synonymType = extractSynonymType(synonym);
-				String theoremName = extractSynonymName(synonym, synonymType).trim();
-				theorem.setName(theoremName);
-				ZDeclList zDeclList = extractTheoremDeclList(synonym);
-				theorem.setZDeclList(zDeclList);
-				List<Variable> formalParamList = SynonymsLoader.extractSynonymsParams(synonym);
-				theorem.setFormalParamList(formalParamList);
-				String predicatesToMatch = SynonymsLoader.extractPredicates(synonym, synonymType);
-				List<List<List<String>>> reservedWords = extractReservedWords(predicatesToMatch);
-				theorem.setReservedWords(reservedWords);
-				List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
-				List<List<Pattern>> patterns = createRegExpr(predicatesToMatch, mapGroups, theorem, synonymType);
-				String replacement = SynonymsLoader.extractReplacement(synonym, synonymType);
-				theorem.setDefinition(replacement);
-				theorem.setPredicatesToMatch(predicatesToMatch);
-				theorem.setVarRegExGroups(mapGroups);
-				theorem.setRegEx(patterns);
-
-				SynonymsControl.getInstance().addElement(theorem);
+				String theoremName = extractSynonymName(synonym, synonymType, axDefVars).trim();
+				if (!theoremName.equals("")) {
+					Theorem theorem = new Theorem();
+					theorem.setName(theoremName);
+					ZDeclList zDeclList = extractTheoremDeclList(synonym);
+					theorem.setZDeclList(zDeclList);
+					List<Variable> formalParamList = SynonymsLoader.extractSynonymsParams(synonym);
+					theorem.setFormalParamList(formalParamList);
+					String predicatesToMatch = SynonymsLoader.extractPredicates(synonym, synonymType);
+					List<List<List<String>>> reservedWords = extractReservedWords(predicatesToMatch);
+					theorem.setReservedWords(reservedWords);
+					List<Map<Integer,String>> mapGroups = new ArrayList<Map<Integer,String>>();
+					List<List<Pattern>> patterns = createRegExpr(predicatesToMatch, mapGroups, theorem, synonymType);
+					String replacement = SynonymsLoader.extractReplacement(synonym, synonymType);
+					theorem.setDefinition(replacement);
+					theorem.setPredicatesToMatch(predicatesToMatch);
+					theorem.setVarRegExGroups(mapGroups);
+					theorem.setRegEx(patterns);
+		
+					SynonymsControl.getInstance().addElement(theorem);
+				}
 			}
 		}
 	}
@@ -88,7 +90,6 @@ public class SynonymsLoader {
 	public static List<Variable> extractSynonymsParams(String line)
 	{
 		List<Variable> params = new ArrayList<Variable>();
-		//String theoremName = line.substring(line.indexOf("@")+1, line.indexOf('~'));
 		line = line.substring(line.indexOf("\\forall")+7, line.indexOf('@'));
 		String types[] = line.split(";");
 		String auxType;
@@ -124,25 +125,38 @@ public class SynonymsLoader {
 		return predicates;
 	}
 
-	private static String extractSynonymName(String line, String type) {
+	private static String extractSynonymName(String line, String type, ArrayList<String> axDefVars) {
 		String synonymName = new String();
+		int beginIndex = line.indexOf("@");
 		if (type.equals("Synonym")){
-			int beginIndex = line.indexOf("@");
 			int endIndex = line.indexOf('~');
 			if ((beginIndex != -1) && (endIndex != -1))
 				synonymName = "Synonym_" + line.substring(beginIndex+1, endIndex).trim();
 		} else {
-			synonymName = "Equivalence_";
+			int endIndex = line.indexOf("\\iff");
+			String predicate;
+			if ((beginIndex != -1) && (endIndex != -1)) {
+				predicate = line.substring(beginIndex+1, endIndex);
+
+				for (int i = 0; i < axDefVars.size(); i++) {
+					String axDef = axDefVars.get(i);
+					if (predicate.split("(\\W|^)"+axDef+"(\\W|$)", 2).length > 1) {
+						synonymName = "Equivalence_" + axDef;
+						break;
+					}
+				}
+			}
 		}
+		if (!synonymName.equals("")) {
+			int random = (int)(Math.random()*1000000);
+			synonymName = synonymName + "_" + random;
 
-		int random = (int)(Math.random()*1000000);
-		synonymName = synonymName + "_" + random;
-
-		//Chequeamos que el nombre del synonym no se haya sido usado
-		AbstractIterator<Theorem> it = SynonymsControl.getInstance().createIterator();
-		while (it.hasNext())
-			if (it.next().getName().equals(synonymName))
-				synonymName = extractSynonymName(line, type);
+			//Chequeamos que el nombre del synonym no se haya sido usado
+			AbstractIterator<Theorem> it = SynonymsControl.getInstance().createIterator();
+			while (it.hasNext())
+				if (it.next().getName().equals(synonymName))
+					synonymName = extractSynonymName(line, type, axDefVars);
+		}
 
 		return synonymName;
 	}
@@ -213,7 +227,7 @@ public class SynonymsLoader {
 		variableReplacement.add("(.+?)");
 
 		for (int k = 0; k < variableReplacement.size(); k++) {
-			
+
 			String replacement = variableReplacement.get(k);
 			String[] predLines = originalPred.split("\n");
 			List<String> lines = new ArrayList<String>();

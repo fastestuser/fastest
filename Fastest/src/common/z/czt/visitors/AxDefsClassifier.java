@@ -69,7 +69,6 @@ TermVisitor<Void> {
 			ZSchText zSchText = axPara.getZSchText();
 			Pred axDefPred = zSchText.getPred();
 			Map<String, Expr> assignedValues = SpecUtils.getAssignedValues(axDefPred);
-			SynonymsLoader.loadSynonyms(axDefPred); //For thoose axiomatic definitions that use \forall
 			DeclList declList = zSchText.getDeclList();
 			if (declList instanceof ZDeclList) {
 				ZFactory zFactory = new ZFactoryImpl();

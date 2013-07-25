@@ -26,6 +26,7 @@ import common.z.SpiveySpecsSorter;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AxDefPredsExtractor;
 import common.z.czt.visitors.AxDefsClassifier;
+import common.z.czt.visitors.AxDefsSynonymsClassifier;
 import common.z.czt.visitors.BasicTypeNamesExtractor;
 import common.z.czt.visitors.EmptySetReplacer;
 import common.z.czt.visitors.FreeTypeNamesExtractor;
@@ -157,6 +158,7 @@ public class LoadSpecCommand implements Command {
             List<RefExpr> noBasicAxDefVars = new ArrayList<RefExpr>();
 
             spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames, basicAxDefs, axDefsValues, axDefsRequired, noBasicAxDefVars));
+            spec.accept(new AxDefsSynonymsClassifier(noBasicAxDefVars));
 
             Map<String, List<Pred>> axDefsRequiredPreds = new HashMap<String, List<Pred>>();
 

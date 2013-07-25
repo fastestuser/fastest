@@ -5,7 +5,6 @@ import common.repository.ConcreteRepository;
 import common.repository.AbstractIterator;
 import compserver.prunning.Theorem;
 
-
 /**
  * The instance of this class (which is a singleton) contains a number of
  * instances of Theorem, representing synonyms of axiomatic definitions
@@ -15,8 +14,6 @@ public class SynonymsControl implements AbstractRepository<Theorem>{
     private static SynonymsControl synonymsControl;
     private AbstractRepository<Theorem> repository;
     private int maxCard;
-    
-    
     
     /**
      * Creates intances of SynonymsControl.
@@ -34,8 +31,6 @@ public class SynonymsControl implements AbstractRepository<Theorem>{
 			synonymsControl = new SynonymsControl();
 		return synonymsControl;
 	}
-
-    
     
     /**
      * Creates an iterator in order to be possible the traversal along this
@@ -45,8 +40,6 @@ public class SynonymsControl implements AbstractRepository<Theorem>{
 	public AbstractIterator<Theorem> createIterator(){
 		return repository.createIterator();
 	}
-
-    
     
     /**
      * Add a new instance of Theorem to this object.
