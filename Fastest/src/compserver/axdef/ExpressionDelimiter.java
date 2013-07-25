@@ -1,16 +1,5 @@
 package compserver.axdef;
 
-import java.io.IOException;
-
-import common.z.SpecUtils;
-import common.z.czt.UniqueZLive;
-
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.parser.oz.ParseUtils;
-import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.StringSource;
-import net.sourceforge.czt.z.ast.Pred;
-
 public class ExpressionDelimiter {
 
 	//dice si es el principio de un argumento
@@ -83,6 +72,7 @@ public class ExpressionDelimiter {
 		sps.i = i; sps.salida = /*"°" + */nomvar + salida /*+ "°"*/;
 		return sps;
 	}
+	
 	private static boolean prinFun(String pred, String nomvar, int i){
 		char csig = i+nomvar.length()<pred.length()?pred.charAt(i+nomvar.length()):' ';
 		return pred.substring(i).startsWith(nomvar) && (csig == ' ' || csig == '~');
@@ -101,8 +91,6 @@ public class ExpressionDelimiter {
 		pred = pred.replace("$", "{");
 		pred = pred.replace("\\}", "$");
 		pred = pred.replace("$", "}");
-		
-		
 		
 		int length = pred.length();
 		SPrima sp = new SPrima();
@@ -123,7 +111,6 @@ public class ExpressionDelimiter {
 				i = c;
 				salida += pedazo + sp.salida ;
 			}
-			
 		}
 		
 		salida = salida + pred.substring(c,pred.length());
@@ -134,10 +121,11 @@ public class ExpressionDelimiter {
 		salida = salida.replace("[", "\\langle");
 		salida = salida.replace("]", "\\rangle");
 		
-		
 		return salida ;
 	} 
 	
+	//For testing
+	/*
 	public static void main(String[] args) throws IOException, CommandException {
 		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
 		String predstr = "g~a~b";
@@ -147,6 +135,5 @@ public class ExpressionDelimiter {
 		String s = marcarPred(predstr2,"g",2);
 		System.out.println(s);
 		
-	}
-
+	}*/
 }

@@ -50,7 +50,6 @@ public class SynonymsLoader {
 			if (auxPred instanceof ForallPred) { //Axiomatic definitions with forall (Synonyms)
 				ForallPred forAllPred = (ForallPred) auxPred;
 
-				//System.out.println("Cargandooooo " + SpecUtils.termToLatex(forAllPred));
 				Theorem theorem = new Theorem();
 				String synonym = SpecUtils.termToLatex(forAllPred);
 				String synonymType = extractSynonymType(synonym);
@@ -70,7 +69,7 @@ public class SynonymsLoader {
 				theorem.setPredicatesToMatch(predicatesToMatch);
 				theorem.setVarRegExGroups(mapGroups);
 				theorem.setRegEx(patterns);
-				
+
 				SynonymsControl.getInstance().addElement(theorem);
 			}
 		}
@@ -115,7 +114,7 @@ public class SynonymsLoader {
 		}
 		return params;
 	}
-	
+
 	private static String extractReplacement(String synonym, String type) {
 		String predicates = new String();
 		if (type.equals("Equivalence"))
@@ -135,16 +134,16 @@ public class SynonymsLoader {
 		} else {
 			synonymName = "Equivalence_";
 		}
-			
+
 		int random = (int)(Math.random()*1000000);
 		synonymName = synonymName + "_" + random;
-		
+
 		//Chequeamos que el nombre del synonym no se haya sido usado
 		AbstractIterator<Theorem> it = SynonymsControl.getInstance().createIterator();
 		while (it.hasNext())
 			if (it.next().getName().equals(synonymName))
 				synonymName = extractSynonymName(line, type);
-				
+
 		return synonymName;
 	}
 
@@ -208,112 +207,110 @@ public class SynonymsLoader {
 	protected static List<List<Pattern>> createRegExpr(String originalPred, List<Map<Integer,String>> mapGroups, Theorem synonym, String synonymType)
 	{
 		List<List<Pattern>> patterns = new ArrayList<List<Pattern>>();
-		String[] predLines = originalPred.split("\n");
-		List<String> lines = new ArrayList<String>();
-		for(int i=0;i<predLines.length;i++)
-			lines.add(predLines[i]);
 
-		for(int i=0;i<lines.size();i++){
-			Map<Integer,String> groups = new HashMap<Integer,String>();
-			String newPred = lines.get(i);
-			//System.out.println("Predicado original:\n"+newPred);
-			List<Variable> vars = synonym.getFormalParamList();
-			for(int j=0;j<vars.size();j++){
-				String name = vars.get(j).getName();
-				Pattern regex = RegExUtils.createVarRegEx(name);
-				Matcher matcher = regex.matcher(newPred);
-				while(matcher.find()){
-					String pattern = matcher.group();
-					String newPattern = pattern.replaceAll(name, "(.+)");
-					newPred = newPred.replaceAll(pattern, newPattern);
-				}
-			}
+		ArrayList<String> variableReplacement = new ArrayList<String>();
+		variableReplacement.add("(.+)");
+		variableReplacement.add("(.+?)");
 
-			newPred = RegExUtils.addEscapeCharacters(newPred);
-			//System.out.println("Despues newPred:\n"+newPred);
-			String[] parts = newPred.split(";");
-			String auxPred = "";
+		for (int k = 0; k < variableReplacement.size(); k++) {
 			
-			if (synonymType.equals("Equivalence")){
-				for(int x=0;x<parts.length-1;x++){
-					//auxPred+="^[ ]*"+parts[x].trim()+"[ ]*$|";
-					auxPred+="[ ]*"+parts[x].trim()+"[ ]*|";
-				}
-				//auxPred+="^[ ]*"+parts[parts.length-1].trim()+"[ ]*$";
-				auxPred+="[ ]*"+parts[parts.length-1].trim()+"[ ]*";
-			} else {
-				for(int x=0;x<parts.length-1;x++){
-					auxPred+=parts[x].trim();
-				}
-				auxPred+=parts[parts.length-1].trim();
-			}
-			
-			String functionName = null;
-			String synonymName = synonym.getName();
-			if (synonymType.equals("Synonym")){
-				functionName = synonymName.split("_")[1];
-			}
-			
-			if(auxPred.contains("(.*)~(.*)")){
-				auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
-			}
-			// Asi estaba
-			else if((auxPred.contains("(.+)~(.+)")) && (synonymType.equals("Equivalence"))){
-				auxPred = auxPred.replace("(.+)~(.+)","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
-			}
-			else if((auxPred.contains("~(.+)")) && (synonymType.equals("Synonym"))){
-				auxPred = auxPred.replace("~(.+)", "[¬]((?:(?!" + functionName + ")[^¬])+)[¬]");
-			}
-			
-			else if(auxPred.contains("(.+)~.*")){
-				auxPred = auxPred.replace("(.+)~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
-			}
-			//System.out.println("El auxPred:\n"+auxPred);
-			String[] auxPatterns = auxPred.split("\\|");
-			//System.out.println("El tamaño es: "+auxPatterns.length);
-			//Pattern regex = Pattern.compile(auxPred,Pattern.MULTILINE);
-			//System.out.println("PAtron:\n"+regex);
-			String aux = lines.get(i);
-			//aux = aux.replaceAll("\\\\sw\\( (.*) \\)", "$1");
-			//aux = aux.replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
-			String[] partsAux = aux.split(";");
-			int groupCount=0;
-			List<Pattern> singlePattern = new ArrayList<Pattern>();
-			for(int j=0;j<partsAux.length;j++){
+			String replacement = variableReplacement.get(k);
+			String[] predLines = originalPred.split("\n");
+			List<String> lines = new ArrayList<String>();
+			for(int i=0;i<predLines.length;i++)
+				lines.add(predLines[i]);
 
-
-				partsAux[j] = partsAux[j].replaceAll("\\\\sw\\( (.*) \\)", "$1");
-				partsAux[j] = partsAux[j].replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
-
-
-
-				auxPatterns[j] = auxPatterns[j].replace("\t","|");
-				//System.out.println("El patron:\n"+auxPatterns[j]);
-				Pattern auxRegex = Pattern.compile(auxPatterns[j],Pattern.MULTILINE);
-				
-				//Prueba con el delimiter
-				if (functionName != null)
-					partsAux[j] = ExpressionDelimiter.marcarPred(partsAux[j].trim(), functionName, synonym.getFormalParamList().size());
-				
-				
-				//partsAux[j] = ExpressionDelimiter.marcarPred(partsAux[j].trim(),"f",2);
-				//
-				Matcher auxMatcher = auxRegex.matcher(partsAux[j]);
-				
-				while(auxMatcher.find()){
-					for(int x=1;x<auxMatcher.groupCount()+1;x++){
-						if(auxMatcher.group(x)!=null && auxMatcher.group(x)!=""){
-							//System.out.println("Grupo "+(x+groupCount)+": "+auxMatcher.group(x));
-							groups.put(new Integer(x+groupCount), auxMatcher.group(x));
-						}
+			for(int i=0;i<lines.size();i++){
+				Map<Integer,String> groups = new HashMap<Integer,String>();
+				String newPred = lines.get(i);
+				//System.out.println("Predicado original:\n"+newPred);
+				List<Variable> vars = synonym.getFormalParamList();
+				for(int j=0;j<vars.size();j++){
+					String name = vars.get(j).getName();
+					Pattern regex = RegExUtils.createVarRegEx(name);
+					Matcher matcher = regex.matcher(newPred);
+					while(matcher.find()){
+						String pattern = matcher.group();
+						String newPattern = pattern.replaceAll(name, replacement);
+						newPred = newPred.replaceAll(pattern, newPattern);
 					}
 				}
-				groupCount+=auxMatcher.groupCount();
-				singlePattern.add(auxRegex);
-			}
 
-			mapGroups.add(groups);
-			patterns.add(singlePattern);
+				newPred = RegExUtils.addEscapeCharacters(newPred);
+				//System.out.println("Despues newPred:\n"+newPred);
+				String[] parts = newPred.split(";");
+				String auxPred = "";
+
+				if (synonymType.equals("Equivalence")){
+					for(int x=0;x<parts.length-1;x++){
+						//auxPred+="^[ ]*"+parts[x].trim()+"[ ]*$|";
+						auxPred+="[ ]*"+parts[x].trim()+"[ ]*|";
+					}
+					//auxPred+="^[ ]*"+parts[parts.length-1].trim()+"[ ]*$";
+					auxPred+="[ ]*"+parts[parts.length-1].trim()+"[ ]*";
+				} else {
+					for(int x=0;x<parts.length-1;x++){
+						auxPred+=parts[x].trim();
+					}
+					auxPred+=parts[parts.length-1].trim();
+				}
+
+				String functionName = null;
+				String synonymName = synonym.getName();
+				if (synonymType.equals("Synonym")){
+					functionName = synonymName.split("_")[1];
+				}
+
+				if(auxPred.contains("(.*)~(.*)")){
+					auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
+				}
+				// Asi estaba
+				else if((auxPred.contains(replacement+"~"+replacement)) && (synonymType.equals("Equivalence"))){
+					auxPred = auxPred.replace(replacement+"~"+replacement,"([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				}
+				else if((auxPred.contains("~"+replacement)) && (synonymType.equals("Synonym"))){
+					auxPred = auxPred.replace("~"+replacement, "[¬]((?:(?!" + functionName + ")[^¬])+)[¬]");
+				}
+
+				else if(auxPred.contains(replacement+"~.*")){
+					auxPred = auxPred.replace(replacement+"~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				}
+				//System.out.println("El auxPred:\n"+auxPred);
+				String[] auxPatterns = auxPred.split("\\|");
+				//System.out.println("El tamaño es: "+auxPatterns.length);
+				//Pattern regex = Pattern.compile(auxPred,Pattern.MULTILINE);
+				//System.out.println("PAtron:\n"+regex);
+				String aux = lines.get(i);
+				//aux = aux.replaceAll("\\\\sw\\( (.*) \\)", "$1");
+				//aux = aux.replaceAll("\\\\se\\( (.*) \\)", "\\\\{ $1 \\\\}");
+				String[] partsAux = aux.split(";");
+				int groupCount=0;
+				List<Pattern> singlePattern = new ArrayList<Pattern>();
+				for(int j=0;j<partsAux.length;j++){
+
+					auxPatterns[j] = auxPatterns[j].replace("\t","|");
+					Pattern auxRegex = Pattern.compile(auxPatterns[j],Pattern.MULTILINE);
+
+					//Prueba con el delimiter
+					if (functionName != null)
+						partsAux[j] = ExpressionDelimiter.marcarPred(partsAux[j].trim(), functionName, synonym.getFormalParamList().size());
+
+					Matcher auxMatcher = auxRegex.matcher(partsAux[j]);
+
+					while(auxMatcher.find()){
+						for(int x=1;x<auxMatcher.groupCount()+1;x++){
+							if(auxMatcher.group(x)!=null && auxMatcher.group(x)!=""){
+								groups.put(new Integer(x+groupCount), auxMatcher.group(x));
+							}
+						}
+					}
+					groupCount+=auxMatcher.groupCount();
+					singlePattern.add(auxRegex);
+				}
+
+				mapGroups.add(groups);
+				patterns.add(singlePattern);
+			}
 		}
 		return patterns;
 	}
@@ -367,7 +364,7 @@ public class SynonymsLoader {
 			e.printStackTrace();
 			System.out.println(defTheorem);
 		}
-		//System.out.println("Parseado:\n"+SpecUtils.termToLatex((Spec)parsedTerm));
+
 		Spec spec = (Spec) parsedTerm;
 		AxPara axPara = null;
 		for (Sect sect : spec.getSect()) {
@@ -397,5 +394,4 @@ public class SynonymsLoader {
 			if(!parts[i].startsWith("\\") && !nonReserved.contains(parts[i]))
 				nonReserved.add(parts[i]);
 	}
-
 }
