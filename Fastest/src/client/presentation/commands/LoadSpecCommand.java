@@ -113,6 +113,7 @@ public class LoadSpecCommand implements Command {
                 output.println("Invalid parameters.  Try 'help'.");
                 return;
             }
+            controller.setNomTexFileSpec(texFileName);
             texFileToRead = new File(texFileToReadName);
             FileSource source = new FileSource(texFileToRead);
 
