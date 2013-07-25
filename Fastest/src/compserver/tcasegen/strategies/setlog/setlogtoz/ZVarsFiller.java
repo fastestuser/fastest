@@ -48,6 +48,9 @@ public final class ZVarsFiller {
 				return exprS;
 			}
 			
+			if (tipos.containsKey(exprS) && tipos.get(exprS).startsWith("BasicConstant"))
+				return exprS;
+			
 			if(SetLogUtils.esSLVariableSimple(exprS) && slvars.get(exprS) != null && slvars.get(exprS).toString().equals("ValueNotAssigned")){
 				return zNames.get(exprS)!=null?zNames.get(exprS):exprS;
 			}
@@ -55,7 +58,6 @@ public final class ZVarsFiller {
 			ExprIterator expr = new ExprIterator(exprS);
 
 			String ct = nodo.toString();
-
 
 			if(exprS.startsWith("int(")){
 				String aux[] = exprS.substring(4,exprS.length()-1).split(",");
@@ -109,6 +111,7 @@ public final class ZVarsFiller {
 				return "\\langle\\rangle";
 			}
 			
+			
 			String tipocompleto = tipos.get(ct);
 
 			if (tipocompleto !=null){
@@ -131,8 +134,6 @@ public final class ZVarsFiller {
 				if (tipocompleto.startsWith("EnumerationType"))
 					return zNames.get(exprS);
 
-				if (tipocompleto.startsWith("BasicConstant"))
-					return exprS;
 				
 				if (tipocompleto.startsWith("BasicType")){
 					String salida = zNames.get(exprS);
