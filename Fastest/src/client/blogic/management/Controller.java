@@ -52,6 +52,7 @@ import common.z.czt.visitors.SchemeUnfolder;
 public class Controller extends IIComponent {
 
 	private SectionManager sectionManager;
+	private String nomTexFileSpec;
 	private Spec originalSpec;
 	private Spec unfoldedSpec;
 	// Repository of the loaded operations from the loaded specification
@@ -312,11 +313,8 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof AllTCasesRefineRequested) {
 			refining = true;
 			try {
-				AllTCasesRefineRequested allTCasesRefineRequested =
-						(AllTCasesRefineRequested) event_;
-				AllTCasesRequested allTCasesRequested =
-						new AllTCasesRequested(allTCasesRefineRequested.getOpName(),
-								allTCasesRefineRequested.getTTree(), getMaxEval());
+				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
+				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
 				EventAdmin eventAdmin = EventAdmin.getInstance();
 				eventAdmin.announceEvent(allTCasesRequested);
 			} catch (Exception e) {
@@ -1193,6 +1191,14 @@ public class Controller extends IIComponent {
 
 	public void setFreeParas(List<FreePara> freeParas) {
 		this.freeParas = freeParas;
+	}
+
+	public String getNomTexFileSpec() {
+		return nomTexFileSpec;
+	}
+
+	public void setNomTexFileSpec(String nomTexFileSpec) {
+		this.nomTexFileSpec = nomTexFileSpec;
 	}    
 
 

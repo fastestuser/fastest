@@ -124,8 +124,8 @@ public final class SetLogGenerator {
 				else if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");
 				}else if(s.startsWith("_CONSTR")){
-					//setlogOutput = s +"\n"+ setlogOutput;
-					setlogOutput = setlogOutput  + "\n" + s;
+					setlogOutput = s +"\n"+ setlogOutput;
+					//setlogOutput = setlogOutput  + "\n" + s;
 					break;
 				}
 			}

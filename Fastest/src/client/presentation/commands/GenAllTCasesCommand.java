@@ -49,52 +49,12 @@ public class GenAllTCasesCommand implements Command {
 
 			Controller controller = clientTextUI.getMyController();
 
-			/*
-			 * The following piece of commented code implements the checking
-			 * that all axiomatic definitions have a value assigned to them
-            Map<String,Expr> axDefsRequired = controller.getAxDefsRequired();
-            Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
-
-            Set<Map.Entry<String, Expr>> requiredAxDefsSet = axDefsRequired.entrySet();
-            Iterator<Map.Entry<String, Expr>> requiredAxDefsIt = requiredAxDefsSet.iterator();
-            List<String> varsWithoutValue = new ArrayList<String>();
-            while(requiredAxDefsIt.hasNext()){
-            Map.Entry<String,Expr> requiredAxDefEntry = requiredAxDefsIt.next();
-            String varName = requiredAxDefEntry.getKey();
-
-            Set<Map.Entry<RefExpr, Expr>> axDefsValuesSet = axDefsValues.entrySet();
-            Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt = axDefsValuesSet.iterator();
-            boolean theVarHasAValue = false;
-            while(axDefsValuesIt.hasNext() && !theVarHasAValue){
-            Map.Entry<RefExpr,Expr> axDefValueEntry = axDefsValuesIt.next();
-            RefExpr axDefRefExpr = axDefValueEntry.getKey();
-            if(varName.equals(axDefRefExpr.getName().toString())){
-            theVarHasAValue = true;
-            }
-
-            }
-            if(!theVarHasAValue)
-            varsWithoutValue.add(varName);
-
-            }
-
-            if(!varsWithoutValue.isEmpty()){
-            output.print("The following variables, defined in axiomatic" +
-            " definitions, \nmust have a value assigned to them" +
-            " before initiating the test \ncase generation: ");
-            output.print(varsWithoutValue.get(0));
-            for(int i=1; i< varsWithoutValue.size(); i++){
-            output.print(", " + varsWithoutValue.get(i));
-            }
-            output.println(".");
-            return;
-            }
-			 */
 			EventAdmin eventAdmin = EventAdmin.getInstance();
 			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
 			Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
 			Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
 			int maxEval = controller.getMaxEval();
+
 
 			Iterator<ZDeclList> it = controller.getAuxiliarDecls().values().iterator();
 			while (it.hasNext())

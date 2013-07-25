@@ -128,8 +128,10 @@ public class ExpressionDelimiter {
 	/*
 	public static void main(String[] args) throws IOException, CommandException {
 		//no anda "(f aa (f aa bb))" si anda "f aa (f aa bb) si anda "(f aa bb)""
-		String predstr = "g~a~b";
+		String predstr = "(5+6)+((1))";
 		ZLive zLive = UniqueZLive.getInstance();
+		ZLive zLive2 = UniqueZLive.getInstance();
+		
 		Pred pred = ParseUtils.parsePred(new StringSource(predstr),zLive.getCurrentSection(), zLive.getSectionManager());
 		String predstr2 = SpecUtils.termToLatex(pred);
 		String s = marcarPred(predstr2,"g",2);

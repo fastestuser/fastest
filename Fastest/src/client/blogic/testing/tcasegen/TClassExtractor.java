@@ -40,15 +40,12 @@ public class TClassExtractor extends IIComponent {
 
                 // Extracts all the TCLassNodes that are leaves of the tClassNode test tree
                 // except for those leaves that are descendants of pruned test classes.
-                AbstractRepository<TClass> tClassLeaves =
-                        tClassNode.acceptVisitor(new TClassLeavesFinder());
-                AbstractIterator<TClass> tClassIt =
-                        tClassLeaves.createIterator();
+                AbstractRepository<TClass> tClassLeaves = tClassNode.acceptVisitor(new TClassLeavesFinder());
+                AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
                 EventAdmin eventAdmin = EventAdmin.getInstance();
                 while (tClassIt.hasNext()) {
                     TClass tClass = tClassIt.next();
-                    TCaseRequested tCaseRequested =
-                            new TCaseRequested(opName, tClass, maxEval);
+                    TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
                     eventAdmin.announceEvent(tCaseRequested);
                     System.out.println("se lanza tcase requested");
                 }
