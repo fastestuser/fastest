@@ -389,10 +389,14 @@ public class ExprParser extends Parser {
 				}
 				else if (nodeType.equals("\\fun")) {
 				    //Calculamos el dominio de la variable
-				    String domType = getChildType(type,0);
-				    String dom = newVar();
-					print("dom(" + var + "," + dom + ")");
-					print(dom + " = " + domType);
+				    String zDomType = getChildType(type,0);
+				    String domType = generateSetlogFiniteType(zDomType);
+				    String zVar = getKey(var, memory);
+				    String dom = memory.get("\\dom" + zVar);
+				    if (dom == null){
+				    	print("dom(" + var + "," + domType + ")");
+					} else
+						print(dom + " = " + domType);
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
@@ -441,6 +445,39 @@ public class ExprParser extends Parser {
 				}
 			}
 			return type;
+		}
+		
+		private String generateSetlogFiniteType(String type) {
+		
+			if (isBasic(types.get(type)))
+				return type;
+			
+			String mType = memory.get(type);
+			if (mType != null)
+				return mType;
+			
+			String nodeType = getType(type);
+			if (nodeType.equals("\\power")) {
+				String newVarName = newVar();
+				String zChild = getChildType(type,0);
+				String child = generateSetlogFiniteType(zChild);
+				print("powerset(" + child + "," + newVarName + ")");
+				memory.put(type, newVarName);
+				types.put(newVarName, type);
+				return newVarName;		
+			} else if (nodeType.equals("\\cross")) {
+				String newVarName = newVar();
+				String zChild1 = getChildType(type,0);
+				String zChild2 = getChildType(type,1);
+				String child1 = generateSetlogFiniteType(zChild1);
+				String child2 = generateSetlogFiniteType(zChild2);
+				print("cross_product(" + child1 + "," + child2 + "," + newVarName + ")");
+				memory.put(type, newVarName);
+				types.put(newVarName, type);
+				return newVarName;		
+			}
+			
+			return "";
 		}
 		
 		private String getKey(String value, HashMap<String,String> hashmap) {
