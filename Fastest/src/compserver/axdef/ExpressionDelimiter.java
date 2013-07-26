@@ -36,6 +36,8 @@ public class ExpressionDelimiter {
 		char c ;
 		for ( i=0; i<length && argcint>0 ; i++){
 			c = pred.charAt(i);
+			//si es el principio de una funcion y chequea prima que es vacio si es la primera vez
+			//que se entra,
 			if ( prinFun(pred,nomvar,i) && prima.isEmpty() ){
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				prima =  pred.substring(prinArg,i) +  sp.salida ;
@@ -47,7 +49,7 @@ public class ExpressionDelimiter {
 				cantP++;
 			if (c == ')' || c == '}' || c == ']')
 				cantP--;
-
+			
 			if (cantP < 0 ){ 
 				salida += pred.substring(prinArg,i) + "¬" ;
 				argcint--;
@@ -72,7 +74,7 @@ public class ExpressionDelimiter {
 		sps.i = i; sps.salida = /*"°" + */nomvar + salida /*+ "°"*/;
 		return sps;
 	}
-	
+	//dice si es el principio de funcion
 	private static boolean prinFun(String pred, String nomvar, int i){
 		char csig = i+nomvar.length()<pred.length()?pred.charAt(i+nomvar.length()):' ';
 		return pred.substring(i).startsWith(nomvar) && (csig == ' ' || csig == '~');
