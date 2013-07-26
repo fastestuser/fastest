@@ -388,6 +388,11 @@ public class ExprParser extends Parser {
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (nodeType.equals("\\fun")) {
+				    //Calculamos el dominio de la variable
+				    String domType = getChildType(type,0);
+				    String dom = newVar();
+					print("dom(" + var + "," + dom + ")");
+					print(dom + " = " + domType);
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {

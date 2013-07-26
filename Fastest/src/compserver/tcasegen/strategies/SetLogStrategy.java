@@ -91,29 +91,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 		
         List<FreePara> freeParas = controller.getFreeParas();
         List<String> basicTypeNames = controller.getBasicTypeNames();
-		
-		//Primero trabajamos con las definiciones axiomaticas
-		//Reemplazamos las definiciones axiomaticas por sus valores
-//		if (axDefsValues != null) {
-//
-//			AxPara tClassAxPara = (AxPara) tClass.getMyAxPara().accept(new CZTCloner());
-//			Pred pred = SpecUtils.getAxParaPred(tClassAxPara);
-//			Set<Map.Entry<RefExpr, Expr>> set = axDefsValues.entrySet();
-//			Iterator<Map.Entry<RefExpr, Expr>> iterator = set.iterator();
-//			CZTReplacer replaceVisitor = new CZTReplacer();
-//
-//			while (iterator.hasNext()) {
-//				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
-//				RefExpr refExpr = mapEntry.getKey();
-//				Expr expr = mapEntry.getValue();
-//				replaceVisitor.setOrigTerm(refExpr);
-//				replaceVisitor.setNewTerm(expr);
-//				pred = (Pred) pred.accept(replaceVisitor);
-//			}
-//
-//			SpecUtils.setAxParaPred(tClassAxPara, pred);
-//			tClass = new TClassImpl(tClassAxPara, tClassName);
-//		}
 
 		//Buscamos los tipos que aparecen en tClass, para incluir
 		//su informacion en la entrada del parser
@@ -222,23 +199,13 @@ public final class SetLogStrategy implements TCaseStrategy{
 					} catch (IllegalAccessException e) {
 						e.printStackTrace();
 					}
-					//TClassNode tClassNode = tClassNodeIt.next();
                     TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, controller);
                     dadNode.acceptVisitor(tClassNodeUnfolder);
                     TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
-                    //System.out.println("Eschemas:\n" + SpecUtils.termToLatex(tClass.getMyAxPara()));                    
                     TCaseRequested tCaseRequested = new TCaseRequested(dadClass.getSchName(), dadClass, controller.getMaxEval());
                     eventAdmin.announceEvent(tCaseRequested);
-                    /*synchronized (clientUI) {
-                    	try {
-							clientUI.wait();
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-                    }*/
 				}
             }
-			
 			return null;
 		}
 		
