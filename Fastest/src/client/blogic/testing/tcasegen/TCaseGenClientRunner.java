@@ -71,7 +71,7 @@ public class TCaseGenClientRunner implements Runnable
 
 
 
-		String serverName = serverInfo.getServerName();
+		//String serverName = serverInfo.getServerName();
 		InetAddress inetAddress = serverInfo.getInetAddress();
 		int port = serverInfo.getPort();
 

@@ -3,7 +3,6 @@ package client.blogic.management;
 import java.util.concurrent.locks.*;
 import java.io.*;
 import java.util.*;
-import java.net.URL;
 
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Spec;
@@ -21,7 +20,6 @@ import client.blogic.management.ii.IIComponent;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
 import client.blogic.testing.ttree.visitors.TCaseDadFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
@@ -33,7 +31,6 @@ import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import common.z.Scheme;
 import common.z.SpecUtils;
 import common.z.czt.visitors.ContainsTermVerifier;
-import compserver.prunning.TreePruner;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -335,11 +332,11 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof TCaseAbstracted) {
 			TCaseAbstracted caseAbstracted = (TCaseAbstracted) event_;
 			String brotherName = caseAbstracted.getBrotherName();
-			AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
+			// AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
 			String opNameSource = caseAbstracted.getOpName();
 			TClassNode tClassNode = opTTreeMap.get(opNameSource);
 			String dadName = tClassNode.acceptVisitor(new TCaseDadFinder(brotherName));
-			Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
+			// Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
 			System.out.println(dadName + " test case abstraction -> SUCCESS.");
 			pendingCTCases--;
 			if (pendingCTCases == 0) {
@@ -383,7 +380,7 @@ public class Controller extends IIComponent {
 			while (iterator2.hasNext()) {
 				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator2.next();
 				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-				String opNameSpec = mapEntry.getKey();
+				// String opNameSpec = mapEntry.getKey();
 				for (int i = 0; i < auxCTCases.size(); i++) {
 					ConcreteTCase auxCTCase = auxCTCases.get(i);
 					String auxCTCName = auxCTCase.getConcreteTCaseName();
@@ -408,8 +405,8 @@ public class Controller extends IIComponent {
 					System.out.print(params.get(i) + ", ");
 				}
 				System.out.println(params.get(params.size() - 1) + ")\n");
-				TreePruner treePruner = new TreePruner(this);
-				boolean pruned = treePruner.pruneFrom(tClassName);
+				//TreePruner treePruner = new TreePruner(this);
+				//boolean pruned = treePruner.pruneFrom(tClassName);
 
 				blockSetAxDefCmd(tClassName);
 
@@ -420,8 +417,7 @@ public class Controller extends IIComponent {
 			if (pendingPrunnings == 0) {
 				// We check if appears new leaves. In that case we try to prune 
 				// them. In the other case we finish the pruning.
-				AbstractRepository<TClass> newLeaves =
-						PruneUtils.obtainTClasses(this);
+				AbstractRepository<TClass> newLeaves = PruneUtils.obtainTClasses(this);
 				AbstractIterator<TClass> tClassItOld = leaves.createIterator();
 				AbstractIterator<TClass> tClassItNew = newLeaves.createIterator();
 				List<TClass> newList = new ArrayList<TClass>();
@@ -501,7 +497,7 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof TCaseRequested) {
 			TCaseRequested tCaseStrategyEvent = (TCaseRequested) event_;
 			opName = tCaseStrategyEvent.getOpName();
-			TClass tClass = tCaseStrategyEvent.getTClass();
+			//TClass tClass = tCaseStrategyEvent.getTClass();
 			if (pendingAbsTCases == 0) {
 				Calendar cal = Calendar.getInstance();
 				inicio = cal.getTimeInMillis();
@@ -520,11 +516,10 @@ public class Controller extends IIComponent {
 				System.out.println(tClassName + " test case generation -> FAILED "
 						+ "(without performing all the possible evaluations)");
 			} else {
-				String schName = abstractTCase.getSchName();
+				//String schName = abstractTCase.getSchName();
 				System.out.println(tClassName + " test case generation -> SUCCESS.");
-				TClassNode tClassNode = opTTreeMap.get(opName);
-				Boolean correctlyadded =
-						tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
+				//TClassNode tClassNode = opTTreeMap.get(opName);
+				//Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
 				// Voy a suponer que es un proceso secuencial
 				// No se puede refinar sin que antes se hayan generado todos los casos de
 				// una operacion
@@ -563,10 +558,8 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof RefineAbsTCasesRequested) {
 			Calendar cal = Calendar.getInstance();
 			inicio = cal.getTimeInMillis();
-			RefineAbsTCasesRequested refineAbsTCasesRequested =
-					(RefineAbsTCasesRequested) event_;
-			Collection<AbstractTCase> tcaColl =
-					refineAbsTCasesRequested.getAbsTCasesColl();
+			RefineAbsTCasesRequested refineAbsTCasesRequested =	(RefineAbsTCasesRequested) event_;
+			Collection<AbstractTCase> tcaColl =	refineAbsTCasesRequested.getAbsTCasesColl();
 			opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
 			String pathUUT = refineAbsTCasesRequested.getPathUUT();
@@ -575,8 +568,7 @@ public class Controller extends IIComponent {
 			while (iter.hasNext()) {
 				AbstractTCase absTCase = iter.next();
 				pendingToRef++;
-				TCaseRefineRequested tCaseRefineRequested =
-						new TCaseRefineRequested(opName, absTCase, pathUUT, targetLanguaje, refLawName);
+				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, absTCase, pathUUT, targetLanguaje, refLawName);
 				try {
 					EventAdmin eventAdmin = EventAdmin.getInstance();
 					eventAdmin.announceEvent(tCaseRefineRequested);
@@ -636,11 +628,11 @@ public class Controller extends IIComponent {
 
 		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
 		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-		String opName;
+		//String opName;
 		Scheme tClassScheme = null;
 		while (iterator.hasNext() && tClassScheme == null) {
 			Map.Entry<String, TClassNode> mapEntry = iterator.next();
-			opName = mapEntry.getKey();
+			//opName = mapEntry.getKey();
 			TClassNode opTTreeRoot = mapEntry.getValue();
 
 			tClassScheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(tClassName, 0));
@@ -651,11 +643,9 @@ public class Controller extends IIComponent {
 
 		ContainsTermVerifier ctVerifier = new ContainsTermVerifier();
 
-		Set<Map.Entry<RefExpr, Expr>> axDefsValuesSet =
-				axDefsValues.entrySet();
+		Set<Map.Entry<RefExpr, Expr>> axDefsValuesSet =	axDefsValues.entrySet();
 
-		Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =
-				axDefsValuesSet.iterator();
+		Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =	axDefsValuesSet.iterator();
 
 		while (axDefsValuesIt.hasNext()) {
 			Map.Entry<RefExpr, Expr> entry = axDefsValuesIt.next();

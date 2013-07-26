@@ -4,9 +4,12 @@ import java.io.*;
 import java.util.*;
 
 import client.presentation.ClientTextUI;
+import common.fastest.FastestUtils;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 import client.blogic.management.Controller;
+import client.blogic.management.ii.EventAdmin;
+import client.blogic.management.ii.events.TCaseGenerated;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.tactics.DNFTactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
@@ -33,6 +36,9 @@ public class SelOpCommand implements Command {
 	@Override
 	public void run(ClientTextUI clientTextUI, String args) {
 
+
+
+
 		PrintWriter output = clientTextUI.getOutput();
 		String tTreeStrategyName = "";
 		try {
@@ -48,10 +54,24 @@ public class SelOpCommand implements Command {
 			}
 
 			String opName = parts[0];
+			Controller controller = clientTextUI.getMyController();
+			
+			// We obtain the AxPara related to this opName
+			Spec spec = controller.getUnfoldedSpec();
+			AxPara axPara = null;
+			for (Sect sect : spec.getSect()) {
+				if (sect instanceof ZSect) {
+					ParaList paraList = ((ZSect) sect).getParaList();
+					if (paraList instanceof ZParaList) {
+						//ZParaList zParaListUnFold = (ZParaList) paraList;
+						axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
+					}
+				}
+			}
+			//warning que todas las axiomaticas definiciones no basicas sean seteadas y reemplazadas.
+			FastestUtils.allNonBasicAxDefReplaced(axPara, controller);
 
 			tTreeStrategyName = defaultTTreeStrategy;
-
-			Controller controller = clientTextUI.getMyController();
 
 			//We check if the name of the operation to be selected is contained
 			//in the repository of loaded operations names
@@ -101,29 +121,13 @@ public class SelOpCommand implements Command {
 			// by default the DNF tactic
 			if (!wasSelected) {
 				Map<String, List<Tactic>> opTacticMap = controller.getTacticMap();
-
 				DNFTactic dnfTactic = new DNFTactic();
-				// We obtain the AxPara related to this opName
-				Spec spec = controller.getUnfoldedSpec();
-				AxPara axPara = null;
-
-				for (Sect sect : spec.getSect()) {
-					if (sect instanceof ZSect) {
-						ParaList paraList = ((ZSect) sect).getParaList();
-						if (paraList instanceof ZParaList) {
-							ZParaList zParaListUnFold = (ZParaList) paraList;
-							axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
-						}
-					}
-				}
-
 				OpScheme opScheme = new OpSchemeImpl(axPara);
 				dnfTactic.setOriginalOp(opScheme);
 				dnfTactic.setController(controller);
 				opTacticMap.put(opName, new ArrayList<Tactic>());
 				opTacticMap.get(opName).add(dnfTactic);
 			}
-
 
 			// We check if the operation to be selected was previously selected
 			// as a predicate. If so, we remove it from the repository of schemas

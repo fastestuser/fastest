@@ -52,17 +52,8 @@ public class ReplaceAxDefCommand implements Command{
 		zLive = UniqueZLive.getInstance();
 
 		Spec spec = loadSpecAgain(controller.getNomTexFileSpec());
-		controller.setOriginalSpec(spec);
-		EventAdmin eventAdmin = null;
-		try {
-			eventAdmin = EventAdmin.getInstance();
-		} catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		}
-		SpecLoaded specLoaded = new SpecLoaded(spec);
-		eventAdmin.announceEvent(specLoaded);
+		
 		//Para cada schema box, hacemos un replace
-		//Spec spec = controller.getOriginalSpec();
 		for (Sect sect : spec.getSect())
 		{
 			if (sect instanceof ZSect)
@@ -94,7 +85,16 @@ public class ReplaceAxDefCommand implements Command{
 				}
 			} 
 		}
-		//System.out.println(SpecUtils.termToLatex(spec));
+		//lanzamos el evento para dar nota del cambio
+		controller.setOriginalSpec(spec);
+		EventAdmin eventAdmin = null;
+		try {
+			eventAdmin = EventAdmin.getInstance();
+		} catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		}
+		SpecLoaded specLoaded = new SpecLoaded(spec);
+		eventAdmin.announceEvent(specLoaded);
 	}
 
 	public static Pred replaceAxDefsInPred(Pred pred) throws IOException, CommandException{
