@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.parser.circus.ParseUtils;
@@ -36,7 +35,7 @@ import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.ParenthesisRemover;
-import compserver.axdef.SynonymsChecker;
+import compserver.axdef.AxDefsChecker;
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.SpecLoaded;
@@ -46,72 +45,6 @@ public class ReplaceAxDefCommand implements Command{
 
 	private static Controller controller;
 	private static ZLive zLive;
-
-
-	/**
-	 * This method copies the content of the file, whose name is equals to the
-	 * first specified string, into the file whose name is equals to the second
-	 * specified string.
-	 */
-	private boolean copyFile(String originalFileName, String newFileName) {
-		try {
-			FileWriter writer = new FileWriter(newFileName);
-			PrintWriter printer = new PrintWriter(writer);
-			FileReader reader = new FileReader(originalFileName);
-			BufferedReader in = new BufferedReader(reader);
-			String line;
-
-			while ((line = in.readLine()) != null) {
-				printer.println(line);
-			}
-			printer.flush();
-
-			printer.close();
-			writer.close();
-
-			in.close();
-			reader.close();
-			return true;
-
-		} catch (FileNotFoundException e) {
-			System.out.println("The file " + originalFileName + " could not be found.");
-			return false;
-		} catch (Exception e) {
-			return false;
-		}
-
-	}
-
-	private Spec loadSpecAgain(String nomTexFileSpec){
-		File texFileToRead = null;
-		Spec spec = null;
-		try {
-			// Inicializamos el Controller
-			// The following is made in order to load the ZLive instance at
-			// Fastest initiation
-			//ZLive zLive = UniqueZLive.getInstance();
-			UniqueZLive.getInstance();
-			int lineNumbersTable[] = null;
-			String texFileToReadName = "";
-			File originalTexFile = null;
-			originalTexFile = new File(nomTexFileSpec);
-			texFileToReadName = "temp/" + originalTexFile.getName() + ".tmp";
-			// A copy of the original file is made, in order to avoid the
-			// access restriction from other programs
-			copyFile(nomTexFileSpec, texFileToReadName);
-			texFileToRead = new File(texFileToReadName);
-			FileSource source = new FileSource(texFileToRead);
-			SectionManager manager = new SectionManager();
-			//SectionManager manager = zLive.getSectionManager();
-			manager.put(new Key(texFileToReadName, Source.class), source);
-			// The specification is loaded and set in the controller
-			spec = (Spec) manager.get(new Key(texFileToReadName, Spec.class));
-		}
-		catch (Exception e){
-			System.out.println("Cant loadAgain " + nomTexFileSpec );
-		}
-		return spec;
-	}
 
 	public void run(ClientTextUI clientTextUI, String args) {
 
@@ -170,8 +103,8 @@ public class ReplaceAxDefCommand implements Command{
 		pred = (Pred) replaceAxDefValues(pred);
 
 		//Reemplazamos las definiciones axiomaticas de tipo "Equivalences"
-		SynonymsChecker synonymsChecker = new SynonymsChecker(pred);
-		String strPred = synonymsChecker.replacedPred();
+		AxDefsChecker axDefsChecker = new AxDefsChecker(pred);
+		String strPred = axDefsChecker.replacedPred();
 		strPred = strPred.replace("\n", "\\\\\n");
 		pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
 		pred = SpecUtils.simplifyAndPred(pred);
@@ -212,4 +145,67 @@ public class ReplaceAxDefCommand implements Command{
 		return null;
 	}
 
+	/**
+	 * This method copies the content of the file, whose name is equals to the
+	 * first specified string, into the file whose name is equals to the second
+	 * specified string.
+	 */
+	private boolean copyFile(String originalFileName, String newFileName) {
+		try {
+			FileWriter writer = new FileWriter(newFileName);
+			PrintWriter printer = new PrintWriter(writer);
+			FileReader reader = new FileReader(originalFileName);
+			BufferedReader in = new BufferedReader(reader);
+			String line;
+
+			while ((line = in.readLine()) != null) {
+				printer.println(line);
+			}
+			printer.flush();
+
+			printer.close();
+			writer.close();
+
+			in.close();
+			reader.close();
+			return true;
+
+		} catch (FileNotFoundException e) {
+			System.out.println("The file " + originalFileName + " could not be found.");
+			return false;
+		} catch (Exception e) {
+			return false;
+		}
+
+	}
+
+	private Spec loadSpecAgain(String nomTexFileSpec){
+		File texFileToRead = null;
+		Spec spec = null;
+		try {
+			// Inicializamos el Controller
+			// The following is made in order to load the ZLive instance at
+			// Fastest initiation
+			//ZLive zLive = UniqueZLive.getInstance();
+			UniqueZLive.getInstance();
+			String texFileToReadName = "";
+			File originalTexFile = null;
+			originalTexFile = new File(nomTexFileSpec);
+			texFileToReadName = "temp/" + originalTexFile.getName() + ".tmp";
+			// A copy of the original file is made, in order to avoid the
+			// access restriction from other programs
+			copyFile(nomTexFileSpec, texFileToReadName);
+			texFileToRead = new File(texFileToReadName);
+			FileSource source = new FileSource(texFileToRead);
+			SectionManager manager = new SectionManager();
+			//SectionManager manager = zLive.getSectionManager();
+			manager.put(new Key(texFileToReadName, Source.class), source);
+			// The specification is loaded and set in the controller
+			spec = (Spec) manager.get(new Key(texFileToReadName, Spec.class));
+		}
+		catch (Exception e){
+			System.out.println("Cant loadAgain " + nomTexFileSpec );
+		}
+		return spec;
+	}
 }

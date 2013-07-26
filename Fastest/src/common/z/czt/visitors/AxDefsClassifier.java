@@ -6,7 +6,7 @@ package common.z.czt.visitors;
 
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-import compserver.axdef.SynonymsLoader;
+import compserver.axdef.AxDefsLoader;
 import compserver.prunning.TheoremsLoader;
 
 import java.util.ArrayList;

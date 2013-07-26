@@ -1,6 +1,6 @@
 package common.z.czt.visitors;
 
-import compserver.axdef.SynonymsLoader;
+import compserver.axdef.AxDefsLoader;
 import java.util.ArrayList;
 import java.util.List;
 import net.sourceforge.czt.base.ast.Term;
@@ -30,7 +30,7 @@ TermVisitor<Void> {
 			for (int i = 0; i < noBasicAxDefVars.size(); i++) { //Las definiciones axiomaticas complejas deben tener una constante dentro
 				axDefVars.add(noBasicAxDefVars.get(i).getZName().getWord());
 			}	
-			SynonymsLoader.loadSynonyms(axDefPred, axDefVars); //For thoose axiomatic definitions that use \forall
+			AxDefsLoader.loadAxDefs(axDefPred, axDefVars); //For thoose axiomatic definitions that use \forall
 		}
 		return null;
 	}

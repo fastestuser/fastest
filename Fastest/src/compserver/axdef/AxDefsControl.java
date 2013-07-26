@@ -7,18 +7,18 @@ import compserver.prunning.Theorem;
 
 /**
  * The instance of this class (which is a singleton) contains a number of
- * instances of Theorem, representing synonyms of axiomatic definitions
+ * instances of Theorem, representing axiomatic definitions that uses forall
  */
-public class SynonymsControl implements AbstractRepository<Theorem>{
+public class AxDefsControl implements AbstractRepository<Theorem>{
     
-    private static SynonymsControl synonymsControl;
+    private static AxDefsControl axDefsControl;
     private AbstractRepository<Theorem> repository;
     private int maxCard;
     
     /**
-     * Creates intances of SynonymsControl.
+     * Creates intances of AxDefsControl.
      */
-	private SynonymsControl(){
+	private AxDefsControl(){
 		repository = new ConcreteRepository<Theorem>();
 	}
 
@@ -26,10 +26,10 @@ public class SynonymsControl implements AbstractRepository<Theorem>{
      * Gets the instance of this class, creating it if necessary.
      * @return
      */
-	public static SynonymsControl getInstance(){	
-		if(synonymsControl==null)
-			synonymsControl = new SynonymsControl();
-		return synonymsControl;
+	public static AxDefsControl getInstance(){	
+		if(axDefsControl==null)
+			axDefsControl = new AxDefsControl();
+		return axDefsControl;
 	}
     
     /**

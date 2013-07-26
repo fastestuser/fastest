@@ -21,20 +21,20 @@ import net.sourceforge.czt.z.ast.Pred;
  * Obtains all the information of the expressions in a test class that match with the
  * regular expression of an axiomatic definition
  */
-public class SynonymsChecker
+public class AxDefsChecker
 {
 
-	private AbstractIterator<Theorem> synonymsIt;
+	private AbstractIterator<Theorem> axDefsIt;
 	private String strPred;
-	private String currentSynonym;
+	private String currentAxDef;
 
 	/**
-	 * Creates instaces of SynonymsChecker.
+	 * Creates instaces of AxDefsChecker.
 	 */
-	public SynonymsChecker(Pred pred)
+	public AxDefsChecker(Pred pred)
 	{
-		SynonymsControl synonymsControl = SynonymsControl.getInstance();
-		synonymsIt = synonymsControl.createIterator();
+		AxDefsControl axDefsControl = AxDefsControl.getInstance();
+		axDefsIt = axDefsControl.createIterator();
 		strPred = SpecUtils.termToLatex(pred);
 		String[] parts = strPred.split("\n");
 		String auxPred = "";
@@ -44,7 +44,7 @@ public class SynonymsChecker
 			auxPred+=parts[i];
 		}
 		strPred = auxPred;
-		currentSynonym = "";
+		currentAxDef = "";
 	}
 	/**
 	 * Returns a String with the modified predicate
@@ -54,10 +54,10 @@ public class SynonymsChecker
 	 */
 	public String replacedPred() throws IOException, CommandException{
 
-		if(synonymsIt.hasNext()){
-			Theorem theSynonym = synonymsIt.next();
+		if(axDefsIt.hasNext()){
+			Theorem theAxDef = axDefsIt.next();
 			
-			List<List<List<String>>> reservedWords = theSynonym.getReservedWords();
+			List<List<List<String>>> reservedWords = theAxDef.getReservedWords();
 			boolean reservedsInPredicate = true; 
 			// We check if the necessary operators are present in the predicate
 			for(int x1=0;x1<reservedWords.size() && reservedsInPredicate;x1++){
@@ -79,7 +79,7 @@ public class SynonymsChecker
 
 			// If the operators are present we do the analysis
 			if(reservedsInPredicate){
-				analyzePatterns(theSynonym);
+				analyzePatterns(theAxDef);
 				return replacedPred() ;
 			}
 			else
@@ -89,17 +89,17 @@ public class SynonymsChecker
 			return strPred ;
 	}
 
-	private void analyzePatterns(Theorem theSynonym) throws IOException, CommandException
+	private void analyzePatterns(Theorem theAxDef) throws IOException, CommandException
 	{
-		if(currentSynonym!=theSynonym.getName()){
-			currentSynonym = theSynonym.getName();
+		if(currentAxDef!=theAxDef.getName()){
+			currentAxDef = theAxDef.getName();
 		}
 
 		String finalStrPred;
 
-		List<List<Pattern>> patterns = theSynonym.getRegEx();
+		List<List<Pattern>> patterns = theAxDef.getRegEx();
 
-		List<Map<Integer,String>> mapGroups = theSynonym.getVarRegExGroups();
+		List<Map<Integer,String>> mapGroups = theAxDef.getVarRegExGroups();
 
 		for (int pattSize=0; pattSize < patterns.size(); pattSize++) {
 
@@ -113,18 +113,18 @@ public class SynonymsChecker
 			for(int i=0;i<auxPatterns.size();i++){
 				Pattern auxPattern = auxPatterns.get(i);
 				String functionName = null;
-				if (currentSynonym.startsWith("Synonym")){
-					functionName = currentSynonym.split("_")[1];
+				if (currentAxDef.startsWith("Synonym")){
+					functionName = currentAxDef.split("_")[1];
 				}
 				if (functionName != null)
-					strPred = ExpressionDelimiter.marcarPred(strPred, functionName, theSynonym.getFormalParamList().size());
+					strPred = ExpressionDelimiter.marcarPred(strPred, functionName, theAxDef.getFormalParamList().size());
 
 				matcher = matcher.reset(strPred);
 				matcher = matcher.usePattern(auxPattern);
 
 				while(matcher.find()){
 
-					finalStrPred = theSynonym.getDefinition();
+					finalStrPred = theAxDef.getDefinition();
 
 					boolean contradiction = false;
 					Map<String,String> mapFRCopy = new HashMap<String,String>();
@@ -150,7 +150,7 @@ public class SynonymsChecker
 								}
 								else{
 									// If the formal parameter is not present in the map and the captured value is present in the map we check if the corresponding formal parameter is a constant or a variable. The constants must be differents
-									List<Variable> vars = theSynonym.getFormalParamList();
+									List<Variable> vars = theAxDef.getFormalParamList();
 									boolean repeat = false;
 									for(int k=0;k<vars.size() && !repeat;k++){
 										Variable var = vars.get(k);
@@ -194,7 +194,7 @@ public class SynonymsChecker
 						boolean result = true;
 
 						//We extract the real parameters in the correct order
-						List<Variable> formalParameters = theSynonym.getFormalParamList();
+						List<Variable> formalParameters = theAxDef.getFormalParamList();
 						List<String> params = new ArrayList<String>();
 						ZLive zLive = UniqueZLive.getInstance();
 						for(int j=0;j<formalParameters.size();j++){
