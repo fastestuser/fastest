@@ -9,7 +9,7 @@ import compserver.prunning.Theorem;
  * The instance of this class (which is a singleton) contains a number of
  * instances of Theorem, representing axiomatic definitions that uses forall
  */
-public class AxDefsControl implements AbstractRepository<Theorem>{
+public final class AxDefsControl implements AbstractRepository<Theorem>{
     
     private static AxDefsControl axDefsControl;
     private AbstractRepository<Theorem> repository;

@@ -21,7 +21,7 @@ import net.sourceforge.czt.z.ast.Pred;
  * Obtains all the information of the expressions in a test class that match with the
  * regular expression of an axiomatic definition
  */
-public class AxDefsChecker
+public final class AxDefsChecker
 {
 
 	private AbstractIterator<Theorem> axDefsIt;

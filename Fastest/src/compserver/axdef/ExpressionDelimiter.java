@@ -1,6 +1,6 @@
 package compserver.axdef;
 
-public class ExpressionDelimiter {
+public final class ExpressionDelimiter {
 
 	//dice si es el principio de un argumento
 	private static boolean finDeArg( int cantP, String pred, int i){

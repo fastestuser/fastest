@@ -200,7 +200,7 @@ public final class ConstantCreator {
 			String[] aux = tipoCompleto.split("[{,]");
 			return aux[1];
 		}
-		// si es basico
+		// si es basico, puede ser basic constant.
 		return var;
 	}
 

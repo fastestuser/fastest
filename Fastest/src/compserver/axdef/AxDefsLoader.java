@@ -37,7 +37,7 @@ import compserver.prunning.Variable;
  * Instances of this class have the functionality of parsing the axiomatic definitions
  */
 
-public class AxDefsLoader {
+public final class AxDefsLoader {
 
 	public static void loadAxDefs(Pred pred, ArrayList<String> axDefVars) {
 		if (pred == null) {
