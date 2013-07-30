@@ -28,43 +28,39 @@ public class FastestUtils {
 		//if not, the case cannot be generated
 		String strPred = SpecUtils.termToLatex(SpecUtils.getAxParaPred(axPara));
 		String strDecl = SpecUtils.termToLatex(SpecUtils.getAxParaListOfDecl(axPara));
-		
+
 		Set<String> axDefsRequired = controller.getAxDefsRequired().keySet();
 		Iterator<String> axDefsRequiredIt = axDefsRequired.iterator();
 		boolean containsAxDef = false;
 		String axDef = null;
 		while (axDefsRequiredIt.hasNext() && (!containsAxDef)) {
 			axDef = axDefsRequiredIt.next();
-			
-			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1){
-				containsAxDef = true;
-				break;
-			}
-			
-			if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
-				containsAxDef = true;
-				break;
+
+			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
+
+				if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+					containsAxDef = true;
+					break;
+				}
 			}
 		}
 		Set<RefExpr> axDefsValues = controller.getAxDefsValues().keySet();
 		Iterator<RefExpr> axDefsValuesIt = axDefsValues.iterator();
 		while (axDefsValuesIt.hasNext() && (!containsAxDef)) {
 			axDef = axDefsValuesIt.next().getZName().getWord();
-			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1){
-				containsAxDef = true;
-				break;
-			}
-			if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
-				containsAxDef = true;
-				break;
+			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
+				if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+					containsAxDef = true;
+					break;
+				}
 			}
 		}
-		
+
 		if (containsAxDef)
 			System.out.println("Missing value for \"" + axDef + "\" in " + SpecUtils.getAxParaName(axPara));
-		
+
 		return !containsAxDef;
-		
+
 	}
 
 

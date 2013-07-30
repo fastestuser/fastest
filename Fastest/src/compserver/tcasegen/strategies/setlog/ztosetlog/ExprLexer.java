@@ -390,9 +390,12 @@ public class ExprLexer extends Lexer {
 				    String zVar = getKey(var, memory);
 				    String dom = memory.get("\\dom" + zVar);
 				    if (dom == null){
-				    	print("dom(" + var + "," + domType + ")");
-					} else
-						print(dom + " = " + domType);
+						dom = newVar();
+						memory.put("\\dom" + zVar, dom);
+						types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
+				    	print("dom(" + var + "," + dom + ")");
+					}
+					print(dom + " = " + domType);
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
@@ -448,9 +451,15 @@ public class ExprLexer extends Lexer {
 			if (isBasic(types.get(type)))
 				return type;
 			
-			String mType = memory.get(type);
-			if (mType != null)
+			if (isNumeric(types.get(type))) {
+				printInfo(type, true);
+				return memory.get(type);
+			}
+			
+			String mType = memory.get("\\power(" + type + ")");
+			if (mType != null) {
 				return mType;
+			}
 			
 			String nodeType = getType(type);
 			if (nodeType.equals("\\power")) {
@@ -458,8 +467,10 @@ public class ExprLexer extends Lexer {
 				String zChild = getChildType(type,0);
 				String child = generateSetlogFiniteType(zChild);
 				print("powerset(" + child + "," + newVarName + ")");
-				memory.put(type, newVarName);
-				types.put(newVarName, type);
+				memory.put("\\power(" + type + ")", newVarName);
+				if (types.get("\\power(" + type + ")") == null)
+					types.put("\\power(" + type + ")", "\\power(" + type + ")");
+				types.put(newVarName, "\\power(" + type + ")");
 				return newVarName;		
 			} else if (nodeType.equals("\\cross")) {
 				String newVarName = newVar();
@@ -468,8 +479,10 @@ public class ExprLexer extends Lexer {
 				String child1 = generateSetlogFiniteType(zChild1);
 				String child2 = generateSetlogFiniteType(zChild2);
 				print("cross_product(" + child1 + "," + child2 + "," + newVarName + ")");
-				memory.put(type, newVarName);
-				types.put(newVarName, type);
+				memory.put("\\power(" + type + ")", newVarName);
+				if (types.get("\\power(" + type + ")") == null)
+					types.put("\\power(" + type + ")", "\\power(" + type + ")");
+				types.put(newVarName, "\\power(" + type + ")");
 				return newVarName;		
 			}
 			
