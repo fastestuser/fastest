@@ -1,5 +1,6 @@
 package client.blogic.testing.tcasegen;
 
+import java.io.PrintWriter;
 import java.util.*;
 
 import net.sourceforge.czt.z.ast.Spec;
@@ -12,11 +13,12 @@ import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import common.fastest.FastestUtils;
+import common.z.SpecUtils;
 import common.z.TClass;
 import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import compserver.tcasegen.strategies.PreCalculatedFiniteModels;
-
+import client.presentation.ClientTextUI;
 /**
  * Intances of this class (although we assume there is only one in the system)
  * manages the requests for abstract test cases generation.  These requests are
@@ -48,8 +50,11 @@ public class TCaseGenClient extends IIComponent {
 			String opName = tCaseRequested.getOpName();
 			TClass tClass = tCaseRequested.getTClass();
 
-
-			if (!FastestUtils.allNonBasicAxDefReplaced(tClass.getMyAxPara(), myClientUI.getMyController())){
+			
+			String axDef = FastestUtils.allNonBasicAxDefReplaced(tClass.getMyAxPara(), myClientUI.getMyController());
+			if (axDef != null){
+				PrintWriter output = ((ClientTextUI) myClientUI).getOutput();
+				output.println("Error: Missing value for \"" + axDef + "\" in " + SpecUtils.getAxParaName(tClass.getMyAxPara()));
 				TCaseGenerated tCaseGenerated = new TCaseGenerated(opName, tClass, null);
 				try{
 					EventAdmin eventAdmin = EventAdmin.getInstance();

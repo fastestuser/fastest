@@ -36,9 +36,6 @@ public class SelOpCommand implements Command {
 	@Override
 	public void run(ClientTextUI clientTextUI, String args) {
 
-
-
-
 		PrintWriter output = clientTextUI.getOutput();
 		String tTreeStrategyName = "";
 		try {
@@ -55,21 +52,6 @@ public class SelOpCommand implements Command {
 
 			String opName = parts[0];
 			Controller controller = clientTextUI.getMyController();
-			
-			// We obtain the AxPara related to this opName
-			Spec spec = controller.getUnfoldedSpec();
-			AxPara axPara = null;
-			for (Sect sect : spec.getSect()) {
-				if (sect instanceof ZSect) {
-					ParaList paraList = ((ZSect) sect).getParaList();
-					if (paraList instanceof ZParaList) {
-						//ZParaList zParaListUnFold = (ZParaList) paraList;
-						axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
-					}
-				}
-			}
-			//warning que todas las axiomaticas definiciones no basicas sean seteadas y reemplazadas.
-			FastestUtils.allNonBasicAxDefReplaced(axPara, controller);
 
 			tTreeStrategyName = defaultTTreeStrategy;
 
@@ -79,9 +61,8 @@ public class SelOpCommand implements Command {
 			AbstractIterator<String> it = loadedOpsRep.createIterator();
 			boolean hasFound = false;
 			while (it.hasNext() && !hasFound) {
-				if (it.next().equals(opName)) {
+				if (it.next().equals(opName))
 					hasFound = true;
-				}
 			}
 
 			if (!hasFound) {
@@ -89,18 +70,33 @@ public class SelOpCommand implements Command {
 				return;
 			}
 
+			// We obtain the AxPara related to this opName
+			Spec spec = controller.getUnfoldedSpec();
+			AxPara axPara = null;
+			for (Sect sect : spec.getSect()) {
+				if (sect instanceof ZSect) {
+					ParaList paraList = ((ZSect) sect).getParaList();
+					if (paraList instanceof ZParaList) 
+						//ZParaList zParaListUnFold = (ZParaList) paraList;
+						axPara = SpecUtils.axParaSearch(opName, (ZParaList) paraList);
+				}
+			}
+			//warning que todas las axiomaticas definiciones no basicas sean seteadas y reemplazadas.
+			String axDef = FastestUtils.allNonBasicAxDefReplaced(axPara, controller);
+			if (axDef != null)
+				output.println("Warning: Missing value for \"" + axDef + "\" in " + SpecUtils.getAxParaName(axPara));
+			
 			//We check if the operation to be selected has been already selected
 			AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
 			AbstractIterator<String> opsToTestIt = opsToTestRep.createIterator();
 			hasFound = false;
 			while (opsToTestIt.hasNext() && !hasFound) {
-				if (opsToTestIt.next().equals(opName)) {
+				if (opsToTestIt.next().equals(opName)) 
 					hasFound = true;
-				}
 			}
-			if (!hasFound) {
+			if (!hasFound) 
 				opsToTestRep.addElement(opName);
-			}
+			
 
 			//If the second parameter is an appropiate TTreeStrategy class we set it as the operation's tactic strategy  in
 			// the controller's opTTreeStrategyMap
@@ -109,13 +105,12 @@ public class SelOpCommand implements Command {
 			Map<String, TTreeStrategy> opTTreeStrategyMap = controller.getOpTTreeStrategyMap();
 			// We analyze if the operation was selected in another step of testing
 			boolean wasSelected = false;
-			if (opTTreeStrategyMap.get(opName) != null) {
+			if (opTTreeStrategyMap.get(opName) != null) 
 				wasSelected = true;
-			}
+			
 
-			if (tTreeStrategy instanceof TTreeStrategy) {
+			if (tTreeStrategy instanceof TTreeStrategy) 
 				opTTreeStrategyMap.put(opName, (TTreeStrategy) tTreeStrategy);
-			}
 
 			// If this is the first time that the operation is selected, we add
 			// by default the DNF tactic

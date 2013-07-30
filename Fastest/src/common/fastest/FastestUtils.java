@@ -23,7 +23,7 @@ import client.blogic.testing.refinement.ConcreteTCase;
  */
 public class FastestUtils {
 
-	public static boolean allNonBasicAxDefReplaced(AxPara axPara, Controller controller){
+	public static String allNonBasicAxDefReplaced(AxPara axPara, Controller controller){
 		//We check to see if all the non basic axDefs in the TClass has been replaced,
 		//if not, the case cannot be generated
 		String strPred = SpecUtils.termToLatex(SpecUtils.getAxParaPred(axPara));
@@ -57,9 +57,9 @@ public class FastestUtils {
 		}
 
 		if (containsAxDef)
-			System.out.println("Missing value for \"" + axDef + "\" in " + SpecUtils.getAxParaName(axPara));
+			return axDef;
 
-		return !containsAxDef;
+		return null;
 
 	}
 

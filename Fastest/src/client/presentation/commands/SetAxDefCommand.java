@@ -34,13 +34,11 @@ import net.sourceforge.czt.z.ast.NarrPara;
 import net.sourceforge.czt.z.ast.LatexMarkupPara;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.ast.SectTypeEnvAnn;
 import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.session.Markup;
-
 import common.z.czt.visitors.StringToNumReplacer;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
@@ -81,7 +79,6 @@ public class SetAxDefCommand implements Command {
 			}
 
 			String varName = parts[0];
-
 			String restStr = parts[1];
 
 			if (!(restStr.startsWith("\""))) {
@@ -117,12 +114,7 @@ public class SetAxDefCommand implements Command {
 
 			ZLive zLive = UniqueZLive.getInstance();
 			TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
-			Term parsedTerm = ParseUtils.parsePred(
-					new StringSource(valueStr),
-					zLive.getCurrentSection(),
-					zLive.getSectionManager());
-
-
+			Term parsedTerm = ParseUtils.parsePred(	new StringSource(valueStr),zLive.getCurrentSection(),zLive.getSectionManager());
 			Map<String, Expr> axDefsRequired = controller.getAxDefsRequired();
 			Expr typeExpr = axDefsRequired.get(varName);
 
@@ -158,10 +150,8 @@ public class SetAxDefCommand implements Command {
 						ZParaList zParaList = (ZParaList) paraList;
 						for (int i = 0; i < zParaList.size(); i++) {
 							Para para = zParaList.get(i);
-							if (!(para instanceof NarrPara
-									|| para instanceof LatexMarkupPara)) {
+							if (!(para instanceof NarrPara || para instanceof LatexMarkupPara)) 
 								printer.println("\n" + SpecUtils.termToLatex(para));
-							}
 						}
 					}
 				}
@@ -171,11 +161,10 @@ public class SetAxDefCommand implements Command {
 			printer.println("\\begin{axdef}");
 			String varDeclStr = varName + "aux :" + SpecUtils.termToLatex(typeExpr);
 			printer.print(varDeclStr);
-			if (!(declStr.equals(("")))) {
+			if (!(declStr.equals(("")))) 
 				printer.println("\\\\");
-			} else {
+			 else 
 				printer.println();
-			}
 			printer.println(declStr);
 			printer.println("\\where");
 			String equalityStr = varName + "aux = " + valueStr;
@@ -199,8 +188,8 @@ public class SetAxDefCommand implements Command {
 				if (sect instanceof ZSect) {
 					ZSect zSect = (ZSect) sect;
 					// We typecheck the specification here
-					String sectionName = zSect.getName();
-					SectTypeEnvAnn envAnn = (SectTypeEnvAnn) manager.get(new Key(sectionName,SectTypeEnvAnn.class));
+					// String sectionName = zSect.getName();
+					// SectTypeEnvAnn envAnn = (SectTypeEnvAnn) manager.get(new Key(sectionName,SectTypeEnvAnn.class));
 					if (isThereDecls) {
 						ParaList paraList = zSect.getParaList();
 						if (paraList instanceof ZParaList) {
@@ -218,9 +207,8 @@ public class SetAxDefCommand implements Command {
 			}
 
 			if (isThereDecls) {
-				if (constantsDecl == null) {
+				if (constantsDecl == null) 
 					System.out.println("This message could have not been printed!");
-				}
 
 				constantsDecl.remove(0);
 				Map<String, ZDeclList> auxiliarDecls = controller.getAuxiliarDecls();
@@ -255,12 +243,10 @@ public class SetAxDefCommand implements Command {
 						// p is a constant predicate
 						String jVarName = varList.get(j);
 						if (!jVarName.equals(varName)) {
-							Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =
-									axDefsValuesSet.iterator();
+							Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =	axDefsValuesSet.iterator();
 							boolean foundValue = false;
 							while (axDefsValuesIt.hasNext() && !foundValue) {
-								Map.Entry<RefExpr, Expr> mapEntry =
-										axDefsValuesIt.next();
+								Map.Entry<RefExpr, Expr> mapEntry =	axDefsValuesIt.next();
 								RefExpr refExpr = mapEntry.getKey();
 								String itVarName = refExpr.getZName().toString();
 								if (itVarName.equals(jVarName)) {
@@ -278,9 +264,8 @@ public class SetAxDefCommand implements Command {
 									foundValue = true;
 								}
 							}
-							if (foundValue == false) {
+							if (foundValue == false) 
 								pCloneIsConstant = false;
-							}
 						}
 					}
 					replaceVisitor.setOrigTerm(varNameRefExpr);
@@ -295,9 +280,7 @@ public class SetAxDefCommand implements Command {
 						Term result = null;
 						//output.println("a ver... "+ SpecUtils.termToLatex(pClone));
 						output.flush();
-						List<? extends ErrorAnn> errors =
-								TypeCheckUtils.typecheck(pClone, zLive.getSectionManager(),
-										false, zLive.getCurrentSection());
+						List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(pClone, zLive.getSectionManager(),false, zLive.getCurrentSection());
 
 						if (errors.size() > 0) {
 							output.println("The specified value does not satisfy the predicate:");
