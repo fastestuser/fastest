@@ -563,10 +563,8 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof RefineAbsTCasesRequested) {
 			Calendar cal = Calendar.getInstance();
 			inicio = cal.getTimeInMillis();
-			RefineAbsTCasesRequested refineAbsTCasesRequested =
-					(RefineAbsTCasesRequested) event_;
-			Collection<AbstractTCase> tcaColl =
-					refineAbsTCasesRequested.getAbsTCasesColl();
+			RefineAbsTCasesRequested refineAbsTCasesRequested =	(RefineAbsTCasesRequested) event_;
+			Collection<AbstractTCase> tcaColl =	refineAbsTCasesRequested.getAbsTCasesColl();
 			opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
 			String pathUUT = refineAbsTCasesRequested.getPathUUT();

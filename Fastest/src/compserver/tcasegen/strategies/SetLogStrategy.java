@@ -97,9 +97,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 				String schemaString = SpecUtils.termToLatex(schema);
 				if (schemaString.equals("null")){ //No es un tipo esquema
 					if (basicTypeNames.contains(schemaName)){ //Es un tipo basico
-						schemaString = "\\begin{zed}\n" +
-								"[" + schemaName + "]\n" + 
-								"\\end{zed}\n\n";
+						schemaString = "\\begin{zed}\n" + "[" + schemaName + "]\n" + "\\end{zed}\n\n";
 						antlrInput = schemaString + antlrInput;
 					} else { //Es un tipo libre
 						while (freeParasIt.hasNext() && schemaString.equals("null")) {
@@ -110,9 +108,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 								for (int i = 0; i < zFreetypeList.size(); i++) {
 									Freetype freetype = zFreetypeList.get(i);
 									if (schemaName.equals(freetype.getName().toString())) {
-										schemaString = "\\begin{zed}\n" +
-												SpecUtils.termToLatex(freetype) + "\n" + 
-												"\\end{zed}\n\n";
+										schemaString = "\\begin{zed}\n" + SpecUtils.termToLatex(freetype) + "\n" + "\\end{zed}\n\n";
 										antlrInput = schemaString + antlrInput;
 										break;
 									}

@@ -230,6 +230,17 @@ public class SetAxDefCommand implements Command {
 			CZTReplacer replaceVisitor = new CZTReplacer();
 			List<Pred> predList = axDefsRequiredPreds.get(varName);
 
+			
+//			if (predList == null){
+//				Pred nuevoPred = ParseUtils.parsePred(new StringSource(varName + " = "+ restStr.substring(1,restStr.length()-1)),zLive.getCurrentSection(), zLive.getSectionManager());
+//				List<? extends ErrorAnn> errors = TypeCheckUtils.typecheck(nuevoPred, zLive.getSectionManager(),false, zLive.getCurrentSection());
+//				if (errors.size() > 0) {
+//					output.println("The specified value does not type");
+//					output.println(errors.toString());
+//				} 
+//			}
+//			
+			
 			if (predList != null) {
 				for (int i = 0; i < predList.size(); i++) {
 					// For each predicate p in which the variable of name varName
