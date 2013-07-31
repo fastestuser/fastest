@@ -70,7 +70,7 @@ public final class AxDefsLoader {
 					theorem.setPredicatesToMatch(predicatesToMatch);
 					theorem.setVarRegExGroups(mapGroups);
 					theorem.setRegEx(patterns);
-		
+
 					AxDefsControl.getInstance().addElement(theorem);
 				}
 			}
@@ -134,16 +134,17 @@ public final class AxDefsLoader {
 				axDefName = "Synonym_" + line.substring(beginIndex+1, endIndex).trim();
 		} else {
 			int endIndex = line.indexOf("\\iff");
-			String predicate;
+			String predicate, decl;
 			if ((beginIndex != -1) && (endIndex != -1)) {
 				predicate = line.substring(beginIndex+1, endIndex);
-
+				decl = line.substring(8, beginIndex);
 				for (int i = 0; i < axDefVars.size(); i++) {
 					String axDef = axDefVars.get(i);
-					if (predicate.split("(\\W|^)"+axDef+"(\\W|$)", 2).length > 1) {
-						axDefName = "Equivalence_" + axDef;
-						break;
-					}
+					if (decl.split("(\\W|^)"+axDef+"(\\W|$)", 2).length == 1) //Si no esta en decl
+						if (predicate.split("(\\W|^)"+axDef+"(\\W|$)", 2).length > 1) {
+							axDefName = "Equivalence_" + axDef;
+							break;
+						}
 				}
 			}
 		}

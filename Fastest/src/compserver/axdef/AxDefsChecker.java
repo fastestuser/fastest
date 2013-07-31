@@ -5,6 +5,8 @@ import common.z.SpecUtils;
 import common.regex.RegExUtils;
 import common.z.czt.UniqueZLive;
 import common.repository.AbstractIterator;
+import common.repository.AbstractRepository;
+import common.repository.ConcreteRepository;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
 import java.io.IOException;
@@ -52,10 +54,26 @@ public final class AxDefsChecker
 	 * @throws CommandException 
 	 * @throws IOException 
 	 */
-	public String replacedPred() throws IOException, CommandException{
+	public String replacedPred(AbstractRepository<String> decls) throws IOException, CommandException{
 
 		if(axDefsIt.hasNext()){
 			Theorem theAxDef = axDefsIt.next();
+			
+			//Chequeamos que no coincida con el nombre de una de las variables del schema
+			boolean isVar = false;
+			AbstractIterator<String> it = decls.createIterator();
+			String name = theAxDef.getName();
+			name = name.substring(name.indexOf('_')+1, name.lastIndexOf('_'));
+			while (it.hasNext()) {
+				String var = it.next();
+				if (var.equals(name)) {
+					isVar = true;
+					break;
+				}
+			}			
+			
+			if (isVar)
+				return replacedPred(decls);
 			
 			List<List<List<String>>> reservedWords = theAxDef.getReservedWords();
 			boolean reservedsInPredicate = true; 
@@ -79,17 +97,17 @@ public final class AxDefsChecker
 
 			// If the operators are present we do the analysis
 			if(reservedsInPredicate){
-				analyzePatterns(theAxDef);
-				return replacedPred() ;
+				analyzePatterns(theAxDef, decls);
+				return replacedPred(decls) ;
 			}
 			else
-				return replacedPred() ;
+				return replacedPred(decls) ;
 		}
 		else
 			return strPred ;
 	}
 
-	private void analyzePatterns(Theorem theAxDef) throws IOException, CommandException
+	private void analyzePatterns(Theorem theAxDef, AbstractRepository<String> decls) throws IOException, CommandException
 	{
 		if(currentAxDef!=theAxDef.getName()){
 			currentAxDef = theAxDef.getName();
@@ -239,7 +257,7 @@ public final class AxDefsChecker
 							if (!strPred.contains("¬")) {
 								strPred = strPred.replace("\n", "\\\\\n");
 								Pred pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
-								pred = ReplaceAxDefCommand.replaceAxDefsInPred(pred);
+								pred = ReplaceAxDefCommand.replaceAxDefsInPred(pred, decls);
 								strPred = SpecUtils.termToLatex(pred);
 								strPred = strPred.replace("\\\\\n", "\n");
 							}

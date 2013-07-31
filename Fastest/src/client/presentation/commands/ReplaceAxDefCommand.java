@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -22,18 +23,25 @@ import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.Source;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.Decl;
+import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
+import common.repository.AbstractIterator;
+import common.repository.AbstractRepository;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTReplacer;
+import common.z.czt.visitors.DeclsExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
 import compserver.axdef.AxDefsChecker;
 import client.blogic.management.Controller;
@@ -45,6 +53,7 @@ public class ReplaceAxDefCommand implements Command{
 
 	private static Controller controller;
 	private static ZLive zLive;
+	//public static AbstractRepository<String> decls;
 
 	public void run(ClientTextUI clientTextUI, String args) {
 
@@ -52,7 +61,7 @@ public class ReplaceAxDefCommand implements Command{
 		zLive = UniqueZLive.getInstance();
 
 		Spec spec = loadSpecAgain(controller.getNomTexFileSpec());
-		
+
 		//Para cada schema box, hacemos un replace
 		for (Sect sect : spec.getSect())
 		{
@@ -71,8 +80,15 @@ public class ReplaceAxDefCommand implements Command{
 							String strBox  = (axPara.getBox()).name();
 							if (strBox.equals("SchBox")){
 								try{
+									//Reemplazamos las definiciones axiomaticas,
+									//pero solo de aquellas variables no definidas en el esquema
+
+									SchExpr schExpr = SpecUtils.getAxParaSchExpr(axPara);
+									//Aqui guardamos los nombres de las variables
+									AbstractRepository<String> decls = SpecUtils.getVarNames(schExpr);
+
 									Pred pred = SpecUtils.getAxParaPred(axPara);
-									pred = replaceAxDefsInPred(pred);
+									pred = replaceAxDefsInPred(pred, decls);
 									SpecUtils.setAxParaPred(axPara, pred);
 									axPara.accept(cleaner);
 								}
@@ -97,21 +113,21 @@ public class ReplaceAxDefCommand implements Command{
 		eventAdmin.announceEvent(specLoaded);
 	}
 
-	public static Pred replaceAxDefsInPred(Pred pred) throws IOException, CommandException{
+	public static Pred replaceAxDefsInPred(Pred pred, AbstractRepository<String> decls) throws IOException, CommandException{
 		//Reemplazamos las definiciones axiomaticas de tipo "Synonyms" de tipo constante,
 		//y aquellas que ya tienen un valor (mediante setaxdef)
-		pred = (Pred) replaceAxDefValues(pred);
+		pred = (Pred) replaceAxDefValues(pred, decls);
 
 		//Reemplazamos las definiciones axiomaticas de tipo "Equivalences"
 		AxDefsChecker axDefsChecker = new AxDefsChecker(pred);
-		String strPred = axDefsChecker.replacedPred();
+		String strPred = axDefsChecker.replacedPred(decls);
 		strPred = strPred.replace("\n", "\\\\\n");
 		pred = ParseUtils.parsePred(new StringSource(strPred),zLive.getCurrentSection(), zLive.getSectionManager());
 		pred = SpecUtils.simplifyAndPred(pred);
 		return pred;
 	}
 
-	private static Term replaceAxDefValues(Term term){
+	private static Term replaceAxDefValues(Term term, AbstractRepository<String> decls){
 
 		Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
 		if (axDefsValues != null) {
@@ -125,19 +141,33 @@ public class ReplaceAxDefCommand implements Command{
 				Map.Entry<RefExpr, Expr> mapEntry = iterator.next();
 				RefExpr refExpr = mapEntry.getKey();
 
-				String refExprPattern = "(\\W|^)" + refExpr.getZName() + "(\\W|$)";
-				strTerm = SpecUtils.termToLatex(term);
+				//Chequeamos que no coincida con el nombre de una de las variables del schema
+				boolean isVar = false;
+				AbstractIterator<String> it = decls.createIterator();
+				String refName = refExpr.getZName().getWord();
+				while (it.hasNext()) {
+					String var = it.next();
+					if (var.equals(refName)) {
+						isVar = true;
+						break;
+					}
+				}
 
-				Pattern pattern = Pattern.compile(refExprPattern);
-				Matcher matcher = pattern.matcher(strTerm);
-				if (matcher.find()) { //Contiene la definicion axiomatica
-					Term expr = mapEntry.getValue();
-					expr = replaceAxDefValues(expr);
-
-					replaceVisitor.setNewTerm(expr);
-					replaceVisitor.setOrigTerm(refExpr);
-					term =  term.accept(replaceVisitor);
+				if (!isVar) {
+					String refExprPattern = "(\\W|^)" + refName + "(\\W|$)";
 					strTerm = SpecUtils.termToLatex(term);
+
+					Pattern pattern = Pattern.compile(refExprPattern);
+					Matcher matcher = pattern.matcher(strTerm);
+					if (matcher.find()) { //Contiene la definicion axiomatica
+						Term expr = mapEntry.getValue();
+						expr = replaceAxDefValues(expr, decls);
+
+						replaceVisitor.setNewTerm(expr);
+						replaceVisitor.setOrigTerm(refExpr);
+						term =  term.accept(replaceVisitor);
+						strTerm = SpecUtils.termToLatex(term);
+					}
 				}
 			}
 			return term;
