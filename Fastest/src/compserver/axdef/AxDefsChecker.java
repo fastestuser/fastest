@@ -230,6 +230,16 @@ public final class AxDefsChecker
 						}
 
 						if (result) {
+							
+							Iterator<String> it = mapFRCopy.keySet().iterator();
+							ConcreteRepository<String> axDefDecls = new ConcreteRepository<String>();
+							while (it.hasNext())
+								axDefDecls.addElement(it.next());
+							finalStrPred = finalStrPred.replace("\n", "\\\\\n");
+							Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
+							finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred, axDefDecls);
+							finalStrPred = SpecUtils.termToLatex(finalPred);
+							
 							Iterator<String> mapIt = mapFRCopy.keySet().iterator();
 							while (mapIt.hasNext()) {
 								String formal = mapIt.next();
@@ -237,9 +247,9 @@ public final class AxDefsChecker
 								finalStrPred = finalStrPred.replaceAll(formalPattern, "$1("+mapFRCopy.get(formal)+")$2");
 							}
 
-							finalStrPred = finalStrPred.replace("\n", "\\\\\n");
-							Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
-							finalStrPred = SpecUtils.termToLatex(finalPred);
+							//finalStrPred = finalStrPred.replace("\n", "\\\\\n");
+							//Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
+							//finalStrPred = SpecUtils.termToLatex(finalPred);
 
 							String[] parts = finalStrPred.split("\n");
 							String auxPred = "";
