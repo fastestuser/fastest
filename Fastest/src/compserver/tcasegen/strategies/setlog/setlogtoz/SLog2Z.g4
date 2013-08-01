@@ -19,7 +19,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 }
 
 @members {
-	HashMap<String,StringPointer> slvars = new HashMap();	
+	HashMap<String,StringPointer> slVars = new HashMap();	
 	HashMap<String,String> zNames = new HashMap();
 	HashMap<String,String> tipos = new HashMap();
 	HashMap<String,String> zVars = new HashMap();
@@ -28,7 +28,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 	ConstantCreator cc;
 	
 	public HashMap<String,StringPointer> getSlvars(){
-		return slvars;
+		return slVars;
 	}
 	
 	public HashMap<String,String> getZVars(){
@@ -53,7 +53,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 		//printHashMap(tipos);
 		//System.out.println("\n");
 		//System.out.println("\n");
-		cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
+		cc = new ConstantCreator(tipos,slVars,zNames,valoresProhibidos);
 		
 	}
 	
@@ -104,20 +104,20 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 					tipo = tipos.get(zNames.get(var));
 					DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
 					valor = new StringPointer(cc.getCte(var,nodo));
-					if(slvars != null)
-						slvars.put(var, valor);
+					if(slVars != null)
+						slVars.put(var, valor);
 					}
 				}
 			}
 	}
 	
 	private void llenarZVars(){
-		Iterator iterator = slvars.keySet().iterator();  
+		Iterator iterator = slVars.keySet().iterator();  
 		String slname,zname,valor;
 		while (iterator.hasNext()) {  
 			slname = iterator.next().toString();
-			if (slvars.get(slname)!=null){	
-				valor = slvars.get(slname).toString();
+			if (slVars.get(slname)!=null){	
+				valor = slVars.get(slname).toString();
 				
 				
 				zname = zNames.get(slname);
@@ -141,8 +141,8 @@ lineas
 		{
 			//System.out.println("\n**salida SLog2Z**: \n");
 			//System.out.println("constraint: " + $constr.text );
-			//System.out.println("\nslvars:");
-			//printHashMap( slvars );
+			//System.out.println("\nslVars:");
+			//printHashMap( slVars );
 			llenarZVars();
 			//System.out.println("\nzVars vacias +++++++++:");
 			//printHashMap(zVars);
@@ -161,9 +161,9 @@ constr
 restr
 locals [StringPointer valor;]
 @init{$restr::valor = new StringPointer();}
-	: 'set(' expr ')' {$restr::valor.setString("{}"); slvars.put($expr.text,$restr::valor);}
-	| 'list(' expr ')' {$restr::valor.setString("[]"); slvars.put($expr.text,$restr::valor);}
-	| 'integer(' expr ')' {$restr::valor.setString(cc.getNumber()); slvars.put($expr.text,$restr::valor);}
+	: 'set(' expr ')' {$restr::valor.setString("{}"); slVars.put($expr.text,$restr::valor);}
+	| 'list(' expr ')' {$restr::valor.setString("[]"); slVars.put($expr.text,$restr::valor);}
+	| 'integer(' expr ')' {$restr::valor.setString(cc.getNumber()); slVars.put($expr.text,$restr::valor);}
 	| (a = NAME 'neq' b = NAME)
 		{
 			String var1 = $a.text;
@@ -200,7 +200,7 @@ locals [StringPointer valor;]
 	| (NAME 'neq' expr | expr 'neq' NAME)
 		{
 			varNoGenerar.add($NAME.text);	
-			slvars.put($NAME.text,new StringPointer("ValueNotAssigned"));
+			slVars.put($NAME.text,new StringPointer("ValueNotAssigned"));
 		}	
 	
 	;
@@ -208,7 +208,7 @@ locals [StringPointer valor;]
 seqIgual
 locals [StringPointer valor;]
 @init{$seqIgual::valor = new StringPointer();}
-	:	(v1=NAME {slvars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slvars.put($v2.text,$seqIgual::valor);} ',')+
+	:	(v1=NAME {slVars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slVars.put($v2.text,$seqIgual::valor);} ',')+
 		{
 			String zname = zNames.get($v1.text);
 			String tipo = tipos.get(zname);

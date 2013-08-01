@@ -1,12 +1,25 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
+import net.sourceforge.czt.animation.eval.ExprComparator;
+import net.sourceforge.czt.animation.eval.ZLive;
+import net.sourceforge.czt.parser.oz.ParseUtils;
+import net.sourceforge.czt.session.CommandException;
+import net.sourceforge.czt.session.StringSource;
+import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.Pred;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import common.z.SpecUtils;
+import common.z.czt.UniqueZLive;
+import common.z.czt.visitors.StringToNumReplacer;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
@@ -131,7 +144,7 @@ public class Test {
 		return n;
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException, CommandException {
 		
 
 		String tipo = "\\power \\num \\cross \\num";
@@ -207,14 +220,27 @@ public class Test {
 //		ConstantGenIterator c = new ConstantGenIterator(root,e,tipos); 
 //		String s = c.generate();
 //		System.out.println(e + " --> " + s);
-		long a = new Integer("-1000000000");
-		int b = 2147483647;
-		int c = -2147483648;
-//		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
-//		String s2 = "Estado";
-//		System.out.println("" + schemaTypeToExprIterator(s1,s2));
-        String exprS = "int(33,XX)";
-        String aux[] = exprS.substring(4,exprS.length()-1).split(",");
+//		long a = new Integer("-1000000000");
+//		int b = 2147483647;
+//		int c = -2147483648;
+////		String s1 = "SchemaType:Estado:[var1:\\num,var2:E]";
+////		String s2 = "Estado";
+////		System.out.println("" + schemaTypeToExprIterator(s1,s2));
+//        String exprS = "int(33,XX)";
+//        String aux[] = exprS.substring(4,exprS.length()-1).split(",");
+        
+        ZLive zLive = UniqueZLive.getInstance();
+        Pred pred = ParseUtils.parsePred(new StringSource("ab = ab"), zLive.getCurrentSection(), zLive.getSectionManager());
+        pred = (Pred)pred.accept(new StringToNumReplacer());
+        TypeCheckUtils.typecheck(pred, zLive.getSectionManager(),false, zLive.getCurrentSection());
+        
+//        Expr e1 = ParseUtils.parseExpr(new StringSource("\\{22\\}"),zLive.getCurrentSection(), zLive.getSectionManager());
+//		
+//        Expr e2 = ParseUtils.parseExpr(new StringSource("\\{23\\}"),zLive.getCurrentSection(), zLive.getSectionManager());
+//        boolean a = ExprComparator.equalZ(e2,e1);
+        
+        pred = zLive.evalPred(pred);
+        System.out.println(SpecUtils.termToLatex(pred));
 	}
 
 }

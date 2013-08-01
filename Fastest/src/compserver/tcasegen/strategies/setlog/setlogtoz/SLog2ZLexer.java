@@ -51,7 +51,7 @@ public class SLog2ZLexer extends Lexer {
 	};
 
 
-		HashMap<String,StringPointer> slvars = new HashMap();	
+		HashMap<String,StringPointer> slVars = new HashMap();	
 		HashMap<String,String> zNames = new HashMap();
 		HashMap<String,String> tipos = new HashMap();
 		HashMap<String,String> zVars = new HashMap();
@@ -60,7 +60,7 @@ public class SLog2ZLexer extends Lexer {
 		ConstantCreator cc;
 		
 		public HashMap<String,StringPointer> getSlvars(){
-			return slvars;
+			return slVars;
 		}
 		
 		public HashMap<String,String> getZVars(){
@@ -85,7 +85,7 @@ public class SLog2ZLexer extends Lexer {
 			//printHashMap(tipos);
 			//System.out.println("\n");
 			//System.out.println("\n");
-			cc = new ConstantCreator(tipos,slvars,valoresProhibidos);
+			cc = new ConstantCreator(tipos,slVars,zNames,valoresProhibidos);
 			
 		}
 		
@@ -136,20 +136,20 @@ public class SLog2ZLexer extends Lexer {
 						tipo = tipos.get(zNames.get(var));
 						DefaultMutableTreeNode nodo = SetLogUtils.toTreeNorm(tipo);
 						valor = new StringPointer(cc.getCte(var,nodo));
-						if(slvars != null)
-							slvars.put(var, valor);
+						if(slVars != null)
+							slVars.put(var, valor);
 						}
 					}
 				}
 		}
 		
 		private void llenarZVars(){
-			Iterator iterator = slvars.keySet().iterator();  
+			Iterator iterator = slVars.keySet().iterator();  
 			String slname,zname,valor;
 			while (iterator.hasNext()) {  
 				slname = iterator.next().toString();
-				if (slvars.get(slname)!=null){	
-					valor = slvars.get(slname).toString();
+				if (slVars.get(slname)!=null){	
+					valor = slVars.get(slname).toString();
 					
 					
 					zname = zNames.get(slname);

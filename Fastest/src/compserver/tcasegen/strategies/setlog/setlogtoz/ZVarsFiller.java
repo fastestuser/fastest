@@ -2,7 +2,6 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
@@ -13,118 +12,10 @@ public final class ZVarsFiller {
 	private HashMap<String,String> zVars;
 	private HashMap<String,String> tipos;
 	private HashMap<String, String> zNames;
-	private int postfijo;
 	private HashMap<String, StringPointer> slvars;
-	private String getNumber(){
-		return String.valueOf(postfijo++);
-	}
-
-	//cambia los caracteres de setlog [] por langlerangle, etc...
-	private String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS) throws Exception{
-		if (exprS.equals("ValueNotAssigned") ){
-			return exprS;
-		}
-
-		if (tipos.containsKey(exprS) && tipos.get(exprS).startsWith("BasicConstant"))
-			return exprS;
-
-		if(SetLogUtils.esSLVariableSimple(exprS) && slvars.get(exprS) != null && slvars.get(exprS).toString().equals("ValueNotAssigned")){
-			return zNames.get(exprS)!=null?zNames.get(exprS):exprS;
-		}
-
-		ExprIterator expr = new ExprIterator(exprS);
-
-		String ct = nodo.toString();
-
-		if(exprS.startsWith("int(")){
-			String aux[] = exprS.substring(4,exprS.length()-1).split(",");
-			return aux[0] + " \\upto " + aux[1];
-		}
-
-		if (ct.equals("()")) 
-			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
-
-		if (ct.equals("\\pfun")||ct.equals("\\fun")||ct.equals("\\ffun")||ct.equals("\\rel")){
-			String salida = "";
-			String coma = ct.equals("\\rel")?",":"\\mapsto ";
-			ExprIterator exprAux;
-			while(expr.hasNext()){
-				exprAux = new ExprIterator(expr.next());
-				salida += "," + "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprAux.next()) + coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),exprAux.next()) + ")";
-			}
-			if (!salida.isEmpty())
-				return "\\{" + salida.substring(1) + "\\}";
-			return "\\emptyset";
-		}
-
-		if (ct.equals("\\cross")){
-			String salida = "";
-			String coma = nodo.getChildCount()>2?",":" \\mapsto ";
-			int i = 0;
-			while(expr.hasNext()){
-				salida += coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(i),expr.next());
-				i++;
-			}
-			return "(" + salida.substring(coma.length()) + ")";
-		}
-
-		if (ct.equals("\\power")){
-			String salida = "";
-			while(expr.hasNext()){
-				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
-			}
-			if (!salida.isEmpty())
-				return "\\{" + salida.substring(1) + "\\}";
-			return "\\emptyset";
-		}
-
-		if (ct.equals("\\seq")){
-			String salida = "";
-			while(expr.hasNext())
-				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
-
-			if (!salida.isEmpty())
-				return "\\langle " + salida.substring(1) + "\\rangle";
-			return "\\langle\\rangle";
-		}
-
-
-		String tipocompleto = tipos.get(ct);
-
-		if (tipocompleto !=null){
-
-			if (tipocompleto.startsWith("SchemaType")){
-				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipocompleto);
-				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipocompleto);
-				String c,v,salida="";
-				while(expr.hasNext()){
-					c = expr.next();
-					v = varsDecl.next();
-					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tiposDecl.next()),c); 
-				}
-				if (!salida.isEmpty())
-					return "\\lblot " + salida.substring(1) + " \\rblot";
-				return "\\lblot\\rblot";
-			}
-
-
-			if (tipocompleto.startsWith("EnumerationType"))
-				return zNames.get(exprS);
-
-
-			if (tipocompleto.startsWith("BasicType")){
-				String salida = zNames.get(exprS);
-				salida = ct.toLowerCase() + (salida!=null?salida:getNumber());
-				salida = salida.replace("?","");
-				return salida;
-			}
-		}
-
-		return exprS;
-	}
 
 	private void setLogToLatexCharsReplacer() throws Exception{
-		postfijo=0;
+		SetLogUtils.setLogToLatexCharsReplacerInit(tipos, slvars, tipos);
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
 		String varn;
@@ -132,7 +23,7 @@ public final class ZVarsFiller {
 			var = it.next().toString();
 			tipo = tipos.get(var);
 			expr = zVars.get(var);
-			varn = setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr);
+			varn = SetLogUtils.setLogToLatexCharsReplacer(SetLogUtils.toTree(tipo),expr);
 			varn = varn.replace("-", "\\negate ");
 			zVars.put(var,varn);
 		}
