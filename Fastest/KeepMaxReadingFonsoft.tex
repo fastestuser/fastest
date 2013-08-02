@@ -1,0 +1,81 @@
+\begin{zed}
+[SENSOR]
+\end{zed}
+
+\begin{zed}
+MaxReadings == [ smax: SENSOR \pfun \num ]
+\end{zed}
+
+\begin{schema}{KeepMaxReadingOk}
+ \Delta MaxReadings \\
+ s?: SENSOR \\
+ r?: \num
+\where
+ s? \in \dom smax \\
+ smax' = smax \oplus \{ s? \mapsto r?\}
+\end{schema}
+
+\begin{zed}
+KeepMaxReadingE1 == [\Xi MaxReadings; s?: SENSOR | s? \notin \dom smax]
+\end{zed}
+
+\begin{zed}
+KeepMaxReading == KeepMaxReadingOk \lor KeepMaxReadingE1 
+\end{zed}
+
+% Estrategia3
+
+\begin{zed}
+[CHAR] \also
+CHANNEL_CONTENT ::= error | msg \ldata \seq CHAR \rdata
+\end{zed}
+
+\begin{zed}
+MaxReadings2 == [ smax: SENSOR \pfun \num; channel: CHANNEL_CONTENT ]
+\end{zed}
+
+\begin{schema}{KeepMaxReadingOk2}
+ \Delta MaxReadings2 \\
+ s?: SENSOR \\
+ r?: \num
+\where
+ s? \in \dom smax \\
+ smax' = smax \oplus \{ s? \mapsto r?\}
+\end{schema}
+
+\begin{zed}
+KeepMaxReadingE12 == [\Xi MaxReadings2; s?: SENSOR | s? \notin \dom smax]
+\end{zed}
+
+\begin{zed}
+KeepMaxReading2 == KeepMaxReadingOk2 \lor KeepMaxReadingE12 
+\end{zed}
+
+%Estrategia5
+
+\begin{zed}
+STATUS ::= down | medium | high
+\end{zed}
+
+\begin{zed}
+MaxReadings3 == [smax : SENSOR \pfun \num; status : STATUS ]
+\end{zed}
+
+\begin{schema}{KeepMaxReadingOk3}
+ \Delta MaxReadings3 \\
+ s?: SENSOR \\
+ r?: \num
+\where
+ s? \in \dom smax \\
+ smax' = smax \oplus \{ s? \mapsto r?\} \\
+ status \in \{down, medium\} \\
+ status' = status
+\end{schema}
+
+\begin{zed}
+KeepMaxReadingE13 == [\Xi MaxReadings3; s?: SENSOR | s? \notin \dom smax]
+\end{zed}
+
+\begin{zed}
+KeepMaxReading3 == KeepMaxReadingOk3 \lor KeepMaxReadingE13 
+\end{zed}

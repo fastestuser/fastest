@@ -162,7 +162,6 @@ public class SetAxDefCommand implements Command {
 				}
 			}
 
-
 			printer.println("\\begin{axdef}");
 			String varDeclStr = varName + "aux :" + SpecUtils.termToLatex(typeExpr);
 			printer.print(varDeclStr);
