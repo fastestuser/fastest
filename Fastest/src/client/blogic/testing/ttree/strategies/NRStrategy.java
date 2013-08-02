@@ -20,7 +20,6 @@ import common.z.czt.visitors.NumVarsExtractor;
 
 /**
  * Implementation of the strategy Numeric Ranges (NR).
- * @author Joaquin Cuenca
  */
 public class NRStrategy{
 
@@ -99,8 +98,8 @@ public class NRStrategy{
 						ranges.put("int", "\\langle -2147483648, 2147483647 \\rangle");
 						ranges.put("short", "\\langle -32768, 32767 \\rangle");
 						ranges.put("long", "\\langle -9223372036854775808, 9223372036854775807 \\rangle");
-						//ranges.put("float", "\\langle  \\rangle"); //Y estos??
-						//ranges.put("double", "\\langle  \\rangle");
+						ranges.put("float", "\\langle " + minFloat +", " + maxFloat + " \\rangle");
+						ranges.put("double", "\\langle " + minDouble +", " + maxDouble + " \\rangle");
 					} else if (language.equalsIgnoreCase("C") || language.equalsIgnoreCase("C++")) {
 						output.println("Language: " + language);
 						ranges.put("int", "\\langle -32768, 32767 \\rangle");
@@ -109,10 +108,9 @@ public class NRStrategy{
 						ranges.put("unsigned int", "\\langle 0, 65535 \\rangle");
 						ranges.put("unsigned short", "\\langle 0, 65535 \\rangle");
 						ranges.put("unsigned long", "\\langle 0, 4294967295 \\rangle");
-						ranges.put("double", "\\langle  \\rangle"); //Y estos??
-						ranges.put("long double", "\\langle  \\rangle");
-						ranges.put("float", "\\langle 0.222222222222222222222 \\rangle");
-
+						ranges.put("float", "\\langle " + minFloat +", " + maxFloat + " \\rangle");
+						ranges.put("double", "\\langle " + minDouble +", " + maxDouble + " \\rangle");
+						ranges.put("long double", "\\langle " + minDouble +", " + maxDouble + " \\rangle");
 					} else {
 						output.println("Invalid language. Choose between: java, C or C++");
 						language = "";
@@ -158,4 +156,16 @@ public class NRStrategy{
 			}
 		}
 	}
+
+	private static String generateRepeatingString(char c, int n) {
+	    StringBuilder b = new StringBuilder();
+	    for (int x = 0; x < n; x++)
+	        b.append(c);
+	    return b.toString();
+	}
+	
+	private String maxFloat = "34028234663852886" + generateRepeatingString('0', 22);
+	private String minFloat = "-34028234663852886" + generateRepeatingString('0', 22);
+	private String maxDouble = "34028234663852886" + generateRepeatingString('0', 60);
+	private String minDouble = "-34028234663852886" + generateRepeatingString('0', 60);
 }

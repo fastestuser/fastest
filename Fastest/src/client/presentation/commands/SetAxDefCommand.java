@@ -6,7 +6,6 @@ package client.presentation.commands;
 
 import java.io.*;
 import java.util.*;
-
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.base.ast.Term;
@@ -40,7 +39,6 @@ import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.session.Markup;
-
 import common.z.czt.visitors.StringToNumReplacer;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
@@ -143,11 +141,8 @@ public class SetAxDefCommand implements Command {
 				return;
 			}
 
-
 			// We verify that the type of the specified value is correct
 			PrintWriter printer = new PrintWriter(new FileWriter(tempFile));
-
-
 			Spec spec = controller.getOriginalSpec();
 
 			for (Sect sect : spec.getSect()) {
@@ -183,11 +178,9 @@ public class SetAxDefCommand implements Command {
 			printer.println("\\end{axdef}");
 			printer.flush();
 
-
 			Source source = new FileSource(fileName);
 			SectionManager manager = new SectionManager();
 			manager.put(new Key(fileName, Source.class), source);
-
 			spec = (Spec) manager.get(new Key(fileName, Spec.class));
 
 			// To typecheck the value we typecheck the following artificious
@@ -226,8 +219,6 @@ public class SetAxDefCommand implements Command {
 				Map<String, ZDeclList> auxiliarDecls = controller.getAuxiliarDecls();
 				auxiliarDecls.put(varName, constantsDecl);
 			}
-
-
 
 			// We verify if the value satisfies the axdef predicate, considering
 			// the others variables defined in axiomatic definitions

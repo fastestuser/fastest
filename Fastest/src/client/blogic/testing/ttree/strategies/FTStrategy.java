@@ -20,7 +20,6 @@ import common.z.czt.visitors.FreetypeVarsExtractor;
 
 /**
  * Implementation of the strategy Numeric Ranges (NR).
- * @author Joaquin Cuenca
  */
 public class FTStrategy{
 
@@ -89,7 +88,7 @@ public class FTStrategy{
 				addtactic.run(clientTextUI, unitToTestName + " " + strategyName + " " + expString);
 				aplied = true;
 			} else {
-				output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expString + " ? y\n");
+				output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expString + " ? y/n");
 				try {
 					option = input.readLine();
 					if (option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")){

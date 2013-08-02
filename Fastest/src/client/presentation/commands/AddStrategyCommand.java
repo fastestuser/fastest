@@ -12,11 +12,6 @@ import client.blogic.testing.ttree.strategies.NRStrategy;
 import client.blogic.testing.ttree.strategies.SPStrategy;
 import common.fastest.FastestUtils;
 
-/**
- * An instance of this class makes possible the addition of a new strategy (together
- * with its parameters, if neccesary) to an operation to be tested.
- * @author Joaquín Cuenca
- */
 public class AddStrategyCommand implements Command{
 
 	/**
@@ -87,7 +82,7 @@ public class AddStrategyCommand implements Command{
 				}
 			}
 
-			//We check if the argument is a known strategy
+			//We check if the argument is a known strategy and define the tactics to use
 			if (parts[1].equalsIgnoreCase("Estrategia1")) {
 				if (parts.length > 2)
 					parts = "SPFull".split(" ", 0);
@@ -113,39 +108,37 @@ public class AddStrategyCommand implements Command{
 					parts = "SPFull NRFull ISEFull".split(" ", 0);
 				else
 					parts = "SP NR ISE".split(" ", 0);
+			} else { //Not a known strategy
+				String customStrategy = "";
+				customStrategy = customStrategy.concat(parts[1]);
+				int i = 2;
+				while (i < parts.length) {
+					customStrategy = customStrategy.concat(" " + parts[i]);
+					i++;
+				}
+				parts = customStrategy.split(" ", 0);
 			}
 			
 			//We apply the strategy
 			int i = 0;
 			while (i < parts.length) { //Mientras haya estrategias por aplicar
-				strategyName = parts[i].replace("Full", "");
+				//strategyName = parts[i].replace("Full", "");
+				strategyName = parts[i].replaceFirst("[Ff]ull", "");
 				//Creamos las strategias y las aplicamos
 				Class strategyClass = Class.forName("client.blogic.testing.ttree.strategies." + strategyName + "Strategy");
 				Object object = strategyClass.newInstance();
 
+				String option = "";
+				if (parts[i].endsWith("Full") || parts[i].endsWith("full"))
+					option = "Full";
+				
 				if (object instanceof SPStrategy) {
-					String option = "";
-					if (parts[i].contains("Full")){
-						option = "Full";
-					}
 					((SPStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
 				} else if (object instanceof NRStrategy) {
-					String option = "";
-					if (parts[i].contains("Full")){
-						option = "Full";
-					}
 					((NRStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
 				} else if (object instanceof FTStrategy) {
-					String option = "";
-					if (parts[i].contains("Full")){
-						option = "Full";
-					}
 					((FTStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
 				} else if (object instanceof ISEStrategy) {
-					String option = "";
-					if (parts[i].contains("Full")){
-						option = "Full";
-					}
 					((ISEStrategy) object).applyStrategy(clientTextUI, unitToTestName, option);
 				}
 				i++;

@@ -27,7 +27,6 @@ import common.z.czt.visitors.SchemeUnfolder;
 
 /**
  * Implementation of the strategy In Set Extention (ISE).
- * @author Joaquin Cuenca
  */
 public class ISEStrategy{
 
@@ -97,7 +96,7 @@ public class ISEStrategy{
 				addtactic.run(clientTextUI, unitToTestName + " " + strategyName + " " + expString);
 				aplied = true;
 			} else {
-				output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expString + " ? y\n");
+				output.println("Apply tactic: " + unitToTestName + " " + strategyName + " " + expString + " ? y/n");
 				try {
 					option = input.readLine();
 					if (option.equalsIgnoreCase("y") || option.equalsIgnoreCase("yes")){

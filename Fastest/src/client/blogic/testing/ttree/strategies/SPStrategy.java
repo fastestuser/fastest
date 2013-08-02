@@ -27,7 +27,6 @@ import common.z.czt.visitors.SchemeUnfolder;
 
 /**
  * Implementation of the strategy Standard Partitions (SP).
- * @author Joaquin Cuenca
  */
 public class SPStrategy{
 

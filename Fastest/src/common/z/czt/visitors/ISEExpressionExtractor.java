@@ -52,7 +52,7 @@ implements TermVisitor<Map<Term,String>>, MemPredVisitor<Map<Term,String>>
 	public Map<Term,String> visitMemPred(MemPred memPred){
 		Map<Term,String> mapList = new HashMap<Term,String>();
 
-		if (!memPred.getMixfix()) { //It is a \in predicate
+		if (!memPred.getMixfix()) { //It is a \in expression
 			Expr rightExpr = memPred.getRightExpr();
 			if (rightExpr instanceof SetExpr) {
 				mapList.put(memPred, SpecUtils.termToLatex(memPred));
