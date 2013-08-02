@@ -103,8 +103,8 @@ public class TCaseGenClient extends IIComponent {
 		}
 		else if(event_ instanceof FastestResetted){
 			tCaseStrategyMap = new HashMap<String, TCaseStrategy>();
-			PreCalculatedFiniteModels pCFM = PreCalculatedFiniteModels.getInstance();
-			pCFM.clear();
+			//PreCalculatedFiniteModels pCFM = PreCalculatedFiniteModels.getInstance();
+			//pCFM.clear();
 		}
 		else
 			throw new IllegalArgumentException();

@@ -117,11 +117,8 @@ public class EventAdmin {
                     String eventName = namesIt.next();
                     String componentNameList = (String) props.get(eventName);
                     String methodName = "manageEvent";
-                    if (componentNameList.startsWith("(")
-                            && componentNameList.endsWith(")")) {
-                        componentNameList = componentNameList.substring(1,
-                                componentNameList.length() - 1);
-
+                    if (componentNameList.startsWith("(") && componentNameList.endsWith(")")) {
+                        componentNameList = componentNameList.substring(1,componentNameList.length() - 1);
                         String componentNames[] = componentNameList.split(";");
                         for (int i = 0; i < componentNames.length; i++) {
                             String componentName = componentNames[i];

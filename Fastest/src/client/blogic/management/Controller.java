@@ -148,6 +148,7 @@ public class Controller extends IIComponent {
 
 	/** Creates a new instance of Controller */
 	public Controller() {
+		nomTexFileSpec = null;
 		loadedOpsRep = new ConcreteRepository<String>();
 		opsToTestRep = new ConcreteRepository<String>();
 		schemaPredicatesRep = new ConcreteRepository<String>();
@@ -525,25 +526,6 @@ public class Controller extends IIComponent {
 				TClassNode tClassNode = opTTreeMap.get(opName);
 				Boolean correctlyadded =
 						tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
-				// Voy a suponer que es un proceso secuencial
-				// No se puede refinar sin que antes se hayan generado todos los casos de
-				// una operacion
-				/*if (refining){
-                pendingToRef++;
-                TCaseRefineRequested tCaseRefineRequested =
-                new TCaseRefineRequested(opName, abstractTCase);
-                ClientUI clientUI = getMyClientUI();
-                if(clientUI instanceof ClientTextUI){
-                clientUI.getMyController();
-                try{
-                EventAdmin eventAdmin = EventAdmin.getInstance();
-                eventAdmin.announceEvent(tCaseRefineRequested);
-                }
-                catch(Exception e){
-                e.printStackTrace();
-                }
-                }
-                }*/
 			}
 			pendingAbsTCases--;
 			//System.out.println("Quedan: "+pendingAbsTCases);
@@ -613,6 +595,26 @@ public class Controller extends IIComponent {
 			selectedRefLaw = null;
 			refining = false;
 			FastestUtils.resetTacticsNumbersMap();
+			
+			//agregado sin pensar mucho.
+			classToTestRep = new ConcreteRepository<String>();
+			schemaPredicatesRep = new ConcreteRepository<String>();
+			dnfPredListMap = new HashMap<String, List<Pred>>();
+			pendingAbsTCases = 0;
+			nomTexFileSpec = null;
+			pendingCTCases = 0;
+			pendingPrunnings = 0;
+			pendingTTrees = 0;
+			pendingToRef = 0;
+			freeParas.clear();
+			basicTypeNames.clear();
+			axDefsValues.clear();
+			axDefsRequired.clear();
+			axDefsRequiredPreds.clear();
+			axDefsPredVars.clear();
+			basicAxDefs.clear();
+			inicioPoda = 0;
+			leaves = new ConcreteRepository<TClass>();
 
 		} else {
 			throw new IllegalArgumentException();

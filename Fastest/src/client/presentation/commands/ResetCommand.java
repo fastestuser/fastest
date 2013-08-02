@@ -2,7 +2,6 @@ package client.presentation.commands;
 
 
 import java.io.*;
-
 import client.presentation.ClientTextUI;
 import client.blogic.management.ii.events.FastestResetted;
 import client.blogic.management.ii.EventAdmin;
