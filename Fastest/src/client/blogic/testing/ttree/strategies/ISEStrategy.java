@@ -3,6 +3,8 @@ package client.blogic.testing.ttree.strategies;
 import java.util.*;
 import java.io.*;
 
+import jline.ConsoleReader;
+
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 import client.presentation.commands.AddTacticCommand;
@@ -53,7 +55,17 @@ public class ISEStrategy{
 		this.option = option;
 
 		Controller controller = clientTextUI.getMyController();
-		BufferedReader input = clientTextUI.getInput();
+		//BufferedReader input = clientTextUI.getInput(); //Asi no imprime los chars cuando lee
+		//Asi si
+		ConsoleReader input = null;
+		try {
+			input = new ConsoleReader();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		input.setInput(new BufferedInputStream(System.in));
+
 		PrintWriter output = clientTextUI.getOutput();
 
 		Command addtactic = new AddTacticCommand();
@@ -82,7 +94,7 @@ public class ISEStrategy{
 		Map<Term, String> expressions;
 		expressions = axPara.accept(searcher);
 		Iterator<Term> expressionsIt = expressions.keySet().iterator();
-		
+
 		boolean aplied = false;
 
 		while (expressionsIt.hasNext()) {
@@ -90,7 +102,7 @@ public class ISEStrategy{
 			Term exp = expressionsIt.next();
 			String expString = SpecUtils.termToLatex(exp);
 			aplied = false;
-			
+
 			if (option.equals("Full")) { //Si se desea aplicar de forma completa, no se pregunta para cada expr
 				output.println("Applying: " + unitToTestName + " " + strategyName + " " + expString);
 				addtactic.run(clientTextUI, unitToTestName + " " + strategyName + " " + expString);

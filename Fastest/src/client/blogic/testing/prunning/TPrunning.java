@@ -56,11 +56,7 @@ public class TPrunning extends IIComponent{
 	 * @throws java.lang.IllegalArgumentException if event_ is not instance of 
 	 * PruneTTreeRequested
 	 */
-	public synchronized void manageEvent(Event_ event_)
-			throws IllegalArgumentException{
-
-
-
+	public synchronized void manageEvent(Event_ event_) throws IllegalArgumentException{
 
 		if(event_ instanceof PruneTTreeRequested){
 			try{
@@ -149,6 +145,7 @@ public class TPrunning extends IIComponent{
 			throw new IllegalArgumentException();
 		}
 	}
+	
 	private boolean requestPrune()
 	{
 		try{

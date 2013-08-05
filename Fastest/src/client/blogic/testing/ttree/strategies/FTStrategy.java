@@ -3,6 +3,8 @@ package client.blogic.testing.ttree.strategies;
 import java.util.*;
 import java.io.*;
 
+import jline.ConsoleReader;
+
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.presentation.ClientTextUI;
@@ -46,7 +48,17 @@ public class FTStrategy{
 		this.option = option;
 
 		Controller controller = clientTextUI.getMyController();
-		BufferedReader input = clientTextUI.getInput();
+		//BufferedReader input = clientTextUI.getInput(); //Asi no imprime los chars cuando lee
+		//Asi si
+		ConsoleReader input = null;
+		try {
+			input = new ConsoleReader();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			return;
+		}
+		input.setInput(new BufferedInputStream(System.in));
+
 		PrintWriter output = clientTextUI.getOutput();
 
 		Command addtactic = new AddTacticCommand();
