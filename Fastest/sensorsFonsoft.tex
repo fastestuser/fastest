@@ -16,8 +16,8 @@ s?:SENSOR; r?:\num \\
 \where
 s? \in \dom smax \\
 smax~s? = r?  \lor smax~s? < r? \\
-smax' = smax \oplus \{s? \mapsto r?\}
-%smax' = (\dom \{s? \mapsto r?\} \ndres smax) \oplus \{s? \mapsto r?\}
+smax' = smax \oplus \{s? \mapsto r?\} \\
+smax' = (\dom \{s? \mapsto r?\} \ndres smax) \oplus \{s? \mapsto r?\}
 \end{schema}
 
 \begin{zed}
@@ -62,12 +62,12 @@ KeepMaxReading == \\
 
 
 \begin{zed}
-KeepMaxReading13 ==  \( KeepMaxReadingOk \land KeepMaxReadingE25 \) \lor KeepMaxReadingE1 
+KeepMaxReading13 ==  ( KeepMaxReadingOk \land KeepMaxReadingE25 ) \lor KeepMaxReadingE1 
 \end{zed}
 
 
 \begin{zed}
-KeepMaxReading14 ==  \( \( \( KeepMaxReadingOk \land KeepMaxReadingE25 \) \lor KeepMaxReadingE1 \) \land KeepMaxReadingE2 \) \lor KeepMaxReadingAux
+KeepMaxReading14 ==  ((( KeepMaxReadingOk \land KeepMaxReadingE25 ) \lor KeepMaxReadingE1 ) \land KeepMaxReadingE2 ) \lor KeepMaxReadingAux
 \end{zed}
 
 
@@ -80,13 +80,13 @@ KeepMaxReading16 ==   KeepMaxReadingOk  \land KeepMaxReadingE25
 \end{zed}
 
 \begin{zed}
-KeepMaxReading2 ==  \( KeepMaxReadingOk \lor KeepMaxReadingE1 \) \land KeepMaxReadingE2
+KeepMaxReading2 ==  ( KeepMaxReadingOk \lor KeepMaxReadingE1 ) \land KeepMaxReadingE2
 \end{zed}
 
 
 
 \begin{zed}
-KeepMaxReading25 ==  \( KeepMaxReadingOk \lor KeepMaxReadingE1 \) \land KeepMaxReadingE25
+KeepMaxReading25 ==  ( KeepMaxReadingOk \lor KeepMaxReadingE1 ) \land KeepMaxReadingE25
 \end{zed}
 
 

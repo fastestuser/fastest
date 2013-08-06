@@ -709,6 +709,7 @@ public class Controller extends IIComponent {
 	public Spec getUnfoldedSpec() {
 		AbstractRepository<String> opNames = this.getOpsToTestRep();
 		AbstractRepository<String> schPredNames = this.getSchemaPredicatesRep();
+		//System.out.println(SpecUtils.termToLatex(originalSpec));
 		return (Spec) originalSpec.accept(new SchemeUnfolder(opNames,schPredNames));
 		//return originalSpec;
 	}

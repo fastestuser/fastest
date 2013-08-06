@@ -17,6 +17,7 @@ import java.util.Map;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.util.Visitor;
+import net.sourceforge.czt.z.ast.And;
 import net.sourceforge.czt.z.ast.AndExpr;
 import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -372,10 +373,10 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
     public SchExpr visitAndExpr(AndExpr andExpr) {
         Expr leftExpr = andExpr.getLeftExpr();
         Expr rightExpr = andExpr.getRightExpr();
-
-        SchExpr visitedLeftExpr = (SchExpr) leftExpr.accept(this);
+        
+        //MODIFICADO, agregado el clone
+        SchExpr visitedLeftExpr = (SchExpr) (leftExpr.accept(this).accept(new CZTCloner()));
         SchExpr visitedRightExpr = (SchExpr) rightExpr.accept(this);
-
         SpecUtils.makeDeclListUnion(visitedLeftExpr, visitedRightExpr);
         ZSchText leftZSchText = visitedLeftExpr.getZSchText();
         ZSchText rightZSchText = visitedRightExpr.getZSchText();
@@ -388,7 +389,9 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         } else if (rightPred == null) {
             pred = leftPred;
         } else if (leftPred != null && rightPred != null) {
-            AndPred andPred = (new ZFactoryImpl()).createAndPred();
+        	ZFactoryImpl factory = new ZFactoryImpl();
+            AndPred andPred = (factory.createAndPred());
+            andPred.setAnd(And.NL);
             andPred.setLeftPred(leftPred);
             andPred.setRightPred(rightPred);
             pred = andPred;
@@ -404,7 +407,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         Expr leftExpr = orExpr.getLeftExpr();
         Expr rightExpr = orExpr.getRightExpr();
 
-        SchExpr visitedLeftExpr = (SchExpr) leftExpr.accept(this);
+        //MODIFICADO, ahora se clona
+        SchExpr visitedLeftExpr = (SchExpr) (leftExpr.accept(this).accept(new CZTCloner()));
         SchExpr visitedRightExpr = (SchExpr) rightExpr.accept(this);
 
         SpecUtils.makeDeclListUnion(visitedLeftExpr, visitedRightExpr);
@@ -581,7 +585,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         Expr leftExpr = iffExpr.getLeftExpr();
         Expr rightExpr = iffExpr.getRightExpr();
 
-        SchExpr visitedLeftExpr = (SchExpr) leftExpr.accept(this);
+        //MODIFICADO, ahora se clona
+        SchExpr visitedLeftExpr = (SchExpr) (leftExpr.accept(this).accept(new CZTCloner()));
         SchExpr visitedRightExpr = (SchExpr) rightExpr.accept(this);
 
         SpecUtils.makeDeclListUnion(visitedLeftExpr, visitedRightExpr);
@@ -613,8 +618,9 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
     public SchExpr visitImpliesExpr(ImpliesExpr impliesExpr) {
         Expr leftExpr = impliesExpr.getLeftExpr();
         Expr rightExpr = impliesExpr.getRightExpr();
-
-        SchExpr visitedLeftExpr = (SchExpr) leftExpr.accept(this);
+        
+        //MODIFICADO, agregado el clone
+        SchExpr visitedLeftExpr = (SchExpr) (leftExpr.accept(this).accept(new CZTCloner()));
         SchExpr visitedRightExpr = (SchExpr) rightExpr.accept(this);
 
         SpecUtils.makeDeclListUnion(visitedLeftExpr, visitedRightExpr);
