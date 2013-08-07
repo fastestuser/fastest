@@ -88,9 +88,11 @@ public class ReplaceAxDefCommand implements Command{
 									AbstractRepository<String> decls = SpecUtils.getVarNames(schExpr);
 
 									Pred pred = SpecUtils.getAxParaPred(axPara);
-									pred = replaceAxDefsInPred(pred, decls);
-									SpecUtils.setAxParaPred(axPara, pred);
-									axPara.accept(cleaner);
+									if (pred != null) {
+										pred = replaceAxDefsInPred(pred, decls);
+										SpecUtils.setAxParaPred(axPara, pred);
+										axPara.accept(cleaner);
+									}
 								}
 								catch (Exception e) {
 									System.out.println("Error while replacing an axiomatic definition.");

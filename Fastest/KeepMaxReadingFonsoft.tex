@@ -16,11 +16,11 @@ MaxReadings == [ smax: SENSOR \pfun \num ]
 \end{schema}
 
 \begin{zed}
-KeepMaxReadingE1 == [\Xi MaxReadings; s?: SENSOR | s? \notin \dom smax]
+KeepMaxReadingE == [\Xi MaxReadings; s?: SENSOR | s? \notin \dom smax]
 \end{zed}
 
 \begin{zed}
-KeepMaxReading == KeepMaxReadingOk \lor KeepMaxReadingE1 
+KeepMaxReading == KeepMaxReadingOk \lor KeepMaxReadingE
 \end{zed}
 
 % Estrategia3
@@ -44,11 +44,11 @@ MaxReadings2 == [ smax: SENSOR \pfun \num; channel: CHANNEL_CONTENT ]
 \end{schema}
 
 \begin{zed}
-KeepMaxReadingE12 == [\Xi MaxReadings2; s?: SENSOR | s? \notin \dom smax]
+KeepMaxReadingE2 == [\Xi MaxReadings2; s?: SENSOR | s? \notin \dom smax]
 \end{zed}
 
 \begin{zed}
-KeepMaxReading2 == KeepMaxReadingOk2 \lor KeepMaxReadingE12 
+KeepMaxReading2 == KeepMaxReadingOk2 \lor KeepMaxReadingE2 
 \end{zed}
 
 %Estrategia5
@@ -73,13 +73,9 @@ MaxReadings3 == [smax : SENSOR \pfun \num; status : STATUS ]
 \end{schema}
 
 \begin{zed}
-KeepMaxReadingE13 == [\Xi MaxReadings3; s?: SENSOR | s? \notin \dom smax]
+KeepMaxReadingE3 == [\Xi MaxReadings3; s?: SENSOR | s? \notin \dom smax]
 \end{zed}
 
 \begin{zed}
-KeepMaxReading3 == KeepMaxReadingOk3 \lor KeepMaxReadingE13 
+KeepMaxReading3 == KeepMaxReadingOk3 \lor KeepMaxReadingE3 
 \end{zed}
-
-\begin{schema}{Prueba}
-x,x':\num
-\end{schema}
