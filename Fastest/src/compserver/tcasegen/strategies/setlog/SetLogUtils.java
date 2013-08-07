@@ -206,7 +206,7 @@ public final class SetLogUtils {
 			elem = expr.next();
 			aux = elem.split(":");
 			salida += "," + aux[0];
-			System.out.println(elem);
+			//System.out.println(elem);
 		}
 		salida = "{" + salida.substring(1) + "}";
 		return new ExprIterator(salida);
@@ -222,7 +222,7 @@ public final class SetLogUtils {
 			elem = expr.next();
 			aux = elem.split(":");
 			salida += "," + aux[1];
-			System.out.println(elem);
+			//System.out.println(elem);
 		}
 		salida = "{" + salida.substring(1) + "}";
 		return new ExprIterator(salida);
