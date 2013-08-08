@@ -14,11 +14,10 @@ MaxReadings == [smax: SENSOR \pfun \num]
 \Delta MaxReadings \\
 s?:SENSOR; r?:\num \\
 \where
-s? \in \dom smax 
-%smax~s? = r?  \lor smax~s? < r? \\
-%smax' = smax \oplus \{s? \mapsto r?\}
-%smax' = (\dom \{s? \mapsto r?\} \ndres smax) \oplus \{s? \mapsto r?\}
-
+s? \in \dom smax \\
+smax~s? = r?  \lor smax~s? < r? \\
+smax' = smax \oplus \{s? \mapsto r?\} \\
+smax' = (\dom \{s? \mapsto r?\} \ndres smax) \oplus \{s? \mapsto r?\}
 \end{schema}
 
 \begin{zed}
@@ -70,14 +69,6 @@ KeepMaxReading13 ==  ( KeepMaxReadingOk \land KeepMaxReadingE25 ) \lor KeepMaxRe
 
 
 \begin{zed}
-<<<<<<< .mine
-=======
-KeepMaxReading14 ==  ((( KeepMaxReadingOk \land KeepMaxReadingE25 ) \lor KeepMaxReadingE1 ) \land KeepMaxReadingE2 ) \lor KeepMaxReadingAux
-\end{zed}
-
-
-\begin{zed}
->>>>>>> .r261
 KeepMaxReading15 ==   KeepMaxReadingOk  \land KeepMaxReadingE2
 \end{zed}
 
