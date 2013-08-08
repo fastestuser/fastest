@@ -2,13 +2,10 @@ package compserver.tcasegen.strategies.setlog;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-
 import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
 import compserver.tcasegen.strategies.setlog.setlogtoz.StringPointer;
 
