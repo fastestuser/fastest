@@ -164,8 +164,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                     	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
                     } else if (axParaExpr instanceof OrExpr) {
                     	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
-                    } else if (axParaExpr instanceof RefExpr) { //¿Esta bien esto comentado?
-                    	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    //} else if (axParaExpr instanceof RefExpr) { //¿Esta bien esto comentado?
+                    //	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
                     }
                    
                     constDecl.setExpr(visitedAxParaExpr);
