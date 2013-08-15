@@ -9,7 +9,6 @@ import common.repository.AbstractRepository;
 import common.z.DeclDecoration;
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -120,8 +119,7 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                                 // The scheme will be unfolded only if it is a
                                 // selected operation
                                 boolean isSelOp = false;
-                                AbstractIterator<String> opNamesIt =
-                                        opNames.createIterator();
+                                AbstractIterator<String> opNamesIt = opNames.createIterator();
                                 while (opNamesIt.hasNext() && !isSelOp) {
                                     String opName = opNamesIt.next();
                                     if (opName.equals(axParaName)) {
@@ -130,10 +128,9 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                                 }
                                 //MODIFICADO
                                 //if (isSelOp) {
-                                    axPara = (AxPara) axPara.accept(this);
+                                axPara = (AxPara) axPara.accept(this);
                                 //}
                             }
-
                         }
                     }
                 }
@@ -164,8 +161,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                     	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
                     } else if (axParaExpr instanceof OrExpr) {
                     	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
-                    //} else if (axParaExpr instanceof RefExpr) { //¿Esta bien esto comentado?
-                    //	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
+                    } else if (axParaExpr instanceof RefExpr) {
+                    	visitedAxParaExpr = (Expr) axParaExpr.accept(this);
                     }
                    
                     constDecl.setExpr(visitedAxParaExpr);
@@ -443,14 +440,6 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
 
         String refExprName = refExpr.getName().toString();
         
-        /*//Primero vemos que no sea algun symbolo matematico por ejemplo. MODIFICADO
-        if (refExprName.equals(UtilSymbols.integerSymbol())
-                || refExprName.equals(UtilSymbols.naturalSymbol())
-                || refExprName.equals("?")
-                || refExpr.getZExprList().size() != 0) {
-            return null;
-        }*/
-        
         int firstCharCode = (int) refExprName.charAt(0);
         if (firstCharCode == 916) {
             //El esquema a expandir es un delta
@@ -472,6 +461,13 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
         AxPara refAxPara = SpecUtils.axParaSearch(refExprName, zParaList);
         //System.out.println("Incluido: " + nameToSearch);
         if (refAxPara == null) {
+        	//Primero vemos que no sea algun symbolo matematico.
+            if (refExprName.equals(UtilSymbols.integerSymbol())
+                    || refExprName.equals(UtilSymbols.naturalSymbol())
+                    || refExprName.equals("?")
+                    || refExpr.getZExprList().size() != 0) {
+                return null;
+            }
             System.out.println("Could not find scheme:" + refExprName);
             return null;
         } else {
@@ -487,8 +483,7 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
             unfoldedAxParaSchExpr = SpecUtils.getAxParaSchExpr(unfoldedAxPara);
 
 
-            AbstractRepository<String> varNameRep =
-                    SpecUtils.getVarNames(unfoldedAxParaSchExpr);
+            AbstractRepository<String> varNameRep = SpecUtils.getVarNames(unfoldedAxParaSchExpr);
             PrimeVarsMaker primeVisitor = new PrimeVarsMaker(varNameRep);
 
             boolean isSelOpOrSelPred = false;
@@ -525,10 +520,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                         List<Decl> auxDeclList = new ArrayList<Decl>();
                         InclDecl inclDecl = zFactory.createInclDecl(refExpr);
                         auxDeclList.add(inclDecl);
-                        ZDeclList newZDeclList =
-                                zFactory.createZDeclList(auxDeclList);
-                        ZSchText newSchText =
-                                zFactory.createZSchText(newZDeclList, null);
+                        ZDeclList newZDeclList = zFactory.createZDeclList(auxDeclList);
+                        ZSchText newSchText = zFactory.createZSchText(newZDeclList, null);
                         newSchExpr = zFactory.createSchExpr(newSchText);
                     }
                     break;
@@ -537,27 +530,20 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                     //El esquema a expandir es un delta o un Xi, es decir,
                     //incluye variables primadas y no primadas
                     if (!isSelOpOrSelPred) {
-                        ZSchText unfoldedAxParaZSchText =
-                                unfoldedAxParaSchExpr.getZSchText();
-
+                        ZSchText unfoldedAxParaZSchText = unfoldedAxParaSchExpr.getZSchText();
                         ZSchText newSchText = (ZSchText) unfoldedAxParaZSchText.accept(new CZTCloner());
                         ZDeclList unfoldedAxParaZDeclList = unfoldedAxParaZSchText.getZDeclList();
                         Pred unfoldedAxParaPred = unfoldedAxParaZSchText.getPred();
-                        SpecUtils.insertZDeclList(unfoldedAxParaZDeclList,
-                                (ZDeclList) unfoldedAxParaZDeclList.accept(primeVisitor), unfoldedAxParaZDeclList.size());
+                        SpecUtils.insertZDeclList(unfoldedAxParaZDeclList, (ZDeclList) unfoldedAxParaZDeclList.accept(primeVisitor), unfoldedAxParaZDeclList.size());
                         if (unfoldedAxParaPred != null) {
-                            unfoldedAxParaZSchText.setPred(SpecUtils.andPreds(
-                                    unfoldedAxParaPred,
-                                    (Pred) unfoldedAxParaPred.accept(primeVisitor)));
+                            unfoldedAxParaZSchText.setPred(SpecUtils.andPreds(unfoldedAxParaPred, (Pred) unfoldedAxParaPred.accept(primeVisitor)));
                         }
                         if (isXi) {
                             // El esquema a expandir es un Xi, por lo que se agregan la conjunción de las igualdades
                             // entre las variables del esquema a expandir y sus correspondientes variables primadas
                             AbstractIterator<String> it = varNameRep.createIterator();
                             while (it.hasNext()) {
-                                unfoldedAxParaZSchText.setPred(SpecUtils.andPreds(
-                                        unfoldedAxParaZSchText.getPred(),
-                                        SpecUtils.createUnchangedPred(it.next())));
+                                unfoldedAxParaZSchText.setPred(SpecUtils.andPreds(unfoldedAxParaZSchText.getPred(), SpecUtils.createUnchangedPred(it.next())));
                             }
                         }
                         newSchExpr = (new ZFactoryImpl()).createSchExpr(newSchText);
@@ -566,10 +552,8 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                         List<Decl> auxDeclList = new ArrayList<Decl>();
                         InclDecl inclDecl = zFactory.createInclDecl(refExpr);
                         auxDeclList.add(inclDecl);
-                        ZDeclList newZDeclList =
-                                zFactory.createZDeclList(auxDeclList);
-                        ZSchText newSchText =
-                                zFactory.createZSchText(newZDeclList, null);
+                        ZDeclList newZDeclList = zFactory.createZDeclList(auxDeclList);
+                        ZSchText newSchText = zFactory.createZSchText(newZDeclList, null);
                         newSchExpr = zFactory.createSchExpr(newSchText);
                     }
 
