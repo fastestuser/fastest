@@ -402,7 +402,7 @@ public class ExprParser extends Parser {
 					print(dom + " = " + domType);
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
-				else if (isNumeric(type)) {
+				else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 					if (tipoSchema == 0) {
 						print(var + " ein " + printInfo(type, true));
 					}
@@ -414,10 +414,6 @@ public class ExprParser extends Parser {
 					if (childType != null) {
 						if (childType.startsWith("EnumerationType")){
 							if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
-						} else if (isNumeric(childType)) {
-							if (tipoSchema == 0) {
-								print("esubset(" + var + ", " + printInfo(childType, true) + ")");
-							}
 						} else
 							if ((tipoSchema == 0) && (exp != null) && (!exp.contains("\\power")))
 							//Si no contiene power, imprimimos, ya que si lo contiene, es realmente una expresion de tipo y no una expresion con valor!

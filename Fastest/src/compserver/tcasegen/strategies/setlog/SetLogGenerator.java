@@ -129,8 +129,8 @@ public final class SetLogGenerator {
 					break;
 				}
 			}
-			//System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
-			//System.out.println("**********************************************************************************************\n");
+			System.out.println("SETLOG OUT:\n" + setlogOutput.replace("&", "&\n"));
+			System.out.println("**********************************************************************************************\n");
 
 			if (pruneClass) {
 				return "FALSE";
