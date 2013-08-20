@@ -98,10 +98,10 @@ public final class SetLogUtils {
 				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipocompleto);
 				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipocompleto);
 				String c,v,salida="";
-				while(expr.hasNext()){
-					c = expr.next();
+				while(tiposDecl.hasNext()){
+					c = tiposDecl.next();
 					v = varsDecl.next();
-					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(tiposDecl.next()),c); 
+					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(c),v); 
 				}
 				if (!salida.isEmpty())
 					return "\\lblot " + salida.substring(1) + " \\rblot";

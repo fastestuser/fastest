@@ -2,6 +2,7 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import javax.swing.tree.DefaultMutableTreeNode;
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 
 /*Mapeador de naturales a expresion, por cada numero natural da una expresion y biceversa*/
@@ -24,7 +25,7 @@ public final class IntExprMap {
 		String aux[] = tipo.split("\\\\upto");
 		return new Integer(elem) - new Integer(aux[0]) + 1;
 	}
-	
+
 	private int cardOfFreeType(String tipo){
 		String aux[] = tipo.split(":");
 		aux = aux[2].split(",");
@@ -71,6 +72,34 @@ public final class IntExprMap {
 		}
 	}	
 
+	private  class Tuple{
+		int size;
+		int[] cardinality;
+		int[] value;
+		
+		public Tuple(int size){
+			this.size = size;
+			this.cardinality = new int[size];
+			this.value = new int[size];
+		}
+		
+		public void setCardinality(int pos, int cardinality) {
+			this.cardinality[pos] = cardinality;
+		}
+		
+		public int getCardinality(int pos) {
+			return this.cardinality[pos];
+		}
+		
+		public void setValue(int pos, int value) {
+			this.value[pos] = value;
+		}
+		
+		public int getValue(int pos) {
+			return this.value[pos];
+		}
+	}
+	
 	private  Par parFromInt(int card2, int num){
 		Par p = new Par();
 		if(card2>0){
@@ -85,6 +114,13 @@ public final class IntExprMap {
 	}
 	private int intFromPar(int x, int y, int card){
 		return card*(x-1) + y;
+	}
+	
+	private  Tuple tupleFromInt(Tuple tuple, int num){ //HACER
+		return tuple;
+	}
+	private Tuple intFromTuple(Tuple tuple){ //HACER
+		return tuple;
 	}
 
 	//devuelve la posicion de los bits encendidos de la representacion binaria del entero,
@@ -105,6 +141,8 @@ public final class IntExprMap {
 		palabra[i++] = ni*resto;
 		return palabra;
 	}
+	
+	
 
 	/* Dado un numero natural y un tipo devuelve una expresion terminal del tipo */
 	private  String f(DefaultMutableTreeNode nodo, int num){
@@ -153,9 +191,40 @@ public final class IntExprMap {
 
 				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
 			}
-		}else if (ct.contains("upto"))
+		}else if (ct.contains("upto")) {
 			salida = elemFromUptoType(ct,num);
-		else/*tipo libre*/ {
+		} else if(tipos.get(ct).startsWith("SchemaType:")) {
+			String tipoCompleto = tipos.get(ct);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipoCompleto);
+			int tiposCant = tiposDecl.cardinalidad();
+			Tuple tuple = new Tuple(tiposCant);
+						
+			for(int i = 0; i < tiposCant; i++) {
+				String tipo = tiposDecl.next();
+				DefaultMutableTreeNode node = SetLogUtils.toTreeNorm(tipo);
+				tuple.setCardinality(i, cardinalidadTipoFinito(node));
+			}
+			//Elegimos los valores de los elementos
+			tuple = tupleFromInt(tuple,num);
+			
+			tiposDecl.reiniciar();
+			for(int i = 0; i < tiposCant; i++) {
+				String tipo = tiposDecl.next();
+				DefaultMutableTreeNode node = SetLogUtils.toTreeNorm(tipo);
+				int aux;
+				String nodeType = node.toString();
+				//numi - 1 es el numero decimal que representa la constante
+				//el cual es la posicion del bit encendido - 1
+				aux = (nodeType.equals("\\power")||nodeType.equals("\\seq"))? 1 : 0;
+				salida += ","  + f(node,tuple.getValue(i)-aux);
+			}
+			
+			if(!salida.isEmpty())
+				salida = "[" + salida.substring(1) + "]";
+			else
+				salida = "[" + "]";
+			
+		} else/*tipo libre*/ {
 			String tipo = tipos.get(ct);
 			salida = elemFromFreeType(tipo,num);	
 		}
