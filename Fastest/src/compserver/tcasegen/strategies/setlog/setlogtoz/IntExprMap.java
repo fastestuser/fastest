@@ -72,34 +72,34 @@ public final class IntExprMap {
 		}
 	}	
 
-	private  class Tuple{
+	public  class Tuple{
 		int size;
 		int[] cardinality;
 		int[] value;
-		
+
 		public Tuple(int size){
 			this.size = size;
 			this.cardinality = new int[size];
 			this.value = new int[size];
 		}
-		
+
 		public void setCardinality(int pos, int cardinality) {
 			this.cardinality[pos] = cardinality;
 		}
-		
+
 		public int getCardinality(int pos) {
 			return this.cardinality[pos];
 		}
-		
+
 		public void setValue(int pos, int value) {
 			this.value[pos] = value;
 		}
-		
+
 		public int getValue(int pos) {
 			return this.value[pos];
 		}
 	}
-	
+
 	private  Par parFromInt(int card2, int num){
 		Par p = new Par();
 		if(card2>0){
@@ -112,15 +112,66 @@ public final class IntExprMap {
 		p.y = num;
 		return p;
 	}
+
 	private int intFromPar(int x, int y, int card){
 		return card*(x-1) + y;
 	}
-	
-	private  Tuple tupleFromInt(Tuple tuple, int num){ //HACER
+
+	public  Tuple tupleFromInt(Tuple tuple, int num){
+
+		int dim = 0;
+		int size = tuple.size;
+		int totalCardinality = 1;
+
+		if (num == 1) {
+			tuple.setValue(0, 1);
+			dim++;
+		} else {
+			while (num > totalCardinality) { //Si no me alcanza con las dimensiones usadas
+
+				int value = num / totalCardinality; //Calculo cuanto me falta
+				if (num % totalCardinality > 0) //Si no da justo agrego 1
+					value++;
+				value = value % tuple.getCardinality(dim); //El resto es el valor
+
+				if (value == 0) //Si el resto es 0, entonces entra justo (uso la cardinalidad)
+					tuple.setValue(dim, tuple.getCardinality(dim));
+				else
+					tuple.setValue(dim, value);
+
+				totalCardinality *= tuple.getCardinality(dim);
+				dim++;
+			}
+
+		}
+		while (dim < size) { //El resto se llena en 0, es un valor invalido, pero se usa para no calcular la dimension total
+			tuple.setValue(dim, 0);
+			dim++;
+		}
+
 		return tuple;
 	}
-	private Tuple intFromTuple(Tuple tuple){ //HACER
-		return tuple;
+
+	public int intFromTuple(Tuple tuple){
+
+		int dim = 1;
+		int num = tuple.getValue(0); //La primera dimension suma derecho, el resto se calcula
+		int size = tuple.size;
+		int totalCardinality = tuple.getCardinality(0);
+
+		//Buscamos la ultima dimension que no tiene 0
+		while ((dim < size) && (tuple.getValue(dim)) != 0){
+			int value = tuple.getValue(dim);
+			value--;
+
+			value *= totalCardinality;
+			num += value;
+
+			totalCardinality *= tuple.getCardinality(dim);
+			dim++;
+		}
+
+		return num;
 	}
 
 	//devuelve la posicion de los bits encendidos de la representacion binaria del entero,
@@ -141,8 +192,8 @@ public final class IntExprMap {
 		palabra[i++] = ni*resto;
 		return palabra;
 	}
-	
-	
+
+
 
 	/* Dado un numero natural y un tipo devuelve una expresion terminal del tipo */
 	private  String f(DefaultMutableTreeNode nodo, int num){
@@ -191,14 +242,16 @@ public final class IntExprMap {
 
 				salida = "["+f(hijoIzq,p.x) + "," + f(hijoDer,p.y) +"]";
 			}
+
 		}else if (ct.contains("upto")) {
 			salida = elemFromUptoType(ct,num);
+
 		} else if(tipos.get(ct).startsWith("SchemaType:")) {
 			String tipoCompleto = tipos.get(ct);
 			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipoCompleto);
 			int tiposCant = tiposDecl.cardinalidad();
 			Tuple tuple = new Tuple(tiposCant);
-						
+
 			for(int i = 0; i < tiposCant; i++) {
 				String tipo = tiposDecl.next();
 				DefaultMutableTreeNode node = SetLogUtils.toTreeNorm(tipo);
@@ -206,7 +259,7 @@ public final class IntExprMap {
 			}
 			//Elegimos los valores de los elementos
 			tuple = tupleFromInt(tuple,num);
-			
+
 			tiposDecl.reiniciar();
 			for(int i = 0; i < tiposCant; i++) {
 				String tipo = tiposDecl.next();
@@ -216,14 +269,19 @@ public final class IntExprMap {
 				//numi - 1 es el numero decimal que representa la constante
 				//el cual es la posicion del bit encendido - 1
 				aux = (nodeType.equals("\\power")||nodeType.equals("\\seq"))? 1 : 0;
-				salida += ","  + f(node,tuple.getValue(i)-aux);
+
+				int nodeValue = tuple.getValue(i);
+				if (nodeValue == 0) //No se necesito calcular su valor, lo pongo en 1
+					nodeValue = 1;
+
+				salida += ","  + f(node,nodeValue-aux);
 			}
-			
+
 			if(!salida.isEmpty())
 				salida = "[" + salida.substring(1) + "]";
 			else
 				salida = "[" + "]";
-			
+
 		} else/*tipo libre*/ {
 			String tipo = tipos.get(ct);
 			salida = elemFromFreeType(tipo,num);	
@@ -289,12 +347,35 @@ public final class IntExprMap {
 			f2 = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? f2+1 : f2;
 
 			return intFromPar( f1 , f2, cardinalidadTipoFinito(hijoDer));
-		}
-		else if(ct.contains("upto")){
+
+		} else if(ct.contains("upto")){
 			salida = numFromUptoType(ct,expr);
 			salida = (salida == 0)?-1:salida;
-		}
-		else{
+
+		} else if(tipos.get(ct).startsWith("SchemaType:")) {
+
+			String tipoCompleto = tipos.get(ct);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipoCompleto);
+			int tiposCant = tiposDecl.cardinalidad();
+			Tuple tuple = new Tuple(tiposCant);
+			ExprIterator elems = new ExprIterator(expr);
+
+			for(int i = 0; i < tiposCant; i++) {
+				String tipo = tiposDecl.next();
+				DefaultMutableTreeNode node = SetLogUtils.toTreeNorm(tipo);
+				tuple.setCardinality(i, cardinalidadTipoFinito(node));
+				int fNode = f(node, elems.next());
+				if (fNode == -1) //Error
+					return -1;
+
+				String ctaux = node.toString();
+				fNode = (ctaux.equals("\\power")||ctaux.equals("\\seq"))? fNode+1 : fNode; //Normalizamos
+				tuple.setValue(i, fNode);
+			}
+
+			return intFromTuple(tuple);
+
+		} else/*tipo libre*/ {
 			salida = numFromFreeType(tipos.get(ct),expr);
 			salida = (salida == 0)?-1:salida;
 		}

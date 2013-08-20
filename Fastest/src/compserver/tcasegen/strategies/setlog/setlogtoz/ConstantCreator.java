@@ -34,6 +34,7 @@ public final class ConstantCreator {
 	private HashMap<String, String> valoresProhibidos;
 	private HashMap<String, StringPointer> slVars;
 	private List<String> basicTypes;
+	private List<String> schemaTypes;
 	private HashMap<String, String> zNames;
 	private int postfijo;
 
@@ -56,6 +57,23 @@ public final class ConstantCreator {
 			// EnumerationType:FT:{elem1,elem2}
 			if (valor.startsWith("BasicType"))
 				basicTypes.add(key);
+		}
+	}
+	
+	/*
+	 * llena la estructura schemaTypes, la cual se usa para saber si una
+	 * expresion tiene como parte de su tipo un tipo schema
+	 */
+	private void llenarSchemaTypes() {
+		schemaTypes = new LinkedList<String>();
+		Iterator<String> iterator = tipos.keySet().iterator();
+		String key, valor;
+		while (iterator.hasNext()) {
+			key = iterator.next().toString();
+			valor = tipos.get(key);
+			// EnumerationType:FT:{elem1,elem2}
+			if (valor.startsWith("SchemaType"))
+				schemaTypes.add(key);
 		}
 	}
 
@@ -88,6 +106,26 @@ public final class ConstantCreator {
 					return false;
 			}
 		}
+		if (schemaTypes == null)
+			llenarSchemaTypes();
+		if (schemaTypes != null) {
+			Iterator<String> it = schemaTypes.iterator();
+			while (it.hasNext()) {
+				String schemaType = it.next();
+				if (tipo.contains(schemaType)) { //Si tiene un tipo schema
+					String schemaTypeComplete = tipos.get(schemaType);
+					//String schemaNode = SetLogUtils.toTreeNorm(schemaTypeComplete).toString();
+					ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(schemaType, schemaTypeComplete);
+					boolean out = true;
+					while ((out == true) && (tiposDecl.hasNext())) {
+						out = soloTipoFinito(SetLogUtils.toTreeNorm(tiposDecl.next()));
+					}
+					if (out == false)
+						return false;
+				}
+			}
+		}
+		
 		return true;
 	}
 

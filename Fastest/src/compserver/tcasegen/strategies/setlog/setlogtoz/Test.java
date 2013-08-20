@@ -147,7 +147,17 @@ public class Test {
 	public static void main(String[] args) throws IOException, CommandException {
 		
 
-		String tipo = "\\power \\num \\cross \\num";
+		IntExprMap.Tuple tuple = new IntExprMap(null).new Tuple(4);
+		tuple.setCardinality(0, 2);
+		tuple.setCardinality(1, 3);
+		tuple.setCardinality(2, 4);
+		tuple.setCardinality(3, 5);
+		tuple = new IntExprMap(null).tupleFromInt(tuple, 120);
+		System.out.println("NUM: " + new IntExprMap(null).intFromTuple(tuple));
+		
+		
+		
+/*		String tipo = "\\power \\num \\cross \\num";
 
 		
 		ANTLRInputStream input = new ANTLRInputStream(tipo);
@@ -161,7 +171,7 @@ public class Test {
         System.out.println("PADRE " + root.getUserObject());
         System.out.println("IZQ " + parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
         System.out.println("DER " + parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
-        
+ */       
         
 //        
 //        input = new ANTLRInputStream(tipo);
@@ -228,19 +238,19 @@ public class Test {
 ////		System.out.println("" + schemaTypeToExprIterator(s1,s2));
 //        String exprS = "int(33,XX)";
 //        String aux[] = exprS.substring(4,exprS.length()-1).split(",");
-        
+ /*       
         ZLive zLive = UniqueZLive.getInstance();
         Pred pred = ParseUtils.parsePred(new StringSource("ab = ab"), zLive.getCurrentSection(), zLive.getSectionManager());
         pred = (Pred)pred.accept(new StringToNumReplacer());
         TypeCheckUtils.typecheck(pred, zLive.getSectionManager(),false, zLive.getCurrentSection());
-        
+ */       
 //        Expr e1 = ParseUtils.parseExpr(new StringSource("\\{22\\}"),zLive.getCurrentSection(), zLive.getSectionManager());
 //		
 //        Expr e2 = ParseUtils.parseExpr(new StringSource("\\{23\\}"),zLive.getCurrentSection(), zLive.getSectionManager());
 //        boolean a = ExprComparator.equalZ(e2,e1);
-        
+ /*       
         pred = zLive.evalPred(pred);
-        System.out.println(SpecUtils.termToLatex(pred));
+        System.out.println(SpecUtils.termToLatex(pred));*/
 	}
 
 }

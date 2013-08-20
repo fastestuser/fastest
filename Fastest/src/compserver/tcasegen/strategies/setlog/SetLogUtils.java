@@ -101,7 +101,7 @@ public final class SetLogUtils {
 				while(tiposDecl.hasNext()){
 					c = tiposDecl.next();
 					v = varsDecl.next();
-					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(c),v); 
+					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(c),expr.next()); 
 				}
 				if (!salida.isEmpty())
 					return "\\lblot " + salida.substring(1) + " \\rblot";
