@@ -338,7 +338,7 @@ public final class ConstantCreator {
 				// el lado derecho, el izquierdo debe ser falso
 				if (sp != null && sp.toString() != null	&& sp.toString().equals("ValueNotAssigned"))
 					return exprS;
-				if (sp != null && sp.toString() != null)
+				if (sp != null && sp.toString() != null && !sp.toString().equals(""))
 					return sp.toString();
 			}
 			cte = cteRestringuida(nodo, exprS);

@@ -393,7 +393,7 @@ public class ExprParser extends Parser {
 				    String domType = generateSetlogFiniteType(zDomType);
 				    String zVar = getKey(var, memory);
 				    String dom = memory.get("\\dom" + zVar);
-				    if (dom == null){
+				    if (dom == null && zVar != null){
 						dom = newVar();
 						memory.put("\\dom" + zVar, dom);
 						types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
