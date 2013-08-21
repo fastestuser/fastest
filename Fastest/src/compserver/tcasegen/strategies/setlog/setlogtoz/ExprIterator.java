@@ -93,6 +93,18 @@ public final class ExprIterator implements Iterator<String>{
 		posActual = backup;
 
 	}
+	
+	public boolean contains(String s){
+		int backup = posActual;
+		boolean esta = false;
+		posActual = 0;
+		while (hasNext()){
+			if (next().equals(s))
+				esta = true;
+		}
+		posActual = backup;
+		return esta;
+	}
 
 	public String toString(){
 		return expr;

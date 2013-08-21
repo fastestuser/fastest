@@ -304,6 +304,11 @@ public final class ConstantCreator {
 		}
 		return var;
 	}
+	
+	boolean esProhibido(String var, String cte){
+		ExprIterator it = new ExprIterator("{" + valoresProhibidos.get(var) + "}");
+		return it.contains(cte);
+	}
 
 	/*
 	 * Dada una expresion y un tipo, genera un terminal cte para el tipo
@@ -328,7 +333,6 @@ public final class ConstantCreator {
 			return exprS;
 		}
 
-		// si es variable auxiliar de {log} genero
 		if (SetLogUtils.esSLVariableSimple(exprS)) {
 			String cte = null;
 			StringPointer sp;
@@ -338,7 +342,7 @@ public final class ConstantCreator {
 				// el lado derecho, el izquierdo debe ser falso
 				if (sp != null && sp.toString() != null	&& sp.toString().equals("ValueNotAssigned"))
 					return exprS;
-				if (sp != null && sp.toString() != null && !sp.toString().equals(""))
+				if (sp != null && sp.toString() != null && !esProhibido(exprS,sp.toString()) && !sp.toString().equals(""))
 					return sp.toString();
 			}
 			cte = cteRestringuida(nodo, exprS);

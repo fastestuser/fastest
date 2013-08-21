@@ -2,9 +2,7 @@ package client.presentation.commands;
 
 import java.io.*;
 import java.util.*;
-
 import net.sourceforge.czt.z.ast.*;
-
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import common.z.SpecUtils;

@@ -2,7 +2,7 @@ package client.blogic.testing.ttree.strategies;
 
 import client.blogic.testing.ttree.tactics.*;
 import java.util.*;
-
+import common.z.SpecUtils;
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
 import common.z.TClass;
@@ -48,6 +48,7 @@ public class IterativeTTreeStrategy implements TTreeStrategy {
 
     private void generateTTreeHelper(TClassNode tClassNode, List<Tactic> tacticList) {
         TClass tClass = tClassNode.getValue();
+        
         boolean anyTacticApplied = false;
         // We traverse the list of tactics until we can apply one of them, that
         // is, until one of them generates new test classes

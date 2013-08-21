@@ -15,7 +15,7 @@ public final class ZVarsFiller {
 	private HashMap<String, StringPointer> slvars;
 
 	private void setLogToLatexCharsReplacer() throws Exception{
-		SetLogUtils.setLogToLatexCharsReplacerInit(tipos, slvars, tipos);
+		SetLogUtils.setLogToLatexCharsReplacerInit(tipos, slvars, zNames);
 		Iterator<String> it = zVars.keySet().iterator();
 		String var,tipo,expr;
 		String varn;

@@ -360,9 +360,10 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
                 }
             }
         }
+        //MODIFICADO comentado
         if (pred != null) {
         	zSchText.setPred((Pred) pred.accept(this));
-        }
+       }
         return schExpr;
     }
 

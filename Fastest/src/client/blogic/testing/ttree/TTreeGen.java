@@ -115,6 +115,7 @@ public class TTreeGen extends IIComponent {
         try {
             EventAdmin eventAdmin = EventAdmin.getInstance();
             TTreeGenerated tTreeGenerated = new TTreeGenerated(unitToTest, newNode);
+            String s = tTreeGenerated.getOpName();
             eventAdmin.announceEvent(tTreeGenerated);
         } catch (Exception e) {
             e.printStackTrace();

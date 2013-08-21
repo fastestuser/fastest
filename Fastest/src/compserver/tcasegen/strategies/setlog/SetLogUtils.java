@@ -110,7 +110,7 @@ public final class SetLogUtils {
 
 
 			if (tipocompleto.startsWith("EnumerationType"))
-				return exprS;
+				return zNames.get(exprS);
 
 
 			if (tipocompleto.startsWith("BasicType")){
