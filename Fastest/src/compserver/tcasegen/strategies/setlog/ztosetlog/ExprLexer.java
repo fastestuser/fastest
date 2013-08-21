@@ -365,7 +365,7 @@ public class ExprLexer extends Lexer {
 						if (tipoSchema == 0) print(var + " in " + type);
 					} else
 						type = type.split(":")[1];
-					return type;
+					return getKey(type, memory);
 				}
 			
 				String nodeType = getType(type);
@@ -439,7 +439,7 @@ public class ExprLexer extends Lexer {
 							if (tipoSchema == 0) print(var + " in " + type);
 						} else
 							type = type.split(":")[1];
-						return type;
+						return getKey(type, memory);
 					}
 				}
 			}

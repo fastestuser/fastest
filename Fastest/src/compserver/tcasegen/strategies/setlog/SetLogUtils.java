@@ -95,8 +95,8 @@ public final class SetLogUtils {
 		if (tipocompleto !=null){
 
 			if (tipocompleto.startsWith("SchemaType")){
-				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipocompleto);
-				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct, tipocompleto);
+				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipocompleto);
+				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipocompleto);
 				String c,v,salida="";
 				while(tiposDecl.hasNext()){
 					c = tiposDecl.next();
@@ -193,10 +193,12 @@ public final class SetLogUtils {
 		return (Character.isDigit(c) || c == '-');
 	}
 
-	public static ExprIterator schemaToVarExprIterator(String nomTipo,String tipoCompleto){
+	public static ExprIterator schemaToVarExprIterator(String tipoCompleto){
 		// ej SchemaType:Estado:[var1:\num,var2:E] -> {var1,var2}
 		// "SchemaType:".length() = 11 + :.lingth()
-		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		//tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
+		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		ExprIterator expr = new ExprIterator(tipoCompleto);
 		String elem,aux[],salida="";
 		while(expr.hasNext()){
@@ -209,10 +211,12 @@ public final class SetLogUtils {
 		return new ExprIterator(salida);
 	}
 
-	public static ExprIterator schemaToTypeExprIterator(String nomTipo,String tipoCompleto){
+	public static ExprIterator schemaToTypeExprIterator(String tipoCompleto){
 		// ej SchemaType:Estado:[var1:\num,var2:E]-> {\num,E}
 		// "SchemaType:".length() = 11 + :.lingth()
-		tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		//tipoCompleto = tipoCompleto.substring(12+nomTipo.length());
+		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
+		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		ExprIterator expr = new ExprIterator(tipoCompleto);
 		String elem,aux[],salida="";
 		while(expr.hasNext()){

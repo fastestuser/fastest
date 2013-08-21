@@ -115,7 +115,7 @@ public final class ConstantCreator {
 				if (tipo.contains(schemaType)) { //Si tiene un tipo schema
 					String schemaTypeComplete = tipos.get(schemaType);
 					//String schemaNode = SetLogUtils.toTreeNorm(schemaTypeComplete).toString();
-					ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(schemaType, schemaTypeComplete);
+					ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(schemaTypeComplete);
 					boolean out = true;
 					while ((out == true) && (tiposDecl.hasNext())) {
 						out = soloTipoFinito(SetLogUtils.toTreeNorm(tiposDecl.next()));
@@ -281,8 +281,8 @@ public final class ConstantCreator {
 		// unfoldeado a tipos.
 		String tipoCompleto = tipos.get(ct);
 		if (tipoCompleto.startsWith("SchemaType")) {
-			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,	tipoCompleto);
-			ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct,	tipoCompleto);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipoCompleto);
+			ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipoCompleto);
 			String salida = "";
 			while (tiposDecl.hasNext())
 				salida += ","+ cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next());
@@ -397,8 +397,8 @@ public final class ConstantCreator {
 		}
 		/* es tipo esquema, porque tiene estructura y no es ningun tipo anterior */
 		// pinta [X,X,X]
-		ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct,tipos.get(ct));
-		ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(ct,	tipos.get(ct));
+		ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipos.get(ct));
+		ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipos.get(ct));
 		while (expr.hasNext()) {
 			varsDecl.next();
 			salida += ","+ cte(SetLogUtils.toTreeNorm(tiposDecl.next()), expr.next());

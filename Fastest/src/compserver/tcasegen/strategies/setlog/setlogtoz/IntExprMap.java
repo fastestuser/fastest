@@ -248,7 +248,7 @@ public final class IntExprMap {
 
 		} else if(tipos.get(ct).startsWith("SchemaType:")) {
 			String tipoCompleto = tipos.get(ct);
-			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipoCompleto);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipoCompleto);
 			int tiposCant = tiposDecl.cardinalidad();
 			Tuple tuple = new Tuple(tiposCant);
 
@@ -355,7 +355,7 @@ public final class IntExprMap {
 		} else if(tipos.get(ct).startsWith("SchemaType:")) {
 
 			String tipoCompleto = tipos.get(ct);
-			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(ct, tipoCompleto);
+			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipoCompleto);
 			int tiposCant = tiposDecl.cardinalidad();
 			Tuple tuple = new Tuple(tiposCant);
 			ExprIterator elems = new ExprIterator(expr);

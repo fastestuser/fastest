@@ -308,7 +308,7 @@ grammar Expr;
 					if (tipoSchema == 0) print(var + " in " + type);
 				} else
 					type = type.split(":")[1];
-				return type;
+				return getKey(type, memory);
 			}
 		
 			String nodeType = getType(type);
@@ -382,7 +382,7 @@ grammar Expr;
 						if (tipoSchema == 0) print(var + " in " + type);
 					} else
 						type = type.split(":")[1];
-					return type;
+					return getKey(type, memory);
 				}
 			}
 		}
