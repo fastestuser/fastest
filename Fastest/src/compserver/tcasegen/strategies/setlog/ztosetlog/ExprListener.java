@@ -26,11 +26,11 @@ public interface ExprListener extends ParseTreeListener {
 	void enterPost(ExprParser.PostContext ctx);
 	void exitPost(ExprParser.PostContext ctx);
 
-	void enterDeclaration(ExprParser.DeclarationContext ctx);
-	void exitDeclaration(ExprParser.DeclarationContext ctx);
-
 	void enterEndExpression(ExprParser.EndExpressionContext ctx);
 	void exitEndExpression(ExprParser.EndExpressionContext ctx);
+
+	void enterDeclaration(ExprParser.DeclarationContext ctx);
+	void exitDeclaration(ExprParser.DeclarationContext ctx);
 
 	void enterParagraph(ExprParser.ParagraphContext ctx);
 	void exitParagraph(ExprParser.ParagraphContext ctx);
@@ -64,4 +64,7 @@ public interface ExprListener extends ParseTreeListener {
 
 	void enterSpecification(ExprParser.SpecificationContext ctx);
 	void exitSpecification(ExprParser.SpecificationContext ctx);
+
+	void enterSchemaTypeText(ExprParser.SchemaTypeTextContext ctx);
+	void exitSchemaTypeText(ExprParser.SchemaTypeTextContext ctx);
 }

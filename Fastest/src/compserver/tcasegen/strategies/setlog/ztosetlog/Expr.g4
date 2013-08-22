@@ -552,8 +552,11 @@ specification
 paragraph
 	//Aceptamos 3 tipos de schemas: la clase de prueba (schema), los tipos esquema necesarios (schemaType) y
 	//las definiciones de tipos basicos y enumerados
-	:	'\\begin{' ('schema' | ('schemaType' {tipoSchema = 1; schemaTypeVars = new HashMap<String,String>();})) '}{' NAME '}'
+	:	'\\begin{' 'schema' '}{' NAME '}'
 		schemaText
+		'\\end{' 'schema' '}'
+	|	'\\begin{' 'schemaType' {tipoSchema = 1; schemaTypeVars = new HashMap<String,String>();} '}{' NAME '}'
+		schemaTypeText
 		{
 			if (tipoSchema == 1) {
 				String newVarName = newVar($NAME.text);
@@ -642,6 +645,10 @@ locals [ArrayList<String> cases;]
       
 schemaText
 	:	NL (declPart NL)? ('\\where' NL)? (predicate NL)*
+	;
+	
+schemaTypeText
+	:	NL (declPart NL)?
 	;
 	
 declPart:	declaration ((';' | NL) declaration)*

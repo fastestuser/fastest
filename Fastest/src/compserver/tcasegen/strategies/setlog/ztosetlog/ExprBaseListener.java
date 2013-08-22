@@ -29,11 +29,11 @@ public class ExprBaseListener implements ExprListener {
 	@Override public void enterPost(ExprParser.PostContext ctx) { }
 	@Override public void exitPost(ExprParser.PostContext ctx) { }
 
-	@Override public void enterDeclaration(ExprParser.DeclarationContext ctx) { }
-	@Override public void exitDeclaration(ExprParser.DeclarationContext ctx) { }
-
 	@Override public void enterEndExpression(ExprParser.EndExpressionContext ctx) { }
 	@Override public void exitEndExpression(ExprParser.EndExpressionContext ctx) { }
+
+	@Override public void enterDeclaration(ExprParser.DeclarationContext ctx) { }
+	@Override public void exitDeclaration(ExprParser.DeclarationContext ctx) { }
 
 	@Override public void enterParagraph(ExprParser.ParagraphContext ctx) { }
 	@Override public void exitParagraph(ExprParser.ParagraphContext ctx) { }
@@ -67,6 +67,9 @@ public class ExprBaseListener implements ExprListener {
 
 	@Override public void enterSpecification(ExprParser.SpecificationContext ctx) { }
 	@Override public void exitSpecification(ExprParser.SpecificationContext ctx) { }
+
+	@Override public void enterSchemaTypeText(ExprParser.SchemaTypeTextContext ctx) { }
+	@Override public void exitSchemaTypeText(ExprParser.SchemaTypeTextContext ctx) { }
 
 	@Override public void enterEveryRule(ParserRuleContext ctx) { }
 	@Override public void exitEveryRule(ParserRuleContext ctx) { }

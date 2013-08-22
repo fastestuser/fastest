@@ -146,7 +146,7 @@ public class Test {
 	
 	public static void main(String[] args) throws IOException, CommandException {
 		
-
+/*
 		IntExprMap.Tuple tuple = new IntExprMap(null).new Tuple(4);
 		tuple.setCardinality(0, 2);
 		tuple.setCardinality(1, 3);
@@ -154,7 +154,7 @@ public class Test {
 		tuple.setCardinality(3, 5);
 		tuple = new IntExprMap(null).tupleFromInt(tuple, 120);
 		System.out.println("NUM: " + new IntExprMap(null).intFromTuple(tuple));
-		
+*/		
 		
 		
 /*		String tipo = "\\power \\num \\cross \\num";
