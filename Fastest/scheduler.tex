@@ -1,0 +1,153 @@
+\begin{zed}
+[PID]
+\end{zed}
+
+\begin{zed}
+PSTATUS ::= waiting | ready
+\end{zed}
+
+\begin{zed}
+EXCEPTION ::= \\
+  \t1 ok | memoryFull | alreadyExists | busyProcess | unknownProcess | noActiveProcess
+\end{zed}
+
+\begin{zed}
+BIN ::= yes | no
+\end{zed}
+
+\beginNO{schema}{Display\_ SP\_ 33}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = no \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \subset \ran procs \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \cap \ran procs = \{ \}
+\end{schema}
+
+\begin{schema}{Display\_ SP\_ 38}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = no \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} = \ran procs
+\end{schema}
+
+
+\beginNO{schema}{Display\_ SP\_ 39}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = no \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \subset \ran procs
+\end{schema}
+
+
+\beginNO{schema}{Display\_ SP\_ 40}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = no \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \cap \ran procs = \{ \}
+\end{schema}
+
+\beginNO{schema}{Display\_ SP\_ 89}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = yes \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \subset \ran procs \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \cap \ran procs = \{ \}
+\end{schema}
+
+\begin{schema}{Display\_ SP\_ 94}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = yes \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} = \ran procs
+\end{schema}
+
+
+\beginNO{schema}{Display\_ SP\_ 95}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = yes \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \subset \ran procs
+\end{schema}
+
+
+\beginNO{schema}{Display\_ SP\_ 96}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN 
+\where
+ idle = yes \\
+ procs \neq \{ \} \\
+ \{ waiting \} \neq \{ \} \\
+ \{ waiting \} \cap \ran procs = \{ \} \\
+ \{ ready \} \neq \{ \} \\
+ \{ ready \} \cap \ran procs = \{ \}
+\end{schema}
+
+\begin{schema}{New\_ SP\_ 20}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN \\
+ p? : PID \\
+ maxProcs : \nat 
+\where
+ \# ( \dom procs ) = maxProcs \\
+ maxProcs = 6 \\
+ procs \neq \{ \} \\
+ \{ p? \mapsto waiting \} \neq \{ \} \\
+ procs \cap \{ p? \mapsto waiting \} = \{ \}
+\end{schema}
+
+
+\begin{schema}{New\_ SP\_ 22}\\
+ procs,procs' : PID \ffun PSTATUS \\
+ current : PID \\
+ idle : BIN \\
+ p? : PID \\
+ maxProcs : \nat 
+\where
+ \# ( \dom procs ) = maxProcs \\
+ maxProcs = 6 \\
+ procs \neq \{ \} \\
+ \{ p? \mapsto waiting \} \neq \{ \} \\
+ \{ p? \mapsto waiting \} \subset procs
+\end{schema}
+
+

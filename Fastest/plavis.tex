@@ -1,0 +1,550 @@
+\begin{zed}
+[MDATA]
+\end{zed}
+
+\begin{zed}
+CTYPE ::= RM | SC | IDA | SDA | TD | RC | MD | ML | LP
+\end{zed}
+
+\begin{zed}
+RTYPE ::= MR | CD | EDP | ND | MDD
+\end{zed}
+
+\begin{zed}
+CMODE ::= COF | CON
+\end{zed}
+
+\begin{zed}
+PARAM ::= 
+  LLDHiOff 
+  | LLDHiOn | TMOff | TMOn | HiV50 | HiV45 | HiV40 | HiVOff | RU | TS18 | TS13
+\end{zed}
+
+\begin{zed}
+TIME == \nat
+\end{zed}
+
+\begin{zed}
+BIN ::= no | yes
+\end{zed}
+
+\begin{schema}{RetrieveEData\_ SP\_ 20}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ data? : \seq MDATA 
+\where
+ 43 < mep + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \neq \{ \} \\
+ \dom memd = \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \}
+\end{schema}
+
+
+\begin{schema}{RetrieveEData\_ SP\_ 21}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ data? : \seq MDATA 
+\where
+ 43 < mep + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \neq \{ \} \\
+ \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \subset \dom memd
+\end{schema}
+
+
+\begin{schema}{RetrieveEData\_ SP\_ 23}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ data? : \seq MDATA 
+\where
+ 43 < mep + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \neq \{ \} \\
+ \dom memd \subset \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \}
+\end{schema}
+
+
+\begin{schema}{RetrieveEData\_ SP\_ 24}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ data? : \seq MDATA 
+\where
+ 43 < mep + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} ) \neq \{ \} \\
+ \lnot \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \} \subseteq \dom memd \\
+ \lnot \dom memd \subseteq \dom \{ i : 1 \upto \# data? @ mep + i \mapsto data?~i \}
+\end{schema}
+
+\begin{schema}{MemoryLoad\_ SP\_ 6}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ waiting = no \\
+ ccmd = ML \\
+ 0 < addr? \\
+ data? \neq \langle \rangle \\
+ addr? + \# data? \leq 44 \\
+ addr? + \# data? \leq mep \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} ) = \{ \}
+\end{schema}
+
+
+\begin{schema}{MemoryLoad\_ SP\_ 8}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ waiting = no \\
+ ccmd = ML \\
+ 0 < addr? \\
+ data? \neq \langle \rangle \\
+ addr? + \# data? \leq 44 \\
+ addr? + \# data? \leq mep \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} ) \neq \{ \} \\
+ \lnot \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \subseteq \dom memd \\
+ \lnot \dom memd \subseteq \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \}
+\end{schema}
+
+\begin{schema}{MemoryLoad\_ SP\_ 14}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ waiting = no \\
+ ccmd = ML \\
+ 0 < addr? \\
+ data? \neq \langle \rangle \\
+ addr? + \# data? \leq 44 \\
+ mep < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} ) = \{ \}
+\end{schema}
+
+
+\begin{schema}{MemoryLoad\_ SP\_ 16}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ waiting = no \\
+ ccmd = ML \\
+ 0 < addr? \\
+ data? \neq \langle \rangle \\
+ addr? + \# data? \leq 44 \\
+ mep < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} ) \neq \{ \} \\
+ \lnot \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \subseteq \dom memd \\
+ \lnot \dom memd \subseteq \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \}
+\end{schema}
+
+\begin{schema}{MemoryLoad\_ SP\_ 52}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ 44 < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ \dom memd = \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \}
+\end{schema}
+
+
+\begin{schema}{MemoryLoad\_ SP\_ 53}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ 44 < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \subset \dom memd
+\end{schema}
+
+
+\begin{schema}{MemoryLoad\_ SP\_ 55}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ 44 < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ \dom memd \subset \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \}
+\end{schema}
+
+
+\begin{schema}{MemoryLoad\_ SP\_ 56}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE \\
+ addr? : \nat \\
+ data? : \seq MDATA \\
+ low? : BIN 
+\where
+ 44 < addr? + \# data? \\
+ memd \neq \{ \} \\
+ \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \neq \{ \} \\
+ ( \dom memd \cap \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} ) \neq \{ \} \\
+ \lnot \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \} \subseteq \dom memd \\
+ \lnot \dom memd \subseteq \dom \{ i : 1 \upto \# data? @ i + addr? - 1 \mapsto data?~i \}
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 3}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ ped = 0 \\
+ mep = 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 4}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ ped = 0 \\
+ mep = 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 10}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = dumping \\
+ dumping = yes \\
+ mdp < 5 * 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 11}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = dumping \\
+ dumping = yes \\
+ mdp < 5 * 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 13}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = dumping \\
+ dumping = yes \\
+ mdp < 5 * 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \cap \dom memp \neq \{ \} \\
+ \dom memp \subset ( mdp + 1 \upto ( mdp + 43 ) )
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 14}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = dumping \\
+ dumping = yes \\
+ mdp < 5 * 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \cap \dom memp \neq \{ \} \\
+ \lnot \dom memp \subseteq ( mdp + 1 \upto ( mdp + 43 ) ) \\
+ \lnot ( mdp + 1 \upto ( mdp + 43 ) ) \subseteq \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 21}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = dumping \\
+ dumping = yes \\
+ mdp = 5 * 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \cap \dom memp \neq \{ \} \\
+ \lnot \dom memp \subseteq ( mdp + 1 \upto ( mdp + 43 ) ) \\
+ \lnot ( mdp + 1 \upto ( mdp + 43 ) ) \subseteq \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 24}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ mep < 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 25}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ mep < 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 31}\\
+ memp , memp', memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ ped = 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 32}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting = no \\
+ ccmd = TD \\
+ sending = yes \\
+ dumping = no \\
+ ped = 43 \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 38}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting \neq no \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 39}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ waiting \neq no \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 45}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ ccmd \neq TD \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 46}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ ccmd \neq TD \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+
+\begin{schema}{TransData\_ SP\_ 52}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ sending \neq yes \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) = \dom memp
+\end{schema}
+
+
+\begin{schema}{TransData\_ SP\_ 53}\\
+ memp, memp' , memd : \seq MDATA \\
+ mdp , mep , ped : \nat \\
+ ctime : TIME \\
+ acquiring , waiting , sending , dumping , waitsignal : BIN \\
+ mode : CMODE \\
+ ccmd : CTYPE 
+\where
+ sending \neq yes \\
+ memp \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \neq \{ \} \\
+ ( mdp + 1 \upto ( mdp + 43 ) ) \subset \dom memp
+\end{schema}
+

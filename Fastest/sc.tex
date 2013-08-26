@@ -1,0 +1,49 @@
+\begin{zed}
+[CATEGORY] \also
+SCREPORT ::= scCatFull | scOk | scError
+\end{zed}
+
+\begin{schema}{SCSetLevel\_ DNF\_ 3}\\
+ level, level' : \num \\
+ categs : \finset CATEGORY \\
+ MAXLEVEL : \nat \\
+ l? : \num 
+\where
+ MAXLEVEL < l?
+\end{schema}
+
+\begin{schema}{SCAddCat\_ SP\_ 4}\\
+ level, level' : \num \\
+ categs : \finset CATEGORY \\
+ MAXNCAT : \nat \\
+ c? : CATEGORY 
+\where
+ c? \notin categs \\
+ \# categs < MAXNCAT \\
+ categs \neq \{ \} \\
+ \{ c? \} \neq \{ \} \\
+ categs \cap \{ c? \} = \{ \}
+\end{schema}
+
+\begin{schema}{SCAddCat\_ SP\_ 22}\\
+ level, level' : \num \\
+ categs : \finset CATEGORY \\
+ MAXNCAT : \nat \\
+ c? : CATEGORY 
+\where
+ \# categs = MAXNCAT \\
+ categs \neq \{ \} \\
+ \{ c? \} \neq \{ \} \\
+ \{ c? \} \subset categs
+\end{schema}
+
+\begin{schema}{SCSetSC\_ DNF\_ 3}\\
+ level, level' : \num \\
+ categs : \finset CATEGORY \\
+ MAXLEVEL , MAXNCAT : \nat \\
+ l? : \num \\
+ C? : \finset CATEGORY 
+\where
+ MAXLEVEL < l?
+\end{schema}
+

@@ -1,0 +1,27 @@
+ \begin{zed}
+[NCTA] \\
+SALDO == \nat
+\end{zed}
+
+\begin{schema}{Extraer\_ SP\_ 29}\\
+ cajas, cajas' : NCTA \pfun SALDO \\
+ num? : NCTA \\
+ m? : SALDO 
+\where
+ m? > cajas~num? \\
+ num? \in \dom cajas \\
+ cajas \neq \{ \} \\
+ \{ num? \mapsto ( ( cajas~num? ) - m? ) \} \neq \{ \} \\
+ \dom \{ num? \mapsto ( ( cajas~num? ) - m? ) \} \subset \dom cajas
+\end{schema}
+
+\begin{schema}{CerrarCaja\_ SP\_ 12}\\
+ cajas, cajas' : NCTA \pfun SALDO \\
+ num? : NCTA 
+\where
+ num? \notin \dom cajas \\
+ cajas \neq \{ \} \\
+ \{ num? \} \neq \{ \} \\
+ \{ num? \} \cap \dom cajas = \{ \}
+\end{schema}
+

@@ -1,0 +1,116 @@
+\begin{zed}
+[ACCNUM, UID, NAME] \\
+MONEY == \nat \\
+BALANCE == \nat
+\end{zed}
+
+\begin{schema}{Withdraw\_ NR\_ 2}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ u? \mapsto n? \in owners \\
+ n? \in \dom balances \\
+ m? > 0 \\
+ m? \leq balances~n? \\
+ m? < 100000
+\end{schema}
+
+\begin{schema}{Withdraw\_ NR\_ 4}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ u? \mapsto n? \in owners \\
+ n? \in \dom balances \\
+ m? > 0 \\
+ m? \leq balances~n? \\
+ m? = 1000000
+\end{schema}
+
+
+\begin{schema}{Withdraw\_ NR\_ 5}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ u? \mapsto n? \in owners \\
+ n? \in \dom balances \\
+ m? > 0 \\
+ m? \leq balances~n? \\
+ m? > 1000000
+\end{schema}
+
+\begin{schema}{Withdraw\_ NR\_ 8}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ n? \notin \dom balances \\
+ m? > 100000 \\
+ m? < 1000000
+\end{schema}
+
+\begin{schema}{Withdraw\_ NR\_ 18}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ u? \mapsto n? \notin owners \\
+ m? > 100000 \\
+ m? < 1000000
+\end{schema}
+
+\begin{schema}{Withdraw\_ NR\_ 22}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ m? > balances~n? \\
+ m? < 100000
+\end{schema}
+
+\begin{schema}{Withdraw\_ NR\_ 24}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ m? > balances~n? \\
+ m? = 1000000
+\end{schema}
+
+
+\begin{schema}{Withdraw\_ NR\_ 25}\\
+ clients, clients' : UID \pfun NAME \\
+ balances : ACCNUM \pfun BALANCE \\
+ owners : UID \rel ACCNUM \\
+ u? : UID \\
+ n? : ACCNUM \\
+ m? : \nat 
+\where
+ m? > balances~n? \\
+ m? > 1000000
+\end{schema}
+
+

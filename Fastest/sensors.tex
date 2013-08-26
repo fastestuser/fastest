@@ -1,52 +1,26 @@
+\begin{schema}{aa}
+a1 : \nat \pfun \num \\
+a2 : \nat \fun \num \\
+a3: \power \num
+\end{schema}
+
 \begin{zed}
-STATUS ::= normal | failure \also
-REVENT ::= LiftOff | ThrustDrop1E | ThrustDrop2E | ThrustDrop3E \also
-[SENSOR]
+[sENSOR] \\
+FT ::= ft1 | ft2 | ft3 | ft4 | ft5 | ft6
 \end{zed}
 
-\begin{axdef}
-constante : \num \\
-constante2 : \num \\
-f : \num \pfun \num \\
-conjunto : \power (\num \cross \num) \\
-sensora : SENSOR
+\begin{schema}{B}
+sen, sen' : sENSOR \\
+%x,x' : FT \fun \num \\
+%y,y' : FT \pfun \num \\
+%p: \power aa \\
+%k: \power (SENSOR \cross \num)\\
+%num1, num2 : \num \\
+a,b : aa
+\end{schema}
+
+\begin{schema}{C}
+b1,b2,b2' : B
 \where
-\forall y : \num @ f~y = constante \\
-\forall x, y : \num @ (x,y) \in conjunto \iff x \neq constante2 \\
-\forall x : \num @ x \neq constante2 \iff x > 456798 \\
-constante = 456
-\end{axdef}
-
-\begin{schema}{A}\\
-a1 : \num \\
-a2 : SENSOR
+b1 \neq b2
 \end{schema}
-
-\begin{schema}{B}\\
-b1 : \num \\
-b2 : SENSOR \\
-b3 : A
-\end{schema}
-
-\begin{schema}{K2}\\
- x , x' : \num \\
- a : SENSOR \\
- b : B 
-\where
- a \neq sensora \\
- x > 456798 \\
- b . b3 . a1 \neq constante2
-\end{schema}
-
-
-
-%\begin{schema}{K}\\
-%x,x' : \num \\
-%a : SENSOR \\
-%b: B
-%\where
-%a \neq sensora \\
-%x \neq constante2 \\
-%b.b3.a1 \neq constante2
-%\end{schema}
-

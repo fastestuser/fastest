@@ -1,0 +1,538 @@
+\begin{zed}
+BIN ::= NO | YES
+\end{zed}
+
+\begin{zed}
+[BYTE]
+\end{zed}
+
+\begin{axdef}
+checksumSeqBYTE: \seq BYTE \fun BYTE
+\end{axdef}
+
+\begin{zed}
+SRVTYPE ::= \\
+  \t1 HS \\
+  \t1 | SC \\
+  \t1 | COM \\
+  \t1 | VOM | SDA | RDA | TD | RA | GMR
+        %GHR | GDR | GTR | 
+      |LDM | EP | MSP \also
+\end{zed}
+
+
+\begin{axdef}
+abstractService: BYTE \pfun SRVTYPE
+\end{axdef}
+
+\begin{zed}
+PDCANS ::= 
+  CR | CD | OM | ND | ASD | AMD
+  %HD | DD | TD | CS | CE 
+  | MSE | ICS | LS
+\end{zed}
+
+
+\begin{zed}
+HSIGNAL ::= RP | AEPPS1 | DEPPS1 | AEPPS2 | DEPPS2 | EXEC | NONE
+\end{zed}
+
+\begin{zed}
+OMODE ::= SAFETY | NOM | DIAG
+\end{zed}
+
+\begin{zed}
+DTYPE ::= SD | HD | MD %| DD | TD
+\end{zed}
+
+\begin{axdef}
+cga, cco, dge1, dge, hke: \power \nat
+\where
+cga = 0 \upto 32767 \\
+cco = 32768 \upto 163839 \\
+dge = 163840 \upto 229376 \\
+hke = 229777 \upto 262144
+\end{axdef}
+
+\begin{zed}
+SPARAM ::= HGT | ILP | AICST
+\end{zed}
+
+\begin{schema}{TransmitMemoryDumpOk21\_ SP\_ 3}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD > 0 \\
+ fa \leq ( totCSR~MD - csrs~MD + 1 ) * 2 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) = \{ \}
+\end{schema}
+
+\begin{schema}{TransmitMemoryDumpOk21\_ SP\_ 6}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD > 0 \\
+ fa \leq ( totCSR~MD - csrs~MD + 1 ) * 2 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \subset ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{TransmitMemoryDumpOk21\_ SP\_ 8}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD > 0 \\
+ fa \leq ( totCSR~MD - csrs~MD + 1 ) * 2 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \cap ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \neq \{ \} \\
+ \lnot ( 33 \upto 160 ) \subseteq ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \\
+ \lnot ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \subseteq ( 33 \upto 160 ) \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + fa ) ) \neq ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{TransmitMemoryDumpAux\_ SP\_ 6}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD > 0 \\
+ ( totCSR~MD - csrs~MD + 1 ) * 2 < fa \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \subset ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{TransmitMemoryDumpAux\_ SP\_ 8}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD > 0 \\
+ ( totCSR~MD - csrs~MD + 1 ) * 2 < fa \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \cap ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ \lnot ( 33 \upto 160 ) \subseteq ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \\
+ \lnot ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \subseteq ( 33 \upto 160 ) \\
+ ( ia + ( ( totCSR~MD - csrs~MD ) * 2 ) \upto ( ia + ( ( totCSR~MD - csrs~MD + 1 ) * 2 ) ) ) \neq ( 33 \upto 160 )
+\end{schema}
+
+\beginNO{schema}{TransmitMemoryDumpOk11\_ SP\_ 5}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD = 0 \\
+ fa \leq 2 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia \upto ( ia + fa ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \subset ( ia \upto ( ia + fa ) )
+\end{schema}
+
+\beginNO{schema}{TransmitMemoryDumpOk11\_ SP\_ 7}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = MD \\
+ om = NOM \\
+ prepData = YES \\
+ prepDataType = MD \\
+ csrs~MD = 0 \\
+ fa \leq 2 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( ia \upto ( ia + fa ) ) \neq \{ \} \\
+ ( ia \upto ( ia + fa ) ) = ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{LoadMemory\_ SP\_ 9}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ ia? : \nat \\
+ data? : \seq BYTE \\
+ c? : \nat 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = LDM \\
+ om = NOM \\
+ csc > 0 \\
+ c? = csc - 1 \\
+ sparam~ILP \leq ia? \\
+ ia? + \# data? \in 0 \upto 32 \\
+ \{ i : \dom data? @ ia? + i \} \cap modMem = \{ \} \\
+ \{ i : \dom data? @ ia? + i \} = \{ \} \\
+ modMem = \{ \}
+\end{schema}
+
+
+\begin{schema}{LoadMemory\_ SP\_ 10}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ %mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ ia? : \nat \\
+ data? : \seq BYTE \\
+ c? : \nat 
+\where
+ %processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = LDM \\
+ om = NOM \\
+ csc > 0 \\
+ c? = csc - 1 \\
+ sparam~ILP \leq ia? \\
+ ia? + \# data? \in 0 \upto 32 \\
+ \{ i : \dom data? @ ia? + i \} \cap modMem = \{ \} \\
+ \{ i : \dom data? @ ia? + i \} = \{ \} \\
+ modMem \neq \{ \}
+\end{schema}
+
+
+\begin{schema}{LoadMemory\_ SP\_ 11}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ ia? : \nat \\
+ data? : \seq BYTE \\
+ c? : \nat 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = LDM \\
+ om = NOM \\
+ csc > 0 \\
+ c? = csc - 1 \\
+ sparam~ILP \leq ia? \\
+ ia? + \# data? \in 0 \upto 32 \\
+ \{ i : \dom data? @ ia? + i \} \cap modMem = \{ \} \\
+ \{ i : \dom data? @ ia? + i \} \neq \{ \} \\
+ modMem = \{ \}
+\end{schema}
+
+
+\begin{schema}{LoadMemory\_ SP\_ 12}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ ia? : \nat \\
+ data? : \seq BYTE \\
+ c? : \nat 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = LDM \\
+ om = NOM \\
+ csc > 0 \\
+ c? = csc - 1 \\
+ sparam~ILP \leq ia? \\
+ ia? + \# data? \in 0 \upto 32 \\
+ \{ i : \dom data? @ ia? + i \} \cap modMem = \{ \} \\
+ \{ i : \dom data? @ ia? + i \} \neq \{ \} \\
+ modMem \neq \{ \} \\
+ \{ i : \dom data? @ ia? + i \} \cap modMem = \{ \}
+\end{schema}
+
+\begin{schema}{TransmitScientificData\_ SP\_ 8}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = SD \\
+ om = NOM \\
+ csrs~SD = 0 \\
+ 3 \leq sdwp \\
+ acquiring = NO \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \cap ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ \lnot ( 33 \upto 160 ) \subseteq ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \\
+ \lnot ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \subseteq ( 33 \upto 160 ) \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{TransmitScientificData\_ SP\_ 16}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = SD \\
+ om = NOM \\
+ csrs~SD > 0 \\
+ acquiring = YES \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \cap ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ \lnot ( 33 \upto 160 ) \subseteq ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \\
+ \lnot ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \subseteq ( 33 \upto 160 ) \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq ( 33 \upto 160 )
+\end{schema}
+
+\begin{schema}{TransmitScientificData\_ SP\_ 24}\\
+ srv,srv' : SRVTYPE \\
+ om : OMODE \\
+ acquiring : BIN \\
+ prepData : BIN \\
+ prepDataType : DTYPE \\
+ page : \nat \\
+ ia , fa : \nat \\
+ lpck : \seq BYTE \\
+ lpckDT : PDCANS \\
+ csrs , totCSR : DTYPE \fun \nat \\
+ csc : \nat \\
+ mem : \nat \pfun BYTE \\
+ modMem : \power \nat \\
+ sdwp : \nat \\
+ sparam : SPARAM \fun \nat \\
+ time : \nat \\
+ processingCmd : BIN \\
+ st? : DTYPE 
+\where
+ processingCmd = YES \land \dom mem = 1 \upto 1024 \\
+ srv = TD \\
+ st? = SD \\
+ om = NOM \\
+ csrs~SD = 0 \\
+ sdwp < 3 \\
+ ( 33 \upto 160 ) \neq \{ \} \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ ( 33 \upto 160 ) \cap ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq \{ \} \\
+ \lnot ( 33 \upto 160 ) \subseteq ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \\
+ \lnot ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \subseteq ( 33 \upto 160 ) \\
+ ( 33 + ( ( totCSR~SD - csrs~SD ) * 2 ) \upto ( 33 + ( ( totCSR~SD - csrs~SD + 1 ) * 2 ) ) ) \neq ( 33 \upto 160 )
+\end{schema}

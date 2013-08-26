@@ -1,0 +1,176 @@
+\begin{zed}
+STATUS ::= normal | failure \also
+REVENT ::= LiftOff | ThrustDrop1E | ThrustDrop2E | ThrustDrop3E
+\end{zed}
+
+\begin{axdef}
+tli, tls: REVENT \fun \nat \\
+X: REVENT \fun \nat 
+\end{axdef}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 18}\\
+tli, tli', tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ e? = LiftOff \\
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \leq fa \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now > 1 \\
+ now < 3
+\end{schema}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 103}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop1E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now > 2 \\
+ now < 4
+\end{schema}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 146}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop2E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now = 3
+\end{schema}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 148}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop2E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now > 3 \\
+ now < 7
+\end{schema}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 149}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop2E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now = 7
+\end{schema}
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 56}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop3E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now = 4
+\end{schema}
+
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 58}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop3E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now > 4 \\
+ now < 10
+\end{schema}
+
+
+\begin{schema}{DetectReferenceEvent\_ NR\_ 59}\\
+tli, tli',tls: REVENT \fun \nat \\
+X: REVENT \fun \nat \\
+ now : \nat \\
+ ot : REVENT \pfun \nat \\
+ sysState : STATUS \\
+ fa : \nat \\
+ e? : REVENT 
+\where
+ sysState = normal \\
+ e? \notin \dom ot \\
+ now \in tli~e? \upto tls~e? \\
+ X~e? \geq fa \\
+ e? = ThrustDrop3E \\
+ ot \neq \{ \} \\
+ \{ e? \mapsto now \} \neq \{ \} \\
+ ot \cap \{ e? \mapsto now \} = \{ \} \\
+ now = 10
+\end{schema}
+
