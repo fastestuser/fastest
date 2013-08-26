@@ -1,8 +1,9 @@
 grammar Expr;
 
-//Gramatica utilizada para la creacion, a partir de una clase de prueba Z, la entrada necesaria
-//para setlog. Es parte del proceso de generacion de casos de prueba.
-
+//
+//  Gramatica utilizada para la creacion, a partir de una clase de prueba Z, la entrada necesaria
+//  para setlog. Es parte del proceso de generacion de casos de prueba.
+//
 @header {
 	package compserver.tcasegen.strategies.setlog.ztosetlog;
 	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
@@ -40,6 +41,9 @@ grammar Expr;
 	String out = new String();
 	String functionsOut = new String();
 	
+	//
+	//  Sets basic axiomatic definitions, so they are used as values and not as variables
+	//
 	public void setBasicAxDef(HashMap<String, List<String>> basicAxDef){
 		Iterator<String> itmap = basicAxDef.keySet().iterator();
 		Iterator<String> itlist = basicAxDef.keySet().iterator();
@@ -61,28 +65,44 @@ grammar Expr;
 		} 
 	}
 	
+	//
+	//  Returns the output that is passed to setlog.
+	//
 	public String getSalida() {
 		return out.concat(functionsOut);
 	}
 	
+	//
+	//  Returns 'memory', the hash map where all the name translations are stored.
+	//
 	public HashMap<String,String> getMemory() {
 		return memory;
 	}
 	
+	//
+	//  Returns 'types', the hash map where all the expression types are stored.
+	//
 	public HashMap<String,String> getTypes() {
 		return types;
 	}
 	
+	//
+	//  Returns 'zVars', the hash map where all the Z variables that has to be fulled with a value are stored.
+	//
 	public HashMap<String,String> getZVars() {
 		return zVars;
 	}
 
-	//Metodo para imprimir normalmente una linea de setlog
+	//
+	//  Metodo principal para imprimir normalmente una linea de entrada para setlog.
+	//
 	public void print(String c) {
+		//Si no estamos dentro de una expression de conjuntos o tipo esquema,
+		//concatenamos en la salida normal
 		if (modoSetExpression == 0 && tipoSchema == 0) { 
-			//System.out.println(c + " & ");
 			out = out.concat(c + " & ");
 		}
+		//Y sino, concatenamos en la variable auxiliar correspondiente
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -91,11 +111,16 @@ grammar Expr;
 			setExpressionExpr = setExpressionExpr.concat(" & " + c);
 	}
 	
-	//Este metodo se utiliza para imprimir informacion del tipo: is_pfun, is_rel, etc
-	//ya que debe ir al final de todo
+	//
+	//  Este metodo se utiliza para imprimir informacion de tipo de una variable: is_pfun, is_rel, etc
+	//  ya que debe ir al final de todo
+	//
 	public void printAtEnd(String c) {
+		//Si no estamos dentro de una expression de conjuntos o tipo esquema,
+		//concatenamos en la salida normal
 		if (modoSetExpression == 0 && tipoSchema == 0) 
 			functionsOut = functionsOut.concat(c + " & ");
+		//Y sino, concatenamos en la variable auxiliar correspondiente
 		else if (modoSetExpression == 1)
 			setExpressionDecl = setExpressionDecl.concat(" & " + c);
 		else if (modoSetExpression == 2)
@@ -104,8 +129,10 @@ grammar Expr;
 			setExpressionExpr = setExpressionExpr.concat(" & " + c);
 	}
 	
-	//Metodo para la determinacion del typo mas externo de un tipo.
-	//Ej:  type = A \cross B ----> return \cross
+	//
+	//  Metodo para la determinacion del tipo de nodo mas externo de un tipo.
+	//  Ej:  type = A \cross B ----> return \cross
+	//
 	String getType(String type) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 		ANTLRInputStream input = new ANTLRInputStream(type);
@@ -115,15 +142,18 @@ grammar Expr;
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
         
-        //Elimino parentesis externos
+        //root es la raiz del arbol, como puede contener parentesis, los elimino
         while (((String) root.getUserObject()).equals("()")) {
         	root = (DefaultMutableTreeNode) root.getChildAt(0);
         }
         
+        //se retorna la informacion de la raiz
         return (String) root.getUserObject();
 	}
 	
-	//Metodo para quitar los parentesis exteriores en expresiones de tipo.
+	//
+	//  Metodo para quitar los parentesis exteriores en expresiones de tipo.
+	//
 	String removeParenthesis(String type) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 		ANTLRInputStream input = new ANTLRInputStream(type);
@@ -133,15 +163,18 @@ grammar Expr;
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
         
-        //Elimino parentesis externos
+        //root es la raiz del arbol, como puede contener parentesis, los elimino
         while (((String) root.getUserObject()).equals("()")) {
         	root = (DefaultMutableTreeNode) root.getChildAt(0);
         }
         
+        //se retorna una impresion del arbol entero
         return parser.printTree(root);
 	}
 	
-	//Metodo para la determinacion del tipo de un hijo de una expresion.
+	//
+	//  Metodo para la determinacion del tipo de un hijo de una expresion.
+	//
 	String getChildType(String type, int pos) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
 		ANTLRInputStream input = new ANTLRInputStream(type);
@@ -151,6 +184,7 @@ grammar Expr;
         parser.typeManage();
         DefaultMutableTreeNode root = parser.getRoot();
         
+        //si tiene parentesis se eliminan
         while (((String) root.getUserObject()).equals("()")) {
         	root = (DefaultMutableTreeNode) root.getChildAt(0);
         }
@@ -161,10 +195,13 @@ grammar Expr;
         	child = (DefaultMutableTreeNode) child.getChildAt(0);
         }
         
+        //se retorna la impresion del hijo correspondiente
         return parser.printTree(child);
 	}
 	
-	//Metodo para realizar la inversion de un tipo en Z.
+	//
+	//  Metodo para realizar la inversion de un tipo en Z.
+	//
 	String invertType(String type) {
 		ANTLRInputStream input = new ANTLRInputStream(type);
         TypeManagerLexer lexer = new TypeManagerLexer(input);
@@ -203,8 +240,10 @@ grammar Expr;
 		return invertedType;
 	}
 	
-	//Metodo para obtener los tipos de los hijos.
-	//EJ: A \pfun B devuelve A y B
+	//
+	//  Metodo para obtener los tipos de los hijos.
+	//  Ej: A \pfun B devuelve A y B
+	//
 	ArrayList<String> childsTypes(String type) {
 		ANTLRInputStream input = new ANTLRInputStream(type);
         TypeManagerLexer lexer = new TypeManagerLexer(input);
@@ -279,12 +318,18 @@ grammar Expr;
 		return childsTypes;
 	}
 	
+	//
+	//  Metodo para crear un nuevo nombre de variable
+	//
 	private String newVar() {
 		String newVarName = "VAR" + varNumber;
 		varNumber++;
 		return newVarName;
 	}
 	
+	//
+	//  Metodo para crear un nuevo nombre de variable partiendo de un nombre en Z
+	//
 	private String newVar(String zName) {
 		String newVarName = zName.substring(0,1).toUpperCase() + zName.substring(1).replace("?","");
 		if (memory.containsValue(newVarName)) { 
@@ -294,11 +339,16 @@ grammar Expr;
 		return newVarName;
 	}
 	
+	//
+	//  Metodo para obtener e imprimir informacion de tipo de una variable
+	//
 	private String typeInfo(String var, String type) {
 		return typeInfo(var, type, "");
 	}
 	
-	//Funcion para imprimir la informacion de tipo de una variable.
+	//
+	//  Metodo para obtener e imprimir informacion de tipo de una variable
+	//
 	private String typeInfo(String var, String type, String exp) {
 			
 		if (type != null) {
@@ -389,6 +439,10 @@ grammar Expr;
 		return type;
 	}
 	
+	
+	//
+	//  Metodo para generar variables setlog que representen un determinado tipo.
+	//
 	private String generateSetlogFiniteType(String type) {
 	
 		if (isBasic(types.get(type)))
@@ -432,6 +486,9 @@ grammar Expr;
 		return "";
 	}
 	
+	//
+	//  Metodo para obtener la key de un determinado valor de un hashmap
+	//
 	private String getKey(String value, HashMap<String,String> hashmap) {
 		Iterator<String> keysIt= hashmap.keySet().iterator();
 		while (keysIt.hasNext()) {
@@ -442,6 +499,12 @@ grammar Expr;
 		return null;
 	}
 	
+	
+	//
+	//  Metodo para crear variables y traducir, en caso de que no hayan sido creadas aun,
+	//  para los tipos numericos basicos. La informacion es luego imprimida si asi se indica,
+	//  en 'wantToPrint'
+	//
 	private String printInfo(String type, boolean wantToPrint) {
 		String translation = memory.get(type);
 		int modoSetExpressionBk = modoSetExpression;
@@ -476,25 +539,38 @@ grammar Expr;
 		return translation;
 	}
 	
+	//
+	//  Determina si es un tipo basico de Z
+	//
 	private boolean isBasic(String type) {
 		if (type.startsWith("BasicType") || type.startsWith("EnumerationType") || type.startsWith("SchemaType"))
 			return true;
 		return false;
 	}
 	
+	//
+	//  Determina si es un tipo numerico de Z
+	//
 	private boolean isNumeric(String type) {
 		if (type.equals("\\num") || type.equals("\\nat") || type.equals("\\nat_{1}"))
 			return true;
 		return false;
 	}
 	
+	//
+	//  Determina si es una secuencia de Z
+	//
 	private boolean isSequence(String type) {
 		if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 			return true;
 		return false;
 	}
 	
-	String convertToSet(String zVar, String setlogVar) { //si es una lista, debemos aplicar list_to_rel
+	//
+	//  Convierte una lista en un conjunto, esto es requerido para aplicar algunas operaciones
+	//  de conjunto a listas. Asi lo permite Z. Si es una lista, debemos aplicar list_to_rel
+	//
+	String convertToSet(String zVar, String setlogVar) {
 		
 		String type = types.get(zVar);
 		if (isSequence(getType(type))) 
@@ -517,36 +593,9 @@ grammar Expr;
 	}
 }
 
+////////////////////// Gramatica //////////////////////
 specification
 	:	( paragraph NL*)+
-	{/*
-	   System.out.println("Tabla Types");
-	   System.out.println("-------------------");
-	   String key, value;
-	   Iterator<String> iterator = types.keySet().iterator();
-	   while (iterator.hasNext()) {
-	           key = iterator.next();
-	           value = types.get(key);
-	           System.out.println(key + "\t\t| " + value);
-	   }
-	   System.out.println("\nTabla Memory");
-	   System.out.println("-------------------");
-	   iterator = memory.keySet().iterator();
-	   while (iterator.hasNext()) {
-	           key = iterator.next();
-	           value = memory.get(key);
-	           System.out.println(key + "\t\t| " + value);
-	   }
-	   System.out.println("\nTabla zVars");
-	   System.out.println("-------------------");
-	   iterator = zVars.keySet().iterator();
-	   while (iterator.hasNext()) {
-           key = iterator.next();
-           value = zVars.get(key);
-           System.out.println(key + "\t\t| " + value);
-  	   }
-     
-	*/}
 	;
 
 paragraph
