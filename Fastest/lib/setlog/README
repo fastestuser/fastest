@@ -1,2 +1,11 @@
 Por el momento, para que setloglib.slog sea cargado, 
-se debe copiar el contenido del mismo al final de serlogTTF.slog
+se debe cambiar en setlog4617.pl (o el que se use),
+donde se llama a setloglib:
+
+setlog_open('setloglib.slog',read,FileStream)
+
+por 
+
+setlog_open('./lib/setlog/setloglib.slog',read,FileStream).
+
+La idea es simplemente cambiar el path de donde se lee el archivo.
