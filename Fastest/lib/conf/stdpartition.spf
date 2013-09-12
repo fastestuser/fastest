@@ -185,3 +185,21 @@ A \neq \{\}, \dom S \neq \{\}, A = \dom S;
 end operator;
 
 
+\cat : operator(s,t);
+s = \langle \rangle, t = \langle \rangle;
+s \neq \langle \rangle, t = \langle \rangle;
+s = \langle \rangle, t \neq \langle \rangle;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s < \# t, \# \ran s < \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s < \# t, \# \ran s = \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s < \# t, \# \ran s = \# s, \# \ran t = \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s < \# t, \# \ran s < \# s, \# \ran t = \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s = \# t, \# \ran s < \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s = \# t, \# \ran s = \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s = \# t, \# \ran s = \# s, \# \ran t = \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s = \# t, \# \ran s < \# s, \# \ran t = \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s > \# t, \# \ran s < \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s > \# t, \# \ran s = \# s, \# \ran t < \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s > \# t, \# \ran s = \# s, \# \ran t = \# t;
+s \neq \langle \rangle, t \neq \langle \rangle, \# s > \# t, \# \ran s < \# s, \# \ran t = \# t
+end operator;
+
