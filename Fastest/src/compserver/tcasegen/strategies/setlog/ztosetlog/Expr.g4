@@ -975,16 +975,18 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put("\\ran" + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\ran" + $e.text, newVarName);
-				types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 1) + ")");
 			
 				String e = memory.get($e.text);
 			
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
 				String type = getType(types.get($e.text));
-				if (isSequence(type))
+				if (isSequence(type)) {
+					types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 0) + ")");
 					print("list_to_set(" + e + "," + newVarName + ")");
-				else
+				} else {
+					types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 1) + ")");
 					print("ran(" + e + "," + newVarName + ")");
+				}
 			}
 			else if ($pre.text.startsWith("seq_{1}")) {
 				String eType = types.get($e.text);
@@ -1022,19 +1024,21 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put($pre.text + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put($pre.text + $e.text, newVarName);
-				types.put($pre.text + $e.text, getChildType(types.get($e.text), 0));
+				types.put($pre.text + $e.text, "\\num");
 			
 				String e = memory.get($e.text);
-				print("prolog_call(min(" + e + "," + newVarName + "))");
+				print("smin(" + e + "," + newVarName + ")");
+				print(newVarName + " ein " + printInfo("\\num", true));
 			}
 			else if ($pre.text.startsWith("max")){
 				memory.put($pre.text + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put($pre.text + $e.text, newVarName);
-				types.put($pre.text + $e.text, getChildType(types.get($e.text), 0));
-			
+				types.put($pre.text + $e.text, "\\num");			
+				
 				String e = memory.get($e.text);
-				print("max(" + e + "," + newVarName + ")");
+				print("smax(" + e + "," + newVarName + ")");
+				print(newVarName + " ein " + printInfo("\\num", true));
 			}
 			else if ($pre.text.startsWith("rev")){
 				print("prolog_call(reverse(" + a + "," + newVarName + "))");
