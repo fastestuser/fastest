@@ -327,10 +327,12 @@ public final class ConstantCreator {
 		if (exprS.startsWith("int(")) {
 
 			String aux[] = exprS.substring(4, exprS.length() - 1).split(",");
-			if (Integer.valueOf(aux[1]) < Integer.valueOf(aux[0]))
+			String a = cte(new DefaultMutableTreeNode("\\num"),aux[0]);
+			String b = cte(new DefaultMutableTreeNode("\\num"),aux[1]);
+			if (!a.equals("ValueNotAssigned") && !b.equals("ValueNotAssigned") && Integer.valueOf(b) < Integer.valueOf(a))
 				return "{}";
 
-			return exprS;
+			return "int(" + a + "," + b + ")";
 		}
 
 		if (SetLogUtils.esSLVariableSimple(exprS)) {

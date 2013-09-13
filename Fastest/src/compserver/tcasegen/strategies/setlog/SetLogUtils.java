@@ -22,6 +22,7 @@ public final class SetLogUtils {
 	}
 	//cambia los caracteres de setlog [] por langlerangle, etc...
 	public static String setLogToLatexCharsReplacer(DefaultMutableTreeNode nodo,String exprS) throws Exception{
+		
 		if (exprS.equals("ValueNotAssigned") ){
 			return exprS;
 		}
@@ -35,12 +36,12 @@ public final class SetLogUtils {
 
 		ExprIterator expr = new ExprIterator(exprS);
 
-		String ct = nodo.toString();
-
 		if(exprS.startsWith("int(")){
 			String aux[] = exprS.substring(4,exprS.length()-1).split(",");
-			return aux[0] + " \\upto " + aux[1];
+			return setLogToLatexCharsReplacer(new DefaultMutableTreeNode("\\int"), aux[0]) + " \\upto " + setLogToLatexCharsReplacer(new DefaultMutableTreeNode("\\int"), aux[1]) ;
 		}
+		
+		String ct = nodo.toString();
 
 		if (ct.equals("()")) 
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
