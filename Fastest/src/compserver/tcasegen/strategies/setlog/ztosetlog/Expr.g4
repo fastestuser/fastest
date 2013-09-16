@@ -200,49 +200,12 @@ grammar Expr;
 	}
 	
 	//
-	//  Metodo para realizar la inversion de un tipo en Z.
-	//
-	String invertType(String type) {
-		ANTLRInputStream input = new ANTLRInputStream(type);
-        TypeManagerLexer lexer = new TypeManagerLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        TypeManagerParser parser = new TypeManagerParser(tokens);
-        parser.typeManage();
-        DefaultMutableTreeNode root = parser.getRoot();
-        
-		String invertedType = new String();
-		String rootType = (String) root.getUserObject();
-		if (rootType.equals("\\power")) {
-			invertedType = invertedType.concat("\\power(");
-			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
-			String childType = (String) child.getUserObject();
-			
-			if (childType.equals("()")) {
-				child = (DefaultMutableTreeNode) child.getChildAt(0);
-				childType = (String) child.getUserObject();
-			}
-			
-			if (childType.equals("\\cross")) {
-				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(1)));
-				invertedType = invertedType.concat("\\cross");
-				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(0)));
-			}
-			invertedType = invertedType.concat(")");
-		
-		} else { //Entonces empieza con pfun, rel etc
-		
-			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
-			invertedType = invertedType.concat(rootType);
-			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
-		
-		}
-		
-		return invertedType;
-	}
-	
-	//
 	//  Metodo para obtener los tipos de los hijos.
-	//  Ej: A \pfun B devuelve A y B
+	//  Se usa para unificar los tipos de funciones, conjuntos y secuencias
+	//  Acepta solo: A \pfun B
+	//               \power (A cross) B
+	//               \seq A
+	//               A \cross B 
 	//
 	ArrayList<String> childsTypes(String type) {
 		ANTLRInputStream input = new ANTLRInputStream(type);
@@ -270,7 +233,7 @@ grammar Expr;
 				childType = (String) child.getUserObject();
 			}
 			
-			if (childType.equals("\\cross")) { //Cambiar para multiples cross
+			if (childType.equals("\\cross")) { //Cambiar para multiples cross?
 				int childsAmount = child.getChildCount();
 				for (int i = 0; i < childsAmount; i++) {
 					aux = (DefaultMutableTreeNode) child.getChildAt(i);
@@ -319,6 +282,47 @@ grammar Expr;
 	}
 	
 	//
+	//  Metodo para realizar la inversion de un tipo en Z.
+	//
+	String invertType(String type) {
+		ANTLRInputStream input = new ANTLRInputStream(type);
+        TypeManagerLexer lexer = new TypeManagerLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        TypeManagerParser parser = new TypeManagerParser(tokens);
+        parser.typeManage();
+        DefaultMutableTreeNode root = parser.getRoot();
+        
+		String invertedType = new String();
+		String rootType = (String) root.getUserObject();
+		if (rootType.equals("\\power")) {
+			invertedType = invertedType.concat("\\power(");
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+			String childType = (String) child.getUserObject();
+			
+			if (childType.equals("()")) {
+				child = (DefaultMutableTreeNode) child.getChildAt(0);
+				childType = (String) child.getUserObject();
+			}
+			
+			if (childType.equals("\\cross")) {
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(1)));
+				invertedType = invertedType.concat("\\cross");
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(0)));
+			}
+			invertedType = invertedType.concat(")");
+		
+		} else { //Entonces empieza con pfun, rel etc
+		
+			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
+			invertedType = invertedType.concat(rootType);
+			invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
+		
+		}
+		
+		return invertedType;
+	}
+	
+	//
 	//  Metodo para crear un nuevo nombre de variable
 	//
 	private String newVar() {
@@ -363,7 +367,10 @@ grammar Expr;
 		
 			String nodeType = getType(type);
 			
-			if (isSequence(nodeType)){
+			if (nodeType.equals("\\cross")) {
+					return type;
+				}
+			else if (isSequence(nodeType)){
 				if (tipoSchema == 0) {
 					if (nodeType.startsWith("seq_{1}"))
 						print(var + " neq []");
@@ -373,7 +380,7 @@ grammar Expr;
 			else if (nodeType.equals("\\rel")) {
 				if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
 			}
-			else if (nodeType.equals("\\pfun")) {
+			else if (nodeType.equals("\\pfun") || nodeType.equals("\\ffun")) {
 				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 			}
 			else if (nodeType.equals("\\fun")) {
@@ -426,12 +433,13 @@ grammar Expr;
 			}
 			else { //double check
 				type = types.get(type);
-				if (type.startsWith("EnumerationType")) {
-					if(!type.startsWith("BasicType")) {
+				if (isBasic(type)) {
+					if(type.startsWith("EnumerationType")) {
 						type = type.split(":")[1];
 						if (tipoSchema == 0) print(var + " in " + type);
 					} else
 						type = type.split(":")[1];
+					
 					return getKey(type, memory);
 				}
 			}
@@ -481,6 +489,13 @@ grammar Expr;
 				types.put("\\power(" + type + ")", "\\power(" + type + ")");
 			types.put(newVarName, "\\power(" + type + ")");
 			return newVarName;		
+		} else if (nodeType.contains("\\upto")) {
+			String varName = memory.get(nodeType);
+			if (varName != null)
+				return varName;
+			else { //No debería entrar nunca acá
+				return "";
+			}
 		}
 		
 		return "";
@@ -563,6 +578,20 @@ grammar Expr;
 	private boolean isSequence(String type) {
 		if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 			return true;
+		return false;
+	}
+	
+	//
+	//  Determina si es un tipo Schema
+	//
+	private boolean isSchemaType(String type) {
+		if (type.startsWith("SchemaType"))
+			return true;
+			
+		String auxType = types.get(type); //Double Check
+		if (auxType != null && auxType.startsWith("SchemaType"))
+			return true;
+			
 		return false;
 	}
 	
@@ -928,7 +957,36 @@ predicate
 expression
 locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName = "", String zName = "", String operator = "",
 	String newVarName1 = "", String newVarName2 = ""]
-	:	pre e=expression
+	:	e1=expression end=endExpression //se utiliza endExpression en vez de expression, como dice la ISO, porque sino el parser
+	                                               //es left-recursive. Esta idea surge de la gramatica de Spivey, y segun los test, no
+	                                               //limita la aceptacion de expresiones
+	{
+		String a, b;
+		a = memory.get($e1.text);
+		b = memory.get($end.text);
+		String op = "";
+				
+		//Si a es una lista, debo convertirla
+		a = convertToSet($e1.text, a);
+		
+		if (memory.get($e1.text + op + $end.text) == null) {
+			String newVarName = newVar();
+			memory.put($e1.text + op + $end.text, newVarName);
+			
+			if (modoSetExpression != 0 )
+				setExpressionVars.put($e1.text + op + $end.text, newVarName);
+
+			String type1 = types.get($e1.text);
+			//getType(type1);
+			String newVarType = childsTypes(type1).get(1);
+			types.put($e1.text + op + $end.text, newVarType);
+			print("apply(" + a + "," + b + "," + newVarName + ")");
+			
+			//Imprimimos la informacion del tipo de la variable
+			typeInfo(newVarName, newVarType);
+		}
+	}
+	|	pre e=expression
 	{
 		if (memory.get($pre.text + $e.text) == null) {
 		
@@ -960,7 +1018,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				memory.put("\\dom" + $e.text, newVarName);
 				if (modoSetExpression != 0 )
 					setExpressionVars.put("\\dom" + $e.text, newVarName);
-				types.put("\\dom" + $e.text, "\\power(" + getChildType(types.get($e.text), 0) + ")");
+				types.put("\\dom" + $e.text, "\\power(" + childsTypes(types.get($e.text)).get(0) + ")");
 			
 				String e = memory.get($e.text);
 			
@@ -981,10 +1039,10 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				//Chequeamos si e es una lista, estas son tratadas de forma diferente
 				String type = getType(types.get($e.text));
 				if (isSequence(type)) {
-					types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 0) + ")");
+					types.put("\\ran" + $e.text, "\\power(" + childsTypes(types.get($e.text)).get(1) + ")");
 					print("list_to_set(" + e + "," + newVarName + ")");
 				} else {
-					types.put("\\ran" + $e.text, "\\power(" + getChildType(types.get($e.text), 1) + ")");
+					types.put("\\ran" + $e.text, "\\power(" + childsTypes(types.get($e.text)).get(1) + ")");
 					print("ran(" + e + "," + newVarName + ")");
 				}
 			}
@@ -1052,7 +1110,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else if ($pre.text.startsWith("head")){
 				print("nth1(1," + a + "," + newVarName + ")");
 				memory.put($pre.text + $e.text, newVarName);
-				String type = getChildType(types.get($e.text), 0);
+				String type = childsTypes(types.get($e.text)).get(1);
 				types.put($pre.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1061,7 +1119,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			else if ($pre.text.startsWith("last")){
 				print("prolog_call(last(" + a + "," + newVarName + "))");
 				memory.put($pre.text + $e.text, newVarName);
-				String type = getChildType(types.get($e.text), 0);
+				String type = childsTypes(types.get($e.text)).get(1);
 				types.put($pre.text + $e.text, type);
 				typeInfo(newVarName, type);
 				if (modoSetExpression != 0 )
@@ -1099,35 +1157,6 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				if (modoSetExpression != 0 )
 					setExpressionVars.put($pre.text + $e.text, newVarName);
 			}
-		}
-	}
-	|	e1=expression end=endExpression //se utiliza endExpression en vez de expression, como dice la ISO, porque sino el parser
-	                                               //es left-recursive. Esta idea surge de la gramatica de Spivey, y segun los test, no
-	                                               //limita la aceptacion de expresiones
-	{
-		String a, b;
-		a = memory.get($e1.text);
-		b = memory.get($end.text);
-		String op = "";
-				
-		//Si a es una lista, debo convertirla
-		a = convertToSet($e1.text, a);
-		
-		if (memory.get($e1.text + op + $end.text) == null) {
-			String newVarName = newVar();
-			memory.put($e1.text + op + $end.text, newVarName);
-			
-			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + op + $end.text, newVarName);
-
-			String type1 = types.get($e1.text);
-			//getType(type1);
-			String newVarType = childsTypes(type1).get(1);
-			types.put($e1.text + op + $end.text, newVarType);
-			print("apply(" + a + "," + b + "," + newVarName + ")");
-			
-			//Imprimimos la informacion del tipo de la variable
-			typeInfo(newVarName, newVarType);
 		}
 	}
 	|	POWER e=expression
@@ -1536,7 +1565,7 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 			print("rimg(" + a + "," + b + "," + newVarName + ")");
 			memory.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, newVarName);
 			String type1 = types.get($e1.text);
-			String type = "\\power(" + getChildType(type1, 1) + ")";
+			String type = "\\power(" + childsTypes(type1).get(1) + ")";
 			types.put($e1.text + $IMGSTART.text + $e2.text + $IMGEND.text, type);
 			typeInfo(newVarName, type);
 			if (modoSetExpression != 0 )
@@ -1754,10 +1783,19 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		if (memory.get($end.text + "." + n) == null) {
 		
 			String eType = types.get($end.text);
-			if (!eType.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
-				eType = types.get(eType);
 			
-			if (eType.startsWith("SchemaType:")) {
+			if (!isSchemaType(eType)){ //Se pide el elemento de una tupla
+				String newVarName = newVar();
+				memory.put($end.text + "." + n, newVarName);
+				eType = childsTypes(eType).get(Integer.parseInt(n)-1);
+				types.put($end.text + "." + n, eType); //Arreglar
+				print("nth1(" + n + "," + memory.get($end.text) + "," + newVarName + ")");
+				
+				typeInfo(newVarName, eType);
+			}
+			else {
+				if (!eType.startsWith("SchemaType:")) //Debo llegar a obtener la lista con las variables
+					eType = types.get(eType);
 				String schemaVars = eType.split(":", 3)[2];
 				//Obtengo el indice de la variable e2 dentro de la lista de variables del tipo schema
 				//Primero obtenemos la lista de variables
@@ -1779,13 +1817,6 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 				
 				typeInfo(newVarName, type);
 				
-			}
-			else { //Se pide el elemento de una tupla
-				String newVarName = newVar();
-				memory.put($end.text + "." + n, newVarName);
-				eType = childsTypes(eType).get(Integer.parseInt(n)-1);
-				types.put($end.text + "." + n, eType); //Arreglar
-				print("nth1(" + n + "," + memory.get($end.text) + "," + newVarName + ")");
 			}
 		}
 	}

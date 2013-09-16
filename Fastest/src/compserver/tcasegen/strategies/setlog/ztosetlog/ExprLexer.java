@@ -256,49 +256,12 @@ public class ExprLexer extends Lexer {
 		}
 		
 		//
-		//  Metodo para realizar la inversion de un tipo en Z.
-		//
-		String invertType(String type) {
-			ANTLRInputStream input = new ANTLRInputStream(type);
-	        TypeManagerLexer lexer = new TypeManagerLexer(input);
-	        CommonTokenStream tokens = new CommonTokenStream(lexer);
-	        TypeManagerParser parser = new TypeManagerParser(tokens);
-	        parser.typeManage();
-	        DefaultMutableTreeNode root = parser.getRoot();
-	        
-			String invertedType = new String();
-			String rootType = (String) root.getUserObject();
-			if (rootType.equals("\\power")) {
-				invertedType = invertedType.concat("\\power(");
-				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
-				String childType = (String) child.getUserObject();
-				
-				if (childType.equals("()")) {
-					child = (DefaultMutableTreeNode) child.getChildAt(0);
-					childType = (String) child.getUserObject();
-				}
-				
-				if (childType.equals("\\cross")) {
-					invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(1)));
-					invertedType = invertedType.concat("\\cross");
-					invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(0)));
-				}
-				invertedType = invertedType.concat(")");
-			
-			} else { //Entonces empieza con pfun, rel etc
-			
-				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
-				invertedType = invertedType.concat(rootType);
-				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
-			
-			}
-			
-			return invertedType;
-		}
-		
-		//
 		//  Metodo para obtener los tipos de los hijos.
-		//  Ej: A \pfun B devuelve A y B
+		//  Se usa para unificar los tipos de funciones, conjuntos y secuencias
+		//  Acepta solo: A \pfun B
+		//               \power (A cross) B
+		//               \seq A
+		//               A \cross B 
 		//
 		ArrayList<String> childsTypes(String type) {
 			ANTLRInputStream input = new ANTLRInputStream(type);
@@ -326,7 +289,7 @@ public class ExprLexer extends Lexer {
 					childType = (String) child.getUserObject();
 				}
 				
-				if (childType.equals("\\cross")) { //Cambiar para multiples cross
+				if (childType.equals("\\cross")) { //Cambiar para multiples cross?
 					int childsAmount = child.getChildCount();
 					for (int i = 0; i < childsAmount; i++) {
 						aux = (DefaultMutableTreeNode) child.getChildAt(i);
@@ -375,6 +338,47 @@ public class ExprLexer extends Lexer {
 		}
 		
 		//
+		//  Metodo para realizar la inversion de un tipo en Z.
+		//
+		String invertType(String type) {
+			ANTLRInputStream input = new ANTLRInputStream(type);
+	        TypeManagerLexer lexer = new TypeManagerLexer(input);
+	        CommonTokenStream tokens = new CommonTokenStream(lexer);
+	        TypeManagerParser parser = new TypeManagerParser(tokens);
+	        parser.typeManage();
+	        DefaultMutableTreeNode root = parser.getRoot();
+	        
+			String invertedType = new String();
+			String rootType = (String) root.getUserObject();
+			if (rootType.equals("\\power")) {
+				invertedType = invertedType.concat("\\power(");
+				DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+				String childType = (String) child.getUserObject();
+				
+				if (childType.equals("()")) {
+					child = (DefaultMutableTreeNode) child.getChildAt(0);
+					childType = (String) child.getUserObject();
+				}
+				
+				if (childType.equals("\\cross")) {
+					invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(1)));
+					invertedType = invertedType.concat("\\cross");
+					invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) child.getChildAt(0)));
+				}
+				invertedType = invertedType.concat(")");
+			
+			} else { //Entonces empieza con pfun, rel etc
+			
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(1)));
+				invertedType = invertedType.concat(rootType);
+				invertedType = invertedType.concat(parser.printTree((DefaultMutableTreeNode) root.getChildAt(0)));
+			
+			}
+			
+			return invertedType;
+		}
+		
+		//
 		//  Metodo para crear un nuevo nombre de variable
 		//
 		private String newVar() {
@@ -419,7 +423,10 @@ public class ExprLexer extends Lexer {
 			
 				String nodeType = getType(type);
 				
-				if (isSequence(nodeType)){
+				if (nodeType.equals("\\cross")) {
+						return type;
+					}
+				else if (isSequence(nodeType)){
 					if (tipoSchema == 0) {
 						if (nodeType.startsWith("seq_{1}"))
 							print(var + " neq []");
@@ -429,7 +436,7 @@ public class ExprLexer extends Lexer {
 				else if (nodeType.equals("\\rel")) {
 					if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
 				}
-				else if (nodeType.equals("\\pfun")) {
+				else if (nodeType.equals("\\pfun") || nodeType.equals("\\ffun")) {
 					if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 				}
 				else if (nodeType.equals("\\fun")) {
@@ -482,12 +489,13 @@ public class ExprLexer extends Lexer {
 				}
 				else { //double check
 					type = types.get(type);
-					if (type.startsWith("EnumerationType")) {
-						if(!type.startsWith("BasicType")) {
+					if (isBasic(type)) {
+						if(type.startsWith("EnumerationType")) {
 							type = type.split(":")[1];
 							if (tipoSchema == 0) print(var + " in " + type);
 						} else
 							type = type.split(":")[1];
+						
 						return getKey(type, memory);
 					}
 				}
@@ -537,6 +545,13 @@ public class ExprLexer extends Lexer {
 					types.put("\\power(" + type + ")", "\\power(" + type + ")");
 				types.put(newVarName, "\\power(" + type + ")");
 				return newVarName;		
+			} else if (nodeType.contains("\\upto")) {
+				String varName = memory.get(nodeType);
+				if (varName != null)
+					return varName;
+				else { //No debería entrar nunca acá
+					return "";
+				}
 			}
 			
 			return "";
@@ -619,6 +634,20 @@ public class ExprLexer extends Lexer {
 		private boolean isSequence(String type) {
 			if (type.equals("\\seq") || type.startsWith("seq_{1}"))
 				return true;
+			return false;
+		}
+		
+		//
+		//  Determina si es un tipo Schema
+		//
+		private boolean isSchemaType(String type) {
+			if (type.startsWith("SchemaType"))
+				return true;
+				
+			String auxType = types.get(type); //Double Check
+			if (auxType != null && auxType.startsWith("SchemaType"))
+				return true;
+				
 			return false;
 		}
 		

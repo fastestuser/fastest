@@ -56,12 +56,22 @@ public class TypeManagerParser extends Parser {
 			if (tree.isLeaf()) 
 				return (String) tree.getUserObject();
 			else if (tree.getChildCount() == 1)
-				if ( ((String) tree.getUserObject()).equals("()")) //REVISAR
+				if ( ((String) tree.getUserObject()).equals("()"))
 					return "(" + printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
 				else
 					return (String) tree.getUserObject() + printTree((DefaultMutableTreeNode) tree.getChildAt(0));
-			else //tiene dos hijos
+			else if (tree.getChildCount() == 2)
 				return printTree((DefaultMutableTreeNode) tree.getChildAt(0)) + ((String) tree.getUserObject()) + printTree((DefaultMutableTreeNode) tree.getChildAt(1));
+			else {//tiene varios hijos, es un CROSS!
+				String returnString = printTree((DefaultMutableTreeNode) tree.getChildAt(0));
+				int i = 1;
+				while (i < tree.getChildCount()) {
+					returnString = returnString.concat("\\cross");
+					returnString = returnString.concat(printTree((DefaultMutableTreeNode) tree.getChildAt(i)));
+					i++;
+				}
+				return returnString;
+			}
 		}
 
 	public TypeManagerParser(TokenStream input) {

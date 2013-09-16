@@ -27,6 +27,7 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.Type;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
@@ -39,6 +40,7 @@ import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.czt.UniqueZLive;
+import common.z.czt.visitors.ExpressionsExtractor;
 import common.z.czt.visitors.TClassNodeUnfolder;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.prunning.TreePruner;
@@ -134,6 +136,20 @@ public final class SetLogStrategy implements TCaseStrategy{
 		//Armamos la entrada para el parser
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
+		
+		
+		//PROBANDO LOS TIPOS, despues borrar...
+		//Map<Expr,Type> mapTypes = tClass.accept(new ExpressionsExtractor());
+		//Iterator iteratorTypes = mapTypes.keySet().iterator();
+		//while (iteratorTypes.hasNext()){
+		//	Expr key = (Expr) iteratorTypes.next();
+		//	System.out.println(SpecUtils.termToLatex(key) + " .... " + SpecUtils.termToLatex(mapTypes.get(key)));
+		//}
+		
+		
+		
+		
+		///////////////////////////////////////
 
 		int setlogTimeout = controller.getSetlogTimeout();
 		//Generamos el caso de prueba
