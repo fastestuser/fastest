@@ -375,28 +375,145 @@ grammar Expr;
 					if (nodeType.startsWith("seq_{1}"))
 						print(var + " neq []");
 					printAtEnd("list(" + var + ")");
+					
+					//Tambien imprimimos informacion sobre su rango
+					
+			    	//Obtenemos el rango de la variable
+			    	String zRanTypeName = getChildType(type,0);
+			    	String zRanType = types.get(zRanTypeName);
+			    	String zVar = getKey(var, memory); //Nombre de la variable en Z
+			    	if (zRanType.startsWith("EnumerationType")){
+			    		String ran = memory.get("\\ran" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (ran == null && zVar != null){
+							ran = newVar();
+							memory.put("\\ran" + zVar, ran);
+							types.put("\\ran" + zVar, "\\power(" + zRanType + ")");
+			    			print("list_to_set(" + var + "," + ran + ")");
+						}
+						print("dsubset(" + ran + "," + zRanTypeName + ")");
+			    	}
 				}
 			}
 			else if (nodeType.equals("\\rel")) {
-				if (tipoSchema == 0) printAtEnd("is_rel(" + var + ")");
+				if (tipoSchema == 0) {
+					printAtEnd("is_rel(" + var + ")");
+					
+					//Tambien imprimimos informacion sobre su rango y dominio
+					
+					//Empezamos por el dominio
+					//Obtenemos el dominio de la variable
+			    	String zDomTypeName = getChildType(type,0);
+			    	String zDomType = types.get(zDomTypeName);
+			    	String zVar = getKey(var, memory); //Nombre de la variable en Z
+			    	if (zDomType.startsWith("EnumerationType")){
+			    		String dom = memory.get("\\dom" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (dom == null && zVar != null){
+							dom = newVar();
+							memory.put("\\dom" + zVar, dom);
+							types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
+			    			print("dom(" + var + "," + dom + ")");
+						}
+						print("dsubset(" + dom + "," + zDomTypeName + ")");
+			    	}
+			    	
+			    	//Y luego lo mismo para el rango
+			    	//Obtenemos el rango de la variable
+			    	String zRanTypeName = getChildType(type,1);
+			    	String zRanType = types.get(zRanTypeName);
+			    	if (zRanType.startsWith("EnumerationType")){
+			    		String ran = memory.get("\\ran" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (ran == null && zVar != null){
+							ran = newVar();
+							memory.put("\\ran" + zVar, ran);
+							types.put("\\ran" + zVar, "\\power(" + zRanType + ")");
+			    			print("ran(" + var + "," + ran + ")");
+						}
+						print("dsubset(" + ran + "," + zRanTypeName + ")");
+			    	}		
+				}
 			}
 			else if (nodeType.equals("\\pfun") || nodeType.equals("\\ffun")) {
-				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
+				if (tipoSchema == 0) {
+					printAtEnd("is_pfun(" + var + ")");
+					
+					//Tambien imprimimos informacion sobre su rango y dominio
+					
+					//Empezamos por el dominio
+					//Obtenemos el dominio de la variable
+			    	String zDomTypeName = getChildType(type,0);
+			    	String zDomType = types.get(zDomTypeName);
+			    	String zVar = getKey(var, memory); //Nombre de la variable en Z
+			    	if (zDomType.startsWith("EnumerationType")){
+			    		String dom = memory.get("\\dom" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (dom == null && zVar != null){
+							dom = newVar();
+							memory.put("\\dom" + zVar, dom);
+							types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
+			    			print("dom(" + var + "," + dom + ")");
+						}
+						print("dsubset(" + dom + "," + zDomTypeName + ")");
+			    	}
+			    	
+			    	//Y luego lo mismo para el rango
+			    	//Obtenemos el rango de la variable
+			    	String zRanTypeName = getChildType(type,1);
+			    	String zRanType = types.get(zRanTypeName);
+			    	if (zRanType.startsWith("EnumerationType")){
+			    		String ran = memory.get("\\ran" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (ran == null && zVar != null){
+							ran = newVar();
+							memory.put("\\ran" + zVar, ran);
+							types.put("\\ran" + zVar, "\\power(" + zRanType + ")");
+			    			print("ran(" + var + "," + ran + ")");
+						}
+						print("dsubset(" + ran + "," + zRanTypeName + ")");
+			    	}
+				}
 			}
 			else if (nodeType.equals("\\fun")) {
-			    //Calculamos el dominio de la variable
-			    String zDomType = getChildType(type,0);
-			    String domType = generateSetlogFiniteType(zDomType);
-			    String zVar = getKey(var, memory);
-			    String dom = memory.get("\\dom" + zVar);
-			    if (dom == null && zVar != null){
-					dom = newVar();
-					memory.put("\\dom" + zVar, dom);
-					types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
-			    	print("dom(" + var + "," + dom + ")");
+			    if (tipoSchema == 0) {
+				    //Calculamos el dominio de la variable
+				    String zDomType = getChildType(type,0);
+				    String domType = generateSetlogFiniteType(zDomType);
+				    String zVar = getKey(var, memory);
+				    String dom = memory.get("\\dom" + zVar);
+				    if (dom == null && zVar != null){
+						dom = newVar();
+						memory.put("\\dom" + zVar, dom);
+						types.put("\\dom" + zVar, "\\power(" + zDomType + ")");
+				    	print("dom(" + var + "," + dom + ")");
+					}
+					print(dom + " = " + domType);
+					
+					//Y luego trabajamos con el rango
+			    	//Obtenemos el rango de la variable
+			    	String zRanTypeName = getChildType(type,1);
+			    	String zRanType = types.get(zRanTypeName);
+			    	if (zRanType.startsWith("EnumerationType")){
+			    		String ran = memory.get("\\ran" + zVar);
+			    		//verificamos si ya creamos una variable para el dominio,
+			    		//y sino creamos una
+			    		if (ran == null && zVar != null){
+							ran = newVar();
+							memory.put("\\ran" + zVar, ran);
+							types.put("\\ran" + zVar, "\\power(" + zRanType + ")");
+			    			print("ran(" + var + "," + ran + ")");
+						}
+						print("dsubset(" + ran + "," + zRanTypeName + ")");
+			    	}
+					
+					printAtEnd("is_pfun(" + var + ")");
 				}
-				print(dom + " = " + domType);
-				if (tipoSchema == 0) printAtEnd("is_pfun(" + var + ")");
 			}
 			else if (type.equals("\\nat") || type.equals("\\num") || type.equals("\\nat_{1}")) {
 				if (tipoSchema == 0) {
