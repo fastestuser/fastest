@@ -404,6 +404,15 @@ public class ExprParser extends Parser {
 			return newVarName;
 		}
 		
+		///////////////////////////////
+		//private String readType(String type) {
+		//	String readedType = types.get(type);
+		//	if (readedType == null)
+		//		readedType = types.get("(" + type + ")");
+		//	return readedType;
+		//	
+		//}
+		
 		//
 		//  Metodo para obtener e imprimir informacion de tipo de una variable
 		//
@@ -443,7 +452,7 @@ public class ExprParser extends Parser {
 				    	String zRanTypeName = getChildType(type,0);
 				    	String zRanType = types.get(zRanTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -468,7 +477,7 @@ public class ExprParser extends Parser {
 				    	String zDomTypeName = getChildType(type,0);
 				    	String zDomType = types.get(zDomTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zDomType.startsWith("EnumerationType")){
+				    	if (zDomType != null && zDomType.startsWith("EnumerationType")){
 				    		String dom = memory.get("\\dom" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -485,7 +494,7 @@ public class ExprParser extends Parser {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -510,7 +519,7 @@ public class ExprParser extends Parser {
 				    	String zDomTypeName = getChildType(type,0);
 				    	String zDomType = types.get(zDomTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zDomType.startsWith("EnumerationType")){
+				    	if (zDomType != null && zDomType.startsWith("EnumerationType")){
 				    		String dom = memory.get("\\dom" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -527,7 +536,7 @@ public class ExprParser extends Parser {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -560,7 +569,7 @@ public class ExprParser extends Parser {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -3423,7 +3432,13 @@ public class ExprParser extends Parser {
 						//Chequeo el nombre para ver si se trata de una sola variable, en ese caso no guardo en la memoria
 						//los parentesis, en otro caso si
 						
-						if (a != null) { //Si no estoy en la parte de declaracion
+						//Primero verificamos que no sea un tipo basico
+						String type = types.get((((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null));
+					    boolean isBasic = false;
+					    if (type != null && isBasic(type))
+					    	isBasic = true;
+						
+						if (a != null && !isBasic) { //Si no estoy en la parte de declaracion
 							Pattern p = Pattern.compile("[^a-zA-Z0-9_]");
 							boolean hasSpecialChar = p.matcher(a).find();
 							
@@ -3439,9 +3454,14 @@ public class ExprParser extends Parser {
 									types.put("(" + (((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null) + ")", "(" + types.get((((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null)) + ")");
 								}
 							}
-						} else  //Si estoy en la parte de declaracion
-							if (types.get((((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null)) != null)
-								types.put("(" + (((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null) + ")", "(" + types.get((((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null)) + ")");
+						} else {  //Si estoy en la parte de declaracion, es decir, estoy guardando un tipo
+							if (type != null) {
+								if (isBasic)
+									types.put("(" + (((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null) + ")", (((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null));
+								else
+									types.put("(" + (((EndExpressionContext)_localctx).e!=null?_input.getText(((EndExpressionContext)_localctx).e.start,((EndExpressionContext)_localctx).e.stop):null) + ")", "(" + type + ")");
+							}
+						}
 					
 				}
 				break;

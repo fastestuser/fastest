@@ -399,6 +399,15 @@ public class ExprLexer extends Lexer {
 			return newVarName;
 		}
 		
+		///////////////////////////////
+		//private String readType(String type) {
+		//	String readedType = types.get(type);
+		//	if (readedType == null)
+		//		readedType = types.get("(" + type + ")");
+		//	return readedType;
+		//	
+		//}
+		
 		//
 		//  Metodo para obtener e imprimir informacion de tipo de una variable
 		//
@@ -438,7 +447,7 @@ public class ExprLexer extends Lexer {
 				    	String zRanTypeName = getChildType(type,0);
 				    	String zRanType = types.get(zRanTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -463,7 +472,7 @@ public class ExprLexer extends Lexer {
 				    	String zDomTypeName = getChildType(type,0);
 				    	String zDomType = types.get(zDomTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zDomType.startsWith("EnumerationType")){
+				    	if (zDomType != null && zDomType.startsWith("EnumerationType")){
 				    		String dom = memory.get("\\dom" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -480,7 +489,7 @@ public class ExprLexer extends Lexer {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -505,7 +514,7 @@ public class ExprLexer extends Lexer {
 				    	String zDomTypeName = getChildType(type,0);
 				    	String zDomType = types.get(zDomTypeName);
 				    	String zVar = getKey(var, memory); //Nombre de la variable en Z
-				    	if (zDomType.startsWith("EnumerationType")){
+				    	if (zDomType != null && zDomType.startsWith("EnumerationType")){
 				    		String dom = memory.get("\\dom" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -522,7 +531,7 @@ public class ExprLexer extends Lexer {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
@@ -555,7 +564,7 @@ public class ExprLexer extends Lexer {
 				    	//Obtenemos el rango de la variable
 				    	String zRanTypeName = getChildType(type,1);
 				    	String zRanType = types.get(zRanTypeName);
-				    	if (zRanType.startsWith("EnumerationType")){
+				    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 				    		String ran = memory.get("\\ran" + zVar);
 				    		//verificamos si ya creamos una variable para el dominio,
 				    		//y sino creamos una
