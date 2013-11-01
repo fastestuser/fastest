@@ -5,6 +5,7 @@ import java.io.*;
 import java.net.URL;
 
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.RefExpr;
 import client.blogic.management.Controller;
 import common.repository.AbstractRepository;
@@ -31,30 +32,39 @@ public class FastestUtils {
 
 		Set<String> axDefsRequired = controller.getAxDefsRequired().keySet();
 		Iterator<String> axDefsRequiredIt = axDefsRequired.iterator();
+
+		//We save first, all the already assign values
+		Set<String> alreadyAssigned = new HashSet<String>();
+		Map<RefExpr, Expr> axDefsAssignedValues = controller.getAxDefsValues();
+		Iterator<RefExpr> it = axDefsAssignedValues.keySet().iterator();
+		while (it.hasNext())
+			alreadyAssigned.add(SpecUtils.termToLatex(it.next()));
+
 		boolean containsAxDef = false;
 		String axDef = null;
 		while (axDefsRequiredIt.hasNext() && (!containsAxDef)) {
 			axDef = axDefsRequiredIt.next();
+			if (!alreadyAssigned.contains(axDef)) {
+				if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
 
-			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
-
-				if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
-					containsAxDef = true;
-					break;
+					if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+						containsAxDef = true;
+						break;
+					}
 				}
 			}
 		}
-		Set<RefExpr> axDefsValues = controller.getAxDefsValues().keySet();
-		Iterator<RefExpr> axDefsValuesIt = axDefsValues.iterator();
-		while (axDefsValuesIt.hasNext() && (!containsAxDef)) {
-			axDef = axDefsValuesIt.next().getZName().getWord();
-			if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
-				if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
-					containsAxDef = true;
-					break;
-				}
-			}
-		}
+		//Set<RefExpr> axDefsValues = controller.getAxDefsValues().keySet();
+		//Iterator<RefExpr> axDefsValuesIt = axDefsValues.iterator();
+		//while (axDefsValuesIt.hasNext() && (!containsAxDef)) {
+		//	axDef = axDefsValuesIt.next().getZName().getWord();
+		//	if(strDecl.split("(^|\\W)"+axDef+"($|\\W)", 2).length == 1){
+		//		if (strPred.split("(^|\\W)"+axDef+"($|\\W)", 2).length > 1) {
+		//			containsAxDef = true;
+		//			break;
+		//		}
+		//	}
+		//}
 
 		if (containsAxDef)
 			return axDef;

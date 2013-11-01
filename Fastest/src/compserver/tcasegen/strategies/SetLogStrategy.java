@@ -58,16 +58,16 @@ public final class SetLogStrategy implements TCaseStrategy{
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
-		
+
 		Controller controller = clientUI.getMyController();
 		String tClassName = tClass.getSchName();
-		
-		
-			
+
+
+
 		System.out.println("Trying to generate a test case for the class: " + tClassName);
-		
-        List<FreePara> freeParas = controller.getFreeParas();
-        List<String> basicTypeNames = controller.getBasicTypeNames();
+
+		List<FreePara> freeParas = controller.getFreeParas();
+		List<String> basicTypeNames = controller.getBasicTypeNames();
 
 		//Buscamos los tipos que aparecen en tClass, para incluir
 		//su informacion en la entrada del parser
@@ -136,8 +136,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 		//Armamos la entrada para el parser
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
-		
-		
+
+
 		//PROBANDO LOS TIPOS, despues borrar...
 		//Map<Expr,Type> mapTypes = tClass.accept(new ExpressionsExtractor());
 		//Iterator iteratorTypes = mapTypes.keySet().iterator();
@@ -145,57 +145,61 @@ public final class SetLogStrategy implements TCaseStrategy{
 		//	Expr key = (Expr) iteratorTypes.next();
 		//	System.out.println(SpecUtils.termToLatex(key) + " .... " + SpecUtils.termToLatex(mapTypes.get(key)));
 		//}
-		
-		
-		
-		
+
+
+
+
 		///////////////////////////////////////
 
 		int setlogTimeout = controller.getSetlogTimeout();
 		//Generamos el caso de prueba
 		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogTimeout,clientUI);
-		
+
 		if (zVars == null) //No encontro caso
 			return null;
 		else if (zVars.isEmpty()) { //No hay caso de prueba, dio False {log}
-			
+
 			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
 			TTreeNode tClassNode = FastestUtils.getTTreeNode(controller, tClassName);
-            TClassNode dadNode = tClassNode.getDadNode();
-            if (dadNode != null) { //Si el hijo no es el VIS
-            	//Pruneamos el nodo
-            	boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
-            	if (result) {
-            		System.out.println("Node pruned: " + tClassName);
-            	}
-            	
-    			//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
-            	AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
-            	AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
-            	Boolean allChildsPruned = new Boolean(true);
-				while(childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
-					TTreeNode child = childsNodeIt.next();
-					if (child instanceof TClassNode) {
-						allChildsPruned = ((TClassNode) child).isPruned();
+			TClassNode dadNode = tClassNode.getDadNode();
+			if (dadNode != null) { //Si el hijo no es el VIS
+				//Pruneamos el nodo
+				boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
+				if (result) {
+					System.out.println("Node pruned: " + tClassName);
+				}
+
+				//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
+				//y no es el VIS
+				TClassNode dadOfDadNode = dadNode.getDadNode();
+				if (dadOfDadNode != null){ //No es el VIS
+					AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
+					AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
+					Boolean allChildsPruned = new Boolean(true);
+					while(childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
+						TTreeNode child = childsNodeIt.next();
+						if (child instanceof TClassNode) {
+							allChildsPruned = ((TClassNode) child).isPruned();
+						}
+					}
+					if (allChildsPruned) {
+						EventAdmin eventAdmin = null;
+						try {
+							eventAdmin = EventAdmin.getInstance();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}
+						TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, controller);
+						dadNode.acceptVisitor(tClassNodeUnfolder);
+						TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
+						TCaseRequested tCaseRequested = new TCaseRequested(dadClass.getSchName(), dadClass, controller.getMaxEval());
+						eventAdmin.announceEvent(tCaseRequested);
 					}
 				}
-				if (allChildsPruned) {
-					EventAdmin eventAdmin = null;
-					try {
-						eventAdmin = EventAdmin.getInstance();
-					} catch (IllegalAccessException e) {
-						e.printStackTrace();
-					}
-                    TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, controller);
-                    dadNode.acceptVisitor(tClassNodeUnfolder);
-                    TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
-                    TCaseRequested tCaseRequested = new TCaseRequested(dadClass.getSchName(), dadClass, controller.getMaxEval());
-                    eventAdmin.announceEvent(tCaseRequested);
-				}
-            }
+			}
 			return null;
 		}
-		
+
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas
 		Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
 		//Map<String, String> zVars = parser2.getZVars();
