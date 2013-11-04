@@ -22,10 +22,13 @@ import net.sourceforge.czt.session.Key;
 import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.Source;
 import net.sourceforge.czt.session.StringSource;
+import net.sourceforge.czt.typecheck.z.ErrorAnn;
+import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.NameList;
 import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
@@ -33,6 +36,8 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.TypeAnn;
+import net.sourceforge.czt.z.ast.VarDecl;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
@@ -40,6 +45,7 @@ import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
+import common.z.czt.visitors.BasicTypeNamesExtractor;
 import common.z.czt.visitors.CZTReplacer;
 import common.z.czt.visitors.DeclsExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
@@ -59,7 +65,9 @@ public class ReplaceAxDefCommand implements Command{
 
 		controller = clientTextUI.getMyController();
 		zLive = UniqueZLive.getInstance();
-
+		
+        //Spec spec = controller.getOriginalSpec();
+        
 		Spec spec = loadSpecAgain(controller.getNomTexFileSpec());
 
 		//Para cada schema box, hacemos un replace
@@ -80,6 +88,7 @@ public class ReplaceAxDefCommand implements Command{
 							String strBox  = (axPara.getBox()).name();
 							if (strBox.equals("SchBox")){
 								try{
+									
 									//Reemplazamos las definiciones axiomaticas,
 									//pero solo de aquellas variables no definidas en el esquema
 
@@ -234,6 +243,10 @@ public class ReplaceAxDefCommand implements Command{
 			manager.put(new Key(texFileToReadName, Source.class), source);
 			// The specification is loaded and set in the controller
 			spec = (Spec) manager.get(new Key(texFileToReadName, Spec.class));
+			
+			TypeCheckUtils.typecheck(spec, manager, true);
+						
+			
 		}
 		catch (Exception e){
 			System.out.println("Cant loadAgain " + nomTexFileSpec );

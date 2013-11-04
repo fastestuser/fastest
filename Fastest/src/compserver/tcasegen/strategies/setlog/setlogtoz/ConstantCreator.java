@@ -37,6 +37,7 @@ public final class ConstantCreator {
 	private List<String> schemaTypes;
 	private HashMap<String, String> zNames;
 	private int postfijo;
+	private int MAXTRYCTEINF = 100;
 
 	protected String getNumber() {
 		return String.valueOf(postfijo++);
@@ -178,6 +179,7 @@ public final class ConstantCreator {
 		return salida;
 	}
 
+	/*Retorna falso si el valor de la variable var es distinto a todos los valores que hay en el iterador ei*/
 	private boolean esProhibida(DefaultMutableTreeNode nodo,String var,ExprIterator ei) {
 		try {
 			ZLive zLive = UniqueZLive.getInstance();
@@ -201,14 +203,14 @@ public final class ConstantCreator {
 		return false;
 	}
 	/* Dado un tipo y una variable, genera un terminal canonico para el tipo de tal manera que no sea
-	 * ninunga de las constantes que estan asociadas en valoresProhibidos, prueba 100 veces como maximo.*/
+	 * ninunga de las constantes que estan asociadas en valoresProhibidos, prueba MAXTRYCTEINF veces como maximo.*/
 	private String cteInfinita(DefaultMutableTreeNode nodo, String var) {
 
 		boolean esProhibida = true;
 		String cte = null;
 		int i = 0;
 		ExprIterator it = new ExprIterator("{" + valoresProhibidos.get(var) + "}");
-		while (esProhibida && i < 100) {
+		while (esProhibida && i < MAXTRYCTEINF) {
 			cte = cteCanonica(nodo, var);
 			esProhibida = esProhibida(nodo,cte,it);
 			i++;
