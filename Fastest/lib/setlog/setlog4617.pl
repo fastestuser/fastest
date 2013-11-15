@@ -1,13 +1,40 @@
 
-%%% VERSION 4.6.17-20
+%%% VERSION 4.7.0-4
 
+% ATTN: occur_check temporarily disabled for efficiency reasons;
+% uncomment definition of predicate occur_check/2 to reactivate it
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%% 4.7.0 %%%
+
+%--- 1
+% aggiunto trattamento user-defined rewriting rules nella ruq_in_goal
+
+%--- 2
+% modificato caricamento file setlog_rules.pl: inserito test di esistenza sul file,
+% aggiunto dynamic inference_rule/7
+
+%--- 3
+% modificato uso "cut" nella conj_member_strong/2
+% aggiunto un parametro alla ruq_in_goal per distinguere tra tipo di regole
+% aggiunto un caso alla definizione di user_def_rules (fail_rule)
+% aggiunto dynamic fail_rule/6
+% aggiunto dichiarazione multifile
+
+%--- 4
+% migliorato stampa constraint 'irreducible'
+%    predicati: write_atomic_constr, setlog/2, remove_solved, h(sbuilt)
+% sistemato spiegazione delay nell'help
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%                                                          
 %%                The {log} interpreter and solver                  
 %%                                                           
-%%                            VERSION 4.6.17   
+%%                            VERSION 4.7.0   
 %%                                             
 %%                      original development by
 %%                                                          
@@ -22,7 +49,7 @@
 %%
 %%       B.Bazzan  S.Manzoli  S.Monica  C.Piazza  L.Gelsomino
 %%
-%%          Last revision by Gianfranco Rossi (May 2013)           
+%%          Last revision by Gianfranco Rossi (October 2013)           
 %%                                                              
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -57,7 +84,12 @@
 :- dynamic context/1. 
 :- dynamic nolabel/0.                                 
 :- dynamic trace/0.
-:- dynamic nofinal/0.
+:- dynamic final/0.
+
+:- dynamic inference_rule/7.
+:- dynamic fail_rule/6.
+:- multifile inference_rule/7.
+:- multifile fail_rule/6.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -202,9 +234,10 @@ write_constr_all([C|Constr],Vars) :-
          
 write_atomic_constr(solved(C,_,_,_)) :- !,
        write(C).
+write_atomic_constr(delay(irreducible(C)&true,_)) :- !, 
+    write(irreducible(C)).
 write_atomic_constr(C) :- !,
        write(C).
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -243,7 +276,8 @@ setlog(Goal,OutConstrLst) :-
        nonvar(Goal), 
        copy_term(Goal,NewGoal),
        solve(NewGoal,C),
-       add_FDc(C,Constr,Warning),
+       remove_solved(C,C1),                   %remove info about "solved" constraints    
+       add_FDc(C1,Constr,Warning),
        fd_warning(Warning),
        postproc(Constr,OutConstrLst),         %from 'with' to {...} notation;  
        postproc(NewGoal,NewGoal_ext),
@@ -307,9 +341,10 @@ consult_lib :-                            %to consult the {log} library file
 remove_solved([],[]).
 remove_solved([solved(C,_,_,_)|R],[C|RR]) :- !,
     remove_solved(R,RR).
+remove_solved([delay(irreducible(C)&true,_)|R],[irreducible(C)|RR]) :- !, 
+    remove_solved(R,RR).
 remove_solved([C|R],[C|RR]) :-
     remove_solved(R,RR).
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -452,8 +487,10 @@ h(sbuilt) :-
    write('   -   consult_lib/0: to consult the {log} library file setloglib.slog'),nl,  
    write('   -   add_lib(F): to add any file F to the {log} library '),nl,  
    write('   -   G!: to make a {log} goal G deterministic'), nl,
-   write('   -   delay(G,C), G, C any {log} goals: to delay '),
-        write('execution of G until C holds'), nl,
+   write('   -   delay(G,C), G, C {log} goals: to delay execution of G '),      
+        write('until either C holds or the computation ends; '), nl,
+   write('   -   delay(irreducible(G),C), G, C {log} goals: to delay execution of G'), 
+        write('until C holds; otherwise return irreducible(G)'), nl,
    write('   -   nolabel/0, label/0: to deactivate/reactivate the automatic '), 
         nl,write('       FD labeling function'), nl, 
    write('   -   labeling(X): to force labeling for a domain variable X'), nl,
@@ -523,7 +560,7 @@ check_lib :-
         
 %%%% solve(+Goal,-Constraint)   Goal: {log} goal in external form
 %
-solve(Goal_int_ruq,Constr):-            
+solve(Goal_int_ruq,Constr):-   
        transform_goal(Goal_int_ruq,B),
        solve_goal_fin(B,Constr).
 
@@ -627,14 +664,10 @@ ssolve(trace,[],[]):-             %% activate constraint solving tracing
 ssolve(trace,[],[]):-    
         assert(trace).
 
-ssolve(nofinal,[],[]):-             %% true if constraint solving is in "final mode" (= level 3)
-        nofinal,!.
-
 ssolve(A,C,D):-                   %% program defined predicates
         our_clause(A,B,C1),
         constrlist(B,C2,D),
         append(C1,C2,C).
-        
 our_clause(A,B,C):-
         functor(A,Pname,N),
         functor(P,Pname,N),
@@ -745,8 +778,12 @@ dis([X|L1],[Y|L2],L3):-
 %        setof(X,solve_goal_fin(InPred,C1),L),
 %        list_to_set(L,S,C2),
 %        append(C2,C1,Cout).
+solve_SF(S,_GName,PName,VarList,Cin,Cout) :- 
+        nonvar(S), S = {},!,
+        InPred =.. [PName,{}|VarList],  %GFR - forse piu' corretto usare GName (?)
+        solve_goal_fin(Cin,[neg(InPred & true)],Cout).
 solve_SF({},_GName,PName,VarList,Cin,Cout) :- 
-        InPred =.. [PName,{}|VarList],
+        InPred =.. [PName,{}|VarList],  %GFR - forse piu' corretto usare GName (?)
         solve_goal_fin(Cin,[neg(InPred & true)],Cout).
 solve_SF(S,GName,_PName,VarList,_Cin,Cout) :- 
         InPred =.. [GName,X|VarList],
@@ -1270,7 +1307,7 @@ trace_out(_,_).
 
 %%%%%%%%%%%%%%%%%%%%%% equality (=/2)
 
-sat_eq([T1 = T2|R1],[T1 = T2|R2],Stop,nf):-     % delayed until final_sat is called  %TEMP
+sat_eq([T1 = T2|R1],[T1 = T2|R2],Stop,nf):-     % delayed until final_sat is called  
         nonvar(T1), T1 = int(A,B), var(A), var(B),
         nonvar(T2), is_empty(T2),!,                        
         sat_step(R1,R2,Stop,nf).                   
@@ -1421,20 +1458,15 @@ is_empty_int(int(A,B)) :-
 
 int_unify(int(L,H),S2,[int(L,H) = S2]) :-            % int(A,B) = {}
         var(L), var(H), nonvar(S2), S2 = {}, !.   
-%int_unify(S2,int(L,H),[int(L,H) = S2]) :-            % {} = int(A,B)
-%        var(L), var(H), is_empty(S2), !. 
+%int_unify(S2,int(L,H),[int(L,H) = S2]) :-           % {} = int(A,B)
 int_unify(int(L,H),T2,C) :-                          % int(t1,t2) = {}
         T2 = {}, !,
         C = [integer(H), integer(L), H < L]. 
-%int_unify(T1,int(L,H),C) :-                          % {} = int(t1,t2)
-%        is_empty(T1), !,
-%        C = [integer(H), integer(L), H < L].
 int_unify(T1,T2,C) :-                                % {...} = int(L,H) (rule 12)
-%      (T1 = _ with _, is_int(T2,_,_),!
-%       ;
-%       T2 = _ with _, is_int(T1,_,_)),
-        T2 = _ with _, is_int(T1,_,_),   
-        C = [subset(T1,T2),subset(T2,T1)].   % to be improved for the ground case
+%        T2 = _ with _, is_int(T1,_,_),          % to be improved for the ground case
+%        C = [subset(T1,T2),subset(T2,T1)].   
+         T2 = _ with _, T1 = int(A,B),          
+         C = [smin(T2,A), smax(T2,B), size(T2,K), K is B-A+1].
 
 
 %%%%%%%%%%% Multiset unification %%%%%%%%%%%%%%%%%
@@ -1475,7 +1507,7 @@ sat_neq([T1 neq T2|R1],R2,R,F):-
          var(T1), var(T2),!,
          sat_neq_vv([T1 neq T2|R1],R2,R,F).  
 
-sat_neq([T1 neq T2|R1],[T1 neq T2|R2],Stop,nf):-     % delayed until final_sat is called   %TEMP  
+sat_neq([T1 neq T2|R1],[T1 neq T2|R2],Stop,nf):-     % delayed until final_sat is called    
          nonvar(T1), T1 = int(A,B), var(A), var(B),  % (--> Level 3)
          nonvar(T2), is_empty(T2),!,                            
          sat_step(R1,R2,Stop,nf).                   
@@ -2288,17 +2320,21 @@ sat_min([smin(R with X,T)|R1],[smin(R with X,T)|R2],Stop,nf):-
         sat_step(R1,R2,Stop,nf).  
 sat_min([smin(R with X,T)|R1],[smin(R with X,T)|R2],Stop,nf):-!,  % smin({...|R},t)
         sat_step(R1,R2,Stop,nf).                % delayed until final_sat is called
+sat_min([smin({} with X,T)|R1],R2,c,f):-        % LEVEL 3: smin({...},t)           
+        simple_integer_expr(X),
+        solve_FD(T >= 0), 
+        sat_step([integer(X),X = T|R1],R2,_,f). 
 sat_min([smin(R with X,T)|R1],R2,c,f):-         % LEVEL 3: smin({...},t)           
         simple_integer_expr(T),
         simple_integer_expr(X),
         solve_FD(T >= 0), 
-%        solve_FD(X >= 0), 
-        (sat_step([integer(X),set(R),X nin R,X = T,smin(R,M),M > T|R1],R2,_,f)
+        (sat_step([integer(X),set(R),X = T,smin(R,M),M >= T|R1],R2,_,f)
          ; 
-         sat_step([integer(X),set(R),X nin R,X > T,smin(R,T)|R1],R2,_,f)
+         sat_step([integer(X),set(R),X > T,smin(R,T)|R1],R2,_,f)
         ). 
 
-minim({},_).         
+minim({},_). 
+minim(int(A,_),A).                 
 minim(R with A,N):- 
         simple_integer_expr(A),               
         solve_FD(A >= N),  
@@ -2311,6 +2347,8 @@ g_min(L,X) :-
   
 gg_min({},P,M):-
         solve_FD(M is P).
+gg_min(int(A,_),P,M) :-
+        calc_min(A,P,M).
 gg_min(R with A,P,M) :-
         integer(A), A>=0,
         calc_min(A,P,G),
@@ -2369,16 +2407,23 @@ sat_max([smax(R with X,T)|R1],[smax(R with X,T)|R2],Stop,nf):-
         sat_step(R1,R2,Stop,nf).  
 sat_max([smax(R with X,T)|R1],[smax(R with X,T)|R2],Stop,nf):-!,  % smax({...|R},t)
         sat_step(R1,R2,Stop,nf).                % delayed until final_sat is called
+sat_max([smax({} with X,T)|R1],R2,_,f) :-       % LEVEL 3: smax({...},t)  
+        simple_integer_expr(X),
+        solve_FD(T >= 0), 
+        sat_step([integer(X),X = T|R1],R2,_,f). 
 sat_max([smax(R with X,T)|R1],R2,_,f) :-        % LEVEL 3: smax({...},t)  
         simple_integer_expr(T),
         simple_integer_expr(X),
         solve_FD(T >= 0), 
-%        solve_FD(X >= 0),   
-        (sat_step([set(R),integer(X),X = T,X nin R,smax(R,M),M >= 0,M < T|R1],R2,_,f)
+%        (sat_step([set(R),integer(X),X = T,X nin R,smax(R,M),M >= 0,M < T|R1],R2,_,f)
+%        ; 
+%         sat_step([set(R),integer(X),X < T,X nin R,smax(R,T)|R1],R2,_,f)). 
+        (sat_step([set(R),integer(X),X = T,smax(R,M),M =< T|R1],R2,_,f)
         ; 
-         sat_step([set(R),integer(X),X < T,X nin R,smax(R,T)|R1],R2,_,f)). 
+         sat_step([set(R),integer(X),X < T,smax(R,T)|R1],R2,_,f)). 
 
 mass({},_).
+mass(int(_,B),B).                 
 mass(R with A,N):-
         simple_integer_expr(A),   
         solve_FD(A >= 0),
@@ -2388,8 +2433,10 @@ mass(R with A,N):-
 g_max(L,X) :-
         gg_max(L,0,X).
 
-gg_max({},P,M):-
+gg_max({},P,M):- 
         solve_FD(M is P).
+gg_max(int(_,B),P,M) :-
+        mag(B,P,M).
 gg_max(R with A,P,M) :-
         integer(A), A>=0,
         mag(A,P,G),
@@ -2462,6 +2509,8 @@ g_inters(S1 with _X,S2,S3) :-
 
 g_size(T,0) :-
         is_empty(T),!.            
+g_size(int(A,B),N) :- !, 
+        N is B-A+1.            
 g_size(R with A,N):-
         g_member(A,R),!,
         g_size(R,N).
@@ -2563,15 +2612,18 @@ sat_ninteger([ninteger(X)|R1],R2,c,F) :-
 %%%%%%%%%%%%%%%%%%%%%%% delay mechanism               
 
 sat_delay([delay(irreducible(A) & true,G)|R1],R2,c,f) :- 
+        final,
         solve_goal(G,C1),!,
         solve_goal(A,C2),
         append(C1,C2,C3),
         append(C3,R1,R3),
         sat_step(R3,R2,_,f).
-sat_delay([delay(irreducible(A) & true,G)|R1],[delay(irreducible(A) & true,G)|R2],Stop,f) :- !,
+sat_delay([delay(irreducible(A) & true,G)|R1],[delay(irreducible(A) & true,G)|R2],Stop,f) :- 
+        final, !,
         sat_step(R1,R2,Stop,f).
 
-sat_delay([delay(A,_G)|R1],R2,c,f) :- !,
+sat_delay([delay(A,_G)|R1],R2,c,f) :- 
+        final, !,
         solve_goal_nodel(A,C2),
         append(C2,R1,R3),
         sat_step(R3,R2,_,f).
@@ -2638,7 +2690,7 @@ test_final([solved(C,_,_,_)|R1],R2,c,f) :-     % final sat: G is true and not in
 
 global_check([],_,[]) :- !.
 
-global_check([T1 = T2|RC],GC,[T1 = T2|NewC]) :-        %TEMP
+global_check([T1 = T2|RC],GC,[T1 = T2|NewC]) :-        
     nonvar(T1), T1 = int(A,B), nonvar(T2), is_empty(T2), !,
     \+find_neq(int(A,B),GC),
     global_check(RC,GC,NewC).
@@ -2650,7 +2702,7 @@ global_check([C|RC],GC,NewC) :-        % neq: neq and un
     mk_new_constr(W,T,OutC),
     append(OutC,CC,NewC),
     global_check(RC,GC,CC).
-global_check([C|RC],GC,[C|NewC]) :-    % type clashes
+global_check([C|RC],GC,[C|NewC]) :-    % type clashes    
     type_constr(C),!,
     \+type_err(C,RC),   
     global_check(RC,GC,NewC).
@@ -2666,7 +2718,7 @@ global_check([C|RC],GC,[solved(un(X,Y,Z),(var(X),var(Y),var(Z)),2,f),
     global_check(RC,GC,NewC).
 global_check([C|RC],GC,NewC) :-        % size: conflicting sizes for the same set
     is_size(C,1,X,N), 
-    var(X),                             
+    var(X),                                              
     find_size(X,RC,M),!,
     N = M,
     global_check(RC,GC,NewC).
@@ -2763,7 +2815,7 @@ mk_new_constr(W,T,OutC):-
         W = {}, OutC = [T neq {}]).
 
 
-find_neq(Int,[I neq E|_]) :-             %TEMP
+find_neq(Int,[I neq E|_]) :-             
        nonvar(E), is_empty(E), I == Int,!.
 find_neq(Int,[_|R]) :- 
        find_neq(Int,R).
@@ -2815,22 +2867,38 @@ find_max(X,[_|R],M) :-
 %%%%%%%%%%%%%%%%%           Level 3           %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%  Labeling and final check   %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-     
-
-final_sat([],[]) :-!.
+ 
 final_sat(C,SFC):- 
       trace_in(C,3),
-      sat_empty_intv(C,CC),   %TEMP
+      final_sat1(C,SFC0), 
+      final_sat2(SFC0,SFC),
+      trace_out(SFC,3).  
+
+final_sat1([],[]) :-!.
+final_sat1(C,SFC):- 
+      sat_empty_intv(C,CC),   
       check_domain(CC),                  %force labeling for integer variables;  
       sat(CC,RevC,f),                    %call the constraint solver (in 'final' mode); 
       final_sat_cont(RevC,CC,SFC).
 
 final_sat_cont(RevC,C,RevC) :-
-      RevC == C,!,                      %if C==RevC, then no rewriting has been applied
-      trace_out(RevC,3).
+      RevC == C,!.
 final_sat_cont(RevC,_C,SFC) :-          %RevC is the resulting constraint; 
-      final_sat(RevC,SFC).              %otherwise, call 'final_sat' again
-  
+      final_sat1(RevC,SFC).              %otherwise, call 'final_sat' again
+ 
+final_sat2([],[]) :-!.
+final_sat2(C,SFC):- 
+      check_domain(C),                  %force labeling for integer variables;
+      set_final, 
+      sat(C,RevC,f),                    %call the constraint solver (in 'final' mode); 
+      final_sat_cont2(RevC,C,SFC).
+
+final_sat_cont2(RevC,C,RevC) :-
+      RevC == C,!,
+      retract_final.
+final_sat_cont2(RevC,_C,SFC) :-          %RevC is the resulting constraint; 
+      final_sat2(RevC,SFC).              %otherwise, call 'final_sat' again
+ 
 check_domain(C):-                       %to force labeling (if possible) for integer         
       memberrest(integer(X),C,CRest),!, %variables that are still uninstantiated in 
       labeling(X),                      %the constraint C 
@@ -2838,7 +2906,7 @@ check_domain(C):-                       %to force labeling (if possible) for int
 check_domain(_).
                       
 
-sat_empty_intv([],[]) :- !.              %TEMP
+sat_empty_intv([],[]) :- !.              
 sat_empty_intv([T1 = T2|R1],[integer(A),integer(B)|R2]) :- 
       nonvar(T1), T1 = int(A,B), nonvar(T2), is_empty(T2),!,
       solve_FD(A > B),
@@ -2849,6 +2917,16 @@ sat_empty_intv([T1 neq T2|R1],[integer(A),integer(B)|R2]) :-
       sat_empty_intv(R1,R2).
 sat_empty_intv([C|R1],[C|R2]) :- 
       sat_empty_intv(R1,R2).
+
+
+set_final :-             
+        final,!.
+set_final :-    
+        assert(final).
+
+retract_final :-
+        retract(final),!.
+retract_final.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3135,11 +3213,9 @@ bag_preproc_bag(M,Y mwith B,Constrs):-!,
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% type constraints generation
 
-%%%% gen_type_constrs(_T1 in T2,[type(aggr(T2))]) :- !.     
-%%%% gen_type_constrs(_T1 nin T2,[type(aggr(T2))]) :- !.
 gen_type_constrs(un(T1,T2,T3),[type(set(T1)),type(set(T2)),type(set(T3))]) :- !.
 gen_type_constrs(nun(T1,T2,T3),[type(set(T1)),type(set(T2)),type(set(T3))]) :- !.
-gen_type_constrs(disj(T1,T2),[type(set(T1)),type(set(T2))]) :- !.
+gen_type_constrs(disj(T1,T2),[type(set(T1)),type(set(T2))]) :- !.  
 gen_type_constrs(ndisj(T1,T2),[type(set(T1)),type(set(T2))]) :- !.
 gen_type_constrs(subset(T1,T2),[type(set(T1)),type(set(T2))]) :- !.
 gen_type_constrs(inters(T1,T2,T3),[type(set(T1)),type(set(T2)),type(set(T3))]) :- !.
@@ -3301,37 +3377,44 @@ check_control_var2(_X).
 %%%%%%%%%%%%    R.U.Q. preprocessing  %%%%%%%%%%%           
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                       
-ruq_in_clause((H :- B),(H :- B1)):-    
-    ruq_in_goal(B,B1),!.    
+ruq_in_clause((H :- B),(H :- NewB)) :-    
+    ruq_in_goal(B,B1,B,infer_rules),    
+    ruq_in_goal(B1,NewB,B1,fail_rules),!.    
 ruq_in_clause(H,H).
 
-ruq_in_goal(A,A):-
+ruq_in_goal(Goal,NewGoal) :-
+    ruq_in_goal(Goal,NewGoal1,Goal,infer_rules), 
+    ruq_in_goal(NewGoal1,NewGoal,NewGoal1,fail_rules).  
+
+ruq_in_goal(A,A,_,_):-
     var(A),!.    
-ruq_in_goal(A & B,GExt):-
-    !, ruq_in_goal(A,A1), ruq_in_goal(B,B1),
+ruq_in_goal(A & B,GExt,G,RR):-
+    !, ruq_in_goal(A,A1,G,RR), ruq_in_goal(B,B1,G,RR),
     conj_append(A1,B1,GExt).    
-ruq_in_goal((A or B),((A1) or (B1))):-
-    !, ruq_in_goal(A,A1), ruq_in_goal(B,B1).    
-ruq_in_goal(neg A,neg(A1)):-
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal(naf A,naf(A1)):-
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal(call(A),call(A1)):-
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal(call(A,C),call(A1,C)):-    %NEW
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal(solve(A),solve(A1)):-
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal((A)!,(A1)!):-
-    !, ruq_in_goal(A,A1).    
-ruq_in_goal(delay(A,G),delay(A1,G1)):-
-    !, ruq_in_goal(A,A1),
-    ruq_in_goal(G,G1).    
-ruq_in_goal(forall(X in _S,_Y),_):- 
+ruq_in_goal((A or B),((A1) or (B1)),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR), ruq_in_goal(B,B1,B,RR). 
+   
+ruq_in_goal(neg A,neg(A1),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR).    
+ruq_in_goal(naf A,naf(A1),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR).    
+ruq_in_goal(call(A),call(A1),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR).
+ruq_in_goal(call(A,C),call(A1,C),_,RR):-    
+    !, ruq_in_goal(A,A1,A,RR).   
+ruq_in_goal(solve(A),solve(A1),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR).    
+ruq_in_goal((A)!,(A1)!,_,RR):-
+    !, ruq_in_goal(A,A1,A,RR).    
+ruq_in_goal(delay(A,G),delay(A1,G1),_,RR):-
+    !, ruq_in_goal(A,A1,A,RR),
+    ruq_in_goal(G,G1,G,RR).   
+ 
+ruq_in_goal(forall(X in _S,_Y),_,_,_):- 
     nonvar(X), !, 
     write('ERROR - Control variable in a R.U.Q. must be a variable term!'), nl, 
     fail.
-ruq_in_goal(forall(X in S,G),NewG):-
+ruq_in_goal(forall(X in S,G),NewG,_,_):-
     !, extract_vars(G,V),
     remove_var(X,V,Vars),
     check_control_var_RUQ(V,Vars), 
@@ -3346,7 +3429,10 @@ ruq_in_goal(forall(X in S,G),NewG):-
     switch_ctxt(OldCtxt,_),
     functor(Gpred,F,N),
     NewG = ruq_call(S,F,Vars).
-ruq_in_goal(A,A).
+
+ruq_in_goal(A,NewG,G,RR) :-     % calling user-defined rewriting rules
+    user_def_rules(A,NewG,G,RR),!.
+ruq_in_goal(A,A,_,_).
     %% N.B. no check for 'forall(X in {...,t[X],...})'
     %% add 'occur_check(X,S)' to enforce it
 
@@ -3356,6 +3442,45 @@ check_control_var_RUQ(Vars,Finalvars) :-
     write(' contain the R.U.Q. control variable'), nl, 
     fail.
 check_control_var_RUQ(_Vars,_Finalvars).
+
+
+%%%%%%%%%%%%%%%%%%%%% User-defined rewriting rules %%%%%%%%%%%%%% 
+
+user_def_rules(A,NewC,G,infer_rules) :- !,
+    inference_rule(initial,C,C_Conds,D,D_Conds,E,AddC),   
+    A = C,
+    list_call(C_Conds),
+    conj_member_strong(D,D_Conds,G,E),
+    conj_append(AddC,A,NewC).
+ 
+user_def_rules(A,NewC,G,fail_rules) :- !,
+    fail_rule(initial,C,C_Conds,D,D_Conds,E),   
+    A = C, 
+    list_call(C_Conds),
+    conj_member_strong(D,D_Conds,G,E),
+    conj_append((a = b),A,NewC).
+
+conj_member_strong([],_,_,_):- !.
+conj_member_strong([T],D_Conds,G,E):-    
+    conj_member_strong1(T,D_Conds,G,E),
+    list_call(D_Conds),!.
+conj_member_strong([T|R],D_Conds,G,E):- 
+    R \== [],
+    conj_member_strong1(T,D_Conds,G,E),
+    conj_member_strong(R,D_Conds,G,E),!.
+
+conj_member_strong1(T,_D_Conds,(T & _Cj),E) :- 
+    list_ex(E,T).   
+conj_member_strong1(T,D_Conds,(_Y & RCj),E):- 
+    conj_member_strong1(T,D_Conds,RCj,E).
+ 
+list_call([]).
+list_call([G|R]) :-
+    call(G), list_call(R).
+
+list_ex([],_).
+list_ex([A|R],T) :-
+    T \== A, list_ex(R,T).   % to exclude identical atoms
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% New predicate generation
@@ -3654,6 +3779,7 @@ list_to_set(L,S,C) :-
 mk_set([],{}) :- !.             
 mk_set([X|L],R with X) :-
        mk_set(L,R).
+
 mk_test_set([],{},[]) :- !.
 mk_test_set([X|L],S,Cout) :-
        sunify(S,R with X,C1),
@@ -3800,15 +3926,16 @@ occur_list(X,[A|_R]):-
 occur_list(X,[_|R]):-
        occur_list(X,R).
 
-occur_check(X,Y):-    % occur_check(X,T): true if variable X DOES NOT occur in term T
-      var(Y),!,X \== Y.
-occur_check(X,Y):-
-      Y =.. [_|R],
-      occur_check_list(X,R).
-occur_check_list(_X,[]):-!.
-occur_check_list(X,[A|R]):-
-      occur_check(X,A),
-      occur_check_list(X,R).
+occur_check(_X,_Y).    % occur check temporalily disabled
+%occur_check(X,Y):-    % occur_check(X,T): true if variable X DOES NOT occur in term T
+%      var(Y),!,X \== Y.
+%occur_check(X,Y):-
+%      Y =.. [_|R],
+%      occur_check_list(X,R).
+%occur_check_list(_X,[]):-!.
+%occur_check_list(X,[A|R]):-
+%      occur_check(X,A),
+%      occur_check_list(X,R).
 
 extract_vars(A,[A]):-
     var(A),!.                 
@@ -3870,7 +3997,7 @@ list_to_conj(A & B,[A|R]):-
 list_to_conj(true,[]):-!.
 list_to_conj(A,[A]).
 
-conj_append(Cj1,Cj2,(Cj1 & Cj2)) :-    %NEW
+conj_append(Cj1,Cj2,(Cj1 & Cj2)) :-    
         var(Cj1),!.
 conj_append(true,Cj2,Cj2) :- !.
 conj_append((X & Cj1),Cj2,(X & Cj3)) :- !,
@@ -3879,8 +4006,13 @@ conj_append(X,Cj2,(X & Cj2)).
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%  Consulting the {log} library %%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% Starting the {log} interpreter %%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %:- setlog(consult_lib,_).
+
+:- (exists_file('./lib/setlog/setlog_rules.pl'),!,consult('./lib/setlog/setlog_rules.pl') 
+    ; 
+    true).
+
 :- nl,write('Use ?- setlog_help to get help information about {log}'),nl,nl.

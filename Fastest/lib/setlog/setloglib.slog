@@ -1,5 +1,4 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%setloglib.slog
-%%% version 4.6.12-3
+%%% version 4.6.12-6
 
 % corretto un bug nella int_to_bag
 % int_to_bag(int(A,A),*{A}) invece di
@@ -7,6 +6,18 @@
 
 %% aggiunta definizione di ein, enin, esubset, essubset - da completare
 %% usato esubset, essubset nelle dsubset, dssubset
+
+% corretto bug nella enin (case2)
+% eliminato isubset, iinters, ecc.
+% modificata definizione di enin nel case1
+% aggiunta unificazione sintattica (predicato eq/2)
+% modificato le definizioni di tutti i predicati "extended" con uso eq/2
+
+% corretto bug nella esubset (mancanza costante case2 in una clausola)
+
+% 6
+% corretto definizione cross_product (coppie ordinate invece di insiemi)
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -38,7 +49,7 @@ powerset(S,PS) :-               % powerset(+S,?PS) is true if PS is the powerset
 
 cross_product(A,B,CP) :-        % cross_product(+A,+B,?CP) is true if CP is the 
      CP = {X : exists([Y,Z],    % Cartesian product of sets A and B
-           X = {Y,Z} & Y in A & Z in B)}.
+           X = [Y,Z] & Y in A & Z in B)}.
 
 list_to_set([],{}).             % list_to_set(+L,?S) is true if S denotes the set
 list_to_set([X|L],{X\S}) :-     % of all elements of the list L
@@ -50,15 +61,17 @@ int_to_set(int(A,B),{A\S}) :-   % of all elements of the interval I
      A1 is A + 1 &
      int_to_set(int(A1,B),S).
 
-diff1({X\S},X,S) :-             % diff1(?S,?X,?R) equivalent to diff(S,{X},R)
-     X nin S.                   % but more efficient
+diff1({X\R},X,R) :-             % diff1(?S,?X,?R) equivalent to diff(S,{X},R)
+     X nin R.                   % but more efficient
 diff1(S,X,S) :- 
      X nin S.
 
-
+eq(T1,T2) :-                    % syntactic unification between terms T2 and T2
+     prolog_call(T1 = T2).
+     
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Improved implementations of primitive set constraints:
-% ï¿½reduce the number of repeated equivalent solutions  
+% ìreduce the number of repeated equivalent solutions  
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 xless(S,X,SS) :-               % remove the element X from S, if S is ground
@@ -117,70 +130,6 @@ test(Pred,Res) :-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%% Improved {log} set constraints, allowing intervals with
-%%%% unspecified bounds
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% improved subset/2
-
- isubset(S1,S2) :-   
-    prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
-    (R==intint & intint_subset(S1,S2)
-     or
-     R==gen & subset(S1,S2)
-    ). 
-
- intint_subset(S1,S2) :-
-    S1=int(A1,B1) &
-    S2=int(A2,B2) &
-    A1=<B1 & A2=<B2 &
-    A1>=A2 & B1=<B2.
-
-% improved ssubset/2 ("strict subset")
- issubset(S1,S2) :-
-    prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
-    (R==intint & intint_ssubset(S1,S2)
-     or
-     R==gen & ssubset(S1,S2)
-    ).
- intint_ssubset(S1,S2) :-
-    S1=int(A1,B1) &
-    S2=int(A2,B2) &
-    A1=<B1 & A2=<B2 &
-    (A1>A2 & B1=<B2 or A1>=A2 & B1<B2).
-
-% improved nsubset/2 ("not subset")
- insubset(S1,S2) :-
-    prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
-    (R==intint & intint_nsubset(S1,S2)
-     or
-     R==gen & nsubset(S1,S2)
-    ).
- intint_nsubset(S1,S2) :-
-    S1=int(A1,B1) &
-    S2=int(A2,B2) &
-    A1=<B1 & A2=<B2 &
-    (A1<A2 or B2<B1).
-
-% improved inters/3
- iinters(S1,S2,S3) :-   
-    prolog_call((nonvar(S1), S1=int(A1,B1), nonvar(S2), S2=int(A2,B2),!, R=intint ; R=gen)) &
-    (R==intint & intint_inters(S1,S2,S3)
-     or
-     R==gen & inters(S1,S2,S3)
-    ). 
- intint_inters(S1,S2,S3) :-
-    S1=int(A1,B1) &
-    S2=int(A2,B2) &
-    max(A1,A2,A3) &
-    min(B1,B2,B3) &
-    (A3>B3 & S3={} 
-     or
-     A3=<B3 & S3=int(A3,B3)
-    ).
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Delayed set operations 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -202,6 +151,7 @@ test(Pred,Res) :-
  dinters(S1,S2,S3) :-  
 %    delay(iinters(S1,S2,S3), nonvar(S1) & nonvar(S2)).  
      einters(S1,S2,S3).
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% Dealing with multisets 
@@ -302,7 +252,8 @@ setlog_lib_help :-
      ) &
      ein(R,T,S).
 
- ein(case1,T,int(A,B)) :-      % S is an unbounded interval
+ ein(case1,T,I) :-             % S is an unbounded interval
+     eq(I,int(A,B)) &
      T >= A & T =< B.
  ein(case2,T,S) :-
      T in S.
@@ -317,10 +268,14 @@ setlog_lib_help :-
      ) &
      enin(R,T,S).
 
- enin(case1,T,int(A,B)) :-     % S is an unbounded interval
-     T < A or T > B.
+ enin(case1,T,I) :-            % S is an unbounded interval
+     eq(I,int(A,B)) &
+     A > B.
+ enin(case1,T,I) :-            % S is an unbounded interval
+     eq(I,int(A,B)) &
+     A =< B & (T < A or T > B).
  enin(case2,T,S) :-
-     T in S.
+     T nin S.
 
 
  esubset(S1,S2) :-
@@ -337,22 +292,27 @@ setlog_lib_help :-
      ) &
     esubset(R,S1,S2).
 
- esubset(case1,int(A1,B1),_) :-           % subset(empty_interval,int)
-     int(A1,B1) = {}.
- esubset(case1,int(A1,B1),int(A2,B2)) :-  % subset(int,int)
-     int(A1,B1) neq {} & int(A2,B2) neq {} &
+ esubset(case1,I,_) :-                    % subset(empty_interval,int)
+     I = {}.
+ esubset(case1,I1,I2) :-                  % subset(int,int)
+     eq(I1,int(A1,B1)) & eq(I2,int(A2,B2)) &
+     I1 neq {} & I2 neq {} &
      A1 >= A2 & B1 =< B2.
- esubset(int(A,B),S) :-                   % subset(empty_interval,set)
+ esubset(case2,I,S) :-                    % subset(empty_interval,set)
+     eq(I,int(A,B)) &
      set(S) & A > B.
- esubset(case2,int(A,A),S) :-             % subset(singleton_interval,set)
+ esubset(case2,I,S) :-                    % subset(singleton_interval,set)
+     eq(I,int(A,A)) &
      set(S) & A in S. 
- esubset(case2,int(A,B),S) :-             % subset(int,set)
+ esubset(case2,I,S) :-                    % subset(int,set)
+     eq(I,int(A,B)) &
      set(S) & A < B & 
      A in S &
      A1 is A + 1 &
      esubset(int(A1,B),S).          
  esubset(case3,{},_).                     % subset({},int)
- esubset(case3,S,int(A,B)) :-             % subset(set,int)
+ esubset(case3,S,I) :-                    % subset(set,int)
+     eq(I,int(A,B)) &
      set(S) & S neq {} &
      smin(S,N) & smax(S,M) &
      N >= A & M =< B.
@@ -376,13 +336,15 @@ setlog_lib_help :-
      ) &
      essubset(R,S1,S2).
 
-  essubset(case1,int(A1,B1),int(A2,B2)) :-  % ssubset(empty_int,non-empty_int)
-     int(A1,B1) = {} &
+ essubset(case1,I1,I2) :-                  % ssubset(empty_int,non-empty_int)
+     eq(I1,int(A1,B1)) & eq(I2,int(A2,B2)) &
+     I1 = {} &
      A2 =< B2.
-  essubset(case1,int(A1,B1),int(A2,B2)) :-  % ssubset(non-empty_int,non-empty_int)
-     int(A1,B1) neq {} & int(A2,B2) neq {} &
+ essubset(case1,I1,I2) :-                  % ssubset(non-empty_int,non-empty_int)
+     eq(I1,int(A1,B1)) & eq(I2,int(A2,B2)) &
+     I1 neq {} & I2 neq {} &
      (A1 > A2 & B1 =< B2 or A1 >= A2 & B1 < B2).
-  essubset(case4,S1,S2) :-                  % nsubset(_AnyOther,_AnyOther)
+ essubset(case4,S1,S2) :-                  % nsubset(_AnyOther,_AnyOther)
      ssubset(S1,S2).
 
 % ensubset(S1,S2)    TO BE COMPLETED!!
@@ -401,9 +363,10 @@ setlog_lib_help :-
      ) &
      ensubset(R,S1,S2).
 
- ensubset(case1,int(A1,B1),int(A2,B2)) :-  % nsubset(int,int)
-     int(A1,B1) neq {} & int(A2,B2) neq {} &
-     (A1<A2 or B2<B1).
+ ensubset(case1,I1,I2) :-                  % nsubset(int,int)
+     eq(I1,int(A1,B1)) & eq(I2,int(A2,B2)) &
+     I1 neq {} & I2 neq {} &
+     (A1 < A2 or B2 < B1).
  ensubset(case4,S1,S2) :-                  % nsubset(_AnyOther,_AnyOther)
      nsubset(S1,S2).
 
@@ -424,17 +387,18 @@ setlog_lib_help :-
      ) &
      einters(R,S1,S2,S3).
 
- einters(case1,int(A1,B1),int(A2,B2),{}) :-  
-    int(A1,B1) = {}.
- einters(case1,int(A1,B1),int(A2,B2),{}) :-  
-    int(A2,B2) = {}.
+ einters(case1,I1,I2,{}) :-  
+    I1 = {}.
+ einters(case1,I1,I2,{}) :-  
+    I2 = {}.
  einters(case1,int(A1,B1),int(A2,B2),S3) :-  
-    int(A1,B1) neq {} & int(A2,B2) neq {} &
+    eq(I1,int(A1,B1)) & eq(I2,int(A2,B2)) &
+    I1 neq {} & I2 neq {} &
     max(A1,A2,A3) &
     min(B1,B2,B3) &
-    (A3>B3 & S3={} 
+    (A3 > B3 & S3 = {} 
      or
-     A3=<B3 & S3=int(A3,B3)
+     A3 =< B3 & S3 = int(A3,B3)
     ).
  einters(case4,S1,S2,S3) :-                 % inters(_AnyOther,_AnyOther,S3)
     inters(S1,S2,S3).
