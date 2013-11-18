@@ -28,7 +28,7 @@ public final class SetLogGenerator {
 	private static HashMap<String, String> zVars;
 	private static ClientUI clientUI;
 
-	public static HashMap<String, String> generate(String antlrInput, int timeout,ClientUI cUI){
+	public static HashMap<String, String> generate(String antlrInput, String setlogFile, int timeout,ClientUI cUI){
 
 		clientUI = cUI;
 		String setLogInput;
@@ -45,7 +45,7 @@ public final class SetLogGenerator {
 		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
 		//System.out.println("**********************************************************************************************\n");
 
-		String setlogOutput = runSetLog(setLogInput, timeout);
+		String setlogOutput = runSetLog(setLogInput, setlogFile, timeout);
 
 		if (setlogOutput == null) //No se encontro caso
 			return null;
@@ -81,7 +81,7 @@ public final class SetLogGenerator {
 		return parser.getSalida();
 	}
 
-	private static String runSetLog(String setLogInput, int timeout){
+	private static String runSetLog(String setLogInput, String setlogFile, int timeout){
 		String setlogOutput = "";
 		try{
 			String[] cmd = {"prolog" , "-q"};
@@ -96,7 +96,7 @@ public final class SetLogGenerator {
 			path = path + "/lib/setlog/"; //Por ultimo agregamos la direccion de setlog
 			path = URLDecoder.decode(path, "UTF-8");
 
-			String goal = "consult('" + path + "setlog4617.pl')."
+			String goal = "consult('" + path + setlogFile + "')."//"setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
 					+ "\nsetlog_consult('" + path + "setlogTTF.slog')."

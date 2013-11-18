@@ -144,6 +144,7 @@ public class Controller extends IIComponent {
 	private int maxPredsToAnalize;
 	//
 	private int setlogTimeout = 100; //Default value
+	private String setlogFile = "setlog4617.pl"; //Default value
 
 
 	/** Creates a new instance of Controller */
@@ -202,7 +203,9 @@ public class Controller extends IIComponent {
 						maxPredsToAnalize = Integer.decode(lineParts[1]);
 					} else if (lineParts[0].equals("SETLOG_TIMEOUT")) {
 						setlogTimeout = Integer.decode(lineParts[1]);
-					}                  
+					} else if (lineParts[0].equals("SETLOG_FILE")) {
+						setlogFile = lineParts[1];
+					}                 
 				}
 			}
 
@@ -1176,6 +1179,10 @@ public class Controller extends IIComponent {
 
 	public int getSetlogTimeout(){
 		return setlogTimeout;        
+	}
+	
+	public String getSetlogFile(){
+		return setlogFile;        
 	}
 
 	public List<String> getBasicTypeNames() {

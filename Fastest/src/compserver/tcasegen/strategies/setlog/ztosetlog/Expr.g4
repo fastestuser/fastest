@@ -40,6 +40,13 @@ grammar Expr;
 	
 	String out = new String();
 	String functionsOut = new String();
+
+	int num_inf = -2147483648;
+	int num_sup = 2147483647;	
+	int nat_inf = 0;
+	int nat_sup = 2147483647;
+	int nat1_inf = 1;
+	int nat1_sup = 2147483647;
 	
 	//
 	//  Sets basic axiomatic definitions, so they are used as values and not as variables
@@ -385,12 +392,27 @@ grammar Expr;
 						print(var + " neq []");
 					printAtEnd("list(" + var + ")");
 					
-					//Tambien imprimimos informacion sobre su rango
+					//Imprimimos informacion sobre la cardinalidad
+					//Primero buscamos el nombre de la variable
+					String zVar = getKey(var, memory); //Nombre de la variable en Z
+					//Si nunca vimos el cardinal, lo buscamos ahora
+					String cardVar = memory.get("\\#"+zVar);
+					if (cardVar == null) {
+						cardVar = newVar();
+						memory.put("\\#"+zVar, cardVar);
+						types.put("\\#"+zVar,"\\nat");
+					}
+					//Buscamos NAT
+					String nat = printInfo("\\nat", true);
+					//Imprimimos la info
+					print("solve(" + cardVar + " ein " + nat + ") & length(" + var + "," + cardVar + ")");
 					
-			    	//Obtenemos el rango de la variable
+					
+					//Tambien imprimimos informacion sobre su rango
+					//Obtenemos el rango de la variable
 			    	String zRanTypeName = getChildType(type,0);
 			    	String zRanType = types.get(zRanTypeName);
-			    	String zVar = getKey(var, memory); //Nombre de la variable en Z
+			    	//String zVar = getKey(var, memory); //Nombre de la variable en Z
 			    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 			    		String ran = memory.get("\\ran" + zVar);
 			    		//verificamos si ya creamos una variable para el dominio,
@@ -669,11 +691,11 @@ grammar Expr;
 		if (wantToPrint && (!out.contains(translation + " = int(")) && ((modoSetExpression == 0) || !((setExpressionDecl+setExpressionExpr+setExpressionPred).contains(translation + " = int(")))){ //Chequeo si ya se imprimio informacion del tipo
 			modoSetExpression = 0;
 			if (type.equals("\\num"))
-				print(translation + " = int(-2147483648, 2147483647)");
+				print(translation + " = int(" + num_inf + ", " + num_sup + ")");
 			else if (type.equals("\\nat"))
-				print(translation + " = int(0, 2147483647)");
+				print(translation + " = int(" + nat_inf + ", " + nat_sup + ")");
 			else if (type.equals("\\nat_{1}"))
-				print(translation + " = int(1, 2147483647)");
+				print(translation + " = int(" + nat1_inf + ", " + nat1_sup + ")");
 			modoSetExpression = modoSetExpressionBk;
 		}
 		
