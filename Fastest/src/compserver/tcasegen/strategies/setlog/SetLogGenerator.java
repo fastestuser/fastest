@@ -28,7 +28,7 @@ public final class SetLogGenerator {
 	private static HashMap<String, String> zVars;
 	private static ClientUI clientUI;
 
-	public static HashMap<String, String> generate(String antlrInput, String setlogFile, int timeout,ClientUI cUI){
+	public static HashMap<String, String> generate(String antlrInput, String setlogFile, int timeout, boolean printSetlog,ClientUI cUI){
 
 		clientUI = cUI;
 		String setLogInput;
@@ -41,9 +41,12 @@ public final class SetLogGenerator {
 			System.out.println("Error when translating to {log}: " + e.toString());
 			return null;
 		}
-		//System.out.println("**********************************************************************************************");
-		//System.out.println("Entrada setlog:\n" + setLogInput.replace("&", "&\n"));
-		//System.out.println("**********************************************************************************************\n");
+		
+		if (printSetlog) {
+			System.out.println("**********************************************************************************************");
+			System.out.print("Translation to setlog:\n" + setLogInput.replace("&", "&\n"));
+			System.out.println("**********************************************************************************************\n");
+		}
 
 		String setlogOutput = runSetLog(setLogInput, setlogFile, timeout);
 

@@ -143,8 +143,12 @@ public class Controller extends IIComponent {
 	// 
 	private int maxPredsToAnalize;
 	//
+	//The timeout used in prolog, for setlog to find a case for a class
 	private int setlogTimeout = 100; //Default value
+	//Setlog File, shouled be in setlog folder
 	private String setlogFile = "setlog4617.pl"; //Default value
+	//Option to determine if the translation from Z to setlog is printed on screen
+	private boolean setlogPrint = false;
 
 
 	/** Creates a new instance of Controller */
@@ -205,7 +209,10 @@ public class Controller extends IIComponent {
 						setlogTimeout = Integer.decode(lineParts[1]);
 					} else if (lineParts[0].equals("SETLOG_FILE")) {
 						setlogFile = lineParts[1];
-					}                 
+					} else if (lineParts[0].equals("SETLOG_PRINT")) {
+						if (lineParts[1].equalsIgnoreCase("true"))
+							setlogPrint = true;
+					}               
 				}
 			}
 
@@ -1183,6 +1190,10 @@ public class Controller extends IIComponent {
 	
 	public String getSetlogFile(){
 		return setlogFile;        
+	}
+	
+	public boolean getSetlogPrint(){
+		return setlogPrint;        
 	}
 
 	public List<String> getBasicTypeNames() {
