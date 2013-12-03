@@ -6,13 +6,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import client.blogic.management.Controller;
-import client.blogic.management.ii.EventAdmin;
-import client.blogic.management.ii.events.TCaseRequested;
-import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.TTreeNode;
 import client.presentation.ClientUI;
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.z.ParseUtils;
@@ -27,23 +22,16 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.Type;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-import common.fastest.FastestUtils;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.czt.UniqueZLive;
-import common.z.czt.visitors.ExpressionsExtractor;
-import common.z.czt.visitors.TClassNodeUnfolder;
 import common.z.czt.visitors.TypesExtractor;
-import compserver.prunning.TreePruner;
 import compserver.tcasegen.strategies.setlog.*;
 
 /* Estrategia que hace uso de SetLog para generar los casos. El parseo de Z a SetLog esta hecho basado en el codigo
@@ -137,20 +125,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 		antlrInput = antlrInput.concat(schemas);
 		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
 
-
-		//PROBANDO LOS TIPOS, despues borrar...
-		//Map<Expr,Type> mapTypes = tClass.accept(new ExpressionsExtractor());
-		//Iterator iteratorTypes = mapTypes.keySet().iterator();
-		//while (iteratorTypes.hasNext()){
-		//	Expr key = (Expr) iteratorTypes.next();
-		//	System.out.println(SpecUtils.termToLatex(key) + " .... " + SpecUtils.termToLatex(mapTypes.get(key)));
-		//}
-
-
-
-
-		///////////////////////////////////////
-
 		int setlogTimeout = controller.getSetlogTimeout();
 		String setlogFile = controller.getSetlogFile();
 		boolean setlogPrint = controller.getSetlogPrint();
@@ -161,45 +135,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 			return null;
 		else if (zVars.isEmpty()) { //No hay caso de prueba, dio False {log}
 
-			//Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-			TTreeNode tClassNode = FastestUtils.getTTreeNode(controller, tClassName);
-			TClassNode dadNode = tClassNode.getDadNode();
-			if (dadNode != null) { //Si el hijo no es el VIS
-				//Pruneamos el nodo
-				boolean result = (new TreePruner(controller)).pruneFrom(tClassName);
-				if (result) {
-					System.out.println("Node pruned: " + tClassName);
-				}
-
-				//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
-				//y no es el VIS
-				TClassNode dadOfDadNode = dadNode.getDadNode();
-				if (dadOfDadNode != null){ //No es el VIS
-					AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
-					AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
-					Boolean allChildsPruned = new Boolean(true);
-					while(childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
-						TTreeNode child = childsNodeIt.next();
-						if (child instanceof TClassNode) {
-							allChildsPruned = ((TClassNode) child).isPruned();
-						}
-					}
-					if (allChildsPruned) {
-						EventAdmin eventAdmin = null;
-						try {
-							eventAdmin = EventAdmin.getInstance();
-						} catch (IllegalAccessException e) {
-							e.printStackTrace();
-						}
-						TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, controller);
-						dadNode.acceptVisitor(tClassNodeUnfolder);
-						TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
-						TCaseRequested tCaseRequested = new TCaseRequested(dadClass.getSchName(), dadClass, controller.getMaxEval());
-						eventAdmin.announceEvent(tCaseRequested);
-					}
-				}
-			}
-			return null;
+			AbstractTCaseImpl abstractTCase = new AbstractTCaseImpl(null, tClass.getSchName());
+			return abstractTCase;
 		}
 
 		//Creamos el caso de prueba a partir de los valores de las variables obtenidas

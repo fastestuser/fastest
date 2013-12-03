@@ -392,27 +392,28 @@ grammar Expr;
 						print(var + " neq []");
 					printAtEnd("list(" + var + ")");
 					
+					//Inicio regla que Maxi tiene duda
 					//Imprimimos informacion sobre la cardinalidad
 					//Primero buscamos el nombre de la variable
-					String zVar = getKey(var, memory); //Nombre de la variable en Z
+					//String zVar = getKey(var, memory); //Nombre de la variable en Z
 					//Si nunca vimos el cardinal, lo buscamos ahora
-					String cardVar = memory.get("\\#"+zVar);
-					if (cardVar == null) {
-						cardVar = newVar();
-						memory.put("\\#"+zVar, cardVar);
-						types.put("\\#"+zVar,"\\nat");
-					}
+					//String cardVar = memory.get("\\#"+zVar);
+					//if (cardVar == null) {
+					//	cardVar = newVar();
+					//	memory.put("\\#"+zVar, cardVar);
+					//	types.put("\\#"+zVar,"\\nat");
+					//}
 					//Buscamos NAT
-					String nat = printInfo("\\nat", true);
+					//String nat = printInfo("\\nat", true);
 					//Imprimimos la info
-					print("solve(" + cardVar + " ein " + nat + ") & length(" + var + "," + cardVar + ")");
+					//print("solve(" + cardVar + " ein " + nat + ") & length(" + var + "," + cardVar + ")");
 					
 					
 					//Tambien imprimimos informacion sobre su rango
 					//Obtenemos el rango de la variable
 			    	String zRanTypeName = getChildType(type,0);
 			    	String zRanType = types.get(zRanTypeName);
-			    	//String zVar = getKey(var, memory); //Nombre de la variable en Z
+			    	String zVar = getKey(var, memory); //Nombre de la variable en Z
 			    	if (zRanType != null && zRanType.startsWith("EnumerationType")){
 			    		String ran = memory.get("\\ran" + zVar);
 			    		//verificamos si ya creamos una variable para el dominio,

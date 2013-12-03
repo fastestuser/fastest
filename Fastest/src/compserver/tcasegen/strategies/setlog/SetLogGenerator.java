@@ -43,9 +43,9 @@ public final class SetLogGenerator {
 		}
 		
 		if (printSetlog) {
-			System.out.println("**********************************************************************************************");
+			System.out.println("---");
 			System.out.print("Translation to setlog:\n" + setLogInput.replace("&", "&\n"));
-			System.out.println("**********************************************************************************************\n");
+			System.out.println("---\n");
 		}
 
 		String setlogOutput = runSetLog(setLogInput, setlogFile, timeout);

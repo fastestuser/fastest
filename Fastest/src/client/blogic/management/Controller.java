@@ -11,7 +11,6 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.ZDeclList;
-
 import client.presentation.ClientUI;
 import client.presentation.ClientTextUI;    
 import client.blogic.testing.refinement.ConcreteTCase;
@@ -21,6 +20,7 @@ import client.blogic.management.ii.IIComponent;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
 import client.blogic.testing.ttree.visitors.TCaseDadFinder;
 import common.repository.AbstractIterator;
@@ -33,6 +33,7 @@ import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import common.z.Scheme;
 import common.z.SpecUtils;
 import common.z.czt.visitors.ContainsTermVerifier;
+import common.z.czt.visitors.TClassNodeUnfolder;
 import compserver.prunning.TreePruner;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import net.sourceforge.czt.session.SectionManager;
@@ -513,10 +514,12 @@ public class Controller extends IIComponent {
 			TCaseRequested tCaseStrategyEvent = (TCaseRequested) event_;
 			opName = tCaseStrategyEvent.getOpName();
 			TClass tClass = tCaseStrategyEvent.getTClass();
+			/*Movido a genalltca command, por problemas de sincronización:
 			if (pendingAbsTCases == 0) {
 				Calendar cal = Calendar.getInstance();
 				inicio = cal.getTimeInMillis();
 			}
+			*/
 
 			pendingAbsTCases++;
 		} else if (event_ instanceof TCaseGenerated) {
@@ -525,17 +528,62 @@ public class Controller extends IIComponent {
 			TClass tClass = tCaseGenerated.getTClass();
 			String tClassName = tClass.getSchName();
 			AbstractTCase abstractTCase = tCaseGenerated.getAbstractTCase();
+			
 			if (abstractTCase == null) {
 				System.out.println(tClassName + " test case generation -> FAILED.");
-			} else if (abstractTCase != null && abstractTCase.getMyAxPara() == null) {
-				System.out.println(tClassName + " test case generation -> FAILED "
-						+ "(without performing all the possible evaluations)");
+				
+			} else if (abstractTCase != null && abstractTCase.getMyAxPara() == null) { //El nodo debe ser pruneado
+			//	System.out.println(tClassName + " test case generation -> FAILED "
+			//			+ "(without performing all the possible evaluations)");
+				
+				System.out.println(tClassName + " test case generation -> PRUNED.");
+				TTreeNode tClassNode = FastestUtils.getTTreeNode(this, tClassName);
+				TClassNode dadNode = tClassNode.getDadNode();
+				if (dadNode != null) { //Si no es el VIS pruneamos el nodo
+					boolean result = (new TreePruner(this)).pruneFrom(tClassName);
+					//if (result) {
+					//	System.out.println("Node pruned: " + tClassName);
+					//}
+
+					//Debemos llamar genalltca en el padre, si es que todos sus hijos fueron pruneados
+					//y no es el VIS
+					TClassNode dadOfDadNode = dadNode.getDadNode();
+					if (dadOfDadNode != null){ //No es el VIS
+						AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
+						AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
+						Boolean allChildsPruned = new Boolean(true);
+						while(childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
+							TTreeNode child = childsNodeIt.next();
+							if (child instanceof TClassNode) {
+								allChildsPruned = ((TClassNode) child).isPruned();
+							}
+						}
+						if (allChildsPruned) {
+							//pendingAbsTCases++;
+							EventAdmin eventAdmin = null;
+							try {
+								eventAdmin = EventAdmin.getInstance();
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							}
+							TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(dadNode, this);
+							dadNode.acceptVisitor(tClassNodeUnfolder);
+							TClass dadClass = tClassNodeUnfolder.getTClassUnfolded();
+							TCaseRequested tCaseRequested = new TCaseRequested(opName, dadClass, maxEval);
+							eventAdmin.announceEvent(tCaseRequested);
+							//salimos
+							pendingAbsTCases--;
+							myLock.unlock();
+							return;
+						}
+					}
+				}
+				
 			} else {
 				String schName = abstractTCase.getSchName();
 				System.out.println(tClassName + " test case generation -> SUCCESS.");
 				TClassNode tClassNode = opTTreeMap.get(opName);
-				Boolean correctlyadded =
-						tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
+				Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
 			}
 			pendingAbsTCases--;
 			//System.out.println("Quedan: "+pendingAbsTCases);
@@ -1220,5 +1268,8 @@ public class Controller extends IIComponent {
 		this.nomTexFileSpec = nomTexFileSpec;
 	}    
 
+	public void setInicio(long inicio){
+		this.inicio = inicio;
+	}
 
 }

@@ -77,6 +77,10 @@ public class GenAllTCasesCommand implements Command {
 					tClassNode.acceptVisitor(tClassNodeUnfolder);
 					TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
 
+					if (someEventAnnounced == false) {
+						Calendar cal = Calendar.getInstance();
+						controller.setInicio(cal.getTimeInMillis());
+					}
 					someEventAnnounced = true;
 					TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
 					eventAdmin.announceEvent(tCaseRequested);
