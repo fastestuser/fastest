@@ -616,7 +616,7 @@ public class ExprLexer extends Lexer {
 						if (childType.startsWith("EnumerationType")){
 							if (tipoSchema == 0) print("subset(" + var + "," + childType.split(":")[1] + ")");
 						} else
-							if ((tipoSchema == 0) && (exp != null) && (!exp.contains("\\power")))
+							if ((tipoSchema == 0) && (exp != null) && (exp != "") && (!exp.contains("\\power")))
 							//Si no contiene power, imprimimos, ya que si lo contiene, es realmente una expresion de tipo y no una expresion con valor!
 								 print(var + " in " + exp);
 					}
