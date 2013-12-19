@@ -17,8 +17,6 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { return visitChildren(ctx); }
 
-	@Override public T visitIType(FTCRLParser.ITypeContext ctx) { return visitChildren(ctx); }
-
 	@Override public T visitZExprString(FTCRLParser.ZExprStringContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitFName(FTCRLParser.FNameContext ctx) { return visitChildren(ctx); }
@@ -26,6 +24,8 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	@Override public T visitReference2(FTCRLParser.Reference2Context ctx) { return visitChildren(ctx); }
 
 	@Override public T visitWithSynonym(FTCRLParser.WithSynonymContext ctx) { return visitChildren(ctx); }
+
+	@Override public T visitRefinementRule(FTCRLParser.RefinementRuleContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitFile(FTCRLParser.FileContext ctx) { return visitChildren(ctx); }
 
@@ -35,15 +35,11 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitPath(FTCRLParser.PathContext ctx) { return visitChildren(ctx); }
 
-	@Override public T visitMap(FTCRLParser.MapContext ctx) { return visitChildren(ctx); }
-
 	@Override public T visitLaws(FTCRLParser.LawsContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitWithRefinement(FTCRLParser.WithRefinementContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitExprRefinement(FTCRLParser.ExprRefinementContext ctx) { return visitChildren(ctx); }
-
-	@Override public T visitLawSynonym(FTCRLParser.LawSynonymContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitIName(FTCRLParser.INameContext ctx) { return visitChildren(ctx); }
 
@@ -55,13 +51,15 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitLaw(FTCRLParser.LawContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { return visitChildren(ctx); }
+
+	@Override public T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitListType(FTCRLParser.ListTypeContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitNumber(FTCRLParser.NumberContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitList(FTCRLParser.ListContext ctx) { return visitChildren(ctx); }
-
-	@Override public T visitLawRefinement(FTCRLParser.LawRefinementContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitTable(FTCRLParser.TableContext ctx) { return visitChildren(ctx); }
 
@@ -69,9 +67,9 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitReference(FTCRLParser.ReferenceContext ctx) { return visitChildren(ctx); }
 
-	@Override public T visitPlcode(FTCRLParser.PlcodeContext ctx) { return visitChildren(ctx); }
-
 	@Override public T visitDotSetOper(FTCRLParser.DotSetOperContext ctx) { return visitChildren(ctx); }
+
+	@Override public T visitPlcode(FTCRLParser.PlcodeContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitEpilogue(FTCRLParser.EpilogueContext ctx) { return visitChildren(ctx); }
 
@@ -79,9 +77,13 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitAnychar(FTCRLParser.AnycharContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitAsRefinement(FTCRLParser.AsRefinementContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitString(FTCRLParser.StringContext ctx) { return visitChildren(ctx); }
+
+	@Override public T visitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitZExpr(FTCRLParser.ZExprContext ctx) { return visitChildren(ctx); }
 

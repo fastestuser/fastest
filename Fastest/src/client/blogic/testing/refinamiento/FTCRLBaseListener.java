@@ -24,9 +24,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterZExprSeq(FTCRLParser.ZExprSeqContext ctx) { }
 	@Override public void exitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { }
 
-	@Override public void enterIType(FTCRLParser.ITypeContext ctx) { }
-	@Override public void exitIType(FTCRLParser.ITypeContext ctx) { }
-
 	@Override public void enterZExprString(FTCRLParser.ZExprStringContext ctx) { }
 	@Override public void exitZExprString(FTCRLParser.ZExprStringContext ctx) { }
 
@@ -38,6 +35,9 @@ public class FTCRLBaseListener implements FTCRLListener {
 
 	@Override public void enterWithSynonym(FTCRLParser.WithSynonymContext ctx) { }
 	@Override public void exitWithSynonym(FTCRLParser.WithSynonymContext ctx) { }
+
+	@Override public void enterRefinementRule(FTCRLParser.RefinementRuleContext ctx) { }
+	@Override public void exitRefinementRule(FTCRLParser.RefinementRuleContext ctx) { }
 
 	@Override public void enterFile(FTCRLParser.FileContext ctx) { }
 	@Override public void exitFile(FTCRLParser.FileContext ctx) { }
@@ -51,9 +51,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterPath(FTCRLParser.PathContext ctx) { }
 	@Override public void exitPath(FTCRLParser.PathContext ctx) { }
 
-	@Override public void enterMap(FTCRLParser.MapContext ctx) { }
-	@Override public void exitMap(FTCRLParser.MapContext ctx) { }
-
 	@Override public void enterLaws(FTCRLParser.LawsContext ctx) { }
 	@Override public void exitLaws(FTCRLParser.LawsContext ctx) { }
 
@@ -62,9 +59,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 
 	@Override public void enterExprRefinement(FTCRLParser.ExprRefinementContext ctx) { }
 	@Override public void exitExprRefinement(FTCRLParser.ExprRefinementContext ctx) { }
-
-	@Override public void enterLawSynonym(FTCRLParser.LawSynonymContext ctx) { }
-	@Override public void exitLawSynonym(FTCRLParser.LawSynonymContext ctx) { }
 
 	@Override public void enterIName(FTCRLParser.INameContext ctx) { }
 	@Override public void exitIName(FTCRLParser.INameContext ctx) { }
@@ -81,6 +75,12 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterLaw(FTCRLParser.LawContext ctx) { }
 	@Override public void exitLaw(FTCRLParser.LawContext ctx) { }
 
+	@Override public void enterSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { }
+	@Override public void exitSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { }
+
+	@Override public void enterSynonymLaw(FTCRLParser.SynonymLawContext ctx) { }
+	@Override public void exitSynonymLaw(FTCRLParser.SynonymLawContext ctx) { }
+
 	@Override public void enterListType(FTCRLParser.ListTypeContext ctx) { }
 	@Override public void exitListType(FTCRLParser.ListTypeContext ctx) { }
 
@@ -89,9 +89,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 
 	@Override public void enterList(FTCRLParser.ListContext ctx) { }
 	@Override public void exitList(FTCRLParser.ListContext ctx) { }
-
-	@Override public void enterLawRefinement(FTCRLParser.LawRefinementContext ctx) { }
-	@Override public void exitLawRefinement(FTCRLParser.LawRefinementContext ctx) { }
 
 	@Override public void enterTable(FTCRLParser.TableContext ctx) { }
 	@Override public void exitTable(FTCRLParser.TableContext ctx) { }
@@ -102,11 +99,11 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterReference(FTCRLParser.ReferenceContext ctx) { }
 	@Override public void exitReference(FTCRLParser.ReferenceContext ctx) { }
 
-	@Override public void enterPlcode(FTCRLParser.PlcodeContext ctx) { }
-	@Override public void exitPlcode(FTCRLParser.PlcodeContext ctx) { }
-
 	@Override public void enterDotSetOper(FTCRLParser.DotSetOperContext ctx) { }
 	@Override public void exitDotSetOper(FTCRLParser.DotSetOperContext ctx) { }
+
+	@Override public void enterPlcode(FTCRLParser.PlcodeContext ctx) { }
+	@Override public void exitPlcode(FTCRLParser.PlcodeContext ctx) { }
 
 	@Override public void enterEpilogue(FTCRLParser.EpilogueContext ctx) { }
 	@Override public void exitEpilogue(FTCRLParser.EpilogueContext ctx) { }
@@ -117,11 +114,17 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterAnychar(FTCRLParser.AnycharContext ctx) { }
 	@Override public void exitAnychar(FTCRLParser.AnycharContext ctx) { }
 
+	@Override public void enterFunAppExpr(FTCRLParser.FunAppExprContext ctx) { }
+	@Override public void exitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { }
+
 	@Override public void enterAsRefinement(FTCRLParser.AsRefinementContext ctx) { }
 	@Override public void exitAsRefinement(FTCRLParser.AsRefinementContext ctx) { }
 
 	@Override public void enterString(FTCRLParser.StringContext ctx) { }
 	@Override public void exitString(FTCRLParser.StringContext ctx) { }
+
+	@Override public void enterRefinementSentence(FTCRLParser.RefinementSentenceContext ctx) { }
+	@Override public void exitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx) { }
 
 	@Override public void enterZExpr(FTCRLParser.ZExprContext ctx) { }
 	@Override public void exitZExpr(FTCRLParser.ZExprContext ctx) { }

@@ -94,7 +94,7 @@ public class RefineCommand implements Command {
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			FTCRLParser parser = new FTCRLParser(tokens);
 
-			ParseTree tree = parser.refinementLaw();
+			ParseTree tree = parser.refinementRule();
 			
 			FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 			visitor.visit(tree);

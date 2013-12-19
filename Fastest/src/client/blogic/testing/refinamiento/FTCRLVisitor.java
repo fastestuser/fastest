@@ -16,8 +16,6 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitZExprSeq(FTCRLParser.ZExprSeqContext ctx);
 
-	T visitIType(FTCRLParser.ITypeContext ctx);
-
 	T visitZExprString(FTCRLParser.ZExprStringContext ctx);
 
 	T visitFName(FTCRLParser.FNameContext ctx);
@@ -25,6 +23,8 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 	T visitReference2(FTCRLParser.Reference2Context ctx);
 
 	T visitWithSynonym(FTCRLParser.WithSynonymContext ctx);
+
+	T visitRefinementRule(FTCRLParser.RefinementRuleContext ctx);
 
 	T visitFile(FTCRLParser.FileContext ctx);
 
@@ -34,15 +34,11 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitPath(FTCRLParser.PathContext ctx);
 
-	T visitMap(FTCRLParser.MapContext ctx);
-
 	T visitLaws(FTCRLParser.LawsContext ctx);
 
 	T visitWithRefinement(FTCRLParser.WithRefinementContext ctx);
 
 	T visitExprRefinement(FTCRLParser.ExprRefinementContext ctx);
-
-	T visitLawSynonym(FTCRLParser.LawSynonymContext ctx);
 
 	T visitIName(FTCRLParser.INameContext ctx);
 
@@ -54,13 +50,15 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitLaw(FTCRLParser.LawContext ctx);
 
+	T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
+
+	T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx);
+
 	T visitListType(FTCRLParser.ListTypeContext ctx);
 
 	T visitNumber(FTCRLParser.NumberContext ctx);
 
 	T visitList(FTCRLParser.ListContext ctx);
-
-	T visitLawRefinement(FTCRLParser.LawRefinementContext ctx);
 
 	T visitTable(FTCRLParser.TableContext ctx);
 
@@ -68,9 +66,9 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitReference(FTCRLParser.ReferenceContext ctx);
 
-	T visitPlcode(FTCRLParser.PlcodeContext ctx);
-
 	T visitDotSetOper(FTCRLParser.DotSetOperContext ctx);
+
+	T visitPlcode(FTCRLParser.PlcodeContext ctx);
 
 	T visitEpilogue(FTCRLParser.EpilogueContext ctx);
 
@@ -78,9 +76,13 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitAnychar(FTCRLParser.AnycharContext ctx);
 
+	T visitFunAppExpr(FTCRLParser.FunAppExprContext ctx);
+
 	T visitAsRefinement(FTCRLParser.AsRefinementContext ctx);
 
 	T visitString(FTCRLParser.StringContext ctx);
+
+	T visitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx);
 
 	T visitZExpr(FTCRLParser.ZExprContext ctx);
 

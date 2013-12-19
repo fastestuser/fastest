@@ -21,9 +21,6 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterZExprSeq(FTCRLParser.ZExprSeqContext ctx);
 	void exitZExprSeq(FTCRLParser.ZExprSeqContext ctx);
 
-	void enterIType(FTCRLParser.ITypeContext ctx);
-	void exitIType(FTCRLParser.ITypeContext ctx);
-
 	void enterZExprString(FTCRLParser.ZExprStringContext ctx);
 	void exitZExprString(FTCRLParser.ZExprStringContext ctx);
 
@@ -35,6 +32,9 @@ public interface FTCRLListener extends ParseTreeListener {
 
 	void enterWithSynonym(FTCRLParser.WithSynonymContext ctx);
 	void exitWithSynonym(FTCRLParser.WithSynonymContext ctx);
+
+	void enterRefinementRule(FTCRLParser.RefinementRuleContext ctx);
+	void exitRefinementRule(FTCRLParser.RefinementRuleContext ctx);
 
 	void enterFile(FTCRLParser.FileContext ctx);
 	void exitFile(FTCRLParser.FileContext ctx);
@@ -48,9 +48,6 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterPath(FTCRLParser.PathContext ctx);
 	void exitPath(FTCRLParser.PathContext ctx);
 
-	void enterMap(FTCRLParser.MapContext ctx);
-	void exitMap(FTCRLParser.MapContext ctx);
-
 	void enterLaws(FTCRLParser.LawsContext ctx);
 	void exitLaws(FTCRLParser.LawsContext ctx);
 
@@ -59,9 +56,6 @@ public interface FTCRLListener extends ParseTreeListener {
 
 	void enterExprRefinement(FTCRLParser.ExprRefinementContext ctx);
 	void exitExprRefinement(FTCRLParser.ExprRefinementContext ctx);
-
-	void enterLawSynonym(FTCRLParser.LawSynonymContext ctx);
-	void exitLawSynonym(FTCRLParser.LawSynonymContext ctx);
 
 	void enterIName(FTCRLParser.INameContext ctx);
 	void exitIName(FTCRLParser.INameContext ctx);
@@ -78,6 +72,12 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterLaw(FTCRLParser.LawContext ctx);
 	void exitLaw(FTCRLParser.LawContext ctx);
 
+	void enterSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
+	void exitSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
+
+	void enterSynonymLaw(FTCRLParser.SynonymLawContext ctx);
+	void exitSynonymLaw(FTCRLParser.SynonymLawContext ctx);
+
 	void enterListType(FTCRLParser.ListTypeContext ctx);
 	void exitListType(FTCRLParser.ListTypeContext ctx);
 
@@ -86,9 +86,6 @@ public interface FTCRLListener extends ParseTreeListener {
 
 	void enterList(FTCRLParser.ListContext ctx);
 	void exitList(FTCRLParser.ListContext ctx);
-
-	void enterLawRefinement(FTCRLParser.LawRefinementContext ctx);
-	void exitLawRefinement(FTCRLParser.LawRefinementContext ctx);
 
 	void enterTable(FTCRLParser.TableContext ctx);
 	void exitTable(FTCRLParser.TableContext ctx);
@@ -99,11 +96,11 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterReference(FTCRLParser.ReferenceContext ctx);
 	void exitReference(FTCRLParser.ReferenceContext ctx);
 
-	void enterPlcode(FTCRLParser.PlcodeContext ctx);
-	void exitPlcode(FTCRLParser.PlcodeContext ctx);
-
 	void enterDotSetOper(FTCRLParser.DotSetOperContext ctx);
 	void exitDotSetOper(FTCRLParser.DotSetOperContext ctx);
+
+	void enterPlcode(FTCRLParser.PlcodeContext ctx);
+	void exitPlcode(FTCRLParser.PlcodeContext ctx);
 
 	void enterEpilogue(FTCRLParser.EpilogueContext ctx);
 	void exitEpilogue(FTCRLParser.EpilogueContext ctx);
@@ -114,11 +111,17 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterAnychar(FTCRLParser.AnycharContext ctx);
 	void exitAnychar(FTCRLParser.AnycharContext ctx);
 
+	void enterFunAppExpr(FTCRLParser.FunAppExprContext ctx);
+	void exitFunAppExpr(FTCRLParser.FunAppExprContext ctx);
+
 	void enterAsRefinement(FTCRLParser.AsRefinementContext ctx);
 	void exitAsRefinement(FTCRLParser.AsRefinementContext ctx);
 
 	void enterString(FTCRLParser.StringContext ctx);
 	void exitString(FTCRLParser.StringContext ctx);
+
+	void enterRefinementSentence(FTCRLParser.RefinementSentenceContext ctx);
+	void exitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx);
 
 	void enterZExpr(FTCRLParser.ZExprContext ctx);
 	void exitZExpr(FTCRLParser.ZExprContext ctx);

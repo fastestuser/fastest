@@ -5,106 +5,79 @@ package client.blogic.testing.refinamiento;
 }
 
 @members{
-//Devuelve el valor, como string, obtenido del caso de prueba
-String getValor(String var) {
-	if (var.equals("u?"))
-		return "345";
-	else if (var.equals("name?"))
-		return "name0";
-	else if (var.equals("n?"))
-		return "n0";
-	return "";
 }
 
-//Devuelve el tipo, como string, obtenido del codigo java
-String getType(String var) {
-	if (var.equals("u?"))
-		return "int";
-	else if (var.equals("name?"))
-		return "char *";
-	else if (var.equals("n?"))
-		return "char *";
-		
-	return "";
-}
-
-}
-
-//Gramática
-refinementLaw
+refinementRule
 	:	'@RRULE' name NL
-    	preamble NL
+          	preamble NL
 		laws
 		(plcode NL)?
 		uut
 		( epilogue NL)?
-		EOF
-	;
-		
-preamble
-	:	'@PREAMBLE' NL 
-		(pLCode | name '.@PREAMBLE' NL)+
-		
 	;
 
-plcode
-	:	'@PLCODE' NL pLCode NL
+preamble
+	:	'@PREAMBLE' NL
+		(pLCode | name '.@PREAMBLE' NL)+
 	;
-	
-uut returns [String code = "";]
-	:	'@UUT' iName
-		'(' (iName)? (',' iName)*  ')' ('MODULE' iName)? NL
-	;
-	
-epilogue
-	:	'@EPILOGUE' NL
-		(pLCode | name '.@EPILOGUE' NL)+
-	;
-	
+
 laws
 	:	'@LAWS' NL
 		(law NL | reference NL | name '.@LAWS' NL)+
+	;
+
+law
+	:	(name ':')? synonymLaw
+	|	(name ':')? refinementLaw
 	;
 
 reference
 	:	name '.' lawName
 	;
 
-lawName
-	:	name
+plcode
+	:	'@PLCODE' NL pLCode NL
 	;
 
-law
-	:	(name ':')? lawSynonym
-	|	(name ':')? lawRefinement
+uut
+	:	'@UUT' iName '(' iName? (',' iName)* ')' ('MODULE' iName)? NL
 	;
-	
-lawSynonym
-	:	name '==' ( asSynonym | withSynonym )
+
+epilogue
+	:	'@EPILOGUE' NL
+		(pLCode | name '.@EPILOGUE' NL)+
 	;
-	
+
+synonymLaw
+	:	name '==' (asSynonym | withSynonym)
+	;
+
 asSynonym
 	:	asRefinement
 	;
-	
+
 withSynonym
 	:	withRefinement
 	;
-	
-lawRefinement
-	:	sName (',' sName)*
-		 '==>' refinement (';' NL? refinement)*
+
+refinementLaw
+	:	sName (',' sName)* '==>' refinementSentence (';' NL? refinementSentence)*
 	;
-	
-refinement returns [String varName]
+
+refinementSentence
+	:	sName (',' sName)* '==>' refinementSentence
+	|	refinement
+	;
+
+refinement
 	:	iName ('AS' asRefinement | asSynonym)?
 	|	exprRefinement
 	;
-	
+
 asRefinement
-	:	dataStruct ('WITH[' withRefinement ']')?
+	:	dataStruct ('WITH[' refinement (',' NL? refinement)* ']')?
 	;
-	
+
 withRefinement
 	:	exprRefinement (',' NL? exprRefinement)*
 	;
@@ -112,107 +85,112 @@ withRefinement
 exprRefinement
 	:	zExpr '==>' refinement
 	;
-	
+
+dataStruct
+	:	'ARRAY'
+	|	'RECORD'
+	|	'MAPPING'
+	|	list
+	|	reference2
+	|	enumeration
+	|	table
+	|	file
+	;
+
+sExprRefinement
+	:	sName
+	|	zExprSet
+	|	zExprNum
+	|	zExprString
+	|	zExprSeq
+	|	funAppExpr
+	;
+
 zExpr
 	:	zExprSet
 	|	zExprNum
 	|	zExprString
 	|	zExprSeq
 	;
-	
+
 zExprSet
 	:	sName ('.' dotSetOper)?
 	|	setExtension
-	|	zExprSet '∪' zExprSet
+	|	zExprSet '@CUP@' zExprSet
 	;
-	
+
 zExprNum
-	:	sName ('.#')?
+	:	sName '.' '#'
 	|	number
 	|	'@AUTOFILL'
-	|	zExprNum 'div' zExprNum 
+	|	zExprNum 'div' zExprNum
+	|	zExprNum '/' zExprNum
+	|	zExprNum 'mod' zExprNum
+	|	zExprNum '+' zExprNum
 	;
-	
+
 zExprString
 	:	string
 	|	number
 	|	'@AUTOFILL'
-	|	sName ('.(' (dotSetOper | '#' | '@STR') ')')?
+	|	sName ('.' (dotSetOper | '#' | '@STR'))?
 	|	zExprString '++' zExprString
 	;
-	
-zExprSeq : '<>';
+
+zExprSeq
+	:	'<>'
+	;
+
+funAppExpr
+	:	iIdent '(' (refinement (',' refinement)* )? ')'
+	;
 
 dotSetOper
-	:	'@' ('dom' | 'ran' | 'ELEM' | '#') 
+	:	'@' ('DOM' | 'RAN' | 'ELEM' | '#')
 	|	DIGIT
 	|	sName
 	|	dotSetOper '.' dotSetOper
 	;
-	
-dataStruct
-	:	'ARRAY'
-	| 'RECORD'
-	| list
-	| map
-	| reference2
-	| enumeration
-	| table
-	| file
-	;
 
 list
-	:	'LIST' ('[' listType ',' ( iName | iName ',' iName ) ']' )?
+	:	'LIST' ( '[' listType ',' (iName | iName ',' iName) ']' )?
 	;
-	
-map
-	:	'MAPKEY[' iName ',' iType (',' iName )? ']' 
-	| 'MAPVAL[' iName ',' iType ']'
-	;
-	
-iType
-	:	name
-	;
-	
-reference2
-	:	'REF[' iName ']'
-	;
-	
-enumeration
-	:	'ENUM' ( '[' ( sName '>' ( iName | number )+ ) | number ])?
-	;
-	
-table
-	:	'TABLE[' iName ',' path ',' fName ']'
-	;
-	
-file
-	:	'FILE[' path ']'
-	;
-	
+
 listType
 	:	'SLL'
 	|	'DLL'
 	|	'CLL'
 	|	'DCLL'
 	;
-	
-pLCode returns [String code]
-	:	'\\\\beginJava' NL anychar NL '\\\\endJava'
+
+reference2
+	:	'REF[' iName ']'
 	;
-	
-anychar
-	:	(ANYCHAR | '#' | DIGIT | LETTER | '.' | '>' | NL)*
+
+enumeration
+	:	'ENUM' ( '[' ( sName '>' ( iName | number )+ ) | number ']')?
 	;
-	
+
+table
+	:	'TABLE[' iName ',' path ',' fName ']'
+	;
+
+file
+	:	'FILE[' path ']'
+	;
+
 name
-	:	LETTER ( '_' | DIGIT | LETTER )*
+	:	LETTER ('_' | DIGIT | LETTER )*
 	;
-	
+
+lawName
+	:	name
+	;
+
 sName
 	:	name '?'?
 	;
-	
+
 iName
 	:	iIdent
 	|	iIdent '[]'
@@ -243,9 +221,19 @@ setExtension
 number
 	:	DIGIT ('0' | DIGIT)*
 	;
+
+pLCode
+	:	'\\\\beginJava' NL anychar NL '\\\\endJava'
+	;
+
+anychar
+	:	(ANYCHAR | '#' | DIGIT | LETTER | '.' | '>' | ';' | NL)*
+	;
 		
 DIGIT : '1'..'9';
 LETTER : 'a'..'z' | 'A'..'Z';
 NL:	'\n' ;
 WS: 	(' '|'\t'|'\r'|'~')+ {skip();} ;
 ANYCHAR: . ;
+		
+
