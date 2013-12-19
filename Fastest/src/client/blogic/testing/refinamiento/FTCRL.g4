@@ -70,8 +70,11 @@ refinementSentence
 	;
 
 refinement
+	:	(sExprRefinement '==>')? iExprRefinement
+	;
+	
+iExprRefinement
 	:	iName ('AS' asRefinement | asSynonym)?
-	|	exprRefinement
 	;
 
 asRefinement

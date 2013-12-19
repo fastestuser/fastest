@@ -51,6 +51,9 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterLaws(FTCRLParser.LawsContext ctx);
 	void exitLaws(FTCRLParser.LawsContext ctx);
 
+	void enterIExprRefinement(FTCRLParser.IExprRefinementContext ctx);
+	void exitIExprRefinement(FTCRLParser.IExprRefinementContext ctx);
+
 	void enterWithRefinement(FTCRLParser.WithRefinementContext ctx);
 	void exitWithRefinement(FTCRLParser.WithRefinementContext ctx);
 

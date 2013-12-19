@@ -36,6 +36,8 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitLaws(FTCRLParser.LawsContext ctx);
 
+	T visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx);
+
 	T visitWithRefinement(FTCRLParser.WithRefinementContext ctx);
 
 	T visitExprRefinement(FTCRLParser.ExprRefinementContext ctx);

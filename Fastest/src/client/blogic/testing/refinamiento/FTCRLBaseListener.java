@@ -54,6 +54,9 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterLaws(FTCRLParser.LawsContext ctx) { }
 	@Override public void exitLaws(FTCRLParser.LawsContext ctx) { }
 
+	@Override public void enterIExprRefinement(FTCRLParser.IExprRefinementContext ctx) { }
+	@Override public void exitIExprRefinement(FTCRLParser.IExprRefinementContext ctx) { }
+
 	@Override public void enterWithRefinement(FTCRLParser.WithRefinementContext ctx) { }
 	@Override public void exitWithRefinement(FTCRLParser.WithRefinementContext ctx) { }
 
