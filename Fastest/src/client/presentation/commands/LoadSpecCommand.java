@@ -156,6 +156,7 @@ public class LoadSpecCommand implements Command {
             List<RefExpr> noBasicAxDefVars = new ArrayList<RefExpr>();
 
             spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames, basicAxDefs, axDefsValues, axDefsRequired, noBasicAxDefVars));
+            
             spec.accept(new AxDefsSynonymsClassifier(noBasicAxDefVars));
 
             Map<String, List<Pred>> axDefsRequiredPreds = new HashMap<String, List<Pred>>();
@@ -213,6 +214,7 @@ public class LoadSpecCommand implements Command {
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } finally {
+        	
             if (texFileToRead != null) {
                 texFileToRead.delete();
             }

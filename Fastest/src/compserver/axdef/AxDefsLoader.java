@@ -90,7 +90,7 @@ public final class AxDefsLoader {
 	public static List<Variable> extractAxDefParams(String line)
 	{
 		List<Variable> params = new ArrayList<Variable>();
-		line = line.substring(line.indexOf("\\forall")+7, line.indexOf('@'));
+		line = line.substring(line.indexOf("\\forall")+7, Math.min(line.indexOf('@'),line.indexOf('|')));
 		String types[] = line.split(";");
 		String auxType;
 
@@ -334,7 +334,7 @@ public final class AxDefsLoader {
 	{
 		List<String> nonReserved = new ArrayList<String>();
 		List<String> declarations = new ArrayList<String>();
-		line = line.substring(line.indexOf("\\forall")+7, line.indexOf('@'));
+		line = line.substring(line.indexOf("\\forall")+7, Math.min(line.indexOf('@'),line.indexOf('|')));
 		String types[] = line.split(";");
 		String auxType;
 		for(int i=0;i<types.length;i++)
