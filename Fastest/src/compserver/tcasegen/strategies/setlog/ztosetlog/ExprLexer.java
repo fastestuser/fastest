@@ -633,7 +633,7 @@ public class ExprLexer extends Lexer {
 					//Obtengo la variable de setlg que representa el upto
 					String nodeName = memory.get(childa + "\\upto" + childb); 
 					if (nodeName != null) {
-						if (tipoSchema == 0) print(var + " in " + nodeName);
+						if (tipoSchema == 0) print(var + " ein " + nodeName);
 					}
 				}
 				else { //double check

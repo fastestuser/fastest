@@ -122,7 +122,7 @@ public final class SetLogGenerator {
 					pruneClass = true;
 					break;
 				}
-				else if (s.equals("_RET = time_out.") || s.startsWith("ERROR:")) //No encontro solucion
+				else if (s.equals("_RET = time_out.") || s.startsWith("ERROR:") || s.startsWith("***WARNING***")) //No encontro solucion
 					return null;
 				else if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
 					setlogOutput = setlogOutput.concat(s + "\n");

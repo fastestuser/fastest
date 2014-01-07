@@ -638,7 +638,7 @@ public class ExprParser extends Parser {
 					//Obtengo la variable de setlg que representa el upto
 					String nodeName = memory.get(childa + "\\upto" + childb); 
 					if (nodeName != null) {
-						if (tipoSchema == 0) print(var + " in " + nodeName);
+						if (tipoSchema == 0) print(var + " ein " + nodeName);
 					}
 				}
 				else { //double check
@@ -1843,7 +1843,7 @@ public class ExprParser extends Parser {
 						String a, b;
 						a = memory.get((((PredicateContext)_localctx).e1!=null?_input.getText(((PredicateContext)_localctx).e1.start,((PredicateContext)_localctx).e1.stop):null));
 						b = memory.get((((PredicateContext)_localctx).e2!=null?_input.getText(((PredicateContext)_localctx).e2.start,((PredicateContext)_localctx).e2.stop):null));
-						print(a + " =< " + b);
+						print(a + " >= " + b);
 					
 				}
 				break;
@@ -2940,25 +2940,31 @@ public class ExprParser extends Parser {
 						          		a = memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
 						          		b = memory.get((((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null));
 						          		String op = "";
+						          			
+						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null)) == null) {	
 						          				
-						          		//Si a es una lista, debo convertirla
-						          		a = convertToSet((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null), a);
-						          		
-						          		if (memory.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null)) == null) {
 						          			String newVarName = newVar();
 						          			memory.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarName);
 						          			
 						          			if (modoSetExpression != 0 )
-						          				setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarName);
-
+						          					setExpressionVars.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarName);
+						          					
 						          			String type1 = types.get((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null));
-						          			//getType(type1);
-						          			String newVarType = childsTypes(type1).get(1);
-						          			types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarType);
-						          			print("apply(" + a + "," + b + "," + newVarName + ")");
+						          				//getType(type1);
+						          				String newVarType = childsTypes(type1).get(1);
+						          				types.put((((ExpressionContext)_localctx).e1!=null?_input.getText(((ExpressionContext)_localctx).e1.start,((ExpressionContext)_localctx).e1.stop):null) + op + (((ExpressionContext)_localctx).end!=null?_input.getText(((ExpressionContext)_localctx).end.start,((ExpressionContext)_localctx).end.stop):null), newVarType);
+						          				
+						          			//Si a es una lista, debo utilizar "nth1" y sino "apply"
+						          			//por eso primero vemos el tipo de a
+						          			String nodeType = getType(type1);
+						          			if (isSequence(nodeType)) {
+						          				print("nth1(" + b + "," + a + "," + newVarName + ")");
+						          			} else {
+						          				print("apply(" + a + "," + b + "," + newVarName + ")");
+						          			}
 						          			
 						          			//Imprimimos la informacion del tipo de la variable
-						          			typeInfo(newVarName, newVarType);
+						          				typeInfo(newVarName, newVarType);
 						          		}
 						          	
 						}

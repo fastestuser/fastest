@@ -78,7 +78,7 @@ iExprRefinement
 	;
 
 asRefinement
-	:	dataStruct ('WITH[' refinement (',' NL? refinement)* ']')?
+	:	dataStruct ('WITH[' refinement (';' NL? refinement)* ']')?
 	;
 
 withRefinement

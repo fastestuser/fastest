@@ -577,7 +577,7 @@ grammar Expr;
 				//Obtengo la variable de setlg que representa el upto
 				String nodeName = memory.get(childa + "\\upto" + childb); 
 				if (nodeName != null) {
-					if (tipoSchema == 0) print(var + " in " + nodeName);
+					if (tipoSchema == 0) print(var + " ein " + nodeName);
 				}
 			}
 			else { //double check
@@ -975,7 +975,7 @@ predicate
 		String a, b;
 		a = memory.get($e1.text);
 		b = memory.get($e2.text);
-		print(a + " =< " + b);
+		print(a + " >= " + b);
 	}
 	|	e1=expression '=' e2=expression
 	{
@@ -1114,25 +1114,31 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 		a = memory.get($e1.text);
 		b = memory.get($end.text);
 		String op = "";
+			
+		if (memory.get($e1.text + op + $end.text) == null) {	
 				
-		//Si a es una lista, debo convertirla
-		a = convertToSet($e1.text, a);
-		
-		if (memory.get($e1.text + op + $end.text) == null) {
 			String newVarName = newVar();
 			memory.put($e1.text + op + $end.text, newVarName);
 			
 			if (modoSetExpression != 0 )
-				setExpressionVars.put($e1.text + op + $end.text, newVarName);
-
+					setExpressionVars.put($e1.text + op + $end.text, newVarName);
+					
 			String type1 = types.get($e1.text);
-			//getType(type1);
-			String newVarType = childsTypes(type1).get(1);
-			types.put($e1.text + op + $end.text, newVarType);
-			print("apply(" + a + "," + b + "," + newVarName + ")");
+				//getType(type1);
+				String newVarType = childsTypes(type1).get(1);
+				types.put($e1.text + op + $end.text, newVarType);
+				
+			//Si a es una lista, debo utilizar "nth1" y sino "apply"
+			//por eso primero vemos el tipo de a
+			String nodeType = getType(type1);
+			if (isSequence(nodeType)) {
+				print("nth1(" + b + "," + a + "," + newVarName + ")");
+			} else {
+				print("apply(" + a + "," + b + "," + newVarName + ")");
+			}
 			
 			//Imprimimos la informacion del tipo de la variable
-			typeInfo(newVarName, newVarType);
+				typeInfo(newVarName, newVarType);
 		}
 	}
 	|	pre e=expression
