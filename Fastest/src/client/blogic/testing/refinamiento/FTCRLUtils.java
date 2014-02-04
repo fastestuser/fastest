@@ -1,5 +1,6 @@
 package client.blogic.testing.refinamiento;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -7,7 +8,7 @@ public class FTCRLUtils {
 
 	public static String sValue(String text) {
 		//Hay que modificarla, esta hardcodeada
-		return "\\{ 1,2,3,4\\}";
+		return "(\\langle 1 \\rangle \\mapsto str2)";
 	}
 
 	public static boolean isSet(String value) {
@@ -23,10 +24,7 @@ public class FTCRLUtils {
 		//Hay que modificarla, esta hardcodeada
 		
 		LinkedList<String> elements = new LinkedList<String>();
-		elements.add("1");
-		elements.add("2");
-		elements.add("3");
-		elements.add("4");
+		elements.add("(\\langle 1 \\rangle \\mapsto str2)");
 		
 		return elements;
 	}
@@ -53,6 +51,18 @@ public class FTCRLUtils {
 
 	public static boolean isArray(String text) {
 		return text.equals("ARRAY");
+	}
+	
+	public static boolean isRecord(String text) {
+		return text.equals("RECORD");
+	}
+
+	public static List<String> refineFromZToJava(String ZValue) {
+		// Esta hardcodeada, debería devolver una lista de nodos,
+		//deberia tomar como argumento un valor en Z, y generar una lista con los valores refinados
+		List<String> returnL = new ArrayList<String>();
+		returnL.add("el refinamiento de: " + ZValue);
+		return returnL;
 	}
 
 }

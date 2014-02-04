@@ -78,7 +78,7 @@ iExprRefinement
 	;
 
 asRefinement
-	:	dataStruct ('WITH[' refinement (';' NL? refinement)* ']')?
+	:	dataStruct ('WITH' '[' refinement (';' (NL)? refinement)* ']')?
 	;
 
 withRefinement
@@ -156,7 +156,7 @@ dotSetOper
 	;
 
 list
-	:	'LIST' ( '[' listType ',' (iName | iName ',' iName) ']' )?
+	:	'LIST' ( '[' listType (',' iName)? (',' iName)? ']' )?
 	;
 
 listType
@@ -167,7 +167,7 @@ listType
 	;
 
 reference2
-	:	'REF[' iName ']'
+	:	'REF' '[' iName ']'
 	;
 
 enumeration
@@ -175,11 +175,11 @@ enumeration
 	;
 
 table
-	:	'TABLE[' iName ',' path ',' fName ']'
+	:	'TABLE' '[' iName ',' path ',' fName ']'
 	;
 
 file
-	:	'FILE[' path ']'
+	:	'FILE' '[' path ']'
 	;
 
 name
@@ -196,7 +196,7 @@ sName
 
 iName
 	:	iIdent
-	|	iIdent '[]'
+	|	iIdent '[' ']'
 	|	iIdent '.' iIdent
 	|	iIdent '.*'
 	;
@@ -239,4 +239,3 @@ NL:	'\n' ;
 WS: 	(' '|'\t'|'\r'|'~')+ {skip();} ;
 ANYCHAR: . ;
 		
-

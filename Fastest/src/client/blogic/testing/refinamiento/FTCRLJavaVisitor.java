@@ -1,5 +1,6 @@
 package client.blogic.testing.refinamiento;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,12 +11,14 @@ import client.blogic.testing.refinamiento.FTCRLParser.LawsContext;
 import client.blogic.testing.refinamiento.FTCRLParser.PLCodeContext;
 import client.blogic.testing.refinamiento.FTCRLParser.PreambleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
+import client.blogic.testing.refinamiento.FTCRLParser.RefinementSentenceContext;
+import client.blogic.testing.refinamiento.FTCRLParser.SNameContext;
 import client.blogic.testing.refinamiento.FTCRLParser.UutContext;
 
 public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 	private String declarationList = "";
-	private String asignementList = "";
+	private String assignmentList = "";
 
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
@@ -33,7 +36,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		LawsContext laws = ctx.laws();
 		this.visit(laws);
 		System.out.print(declarationList);
-		System.out.print(asignementList);
+		System.out.print(assignmentList);
 
 		//Analizamos la uut
 		UutContext uut = ctx.uut();
@@ -83,116 +86,187 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		return null;
 	}
 
-	//@Override
-	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, String varName){
+	@Override
+	public Value visitRefinementLaw(FTCRLParser.RefinementLawContext ctx){
 
+		//Obtenemos los nombres de las variables Z que se van a utilizar
+		//y se van a pasar como argumento a las RefinementSentence
+		List<String> zVars = new ArrayList<String>();
+		Iterator<SNameContext> itZVars = ctx.sName().iterator();
+		while(itZVars.hasNext()){
+			zVars.add(itZVars.next().getText());
+		}
+
+		//Iteramos sobre las RefinementSentence para pasar como argumento las variables Z
+		Iterator<RefinementSentenceContext> itRefinementSentence = ctx.refinementSentence().iterator();
+		while (itRefinementSentence.hasNext()){
+			this.visitRefinementSentence(itRefinementSentence.next(), zVars);
+		}
+
+		return null;
+
+	}
+
+	public Value visitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx, List<String> zVars){
+
+		//Si se utilizan nuevas variables Z, pasamos esas, y sino utilizamos zVars que nos llegaron del padre
+
+		if (ctx.refinement() != null){ //Si es un refinement
+			this.visitRefinement(ctx.refinement(), zVars, new ArrayList<String>());
+
+		} else { //Si hay nuevas sName
+			zVars = new ArrayList<String>();
+			Iterator<SNameContext> itZVars = ctx.sName().iterator();
+			while(itZVars.hasNext()){
+				zVars.add(itZVars.next().getText());
+			}
+
+			this.visitRefinementSentence(ctx.refinementSentence(), zVars);
+		}
+
+		return null;
+
+	}
+
+	//@Override
+	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, String varName, String ZValue){
 		DataStructContext dataStruct = ctx.dataStruct();
 		//Si es una lista..
 		if (dataStruct.list() != null) {
-			//Hay que llenar la LinkedList, con los nodos creados en el WITH
-			List<String> createdNodes = this.refineWITH(ctx.refinement());
+			List<String> createdNodes = new ArrayList<String>();
+			if (ctx.refinement().isEmpty()) { //No tiene WITH
+				createdNodes = FTCRLUtils.refineFromZToJava(ZValue);
+			} else {
+				//Si tiene WITH Hay que llenar la LinkedList, con los nodos creados en el WITH
+				List<RefinementContext> refinement = ctx.refinement();
+				createdNodes = this.refineWITH(refinement, ZValue);
+			}
 			Iterator<String> it = createdNodes.iterator();
 			while (it.hasNext()) {
-				asignementList = asignementList.concat(varName + ".add(" + it.next() + ");\n");
+				assignmentList = assignmentList.concat(varName + ".add(" + it.next() + ");\n");
 			}
 		} else if (FTCRLUtils.isArray(dataStruct.getText())) { //Si es un ARRAY
 			//Hay que llenar el Array, con los nodos creados en el WITH
-			List<String> createdNodes = this.refineWITH(ctx.refinement());
+			List<String> createdNodes = this.refineWITH(ctx.refinement(), ZValue);
 			Iterator<String> it = createdNodes.iterator();
 			int position = 0;
 			while (it.hasNext()) {
-				asignementList = asignementList.concat(varName + "[" + position + "] = " + it.next() + ";\n");
+				assignmentList = assignmentList.concat(varName + "[" + position + "] = " + it.next() + ";\n");
 				position++;
+			}
+		} else if (FTCRLUtils.isRecord(dataStruct.getText())) { //Si es un RECORD
+			//Hay que llenar el Record, con los nodos creados en el WITH (esta bien este comentario??)
+			List<String> createdNodes = this.refineWITH(ctx.refinement(), ZValue);
+			Iterator<String> it = createdNodes.iterator();
+			//Podemos asumir que como es un RECORD, solo habrá un nodo en el iterador
+			if (it.hasNext()) {
+				assignmentList = assignmentList.concat(varName + " = " + it.next() + ";\n");
 			}
 		}
 
 		return null;
 	}
 
-	@Override
-	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx){
+	//@Override
+	/*	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, String ZValue){
 
 		if (ctx.asRefinement() != null) {
-			//visito el asRefinement, pasando el nombre de la variable
-			visitAsRefinement(ctx.asRefinement(), ctx.iName().getText());
+			//visito el asRefinement, pasando el nombre de la variable y el valor en Z a refinar
+			visitAsRefinement(ctx.asRefinement(), ctx.iName().getText(), ZValue);
+		} else {
+			//assignmentList = assignmentList.concat(ctx.iName().getText() + " = " + FTCRLUtils.refineFromZToJava(ZValue));
 		}
 
 		return new Value(ctx.iName().getText());
-	}
-	
+	}*/
+
 	//@Override
-	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, String recordName){
+	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, String recordName, String ZValue){
 
 		if (ctx.asRefinement() != null) {
-			//visito el asRefinement, pasando el nombre de la variable
-			visitAsRefinement(ctx.asRefinement(), recordName);
+			//visito el asRefinement, pasando el nombre de la variable y el valor en Z a refinar
+			visitAsRefinement(ctx.asRefinement(), recordName, ZValue);
+		} else {
+			assignmentList = assignmentList.concat(recordName + " = " + FTCRLUtils.refineFromZToJava(ZValue) + ";\n");
 		}
 
 		return new Value(recordName);
 	}
 
 	//@Override
-	public Value visitRefinement(FTCRLParser.RefinementContext ctx, List<String> records){
+	public Value visitRefinement(FTCRLParser.RefinementContext ctx, List<String> zVars, List<String> records){
 
 		boolean createRecords = false;
 		Iterator<String> itRecords = records.iterator(); //Se usa cuando ya estan creados los records a usar
 		if (records.isEmpty())
 			createRecords = true;
 
-		//Determino primero a que refino (lado derecho)
-		//Value ref = this.visit(ctx.iExprRefinement());
-		//String refS = ref.asString(); //cdata.uid
-		//String refType = FTCRLUtils.getType(refS); //String
+		String value = "";
 
 		//Si tiene sExprRefinement, hay que calcular su valor (lado izquierdo)
 		if (ctx.sExprRefinement() != null) {
 			//Calculamos su valor
-			String value = FTCRLUtils.sValue(ctx.sExprRefinement().getText());
-			//Vemos si es un conjunto
-			boolean isSet = FTCRLUtils.isSet(value);
-			if (isSet){ //si es un conjunto, debemos iterar sobre sus elementos
-				List<String> setElements = FTCRLUtils.setElements(value);
-				Iterator<String> it = setElements.iterator();
-				while (it.hasNext()){
-					String element = it.next();
-					
-					//Determino primero a que refino (lado derecho)
-					String refS = ctx.iExprRefinement().iName().getText();
-					//String refS = ref.asString(); //cdata.uid
-					//String refType = FTCRLUtils.getType(refS); //String
-					
-					//Debo refinar element a refType, y almacenarlo en un record refS
-					//Entonces primero creo un record, el tipo del record lo obtengo de refS
-					if (createRecords) {
-						String recordType = FTCRLUtils.recordType(refS);
-						String recordAtribute = FTCRLUtils.recordAtribute(refS);
-						//Elijo un nombre random
-						String recordName = recordType + ((int) (Math.random()*100));
-						
-						this.visitIExprRefinement(ctx.iExprRefinement(), recordName + recordAtribute);
-						
-						declarationList = declarationList.concat(recordType + " " + recordName + " = new " + recordType + "();\n");
-						asignementList = asignementList.concat(recordName + recordAtribute + " = " + element + ";\n");
-						records.add(recordName);
-					} else {
-						//Uso un record ya creado
-						String nodeName = itRecords.next(); //Esto no deberia ser null
-						if (nodeName == null)
-							System.out.println("ERROR: conjuntos en una misma regla WITH con distinta cardinalidad");
-						String recordAtribute = FTCRLUtils.recordAtribute(refS);
-						asignementList = asignementList.concat(nodeName + recordAtribute + " = " + element + ";\n");
-					}
-				}
-			} else { //si no es un conjunto, no hay que iterar
+			value = FTCRLUtils.sValue(ctx.sExprRefinement().getText());
 
-			}
+		} else {//Y sino el valor es el de la variable Z que se encuentra en zVars
+			value = FTCRLUtils.sValue(zVars.get(0));
 
 		}
+
+		Iterator<String> itElements;
+		//Vemos si es un conjunto
+		boolean isSet = FTCRLUtils.isSet(value);
+		if (isSet){ //si es un conjunto, debemos iterar sobre sus elementos
+			List<String> setElements = FTCRLUtils.setElements(value);
+			itElements = setElements.iterator();
+		} else { //si no es un conjunto, solo hay un valor
+			List<String> elements = new ArrayList<String>();
+			elements.add(value);
+			itElements = elements.iterator();
+		}
+		
+		while (itElements.hasNext()){//Luego iteramos sobre estos valores
+			String element = itElements.next();
+
+			//Determino primero a que refino (lado derecho)
+			//Puede ser una variable o un tipo
+			String refS = ctx.iExprRefinement().iName().getText();
+			String recordType = FTCRLUtils.recordType(refS);
+			String recordAtribute = FTCRLUtils.recordAtribute(refS);
+			String varName = "";
+
+			//Debo refinar element a refType
+			if (Character.isLowerCase(refS.charAt(0))){ //Si es una variable, no debo crear un record
+				varName = recordType;
+			} else { //Si es un tipo, debo crear un elemento del mismo
+
+				if (createRecords) {
+					//Elijo un nombre random
+					varName = recordType.toLowerCase() + ((int) (Math.random()*100));
+					declarationList = declarationList.concat(recordType + " " + varName + /*" = new " + recordType + ()*/";\n");
+					records.add(varName);
+				} else {
+					//Uso un record ya creado
+					varName = itRecords.next(); //Esto no deberia ser null
+					if (varName == null)
+						System.out.println("ERROR: conjuntos en una misma regla WITH con distinta cardinalidad");
+				}
+				//assignmentList = assignmentList.concat(varName + recordAtribute + " = " + element + ";\n");
+			}
+			//Visito el IExprRefinement pasando el nombre y atributo de la variable y el valor a refinar de Z
+			this.visitIExprRefinement(ctx.iExprRefinement(), varName + recordAtribute, element);
+		} 
 
 		return null;
 	}
 
-	@Override
+	//@Override
+	//public Value visitRefinement(FTCRLParser.RefinementContext ctx){
+	//	this.visitRefinement(ctx, null);
+	//	return null;
+	//}
+
+	/*@Override
 	public Value visitRefinement(FTCRLParser.RefinementContext ctx){
 		//Determino primero a que refino (lado derecho)
 		Value ref = this.visit(ctx.iExprRefinement());
@@ -204,21 +278,25 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Calculamos su valor
 			String value = FTCRLUtils.sValue(ctx.sExprRefinement().getText());
 			//Debo refinar element a refType, y almacenarlo en la variable
-			asignementList = asignementList.concat(refS + " = " + value + ";\n");
+			assignmentList = assignmentList.concat(refS + " = " + value + ";\n");
 		}
 		return null;
-	}
+	}*/
 
-		private List<String> refineWITH(List<RefinementContext> refinements) {
+	private List<String> refineWITH(List<RefinementContext> refinements, String zValue) {
 
-			List<String> createdRecords = new LinkedList<String>();
+		List<String> createdRecords = new LinkedList<String>();
 
-			Iterator<RefinementContext> it = refinements.iterator();
-			while (it.hasNext()){
-				this.visitRefinement(it.next(), createdRecords);
-			}
+		Iterator<RefinementContext> it = refinements.iterator();
+		while (it.hasNext()){
 
-			return createdRecords;
+			//Esta mal la parte dde ZValue
+			ArrayList<String> values = new ArrayList<String>();
+			values.add(zValue);
+			this.visitRefinement(it.next(), values, createdRecords);
 		}
 
+		return createdRecords;
 	}
+
+}
