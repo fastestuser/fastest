@@ -9,14 +9,18 @@ public class FTCRLUtils {
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){
+		String lineas[] = tcase.split("\\where");
+		lineas = lineas[1].split("\\n");
+		int i = 1;
+		String[] reg = null;
 		HashMap<String, String> map = new HashMap<String, String>();
-		
-		map.put("xs", "\\langle ( \\langle 1 \\rangle \\mapsto str2 ) \\rangle");
-		map.put("xsRan", "\\{ ( \\langle 1 \\rangle \\mapsto str2 ) \\}");
-		map.put("init", "yes");
-		map.put("xsl", "0");
-		map.put("xss", "\\negate 2147483648");
-		map.put("xsxsl", "0");
+		//la ultima linea siempre es "\\end{schema}"
+		while (i < lineas.length -1){
+			reg = lineas[i].split("=");
+			map.put(reg[0],reg[1]);
+			//System.out.println(reg[0] +"->" +reg[1]);
+			i++;
+		}
 		
 		return map;
 	}
