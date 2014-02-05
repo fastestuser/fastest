@@ -9,10 +9,11 @@ public class FTCRLUtils {
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){
+		
 		HashMap<String, String> map = new HashMap<String, String>();
 		String lineas[] = tcase.split("\\where");
-		//si no tiene nada en el where, o no tiene where
-		if (lineas.length <= 2) return map;
+		//si no tiene where
+		if (lineas.length == 1) return map;
 		
 		
 		lineas = lineas[1].split("\\n");
@@ -27,7 +28,10 @@ public class FTCRLUtils {
 		}
 		//la ultima linea no tiene "\\"
 		reg = lineas[i].split("=");
-		map.put(reg[0],reg[1]);
+		//si no tiene nada en el where
+		if (reg.length == 2)
+			map.put(reg[0],reg[1]);
+		
 		return map;
 	}
 	
