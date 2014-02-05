@@ -1,6 +1,7 @@
 package client.blogic.testing.refinamiento;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,6 +20,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 	private String declarationList = "";
 	private String assignmentList = "";
+	private HashMap<String,String> zValuesMap = new HashMap<String,String>();
 
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
@@ -82,7 +84,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		System.out.println(");");
-
 		return null;
 	}
 
@@ -104,7 +105,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		return null;
-
 	}
 
 	public Value visitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx, List<String> zVars){
@@ -125,7 +125,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		return null;
-
 	}
 
 	//@Override
@@ -168,19 +167,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//@Override
-	/*	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, String ZValue){
-
-		if (ctx.asRefinement() != null) {
-			//visito el asRefinement, pasando el nombre de la variable y el valor en Z a refinar
-			visitAsRefinement(ctx.asRefinement(), ctx.iName().getText(), ZValue);
-		} else {
-			//assignmentList = assignmentList.concat(ctx.iName().getText() + " = " + FTCRLUtils.refineFromZToJava(ZValue));
-		}
-
-		return new Value(ctx.iName().getText());
-	}*/
-
-	//@Override
 	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, String recordName, String ZValue){
 
 		if (ctx.asRefinement() != null) {
@@ -206,10 +192,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Si tiene sExprRefinement, hay que calcular su valor (lado izquierdo)
 		if (ctx.sExprRefinement() != null) {
 			//Calculamos su valor
-			value = FTCRLUtils.sValue(ctx.sExprRefinement().getText());
+			value = FTCRLUtils.sValue(ctx.sExprRefinement().getText(), zValuesMap);
 
 		} else {//Y sino el valor es el de la variable Z que se encuentra en zVars
-			value = FTCRLUtils.sValue(zVars.get(0));
+			value = FTCRLUtils.sValue(zVars.get(0), zValuesMap);
 
 		}
 
@@ -217,8 +203,9 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Vemos si es un conjunto
 		boolean isSet = FTCRLUtils.isSet(value);
 		if (isSet){ //si es un conjunto, debemos iterar sobre sus elementos
-			List<String> setElements = FTCRLUtils.setElements(value);
-			itElements = setElements.iterator();
+			//List<String> setElements = FTCRLUtils.setElements(value);
+			value = value.substring(1, value.length()-2) + "}";
+			itElements = new common.util.ExprIterator(value);
 		} else { //si no es un conjunto, solo hay un valor
 			List<String> elements = new ArrayList<String>();
 			elements.add(value);
@@ -260,29 +247,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		return null;
 	}
 
-	//@Override
-	//public Value visitRefinement(FTCRLParser.RefinementContext ctx){
-	//	this.visitRefinement(ctx, null);
-	//	return null;
-	//}
-
-	/*@Override
-	public Value visitRefinement(FTCRLParser.RefinementContext ctx){
-		//Determino primero a que refino (lado derecho)
-		Value ref = this.visit(ctx.iExprRefinement());
-		String refS = ref.asString(); //l
-		String refType = FTCRLUtils.getType(refS); //int
-
-		//Si tiene sExprRefinement, hay que calcular su valor (lado izquierdo)
-		if (ctx.sExprRefinement() != null) {
-			//Calculamos su valor
-			String value = FTCRLUtils.sValue(ctx.sExprRefinement().getText());
-			//Debo refinar element a refType, y almacenarlo en la variable
-			assignmentList = assignmentList.concat(refS + " = " + value + ";\n");
-		}
-		return null;
-	}*/
-
 	private List<String> refineWITH(List<RefinementContext> refinements, String zValue) {
 
 		List<String> createdRecords = new LinkedList<String>();
@@ -297,6 +261,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		return createdRecords;
+	}
+	
+	//Este metodo se utiliza para determinar el caso de prueba que se 
+	public void assignTCase(String tcase){
+		
+		this.zValuesMap = FTCRLUtils.createZValuesMap(tcase);
 	}
 
 }

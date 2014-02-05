@@ -42,18 +42,15 @@ public class RefineCommand implements Command {
 			output.println("Invalid parameters.  Try 'help'.");
 		} else {
 
-			//System.out.println(leerCaso());
-			System.out.println(leerRegla());
-			
-
+			String caso = leerCaso();
+			System.out.println(leerRegla(caso));
 		}
-
 	}
 
 	private String leerCaso() {
 		try {
 			// Abrimos el archivo
-			FileInputStream fstream = new FileInputStream("/home/joaquin/workspace/caso.tex");
+			FileInputStream fstream = new FileInputStream("/home/joaquin/workspace/Fastest/caso.tex");
 			// Creamos el objeto de entrada
 			DataInputStream entrada = new DataInputStream(fstream);
 			// Creamos el Buffer de Lectura
@@ -77,7 +74,7 @@ public class RefineCommand implements Command {
 		return "null";
 	}
 	
-	private String leerRegla() {
+	private String leerRegla(String tcase) {
 		try {
 			//Llamamos a ANTLR
 			
@@ -97,6 +94,7 @@ public class RefineCommand implements Command {
 			ParseTree tree = parser.refinementRule();
 			
 			FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
+			visitor.assignTCase(tcase);
 			visitor.visit(tree);
 			
 			

@@ -1,47 +1,67 @@
 package client.blogic.testing.refinamiento;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 public class FTCRLUtils {
 
-	public static String sValue(String text) {
-		//Hay que modificarla, esta hardcodeada
-		return "(\\langle 1 \\rangle \\mapsto str2)";
+	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
+	public static HashMap<String, String> createZValuesMap(String tcase){
+		HashMap<String, String> map = new HashMap<String, String>();
+		
+		map.put("xs", "\\langle ( \\langle 1 \\rangle \\mapsto str2 ) \\rangle");
+		map.put("xsRan", "\\{ ( \\langle 1 \\rangle \\mapsto str2 ) \\}");
+		map.put("init", "yes");
+		map.put("xsl", "0");
+		map.put("xss", "\\negate 2147483648");
+		map.put("xsxsl", "0");
+		
+		return map;
+	}
+	
+	//Esta función debe calcular el valor de una expresión FTCRL como
+	// xs ++ ys, o xs.@RAN, etc.
+	//Para obtener el valor, debe utilizar el caso de prueba y asi obtener
+	//los valores de xs e ys
+	public static String sValue(String exp, HashMap<String,String> zValuesMap) {
+
+		//Me fijo si es unicamente una variable de Z, si es así,
+		//solo debo buscar su valor
+		
+		if (exp.equals("xs.@RAN"))
+			return zValuesMap.get("xsRan");
+		
+		//Modificar
+		
+		return "\\{(\\langle 1 \\rangle \\mapsto str2), (joa)\\}";
 	}
 
+	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
 	public static boolean isSet(String value) {
-		//Hay que modificarla, no esta bien esto, hay que parsear la entrada o algo asi
+		//Creo que con chequear el inicio y el final es suficiente, porque una expresión de la forma
+		// { ...} ... {...} no debería llegar como argumenta, ya que pide un valor y no una expresion.
 		if (value.startsWith("\\{") && value.endsWith("\\}"))
 			return true;
 		else
 			return  false;
 	}
 
-	public static List<String> setElements(String value) {
-		//value debe ser un conjunto
-		//Hay que modificarla, esta hardcodeada
-		
-		LinkedList<String> elements = new LinkedList<String>();
-		elements.add("(\\langle 1 \\rangle \\mapsto str2)");
-		
-		return elements;
-	}
-
-	public static String getType(String refS) {
-		//Hay que modificarla, esta hardcodeada
-		
-		return "String";
-	}
-
+	//Determina la clase en Java que representa 'refS'
+	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
+	//y name un atributo de la misma, retorna "A"
 	public static String recordType(String refS) {
-		//Hay que controlarla
 		return refS.split("[.]", 2)[0];
 	}
 
+	//Determina el atributo en Java que se utiliza en 'refS'
+	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
+	//y name un atributo de la misma, retorna ".name"
 	public static String recordAtribute(String refS) {
-		//Hay que controlarla
+		//Hay que controlarla.
+		//Hay que devolver todos los atributos si tiene varios?
+		//o solo el primero?
 		String[] split = refS.split("[.]", 2);
 		if (split.length > 1) //Tiene atributo
 			return "." + split[1];
@@ -49,14 +69,17 @@ public class FTCRLUtils {
 			return "";
 	}
 
+	//Determina si es un ARRAY de FTCRL, se utiliza dentro de los AsRefinement
 	public static boolean isArray(String text) {
 		return text.equals("ARRAY");
 	}
-	
+
+	//Determina si es un RECORD de FTCRL, se utiliza dentro de los AsRefinement
 	public static boolean isRecord(String text) {
 		return text.equals("RECORD");
 	}
 
+	//Refina el zValue a su valor correspondiente en Java
 	public static List<String> refineFromZToJava(String ZValue) {
 		// Esta hardcodeada, debería devolver una lista de nodos,
 		//deberia tomar como argumento un valor en Z, y generar una lista con los valores refinados
