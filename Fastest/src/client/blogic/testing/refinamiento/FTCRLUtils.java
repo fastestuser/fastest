@@ -15,13 +15,14 @@ public class FTCRLUtils {
 		String[] reg = null;
 		HashMap<String, String> map = new HashMap<String, String>();
 		//la ultima linea siempre es "\\end{schema}"
-		while (i < lineas.length -1){
+		while (i < lineas.length -2){
 			reg = lineas[i].split("=");
-			map.put(reg[0],reg[1]);
-			//System.out.println(reg[0] +"->" +reg[1]);
+			map.put(reg[0],reg[1].substring(0, reg[1].length()-2));
 			i++;
 		}
-		
+		//la ultima linea no tiene "\\"
+		reg = lineas[i].split("=");
+		map.put(reg[0],reg[1]);
 		return map;
 	}
 	
