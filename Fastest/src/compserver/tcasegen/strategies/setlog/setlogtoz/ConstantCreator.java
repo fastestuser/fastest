@@ -7,6 +7,7 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
+import common.util.ExprIterator;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.StringToNumReplacer;

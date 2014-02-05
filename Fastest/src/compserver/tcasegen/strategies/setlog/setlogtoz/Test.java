@@ -17,6 +17,7 @@ import net.sourceforge.czt.z.ast.Pred;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
+import common.util.ExprIterator;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.StringToNumReplacer;
@@ -251,6 +252,12 @@ public class Test {
  /*       
         pred = zLive.evalPred(pred);
         System.out.println(SpecUtils.termToLatex(pred));*/
+		
+		ExprIterator it = new ExprIterator("{1,\\2\\,(2,3)}");
+		System.out.println("imprimir expr iterator");
+		while(it.hasNext()){
+			System.out.println(it.next());
+		}
 	}
 
 }

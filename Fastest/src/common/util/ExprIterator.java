@@ -1,20 +1,30 @@
-package compserver.tcasegen.strategies.setlog.setlogtoz;
+package common.util;
 
 import java.util.Iterator;
 
 /* Dada una expresion permite iterar sobre sus elementos
- * ej: expr = {ccc,[XXX],dsad3,{{}{}},dsda} entonces cada elemento es ccc, [XXX], etc....*/
+ * ej: expr = {ccc,[XXX],dsad3,{{}{}},dsda} entonces cada elemento es ccc, [XXX], etc....
+ * ej: expr = \\{ccc,[XXX],dsad3,{{}{}},dsda\\} , tambien anda con \\langle \\rangle*/
+
 public final class ExprIterator implements Iterator<String>{
 	private int posActual,posPrev;
 	private String expr;
 	private char cierre,open;
 
 	public ExprIterator(String expr){
-		this.expr = expr;
+		
+		this.expr = expr.replace("\\langle", "$");
+		this.expr = this.expr.replace("\\rangle", "°");
+		
+		if (this.expr.charAt(0) == '\\'){
+			this.expr = this.expr.substring(1, this.expr.length()-2) + this.expr.charAt(this.expr.length()-1);
+		}
+		
 		this.posActual = this.posPrev = 0;
-		// va a ser igual a '}' ó ']' ó ')'
-		this.open = expr.charAt(0);
-		this.cierre = expr.charAt(expr.length()-1);
+		// va a ser igual a '}' ó ']' ó ')' ó °
+		
+		this.open = this.expr.charAt(0);
+		this.cierre = this.expr.charAt(this.expr.length()-1);		
 	}
 
 	public void reiniciar(){
@@ -52,9 +62,9 @@ public final class ExprIterator implements Iterator<String>{
 		String elem = null;
 		for(;i<length;i++){
 			c = expr.charAt(i);
-			if (c == '{' || c == '(' || c == '[')
+			if (c == '{' || c == '(' || c == '[' || c == '$')
 				abiertos++;
-			if (c == '}' || c == ')' || c == ']')
+			if (c == '}' || c == ')' || c == ']' || c == '°')
 				abiertos--;
 			if(( c == ',' && abiertos == 0 ) ||(c == cierre && abiertos == -1)){
 				elem = expr.substring(posActual+1,i);
@@ -62,6 +72,11 @@ public final class ExprIterator implements Iterator<String>{
 			}
 		}
 		posActual = i;
+		
+		elem = elem.replace("$", "\\langle");
+		elem = elem.replace("°", "\\rangle");
+		
+		
 		return elem;
 	}
 

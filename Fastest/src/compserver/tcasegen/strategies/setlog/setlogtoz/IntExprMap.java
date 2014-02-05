@@ -2,6 +2,8 @@ package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.util.HashMap;
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 
 

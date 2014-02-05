@@ -6,7 +6,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import compserver.tcasegen.strategies.setlog.setlogtoz.ExprIterator;
+
+import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.setlogtoz.StringPointer;
 
 public final class SetLogUtils {
