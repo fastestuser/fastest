@@ -1,9 +1,7 @@
 package client.blogic.testing.refinamiento;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+
 
 public class FTCRLUtils {
 
@@ -14,7 +12,6 @@ public class FTCRLUtils {
 		String lineas[] = tcase.split("\\where");
 		//si no tiene where
 		if (lineas.length == 1) return map;
-		
 		
 		lineas = lineas[1].split("\\n");
 		int i = 1;
@@ -39,17 +36,30 @@ public class FTCRLUtils {
 	// xs ++ ys, o xs.@RAN, etc.
 	//Para obtener el valor, debe utilizar el caso de prueba y asi obtener
 	//los valores de xs e ys
-	public static String sValue(String exp, HashMap<String,String> zValuesMap) {
+	public static String sValue(String exp, Replacement replacement, HashMap<String,String> zValuesMap) {
 
 		//Me fijo si es unicamente una variable de Z, si es así,
 		//solo debo buscar su valor
+		if (exp.equals("clients.@DOM")){
+			return "uid0";
+		}
+		if (exp.equals("clients.@RAN")){
+			return "iname0";
+		}
+		if (exp.equals("balances.@DOM")){
+			return "uid0";
+		}
+		if (exp.equals("balances.@RAN")){
+			return "iname0";
+		}
+		if (exp.equals("balances.@#")){
+			return "5";
+		}
 		
-		if (exp.equals("xs.@RAN"))
-			return zValuesMap.get("xsRan");
+		return zValuesMap.get(exp);
 		
 		//Modificar
 		
-		return "\\{(\\langle 1 \\rangle \\mapsto str2), (joa)\\}";
 	}
 
 	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
@@ -92,14 +102,4 @@ public class FTCRLUtils {
 	public static boolean isRecord(String text) {
 		return text.equals("RECORD");
 	}
-
-	//Refina el zValue a su valor correspondiente en Java
-	public static List<String> refineFromZToJava(String ZValue) {
-		// Esta hardcodeada, debería devolver una lista de nodos,
-		//deberia tomar como argumento un valor en Z, y generar una lista con los valores refinados
-		List<String> returnL = new ArrayList<String>();
-		returnL.add("el refinamiento de: " + ZValue);
-		return returnL;
-	}
-
 }
