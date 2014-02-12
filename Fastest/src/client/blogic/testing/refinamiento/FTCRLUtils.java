@@ -20,14 +20,14 @@ public class FTCRLUtils {
 		//la ultima linea siempre es "\\end{schema}"
 		while (i < lineas.length -2){
 			reg = lineas[i].split("=");
-			map.put(reg[0],reg[1].substring(0, reg[1].length()-2));
+			map.put(reg[0].trim(),reg[1].substring(0, reg[1].length()-2).trim());
 			i++;
 		}
 		//la ultima linea no tiene "\\"
 		reg = lineas[i].split("=");
 		//si no tiene nada en el where
 		if (reg.length == 2)
-			map.put(reg[0],reg[1]);
+			map.put(reg[0].trim(),reg[1].trim());
 		
 		return map;
 	}
@@ -48,6 +48,21 @@ public class FTCRLUtils {
 		}
 		if (exp.equals("balances.@DOM")){
 			return "uid0";
+		}
+		if (exp.equals("balances.@RAN")){
+			return "iname0";
+		}
+		if (exp.equals("balances.@#")){
+			return "5";
+		}
+		if (exp.equals("xs.@RAN")){
+			return "(\\{1,2\\}, n1)";
+		}
+		if (exp.equals("xs.@RAN.1")){
+			return "\\{1,2\\}";
+		}
+		if (exp.equals("xs.@RAN.2")){
+			return "n1";
 		}
 		if (exp.equals("balances.@RAN")){
 			return "iname0";
