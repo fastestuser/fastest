@@ -5,13 +5,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import common.util.ExprIterator;
+
 import client.blogic.testing.refinamiento.FTCRLParser.DataStructContext;
+import client.blogic.testing.refinamiento.FTCRLParser.DotSetOperContext;
 import client.blogic.testing.refinamiento.FTCRLParser.INameContext;
 import client.blogic.testing.refinamiento.FTCRLParser.LawsContext;
 import client.blogic.testing.refinamiento.FTCRLParser.PLCodeContext;
 import client.blogic.testing.refinamiento.FTCRLParser.PreambleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementSentenceContext;
+import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SNameContext;
 import client.blogic.testing.refinamiento.FTCRLParser.UutContext;
 import client.blogic.testing.refinamiento.basicrefinement.*;
@@ -256,6 +260,68 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		return varName;
+	}
+	
+	private String visitDotSetOper(DotSetOperContext ctx, String v) {
+		//si es una tupla con (,), le pongo corchetes para que sea conjunto
+		
+		v = (v.charAt(0)=='(')?"{"+v+"}":v;
+		ExprIterator itElements = new common.util.ExprIterator(v);
+				
+		String s[];
+		s = v.split(",");
+		String oper = ctx.getText();
+		if(oper.contains("DOM")){
+			return s[0].substring(2);
+		}
+		else if(oper.contains("RAN")){
+			return s[1].substring(0,s[1].length()-2);
+		}
+		else if(oper.contains("#")){
+			return String.valueOf(itElements.cardinalidad());
+		}
+		return null;
+	}
+	
+	private String visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement, HashMap<String, String> zValuesMap) {
+		
+		if (ctx.sName() != null){
+			String v = "",sName;
+			sName = ctx.sName().getText();
+			// sName tiene que ser si o si o el remplazo o alguna variable del hashmap
+			if (replacement != null && replacement.exp != null && replacement.exp.equals(sName))
+				v = replacement.value;
+			
+			else if (zValuesMap != null && zValuesMap.get(sName) != null )
+				v = zValuesMap.get(sName);
+			return visitDotSetOper(ctx.dotSetOper(),v);
+			
+		}
+		return null;
+	}
+	
+	public String visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement,HashMap<String,String> zValuesMap){
+		
+		if (ctx.sName()!=null){
+			String r = ctx.sName().getText();
+			if (replacement != null && replacement.exp != null && replacement.exp.equals(r))
+				return replacement.value;
+			
+			else if (zValuesMap != null && zValuesMap.get(r) != null ){
+				return zValuesMap.get(r);
+				
+			}
+			return "null";
+		}
+		
+		else if(ctx.zExprSet()!=null){
+			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap);
+		}
+		else if(ctx.zExprNum()!=null){
+			
+		}
+		return "";
+		
 	}
 
 	private String refineWITH(List<RefinementContext> refinements, Replacement replace, String record) {

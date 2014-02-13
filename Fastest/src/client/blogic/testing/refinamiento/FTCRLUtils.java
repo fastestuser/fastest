@@ -1,6 +1,12 @@
 package client.blogic.testing.refinamiento;
 
+import java.io.IOException;
 import java.util.HashMap;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+
+import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 
 
 public class FTCRLUtils {
@@ -20,58 +26,69 @@ public class FTCRLUtils {
 		//la ultima linea siempre es "\\end{schema}"
 		while (i < lineas.length -2){
 			reg = lineas[i].split("=");
-			map.put(reg[0].trim(),reg[1].substring(0, reg[1].length()-2).trim());
+			map.put(reg[0].replaceAll(" ", ""),reg[1].substring(0, reg[1].length()-2).replaceAll(" ", ""));
 			i++;
 		}
 		//la ultima linea no tiene "\\"
 		reg = lineas[i].split("=");
 		//si no tiene nada en el where
 		if (reg.length == 2)
-			map.put(reg[0].trim(),reg[1].trim());
+			map.put(reg[0].replaceAll(" ", ""),reg[1].replaceAll(" ", ""));
 		
 		return map;
 	}
+	
 	
 	//Esta función debe calcular el valor de una expresión FTCRL como
 	// xs ++ ys, o xs.@RAN, etc.
 	//Para obtener el valor, debe utilizar el caso de prueba y asi obtener
 	//los valores de xs e ys
-	public static String sValue(String exp, Replacement replacement, HashMap<String,String> zValuesMap) {
-
-		//Me fijo si es unicamente una variable de Z, si es así,
-		//solo debo buscar su valor
-		if (exp.equals("clients.@DOM")){
-			return "uid0";
-		}
-		if (exp.equals("clients.@RAN")){
-			return "iname0";
-		}
-		if (exp.equals("balances.@DOM")){
-			return "uid0";
-		}
-		if (exp.equals("balances.@RAN")){
-			return "iname0";
-		}
-		if (exp.equals("balances.@#")){
-			return "5";
-		}
-		if (exp.equals("xs.@RAN")){
-			return "(\\{1,2\\}, n1)";
-		}
-		if (exp.equals("xs.@RAN.1")){
-			return "\\{1,2\\}";
-		}
-		if (exp.equals("xs.@RAN.2")){
-			return "n1";
-		}
-		if (exp.equals("balances.@RAN")){
-			return "iname0";
-		}
-		if (exp.equals("balances.@#")){
-			return "5";
-		}
+	private static String resolverSExp(String e,Replacement replacement, HashMap<String,String> zValuesMap) throws IOException{
 		
-		return zValuesMap.get(exp);
+		ANTLRInputStream in = new ANTLRInputStream(e);
+		FTCRLLexer lexer = new FTCRLLexer(in);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		FTCRLParser parser = new FTCRLParser(tokens);
+
+		ParseTree tree = parser.sExprRefinement();
+		
+		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
+		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap);
+	}
+//	private static String remplazo(String expr, String var, String value){
+//		//remplaza en expr, cada vez que aparece var por value
+//		//tiene en cuenta ej: expr = xsxs++xs; var = xs; value = (1,2)
+//		//salida es = xsxs++(1,2)
+//		Pattern pattern = Pattern.compile("(\\W|^)"+var+"(\\W|$)");
+//		Matcher matcher = pattern.matcher(expr);
+//		return matcher.replaceAll("$1" + value + "$2");
+//	}
+	public static String sValue(String exp, Replacement replacement, HashMap<String,String> zValuesMap) {
+		try {
+			return resolverSExp(exp,replacement,zValuesMap);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+//		String salida ="";
+//		salida = remplazo(exp,replacement.exp,replacement.value);
+//		
+//		Iterator<String> iterator = zValuesMap.keySet().iterator();
+//
+//		String key,value;
+//		while (iterator.hasNext()) {  
+//			key = iterator.next().toString();
+//			if (zValuesMap.get(key) == null)
+//				value = "nullc";
+//			else 
+//				value = zValuesMap.get(key).toString();
+//			salida = remplazo(salida,key,value);  
+//		} 
+//		
+//		salida = resolverSExp(salida);
+//		
+//		return zValuesMap.get(exp);
+		return exp;
 		
 		//Modificar
 		

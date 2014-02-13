@@ -6,8 +6,8 @@ public class Replacement {
 	String value = ""; //Valor de la expresion
 
 	Replacement(String exp, String value){
-		this.exp = exp;
-		this.value = value;
+		this.exp = exp; //clients
+		this.value = value; //(1,2)
 	}
 
 }
