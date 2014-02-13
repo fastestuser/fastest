@@ -61,7 +61,7 @@ public class RefineCommand implements Command {
 			strLinea = "";
 			// Leer el archivo linea por linea
 			while ((aux = buffer.readLine()) != null) {
-				strLinea = strLinea + "\n" + aux;
+				strLinea = strLinea + aux + "\n";
 				// Imprimimos la línea por pantalla
 
 			}

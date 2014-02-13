@@ -2,10 +2,16 @@ package client.blogic.testing.refinamiento;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import compserver.tcasegen.strategies.setlog.SetLogUtils;
+import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
+import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 
 
@@ -15,82 +21,67 @@ public class FTCRLUtils {
 	public static HashMap<String, String> createZValuesMap(String tcase){
 		
 		HashMap<String, String> map = new HashMap<String, String>();
+		
+		//Limpiamos los espacios y doble barras
+		tcase = tcase.replaceAll(" ", "");
+		tcase = tcase.replaceAll("\\\\\\\\", "");
+		
 		String lineas[] = tcase.split("\\where");
+		
 		//si no tiene where
 		if (lineas.length == 1) return map;
 		
 		lineas = lineas[1].split("\\n");
-		int i = 1;
-		String[] reg = null;
 		
 		//la ultima linea siempre es "\\end{schema}"
-		while (i < lineas.length -2){
-			reg = lineas[i].split("=");
-			map.put(reg[0].replaceAll(" ", ""),reg[1].substring(0, reg[1].length()-2).replaceAll(" ", ""));
-			i++;
+		for (int i = 1; i < lineas.length -1; i++){
+			String[] reg = lineas[i].split("=");
+			map.put(reg[0], reg[1]);
 		}
-		//la ultima linea no tiene "\\"
-		reg = lineas[i].split("=");
-		//si no tiene nada en el where
-		if (reg.length == 2)
-			map.put(reg[0].replaceAll(" ", ""),reg[1].replaceAll(" ", ""));
 		
 		return map;
 	}
 	
+	//Crea un map con los tyipos de las variables de Z, a partir del caso de prueba
+		public static HashMap<String, String> createZTypesMap(String tcase){
+			
+			HashMap<String, String> map = new HashMap<String, String>();
+			
+			//Limpiamos los espacios y doble barras
+			tcase = tcase.replaceAll(" ", "");
+			tcase = tcase.replaceAll("\\\\\\\\", "");
+			
+			String lineas[] = tcase.split("\\where");
+						
+			lineas = lineas[0].split("\\n");
+			
+			//la primer linea siempre es "\\begin{schema}"
+			for (int i = 1; i < lineas.length -1; i++){
+				String[] reg = lineas[i].split(":");
+				String type = reg[1];
+				
+				String vars[] = reg[0].split(","); //Lista de variables
+				for (int j=0; j < vars.length; j++) {
+					map.put(vars[j].replaceAll(" ", ""),type);
+				}
+			}
+			
+			return map;
+		}
 	
-	//Esta función debe calcular el valor de una expresión FTCRL como
-	// xs ++ ys, o xs.@RAN, etc.
-	//Para obtener el valor, debe utilizar el caso de prueba y asi obtener
-	//los valores de xs e ys
-	private static String resolverSExp(String e,Replacement replacement, HashMap<String,String> zValuesMap) throws IOException{
-		
-		ANTLRInputStream in = new ANTLRInputStream(e);
+	
+	public static SExpr sExpr(String exp, Replacement replacement, HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap) {
+		ANTLRInputStream in = new ANTLRInputStream(exp);
 		FTCRLLexer lexer = new FTCRLLexer(in);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		FTCRLParser parser = new FTCRLParser(tokens);
-
 		ParseTree tree = parser.sExprRefinement();
 		
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
-		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap);
-	}
-//	private static String remplazo(String expr, String var, String value){
-//		//remplaza en expr, cada vez que aparece var por value
-//		//tiene en cuenta ej: expr = xsxs++xs; var = xs; value = (1,2)
-//		//salida es = xsxs++(1,2)
-//		Pattern pattern = Pattern.compile("(\\W|^)"+var+"(\\W|$)");
-//		Matcher matcher = pattern.matcher(expr);
-//		return matcher.replaceAll("$1" + value + "$2");
-//	}
-	public static String sValue(String exp, Replacement replacement, HashMap<String,String> zValuesMap) {
-		try {
-			return resolverSExp(exp,replacement,zValuesMap);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-//		String salida ="";
-//		salida = remplazo(exp,replacement.exp,replacement.value);
-//		
-//		Iterator<String> iterator = zValuesMap.keySet().iterator();
-//
-//		String key,value;
-//		while (iterator.hasNext()) {  
-//			key = iterator.next().toString();
-//			if (zValuesMap.get(key) == null)
-//				value = "nullc";
-//			else 
-//				value = zValuesMap.get(key).toString();
-//			salida = remplazo(salida,key,value);  
-//		} 
-//		
-//		salida = resolverSExp(salida);
-//		
-//		return zValuesMap.get(exp);
-		return exp;
+		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap, zTypesMap);
+
+		//return exp;
 		
-		//Modificar
 		
 	}
 
@@ -133,5 +124,27 @@ public class FTCRLUtils {
 	//Determina si es un RECORD de FTCRL, se utiliza dentro de los AsRefinement
 	public static boolean isRecord(String text) {
 		return text.equals("RECORD");
+	}
+	
+	//
+	//  Metodo para la determinacion del tipo de un hijo de una expresion Z.
+	//
+	public static String getChildType(String type, int pos) {
+		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager utilizada en Setlog
+        DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
+        
+        //si tiene parentesis se eliminan
+        while (((String) root.getUserObject()).equals("()")) {
+        	root = (DefaultMutableTreeNode) root.getChildAt(0);
+        }
+        
+        DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
+        
+        while (((String) child.getUserObject()).equals("()")) {
+        	child = (DefaultMutableTreeNode) child.getChildAt(0);
+        }
+        
+        //se retorna la impresion del hijo correspondiente
+        return TypeManagerParser.printTree(child);
 	}
 }

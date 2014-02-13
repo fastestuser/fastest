@@ -12,15 +12,15 @@ import client.blogic.testing.refinamiento.SExpr;
 
 public class SetRefinement {
 	
-	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrlJavaVisitor){
+	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
 		//Obtenemos los elementos del conjunto y determinamos el tipo de los elementos
 		Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
 		String elemType = "\\num";
 		while (itElements.hasNext()){
 			SExpr zElemExpr = new SExpr(itElements.next(), elemType);
-			ftcrlJavaVisitor.printAssignment(javaExpr.exp + ".add(" + ftcrlJavaVisitor.refineFromZToJava(zElemExpr, "BASIC", null) + ")");
+			ftcrl.printAssignment(javaExpr.exp + ".add(" + ftcrl.refineFromZToJava(zElemExpr, "BASIC", null) + ")");
 		}
-		return zExpr.exp;
+		return javaExpr.exp;
 		
 	}
 
