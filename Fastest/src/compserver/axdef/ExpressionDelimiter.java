@@ -27,9 +27,10 @@ public final class ExpressionDelimiter {
 	*/
 	private static SPrima marcarPredPrima(String pred, String nomvar, int argc){
 		int argcint = argc; 
-		int length = pred.length();
+		//int length = pred.length();
 		int cantP = 0;
 		pred = pred.substring(nomvar.length());
+		int length = pred.length();
 		String salida = "",prima = "";
 		int i,prinArg=0,iprimaf = 0;
 		SPrima sp = new SPrima();

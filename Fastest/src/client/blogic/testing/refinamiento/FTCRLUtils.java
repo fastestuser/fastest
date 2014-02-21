@@ -1,17 +1,11 @@
 package client.blogic.testing.refinamiento;
 
-import java.io.IOException;
 import java.util.HashMap;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
-import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
-import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 
 
@@ -69,7 +63,7 @@ public class FTCRLUtils {
 			return map;
 		}
 	
-	
+	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
 	public static SExpr sExpr(String exp, Replacement replacement, HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap) {
 		ANTLRInputStream in = new ANTLRInputStream(exp);
 		FTCRLLexer lexer = new FTCRLLexer(in);
@@ -79,10 +73,6 @@ public class FTCRLUtils {
 		
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap, zTypesMap);
-
-		//return exp;
-		
-		
 	}
 
 	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
@@ -126,17 +116,10 @@ public class FTCRLUtils {
 		return text.equals("RECORD");
 	}
 	
-	//
 	//  Metodo para la determinacion del tipo de un hijo de una expresion Z.
-	//
 	public static String getChildType(String type, int pos) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager utilizada en Setlog
         DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
-        
-        //si tiene parentesis se eliminan
-        while (((String) root.getUserObject()).equals("()")) {
-        	root = (DefaultMutableTreeNode) root.getChildAt(0);
-        }
         
         DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
         
@@ -145,6 +128,26 @@ public class FTCRLUtils {
         }
         
         //se retorna la impresion del hijo correspondiente
-        return TypeManagerParser.printTree(child);
+        return printTreeWithParenthesis(child);
+	}
+	
+	//Necesito esta funcion para imprimir el árbol en getChildType(...), la cual agrega parentesis, ya que TreeNorm los elimina
+	private static String printTreeWithParenthesis(DefaultMutableTreeNode tree){
+		if (tree.isLeaf()) 
+			return (String) tree.getUserObject();
+		else if (tree.getChildCount() == 1)
+			return (String) tree.getUserObject()+ "(" + printTreeWithParenthesis((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+		else if (tree.getChildCount() == 2)
+			return "(" + printTreeWithParenthesis((DefaultMutableTreeNode) tree.getChildAt(0)) + ")" + ((String) tree.getUserObject()) + "(" + printTreeWithParenthesis((DefaultMutableTreeNode) tree.getChildAt(1)) + ")";
+		else {//tiene varios hijos, es un CROSS!
+			String returnString = "(" + printTreeWithParenthesis((DefaultMutableTreeNode) tree.getChildAt(0)) + ")";
+			int i = 1;
+			while (i < tree.getChildCount()) {
+				returnString = returnString.concat("\\cross");
+				returnString = returnString.concat("(" + printTreeWithParenthesis((DefaultMutableTreeNode) tree.getChildAt(i)) + ")");
+				i++;
+			}
+			return returnString;
+		}
 	}
 }

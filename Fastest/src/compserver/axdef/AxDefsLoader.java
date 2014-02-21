@@ -90,7 +90,13 @@ public final class AxDefsLoader {
 	public static List<Variable> extractAxDefParams(String line)
 	{
 		List<Variable> params = new ArrayList<Variable>();
-		line = line.substring(line.indexOf("\\forall")+7, Math.min(line.indexOf('@'),line.indexOf('|')));
+		int end1 = line.indexOf('@');
+		int end2 = line.indexOf('|');
+		if ((end1 != -1) && (end2 != -1))
+			end1 = Math.min(line.indexOf('@'),line.indexOf('|'));
+		else
+			end1 = Math.max(line.indexOf('@'),line.indexOf('|'));
+		line = line.substring(line.indexOf("\\forall")+7, end1);
 		String types[] = line.split(";");
 		String auxType;
 
@@ -122,16 +128,17 @@ public final class AxDefsLoader {
 			predicates = axDef.substring(axDef.indexOf("\\iff")+5);
 		else
 			predicates = axDef.substring(axDef.indexOf("=")+1);
-		return predicates;
+		return predicates.trim();
 	}
 
 	private static String extractAxDefName(String line, String type, ArrayList<String> axDefVars) {
 		String axDefName = new String();
 		int beginIndex = line.indexOf("@");
 		if (type.equals("Synonym")){
-			int endIndex = line.indexOf('~');
-			if ((beginIndex != -1) && (endIndex != -1))
-				axDefName = "Synonym_" + line.substring(beginIndex+1, endIndex).trim();
+			if (beginIndex != -1){
+				String[] split = line.substring(beginIndex+1).trim().split("\\W", 2);
+				axDefName = "Synonym_" + split[0].trim();
+			}
 		} else {
 			int endIndex = line.indexOf("\\iff");
 			String predicate, decl;
@@ -164,12 +171,14 @@ public final class AxDefsLoader {
 
 	private static String extractPredicates(String line, String type) {
 		String predicates = new String();
+		int start = line.indexOf('@');
+		line = line.substring(start+1);
 		if (type.equals("Synonym"))
-			predicates = line.substring(line.indexOf('@')+1, line.indexOf("="));
+			predicates = line.substring(0, line.indexOf("="));
 		else
-			predicates = line.substring(line.indexOf('@')+1, line.indexOf("\\iff"));
+			predicates = line.substring(0, line.indexOf("\\iff"));
 
-		return predicates;
+		return predicates.trim();
 	}
 
 	private static List<List<List<String>>> extractReservedWords(String predicate)
@@ -334,7 +343,13 @@ public final class AxDefsLoader {
 	{
 		List<String> nonReserved = new ArrayList<String>();
 		List<String> declarations = new ArrayList<String>();
-		line = line.substring(line.indexOf("\\forall")+7, Math.min(line.indexOf('@'),line.indexOf('|')));
+		int end1 = line.indexOf('@');
+		int end2 = line.indexOf('|');
+		if ((end1 != -1) && (end2 != -1))
+			end1 = Math.min(line.indexOf('@'),line.indexOf('|'));
+		else
+			end1 = Math.max(line.indexOf('@'),line.indexOf('|'));
+		line = line.substring(line.indexOf("\\forall")+7, end1);
 		String types[] = line.split(";");
 		String auxType;
 		for(int i=0;i<types.length;i++)
@@ -407,6 +422,7 @@ public final class AxDefsLoader {
 		String[] parts = type.split(" ");
 		for(int i=0;i<parts.length;i++)
 			if(!parts[i].startsWith("\\") && !nonReserved.contains(parts[i]))
+				if (!parts[i].equals("(") && !parts[i].equals(")"))
 				nonReserved.add(parts[i]);
 	}
 }

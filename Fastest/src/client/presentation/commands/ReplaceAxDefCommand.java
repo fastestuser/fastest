@@ -65,9 +65,9 @@ public class ReplaceAxDefCommand implements Command{
 
 		controller = clientTextUI.getMyController();
 		zLive = UniqueZLive.getInstance();
-		
-        //Spec spec = controller.getOriginalSpec();
-        
+
+		//Spec spec = controller.getOriginalSpec();
+
 		Spec spec = loadSpecAgain(controller.getNomTexFileSpec());
 
 		//Para cada schema box, hacemos un replace
@@ -86,21 +86,23 @@ public class ReplaceAxDefCommand implements Command{
 						{    
 							AxPara axPara  = (AxPara) para;
 							String strBox  = (axPara.getBox()).name();
-							if (strBox.equals("SchBox")){
+							if (strBox.equals("SchBox") || strBox.equals("OmitBox")){ //Esquemas en la notacion normal o comprimida
 								try{
-									
+
 									//Reemplazamos las definiciones axiomaticas,
 									//pero solo de aquellas variables no definidas en el esquema
 
 									SchExpr schExpr = SpecUtils.getAxParaSchExpr(axPara);
-									//Aqui guardamos los nombres de las variables
-									AbstractRepository<String> decls = SpecUtils.getVarNames(schExpr);
+									if (schExpr != null) {
+										//Aqui guardamos los nombres de las variables
+										AbstractRepository<String> decls = SpecUtils.getVarNames(schExpr);
 
-									Pred pred = SpecUtils.getAxParaPred(axPara);
-									if (pred != null) {
-										pred = replaceAxDefsInPred(pred, decls);
-										SpecUtils.setAxParaPred(axPara, pred);
-										axPara.accept(cleaner);
+										Pred pred = SpecUtils.getAxParaPred(axPara);
+										if (pred != null) {
+											pred = replaceAxDefsInPred(pred, decls);
+											SpecUtils.setAxParaPred(axPara, pred);
+											axPara.accept(cleaner);
+										}
 									}
 								}
 								catch (Exception e) {
@@ -243,10 +245,10 @@ public class ReplaceAxDefCommand implements Command{
 			manager.put(new Key(texFileToReadName, Source.class), source);
 			// The specification is loaded and set in the controller
 			spec = (Spec) manager.get(new Key(texFileToReadName, Spec.class));
-			
+
 			TypeCheckUtils.typecheck(spec, manager, true);
-						
-			
+
+
 		}
 		catch (Exception e){
 			System.out.println("Cant loadAgain " + nomTexFileSpec );

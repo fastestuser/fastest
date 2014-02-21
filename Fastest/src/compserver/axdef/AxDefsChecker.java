@@ -42,7 +42,7 @@ public final class AxDefsChecker
 		String auxPred = "";
 		for(int i=0;i<parts.length;i++){
 			if(parts[i].endsWith(" \\\\"))
-				parts[i] = parts[i].substring(0, parts[i].length() -3)+"\n";
+				parts[i] = parts[i].substring(0, parts[i].length() -3)+" \n";
 			auxPred+=parts[i];
 		}
 		strPred = auxPred;
@@ -237,7 +237,7 @@ public final class AxDefsChecker
 								axDefDecls.addElement(it.next());
 							finalStrPred = finalStrPred.replace("\n", "\\\\\n");
 							Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
-							finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred, axDefDecls);
+							//finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred, axDefDecls); //Antes reemplazaba acá, pero esta mal
 							finalStrPred = SpecUtils.termToLatex(finalPred);
 							
 							Iterator<String> mapIt = mapFRCopy.keySet().iterator();
@@ -246,10 +246,6 @@ public final class AxDefsChecker
 								String formalPattern = "(\\W|^)" + formal + "(\\W|$)";
 								finalStrPred = finalStrPred.replaceAll(formalPattern, "$1("+mapFRCopy.get(formal)+")$2");
 							}
-
-							//finalStrPred = finalStrPred.replace("\n", "\\\\\n");
-							//Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
-							//finalStrPred = SpecUtils.termToLatex(finalPred);
 
 							String[] parts = finalStrPred.split("\n");
 							String auxPred = "";
@@ -271,7 +267,8 @@ public final class AxDefsChecker
 								strPred = SpecUtils.termToLatex(pred);
 								strPred = strPred.replace("\\\\\n", "\n");
 							}
-
+							//Ahora reemplazo acá las demás axDefs
+							//finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred, axDefDecls);
 							matcher = matcher.reset(strPred);
 						}
 					}

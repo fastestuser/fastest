@@ -117,7 +117,7 @@ zExpr
 	;
 
 zExprSet
-	:	sName ('.' dotSetOper)?
+	:	sName ('.' dotSetOper)*
 	|	setExtension
 	|	zExprSet '@CUP@' zExprSet
 	;
@@ -136,7 +136,7 @@ zExprString
 	:	string
 	|	number
 	|	'@AUTOFILL'
-	|	sName ('.' (dotSetOper | '#' | '@STR'))?
+	|	sName ('.' (dotSetOper* | '#' | '@STR'))?
 	|	zExprString '++' zExprString
 	;
 
@@ -152,7 +152,6 @@ dotSetOper
 	:	'@' ('DOM' | 'RAN' | 'ELEM' | '#')
 	|	DIGIT
 	|	sName
-	|	dotSetOper '.' dotSetOper
 	;
 
 list

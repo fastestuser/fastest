@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
 import common.util.ExprIterator;
-
 import client.blogic.testing.refinamiento.FTCRLParser.DataStructContext;
 import client.blogic.testing.refinamiento.FTCRLParser.DotSetOperContext;
 import client.blogic.testing.refinamiento.FTCRLParser.INameContext;
@@ -15,7 +13,6 @@ import client.blogic.testing.refinamiento.FTCRLParser.PLCodeContext;
 import client.blogic.testing.refinamiento.FTCRLParser.PreambleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementSentenceContext;
-import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SNameContext;
 import client.blogic.testing.refinamiento.FTCRLParser.UutContext;
 import client.blogic.testing.refinamiento.basicrefinement.*;
@@ -30,11 +27,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public void printDeclaration(String line){
 		declarationList = declarationList.concat(line + ";\n");
 	}
-	
+
 	public void printAssignment(String line){
 		assignmentList = assignmentList.concat(line + ";\n");
 	}
-	
+
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
 
@@ -123,7 +120,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public Value visitRefinementSentence(FTCRLParser.RefinementSentenceContext ctx, List<String> zVars){
 
 		//Si se utilizan nuevas variables Z, pasamos esas, y sino utilizamos zVars que nos llegaron del padre
-
 		if (ctx.refinement() != null){ //Si es un refinement
 			this.visitRefinement(ctx.refinement(), zVars, null, null);
 
@@ -139,12 +135,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		return null;
 	}
-	
+
 	//@Override
 	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, Replacement replaceValue, String record, String varName, SExpr zExpr, int position){
-		
+
 		DataStructContext dataStruct = ctx.dataStruct();
-		
+
 		//Si es una lista
 		if (dataStruct.list() != null) {
 			if (!ctx.refinement().isEmpty()) {
@@ -154,12 +150,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			} else {
 				refineFromZToJava(zExpr, "LIST", new SExpr(varName, ""));
 			}
-			
-		//Si es un record
+
+			//Si es un record
 		} else if (FTCRLUtils.isRecord(dataStruct.getText())) {
 			//Si es un record, pasamos "mas abajo" en el árbol el record creado
 			refineWITH(ctx.refinement(), replaceValue, record);
-		
+
 			//Si es un array
 		} else if (FTCRLUtils.isArray(dataStruct.getText())) {
 			if (!ctx.refinement().isEmpty()) {
@@ -170,10 +166,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				refineFromZToJava(zExpr, "ARRAY", new SExpr(varName, ""));
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	//@Override
 	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, Replacement replacement, String record, String varName, SExpr zExpr){
 
@@ -186,7 +182,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		return null;
 	}
-	 
+
 	//@Override
 	public String visitRefinement(FTCRLParser.RefinementContext ctx, List<String> zVars, String record, Replacement replaceValue){
 
@@ -222,10 +218,9 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				//Uso un record ya creado
 				varName = record; //Esto no deberia ser null
 			}
-			//assignmentList = assignmentList.concat(varName + recordAtribute + " = " + element + ";\n");
 		}
-		
-		
+
+
 		//Si es un conjunto y ademas tiene WITH
 		if (FTCRLUtils.isSet(zExpr.exp) && (ctx.iExprRefinement().asRefinement() != null) 
 				&& !ctx.iExprRefinement().asRefinement().refinement().isEmpty()) {
@@ -239,7 +234,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				//Creamos el nuevo reemplazo
 				replaceValue = new Replacement(replaceExp, elem, elemType);
 				visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, varName, zExpr, position);
-				
+
 				//Incrementamos la posición del nodo
 				//Esto se usa en los array, para saber en que posición va
 				position++;
@@ -252,35 +247,100 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			replaceValue = new Replacement(replaceExp, zExpr.exp, zExpr.type);
 			visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, varName, zExpr, 0);
 
-		//No tiene WITH
+			//No tiene WITH
 		} else {
-			
+
 			visitIExprRefinement(ctx.iExprRefinement(), null, record, varName + recordAtribute, zExpr);
-			
 		}
 
 		return varName;
 	}
-	
+
+	//Este metodo permite visitar un SExprRefinement para obtener su valor y su tipo.
+	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+
+		//Si simplemente es un SName, debe estar en el replacement o en el Map de Z
+		if (ctx.sName()!=null)
+			return visitSName(ctx.sName(),replacement,zValuesMap, zTypesMap);
+		//Si es un ZExprSet, lo visito y devuelvo su SExpr
+		else if(ctx.zExprSet()!=null)
+			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap, zTypesMap);
+		else
+			return null;
+	}
+
+	//Este metodo permite visitar un ZExprSet para obtener su valor y su tipo.
+	private SExpr visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+
+		//En el primer caso, el ZExprSet se conforma de un SName, y quizas un dotSetOperator
+		if (ctx.sName() != null){
+			//Del sName debo obtener el SExpr correspondiente
+			SExpr s = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			//Y luego visito los DotSetOper, pero antes veo si debo hacer el replace
+			String sName = ctx.sName().getText();
+			List<DotSetOperContext> dot = ctx.dotSetOper();
+			if (replacement != null && !dot.isEmpty()) {
+				int replacePos = 0;
+				//En la primer pasada intento hacer el replace
+				for (; replacePos < dot.size(); replacePos++){
+					//Primero veo si debo hacer el replace
+					sName = sName.concat("." + dot.get(replacePos).getText());
+					if (sName.equals(replacement.exp)){
+						s = new SExpr(replacement.value, replacement.type);
+						break;
+					}
+				}
+				//Si di la vuelta completa, "reseteo"
+				if (replacePos == dot.size())
+					replacePos = -1;
+				//Luego visito los DotSetOper que no fueron utilizados en el replace
+				//donde se aplican los operadores a las expresiones
+				for (replacePos++; replacePos < dot.size(); replacePos++){
+					s = visitDotSetOper(dot.get(replacePos), s);
+				}
+			}
+			return s;
+
+		} else
+			return null;
+	}
+
+	//Este metodo permite visitar un SName para obtener su valor y su tipo.
+	public SExpr visitSName(FTCRLParser.SNameContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+
+		String s = ctx.getText();
+		//Si el replacement es el SName, devuelvo directamente su valor y tipo
+		if (replacement != null && replacement.exp != null && replacement.exp.equals(s))
+			return new SExpr(replacement.value, replacement.type);
+		//Y sino lo busco en el Map de Z
+		else if (zValuesMap != null && zValuesMap.get(s) != null )
+			return new SExpr(zValuesMap.get(s), zTypesMap.get(s));
+		//No deberia devolver null
+		else
+			return null;
+	}
+
+	//Este metodo permite visitar un DotSetOper para obtener su valor y su tipo.
+	//Se agrega el argumento SName, que se utilizará cuando haya más de un DotSetOper
+	//para llevar la cuenta de cuando hay que hacer el replace.
 	private SExpr visitDotSetOper(DotSetOperContext ctx, SExpr v) {
-		//si es una tupla con (,), le pongo corchetes para que sea conjunto
-		
-		v.exp = (v.exp.charAt(0)=='(')?"{"+v.exp+"}":v.exp;
+
+		//si es una tupla con (,), le pongo corchetes para que sea conjunto y asi poder usar su iterador
+		v.exp = (v.exp.charAt(0)=='(')?"{"+v.exp.substring(1, v.exp.length()-1)+"}":v.exp;
 		ExprIterator itElements = new common.util.ExprIterator(v.exp);
-				
-		String s[];
-		s = v.exp.split(",");
+
 		String oper = ctx.getText();
 		if(oper.contains("DOM")){
-			String value = s[0].substring(2);
+			String value = itElements.next();
 			String type = FTCRLUtils.getChildType(v.type, 0); //A \cross B --> A
 			return new SExpr(value, type);
 		}
 		else if(oper.contains("RAN")){
-			String value = s[1].substring(0,s[1].length()-2);
+			itElements.next();
+			String value = itElements.next();
 			String type = FTCRLUtils.getChildType(v.type, 1); //A \cross B --> B
 			return new SExpr(value, type);
-			
+
 		}
 		else if(oper.contains("#")){
 			String value = String.valueOf(itElements.cardinalidad());
@@ -289,56 +349,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 		else if (ctx.DIGIT() != null) { //Operador "."
 			int atributeNumber = Integer.parseInt(ctx.DIGIT().getText());
-			ExprIterator itElements2 = new common.util.ExprIterator(v.exp.substring(1, v.exp.length()-1));
 			for (int i = 1; i < atributeNumber; i++)
-				itElements2.next();
-			String value = itElements2.next();
+				itElements.next();
+			String value = itElements.next();
 			String type = FTCRLUtils.getChildType(v.type, atributeNumber-1);
 			return new SExpr(value, type);
 		}
 		return null;
-	}
-	
-	private SExpr visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
-		
-		if (ctx.sName() != null){
-			SExpr v = null;
-			String sName = ctx.sName().getText();
-			// sName tiene que ser si o si o el remplazo o alguna variable del hashmap
-			if (replacement != null && replacement.exp != null && replacement.exp.equals(sName))
-				v = new SExpr(replacement.value, replacement.type);
-			
-			else if (zValuesMap != null && zValuesMap.get(sName) != null )
-				v = new SExpr(zValuesMap.get(sName), zTypesMap.get(sName));
-			
-			return visitDotSetOper(ctx.dotSetOper(),v);
-			
-		}
-		return null;
-	}
-	
-	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
-		
-		if (ctx.sName()!=null){
-			String r = ctx.sName().getText();
-			if (replacement != null && replacement.exp != null && replacement.exp.equals(r))
-				return new SExpr(replacement.value, replacement.type);
-			
-			else if (zValuesMap != null && zValuesMap.get(r) != null ){
-				return new SExpr(zValuesMap.get(r), zTypesMap.get(r));
-				
-			}
-			return null;
-		}
-		
-		else if(ctx.zExprSet()!=null){
-			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap, zTypesMap);
-		}
-		else if(ctx.zExprNum()!=null){
-			
-		}
-		return null;
-		
 	}
 
 	private String refineWITH(List<RefinementContext> refinements, Replacement replace, String record) {
@@ -358,34 +375,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//y typeVariable es l,
 	//debera hacer las asignaciones: l.add(1); l.add(2); l.add(3) 
 	public String refineFromZToJava(SExpr zExpr, String toType, SExpr javaExpr) {
-		
+
 		//En base al tipo en Z de sValue debo utilizar una determinada clase para refinarla
 		if (zExpr.type.equals("\\num") || zExpr.type.equals("\\nat"))
 			return NumRefinement.refine(zExpr, toType, javaExpr, this);
-		else if (zExpr.type.startsWith("\\set"))
+		else if (zExpr.type.startsWith("\\power"))
 			return SetRefinement.refine(zExpr, toType, javaExpr, this);
 		return "";
-		
-		/*
-		//Si refinamos a una lista, debemos iterar sobre los elementos de ZValue
-		//para ir agregandolos a la variable typeVariable
-		if (toType.equals("LIST")){
-			//Obtenemos los elementos del conjunto
-			Iterator<String> itElements = new common.util.ExprIterator(sValue);
-			while (itElements.hasNext()){
-				assignmentList = assignmentList.concat(typeVariable + ".add(" + refineFromZToJava(itElements.next(), "BASIC", null) + ");\n");
-			}
-			return typeVariable;
-		} else if (toType.equals("BASIC")){
-			if (typeVariable != null) {
-				assignmentList = assignmentList.concat(typeVariable + " = " + sValue + ";\n");
-				return typeVariable;
-			} else {
-				return sValue;
-			}
-		} 
-		return typeVariable;
-		*/
 	}
 
 	//Este metodo se utiliza para determinar el caso de prueba que se utilizará

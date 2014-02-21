@@ -1,8 +1,11 @@
 package common.z.czt.visitors;
 
+import common.z.SpecUtils;
 import compserver.axdef.AxDefsLoader;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.base.visitor.VisitorUtils;
@@ -23,6 +26,7 @@ TermVisitor<Void> {
 	}
 
 	public Void visitAxPara(AxPara axPara) {
+		String test = SpecUtils.termToLatex(axPara);
 		if (axPara.getBox() == Box.AxBox) {
 			ZSchText zSchText = axPara.getZSchText();
 			Pred axDefPred = zSchText.getPred();
