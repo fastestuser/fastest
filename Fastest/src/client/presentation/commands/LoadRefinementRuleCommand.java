@@ -35,13 +35,14 @@ public class LoadRefinementRuleCommand implements Command{
 			}
 
 			// We obtain the file from the path
+			
 			File refLawFile = new File(parts[0]);
 			if (!refLawFile.exists()){
 			    output.println("File " + parts[0] + " not found");
 			}
 			else{
 				// We parse the refinement law
-				FTCRLUtils.parse(refLawFile);
+				FTCRLUtils.parse(FTCRLUtils.preprosesar(refLawFile));
 			}
 		}
 		catch(Exception e){

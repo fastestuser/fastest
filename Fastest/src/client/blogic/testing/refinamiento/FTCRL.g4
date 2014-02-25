@@ -9,7 +9,7 @@ package client.blogic.testing.refinamiento;
 
 refinementRule
 	:	'@RRULE' name NL
-          	preamble NL
+        preamble
 		laws
 		(plcode NL)?
 		uut
@@ -18,7 +18,7 @@ refinementRule
 
 preamble
 	:	'@PREAMBLE' NL
-		(pLCode | name '.@PREAMBLE' NL)+
+		(pLCode NL | name '.@PREAMBLE' NL)*
 	;
 
 laws

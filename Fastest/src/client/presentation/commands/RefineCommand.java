@@ -2,31 +2,13 @@ package client.presentation.commands;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.List;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import compserver.tcasegen.strategies.setlog.SetLogGenerator;
-import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLJavaVisitor;
-import client.blogic.testing.refinamiento.FTCRLLexer;
-import client.blogic.testing.refinamiento.FTCRLParser;
 import client.blogic.testing.refinamiento.FTCRLUtils;
-import client.blogic.testing.ttree.strategies.TTreeStrategy;
-import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
 
 /**
