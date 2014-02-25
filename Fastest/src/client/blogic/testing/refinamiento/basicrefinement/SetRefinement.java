@@ -13,14 +13,28 @@ import client.blogic.testing.refinamiento.SExpr;
 public class SetRefinement {
 	
 	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+		//Primero vemos donde hay que almacenar lo que refinaremos
+		String javaVar = "";
+		if ((javaExpr != null) && (javaExpr.exp != "")){
+			javaVar = javaExpr.exp;
+		} else {
+			javaVar = "newSetVar"; //Cambiar
+		}
+		
 		//Obtenemos los elementos del conjunto y determinamos el tipo de los elementos
 		Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
-		String elemType = "\\num";
+		String zElemType = FTCRLUtils.getChildType(zExpr.type, 0);
+
+		//Obtenemos el tipo de los nodos del conjunto
+		String javaElemType = FTCRLUtils.getInnerType(javaExpr.type);
+		javaExpr.exp = "";
+		javaExpr.type = javaElemType;
+		
 		while (itElements.hasNext()){
-			SExpr zElemExpr = new SExpr(itElements.next(), elemType);
-			ftcrl.printAssignment(javaExpr.exp + ".add(" + ftcrl.refineFromZToJava(zElemExpr, "BASIC", null) + ")");
+			SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+			ftcrl.printAssignment(javaVar + ".add(" + ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr) + ")");
 		}
-		return javaExpr.exp;
+		return javaVar;
 		
 	}
 

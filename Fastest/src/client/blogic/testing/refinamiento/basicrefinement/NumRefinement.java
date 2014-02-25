@@ -10,14 +10,23 @@ import client.blogic.testing.refinamiento.SExpr;
 public class NumRefinement {
 	
 	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+		
+		String value = refineTo(zExpr, javaExpr);
 		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
-		if (javaExpr != null) {
-			ftcrl.printAssignment(javaExpr.exp + " = " + zExpr.exp);
-			return javaExpr.exp;
-		//Y sino devuelvo el valor refinado en vez de la variable Java
-		} else {
-			return zExpr.exp;
+		if ((javaExpr != null) && (javaExpr.exp != "")) {
+			ftcrl.printAssignment(javaExpr.exp + " = " + value);
 		}
+		//Y sino devuelvo el valor refinado en vez de la variable Java
+		return value;
+	}
+	
+	private static String refineTo(SExpr zExpr, SExpr javaExpr){
+		if (javaExpr.type.equals("String")){
+			return "\"" + zExpr.exp + "\"";
+		} else if (javaExpr.type.equals("Integer"))
+			return zExpr.exp;
+		
+		return "";
 		
 	}
 

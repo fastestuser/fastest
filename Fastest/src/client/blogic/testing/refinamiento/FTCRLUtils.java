@@ -1,23 +1,23 @@
 package client.blogic.testing.refinamiento;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.file.Files;
 import java.util.HashMap;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+
 import java.util.Scanner;
-import compserver.tcasegen.strategies.setlog.SetLogGenerator;
+
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
+import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
+import client.blogic.testing.refinamiento.javaparser.Java7Parser;
+import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
 
 
 public class FTCRLUtils {
@@ -26,6 +26,10 @@ public class FTCRLUtils {
 	
 	public static FTCRLParser getParser(){
 		return parser;
+	}
+	
+	public static String getPreamble(){
+		return preamble;
 	}
 	
 	public static String preprosesar(File refRuleFile) throws IOException{
@@ -46,55 +50,108 @@ public class FTCRLUtils {
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){
-		
+
 		HashMap<String, String> map = new HashMap<String, String>();
-		
+
 		//Limpiamos los espacios y doble barras
 		tcase = tcase.replaceAll(" ", "");
 		tcase = tcase.replaceAll("\\\\\\\\", "");
-		
+
 		String lineas[] = tcase.split("\\where");
-		
+
 		//si no tiene where
 		if (lineas.length == 1) return map;
-		
+
 		lineas = lineas[1].split("\\n");
-		
+
 		//la ultima linea siempre es "\\end{schema}"
 		for (int i = 1; i < lineas.length -1; i++){
 			String[] reg = lineas[i].split("=");
 			map.put(reg[0], reg[1]);
 		}
-		
+
 		return map;
 	}
-	
+
 	//Crea un map con los tyipos de las variables de Z, a partir del caso de prueba
-		public static HashMap<String, String> createZTypesMap(String tcase){
-			
-			HashMap<String, String> map = new HashMap<String, String>();
-			
-			//Limpiamos los espacios y doble barras
-			tcase = tcase.replaceAll(" ", "");
-			tcase = tcase.replaceAll("\\\\\\\\", "");
-			
-			String lineas[] = tcase.split("\\where");
-						
-			lineas = lineas[0].split("\\n");
-			
-			//la primer linea siempre es "\\begin{schema}"
-			for (int i = 1; i < lineas.length -1; i++){
-				String[] reg = lineas[i].split(":");
-				String type = reg[1];
-				
-				String vars[] = reg[0].split(","); //Lista de variables
-				for (int j=0; j < vars.length; j++) {
-					map.put(vars[j].replaceAll(" ", ""),type);
-				}
+	public static HashMap<String, String> createZTypesMap(String tcase){
+
+		HashMap<String, String> map = new HashMap<String, String>();
+
+		//Limpiamos los espacios y doble barras
+		tcase = tcase.replaceAll(" ", "");
+		tcase = tcase.replaceAll("\\\\\\\\", "");
+
+		String lineas[] = tcase.split("\\where");
+
+		lineas = lineas[0].split("\\n");
+
+		//la primer linea siempre es "\\begin{schema}"
+		for (int i = 1; i < lineas.length -1; i++){
+			String[] reg = lineas[i].split(":");
+			String type = reg[1];
+
+			String vars[] = reg[0].split(","); //Lista de variables
+			for (int j=0; j < vars.length; j++) {
+				map.put(vars[j].replaceAll(" ", ""),type);
 			}
-			
-			return map;
 		}
+
+		return map;
+	}
+
+	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
+	public static HashMap<String, String> createJavaTypesMap(String javaCode){
+		
+		//Utilizamos el parser de Java
+		ANTLRInputStream input = new ANTLRInputStream(javaCode);
+		Java7Lexer lexer = new Java7Lexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		Java7Parser parser = new Java7Parser(tokens);
+		ParseTree tree = parser.compilationUnit();
+		
+		//Lo visitamos
+		HashMap<String, String> map = new HashMap<String, String>();
+		TypeExtractorVisitor visitor = new TypeExtractorVisitor(map);
+
+		visitor.visit(tree);
+		
+		//map.put("A.b","B"); //(FieldDeclaration)
+		//map.put("B.c","C"); //(FieldDeclaration)
+		//map.put("A.l","LinkedList<Integer>"); //(FieldDeclaration)
+		//map.put("A.name","String"); //(FieldDeclaration)
+		//map.put("l","LinkedList<Integer>"); //(NormalParameterDecl)
+		//map.put("name"," String"); //(NormalParameterDecl)
+		//map.put("a","List<A>"); //(NormalParameterDecl)
+		
+		return visitor.getMap();
+	}
+
+	//Este método debe obtener el tipo de una expresion java como:
+	//- una variable: "a"
+	//- una variable de una clase: "A.name"
+	//- el argumento de un metodo: "arg"
+	public static String getJavaType(String javaExp, HashMap<String, String> javaTypes){
+		
+		String type = javaTypes.get(javaExp);
+		if (type != null)
+			return type;
+		else {
+			//tiene que ser un atributo de una clase
+			//ej: A.b.name, donde A.b es un B
+			//obtenemos el ultimo argumento,
+			//y buscamos el tipo de la primer parte
+			int lastPoint = javaExp.lastIndexOf(".");
+			if (lastPoint != -1){
+				String atribute = javaExp.substring(lastPoint);
+				type = getJavaType(javaExp.substring(0, lastPoint), javaTypes);
+				type = javaTypes.get(type + atribute);
+				return type;
+			}
+		}
+			return "";
+		
+	}
 	
 	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
 	public static SExpr sExpr(String exp, Replacement replacement, HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap) {
@@ -103,7 +160,7 @@ public class FTCRLUtils {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		FTCRLParser parser = new FTCRLParser(tokens);
 		ParseTree tree = parser.sExprRefinement();
-		
+
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap, zTypesMap);
 	}
@@ -148,22 +205,22 @@ public class FTCRLUtils {
 	public static boolean isRecord(String text) {
 		return text.equals("RECORD");
 	}
-	
+
 	//  Metodo para la determinacion del tipo de un hijo de una expresion Z.
 	public static String getChildType(String type, int pos) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager utilizada en Setlog
-        DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
-        
-        DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
-        
-        while (((String) child.getUserObject()).equals("()")) {
-        	child = (DefaultMutableTreeNode) child.getChildAt(0);
-        }
-        
-        //se retorna la impresion del hijo correspondiente
-        return printTreeWithParenthesis(child);
+		DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
+
+		DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(pos);
+
+		while (((String) child.getUserObject()).equals("()")) {
+			child = (DefaultMutableTreeNode) child.getChildAt(0);
+		}
+
+		//se retorna la impresion del hijo correspondiente
+		return printTreeWithParenthesis(child);
 	}
-	
+
 	//Necesito esta funcion para imprimir el árbol en getChildType(...), la cual agrega parentesis, ya que TreeNorm los elimina
 	private static String printTreeWithParenthesis(DefaultMutableTreeNode tree){
 		if (tree.isLeaf()) 
@@ -182,5 +239,18 @@ public class FTCRLUtils {
 			}
 			return returnString;
 		}
+	}
+
+	//Devuelve el tipo del "hijo" de un tipo de java
+	//Ej: entrada: "LinkedList<String>" -> salida: String
+	public static String getInnerType(String type) {
+		//Hay que controlarla
+		int start = type.indexOf("<");
+		int end = type.lastIndexOf(">");
+		if ((start != -1) && (end != -1)){
+			return type.substring(start+1, end);
+		}
+		
+		return null;
 	}
 }
