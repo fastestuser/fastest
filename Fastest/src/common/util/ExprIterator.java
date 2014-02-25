@@ -79,6 +79,11 @@ public final class ExprIterator implements Iterator<String>{
 		
 		return elem;
 	}
+	public String next(int n){
+		for (int i = 1; i<n;i++)
+			next();
+		return next();
+	}
 
 	//borra el elemento actual y reinicia el iterador
 	public void remove() {

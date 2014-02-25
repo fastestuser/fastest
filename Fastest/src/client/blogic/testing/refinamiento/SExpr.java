@@ -12,5 +12,7 @@ public class SExpr {
 		this.exp = exp;
 		this.type = value;
 	}
-
+	public SExpr(){
+	}
+	
 }

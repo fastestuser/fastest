@@ -355,6 +355,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			String type = FTCRLUtils.getChildType(v.type, atributeNumber-1);
 			return new SExpr(value, type);
 		}
+		//si era un conjunto o una tupla devuelvo o un conjunto o un elemento
 		return null;
 	}
 

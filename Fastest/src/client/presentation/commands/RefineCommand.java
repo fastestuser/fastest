@@ -24,6 +24,7 @@ import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLJavaVisitor;
 import client.blogic.testing.refinamiento.FTCRLLexer;
 import client.blogic.testing.refinamiento.FTCRLParser;
+import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
@@ -41,9 +42,15 @@ public class RefineCommand implements Command {
 		if (!args.equals("")) {
 			output.println("Invalid parameters.  Try 'help'.");
 		} else {
-
+			ParseTree tree = (ParseTree) FTCRLUtils.getParser().refinementRule();
+			FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
+			
 			String caso = leerCaso();
-			System.out.println(leerRegla(caso));
+			visitor.assignTCase(caso);
+			visitor.visit(tree);
+			
+			
+			//System.out.println(leerRegla(caso));
 		}
 	}
 
@@ -74,35 +81,4 @@ public class RefineCommand implements Command {
 		return "null";
 	}
 	
-	private String leerRegla(String tcase) {
-		try {
-			//Llamamos a ANTLR
-			
-			URL location = SetLogGenerator.class.getProtectionDomain().getCodeSource().getLocation();
-			String path = location.getFile();
-			if (path.endsWith("/")) //Al correrlo desde eclipse, el path termina en /bin/, con lo cual se elimina primero la ultima /
-				path = path.substring(0, path.lastIndexOf("/"));
-			path = path.substring(0, path.lastIndexOf("/")); //Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
-			path = URLDecoder.decode(path, "UTF-8");
-			
-			InputStream in = new FileInputStream(path + "/RefinementLaws");
-			ANTLRInputStream input = new ANTLRInputStream(in );
-			FTCRLLexer lexer = new FTCRLLexer(input);
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			FTCRLParser parser = new FTCRLParser(tokens);
-
-			ParseTree tree = parser.refinementRule();
-			
-			FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
-			visitor.assignTCase(tcase);
-			visitor.visit(tree);
-			
-			
-			return "";
-			
-		} catch (Exception e) { // Catch de excepciones
-			System.out.println("Ocurrio un error: " + e.getMessage());
-		}
-		return "null";
-	}
 }

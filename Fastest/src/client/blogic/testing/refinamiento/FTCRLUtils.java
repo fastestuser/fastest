@@ -1,15 +1,38 @@
 package client.blogic.testing.refinamiento;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+
+import compserver.tcasegen.strategies.setlog.SetLogGenerator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 
 
 public class FTCRLUtils {
+	static FTCRLParser parser;
+	
+	public static FTCRLParser getParser(){
+		return parser;
+	}
+	
+	public static void parse(File refRuleFileName) throws IOException{
+			
+			InputStream in = new FileInputStream(refRuleFileName.getAbsolutePath());
+			ANTLRInputStream input = new ANTLRInputStream(in);
+			FTCRLLexer lexer = new FTCRLLexer(input);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			parser = new FTCRLParser(tokens);
+		
+	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){

@@ -3,12 +3,13 @@ package client.presentation.commands;
 import java.io.*;
 
 import client.presentation.ClientTextUI;
+import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinement.RefLawRepository;
 import client.blogic.testing.refinement.Utils;
 import client.blogic.management.Controller;
 
 
-public class LoadRefinementLawCommand implements Command{
+public class LoadRefinementRuleCommand implements Command{
 
     /**
      * Runs this command.
@@ -40,7 +41,7 @@ public class LoadRefinementLawCommand implements Command{
 			}
 			else{
 				// We parse the refinement law
-				String refLawName = Utils.parseFile(refLawFile);
+				FTCRLUtils.parse(refLawFile);
 			}
 		}
 		catch(Exception e){
