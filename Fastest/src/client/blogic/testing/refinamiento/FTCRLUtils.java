@@ -13,6 +13,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.util.Scanner;
 
+import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
@@ -23,6 +24,7 @@ import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
 public class FTCRLUtils {
 	static FTCRLParser parser;
 	static String preamble; //codigo java de la refrule
+	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
 	
 	public static FTCRLParser getParser(){
 		return parser;
@@ -112,19 +114,12 @@ public class FTCRLUtils {
 		
 		//Lo visitamos
 		HashMap<String, String> map = new HashMap<String, String>();
-		TypeExtractorVisitor visitor = new TypeExtractorVisitor(map);
+		TypeExtractorVisitor visitor = new TypeExtractorVisitor();
 
 		visitor.visit(tree);
 		
-		//map.put("A.b","B"); //(FieldDeclaration)
-		//map.put("B.c","C"); //(FieldDeclaration)
-		//map.put("A.l","LinkedList<Integer>"); //(FieldDeclaration)
-		//map.put("A.name","String"); //(FieldDeclaration)
-		//map.put("l","LinkedList<Integer>"); //(NormalParameterDecl)
-		//map.put("name"," String"); //(NormalParameterDecl)
-		//map.put("a","List<A>"); //(NormalParameterDecl)
-		
-		return visitor.getMap();
+		enumTypes = visitor.getEnumTypes(); //Almacenamos los tipos "enum"
+		return visitor.getMap(); //retornamos el map con los tipos de las variables
 	}
 
 	//Este método debe obtener el tipo de una expresion java como:
@@ -253,4 +248,25 @@ public class FTCRLUtils {
 		
 		return null;
 	}
+	
+	//Determina si un tipo en java es "enum"
+	public static boolean isEnumJava(String type){
+		if (enumTypes.get(type) != null)
+			return true;
+		else
+			return false;
+	}
+	
+	//Retorna el n-esimo elemento de un "enum" de Java
+		public static String getEnumJavaElem(String type, int n){
+			
+			String values = enumTypes.get(type);
+			if (values != null){
+				//Creamos un iterador sobre los elementos
+				ExprIterator itElements = new common.util.ExprIterator(values);
+				n = n % itElements.cardinalidad();
+				return itElements.next(n);
+			} else
+				return "";
+		}
 }

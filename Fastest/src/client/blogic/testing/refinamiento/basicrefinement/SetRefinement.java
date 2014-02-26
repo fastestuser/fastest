@@ -11,7 +11,7 @@ import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.SExpr;
 
 public class SetRefinement {
-	
+
 	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
 		//Primero vemos donde hay que almacenar lo que refinaremos
 		String javaVar = "";
@@ -20,7 +20,7 @@ public class SetRefinement {
 		} else {
 			javaVar = "newSetVar"; //Cambiar
 		}
-		
+
 		//Obtenemos los elementos del conjunto y determinamos el tipo de los elementos
 		Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
 		String zElemType = FTCRLUtils.getChildType(zExpr.type, 0);
@@ -29,13 +29,24 @@ public class SetRefinement {
 		String javaElemType = FTCRLUtils.getInnerType(javaExpr.type);
 		javaExpr.exp = "";
 		javaExpr.type = javaElemType;
-		
-		while (itElements.hasNext()){
-			SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
-			ftcrl.printAssignment(javaVar + ".add(" + ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr) + ")");
+
+		if (toType.equals("LIST")){
+			while (itElements.hasNext()){
+				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
+				ftcrl.printAssignment(javaVar + ".add(" + refinedElem + ")");
+			}
+		} else if (toType.equals("ARRAY")){
+			int arrayPos = 0;
+			while (itElements.hasNext()){
+				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
+				ftcrl.printAssignment(javaVar + "[" + arrayPos + "] = " + refinedElem);
+				arrayPos++;
+			}
 		}
 		return javaVar;
-		
+
 	}
 
 }
