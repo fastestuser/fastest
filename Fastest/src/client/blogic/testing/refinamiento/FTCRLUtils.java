@@ -50,7 +50,7 @@ public class FTCRLUtils {
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			parser = new FTCRLParser(tokens);
 			RefinementRule newRule = new RefinementRule(parser,preamble);
-			RefinementRules.getInstance().addRule("sum", newRule);
+			RefinementRules.getInstance().addRule(parser.refinementRule().name().getText(), newRule);
 			
 	} 
 

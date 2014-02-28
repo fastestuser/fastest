@@ -13,7 +13,8 @@ public final class ExprIterator implements Iterator<String>{
 
 	public ExprIterator(String expr){
 		
-		this.expr = expr.replace("\\langle", "$");
+		this.expr = expr.replace("\\mapsto", ",");
+		this.expr = this.expr.replace("\\langle", "$");
 		this.expr = this.expr.replace("\\rangle", "°");
 		
 		if (this.expr.charAt(0) == '\\'){

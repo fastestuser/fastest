@@ -9,30 +9,21 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.ZDeclList;
 import common.fastest.FastestUtils;
-import common.repository.AbstractRepository;
 import common.z.AbstractTCase;
 import common.z.Scheme;
 import common.z.SpecUtils;
-import common.z.TClass;
-import common.z.czt.visitors.TClassNodeUnfolder;
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RefineAbsTCasesRequested;
 import client.blogic.testing.refinamiento.RefinementRules;
-import client.blogic.testing.ttree.TCaseNode;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
-import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
-import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
-import client.blogic.testing.ttree.visitors.TTreeTextUIPrinter;
 import client.presentation.ClientTextUI;
 
 /**

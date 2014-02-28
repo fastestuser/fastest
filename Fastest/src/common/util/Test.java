@@ -7,7 +7,7 @@ public class Test {
 	 */
 	public static void main(String[] args) {
 		
-		String s = "{1,\\langle 2,3 \\rangle,(2,3)}";
+		String s = "~\\langle(\\langle1\\rangle\\mapstostr2)\\rangle";
 		ExprIterator it = new ExprIterator(s);
 		System.out.println("imprimir expr iterator   " + s);
 		while(it.hasNext()){
