@@ -2,6 +2,7 @@ package client.blogic.testing.refinamiento.javaparser;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 
 import client.blogic.testing.refinamiento.javaparser.Java7Parser.EnumBodyContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Parser.EnumConstantContext;
@@ -16,11 +17,12 @@ public class TypeExtractorVisitor extends Java7ParserBaseVisitor{
 
 	HashMap<String,String> map; //Tipos de las variables
 	HashMap<String,String> enumTypes; //Tipos "enum"
+	LinkedList<String> privateVars; //Variables "private"
 	
 	public TypeExtractorVisitor(){
 		this.map = new HashMap<String,String>();
 		this.enumTypes = new HashMap<String,String>();
-		//this.enumTypes.put("Day", "{Lunes,Martes,Miercoles,Jueves}");
+		this.privateVars = new LinkedList<String>();
 	}
 	
 	public HashMap<String,String> getMap(){
@@ -31,8 +33,12 @@ public class TypeExtractorVisitor extends Java7ParserBaseVisitor{
 		return this.enumTypes;
 	}
 	
-private String visitedClass = "";
-private String visitedEnumType = "";
+	public LinkedList<String> getPrivateVars(){
+		return this.privateVars;
+	}
+	
+	private String visitedClass = "";
+	private String visitedEnumType = "";
 	
 	@Override
 	public Object visitNormalClassDeclaration(NormalClassDeclarationContext ctx){
@@ -44,11 +50,18 @@ private String visitedEnumType = "";
 	
 	@Override
 	public Object visitFieldDeclaration(FieldDeclarationContext ctx){
-		String type = ctx.type().getText();
+		String type = ctx.type().getText(); //El tipo de la variable
+		boolean isPublic = false; //Para saber si la variable es privada o publica
+		String modifiers = ctx.modifiers().getText();//Los modificadores
+		if (modifiers.contains("public"))
+			isPublic = true;
+		
 		Iterator<VariableDeclaratorContext> it = ctx.variableDeclarator().iterator();
 		while (it.hasNext()) {
 			String var = it.next().Identifier().getText();
 			map.put(visitedClass + "." + var,type);
+			if (!isPublic) //Si no es publica, debo agregarla a la lista de variables privadas
+				privateVars.add(visitedClass + "." + var);
 		}
 		return null;
 	}

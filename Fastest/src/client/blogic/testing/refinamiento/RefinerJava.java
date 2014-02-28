@@ -14,10 +14,10 @@ public class RefinerJava implements Refiner{
 	public List<TCaseAssignment> refineRule(RefinementRule rule, Term atc) {
 		
 		String casoString = SpecUtils.termToLatex(atc);
-		casoString.replace("~", "");
+		casoString = casoString.replace("~", "");
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 		visitor.assignTCase(casoString);
-		visitor.visit(rule.getParser().refinementRule());
+		visitor.visit(rule.getTree());
 		// TODO Auto-generated method stub
 		return null;
 	}

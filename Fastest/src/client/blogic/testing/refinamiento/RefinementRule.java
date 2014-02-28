@@ -1,21 +1,21 @@
 package client.blogic.testing.refinamiento;
 
-import org.antlr.v4.runtime.tree.ParseTree;
+import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
 
 public class RefinementRule {
-	private FTCRLParser parser;
+	private RefinementRuleContext tree;
 	private String preamble;
 	
-	public RefinementRule(FTCRLParser parser, String preamble){
-		this.parser = parser;
+	public RefinementRule(RefinementRuleContext tree, String preamble){
+		this.tree = tree;
 		this.preamble = preamble;
 	}
 	
-	public FTCRLParser getParser() {
-		return parser;
+	public RefinementRuleContext getTree() {
+		return tree;
 	}
-	public void setParser(FTCRLParser parser) {
-		this.parser = parser;
+	public void setTree(RefinementRuleContext tree) {
+		this.tree = tree;
 	}
 	public String getPreamble() {
 		return preamble;

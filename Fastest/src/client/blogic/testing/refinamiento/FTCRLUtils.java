@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
@@ -15,6 +16,7 @@ import java.util.Scanner;
 
 import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
+import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
 import client.blogic.testing.refinamiento.javaparser.Java7Parser;
@@ -22,19 +24,20 @@ import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
 
 
 public class FTCRLUtils {
-	static FTCRLParser parser;
+	static RefinementRuleContext tree;
 	static String preamble; //codigo java de la refrule
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
-	
-	
-	public static FTCRLParser getParser(){
-		return parser;
+	static LinkedList<String> privateVars = new LinkedList<String>(); //Indica las variables privadas (no publicas en verdad) de java
+
+
+	public static RefinementRuleContext getTree(){
+		return tree;
 	}
-	
+
 	public static String getPreamble(){
 		return preamble;
 	}
-	
+
 	public static String preprosesar(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRules = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
@@ -42,16 +45,15 @@ public class FTCRLUtils {
 		preamble = refRulesAux[1];
 		return refRulesAux[0] +"@PREAMBLE\n@LAWS"+ refRulesAux[2];
 	}
-	
-	
+
+
 	public static void parse(String refRules) throws IOException{
-			ANTLRInputStream input = new ANTLRInputStream(refRules);
-			FTCRLLexer lexer = new FTCRLLexer(input);
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			parser = new FTCRLParser(tokens);
-			RefinementRule newRule = new RefinementRule(parser,preamble);
-			RefinementRules.getInstance().addRule(parser.refinementRule().name().getText(), newRule);
-			
+		ANTLRInputStream input = new ANTLRInputStream(refRules);
+		FTCRLLexer lexer = new FTCRLLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		tree = new FTCRLParser(tokens).refinementRule();
+		RefinementRule newRule = new RefinementRule(tree,preamble);
+		RefinementRules.getInstance().addRule(tree.name().getText(), newRule);
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
@@ -108,21 +110,22 @@ public class FTCRLUtils {
 
 	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
 	public static HashMap<String, String> createJavaTypesMap(String javaCode){
-		
+
 		//Utilizamos el parser de Java
 		ANTLRInputStream input = new ANTLRInputStream(javaCode);
 		Java7Lexer lexer = new Java7Lexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		Java7Parser parser = new Java7Parser(tokens);
 		ParseTree tree = parser.compilationUnit();
-		
+
 		//Lo visitamos
 		HashMap<String, String> map = new HashMap<String, String>();
 		TypeExtractorVisitor visitor = new TypeExtractorVisitor();
 
 		visitor.visit(tree);
-		
+
 		enumTypes = visitor.getEnumTypes(); //Almacenamos los tipos "enum"
+		privateVars = visitor.getPrivateVars(); //Almacenamos las variables privadas
 		return visitor.getMap(); //retornamos el map con los tipos de las variables
 	}
 
@@ -131,7 +134,7 @@ public class FTCRLUtils {
 	//- una variable de una clase: "A.name"
 	//- el argumento de un metodo: "arg"
 	public static String getJavaType(String javaExp, HashMap<String, String> javaTypes){
-		
+
 		String type = javaTypes.get(javaExp);
 		if (type != null)
 			return type;
@@ -148,10 +151,10 @@ public class FTCRLUtils {
 				return type;
 			}
 		}
-			return "";
-		
+		return "";
+
 	}
-	
+
 	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
 	public static SExpr sExpr(String exp, Replacement replacement, HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap) {
 		ANTLRInputStream in = new ANTLRInputStream(exp);
@@ -169,6 +172,16 @@ public class FTCRLUtils {
 		//Creo que con chequear el inicio y el final es suficiente, porque una expresión de la forma
 		// { ...} ... {...} no debería llegar como argumenta, ya que pide un valor y no una expresion.
 		if (value.startsWith("\\{") && value.endsWith("\\}"))
+			return true;
+		else
+			return  false;
+	}
+
+	//Determina si 'value' es una seq. Como entrada toma un valor, no una expresion FTCRL.
+	public static boolean isSeq(String value) {
+		//Creo que con chequear el inicio y el final es suficiente, porque una expresión de la forma
+		// < ...> ... <...> no debería llegar como argumenta, ya que pide un valor y no una expresion.
+		if (value.startsWith("\\langle") && value.endsWith("\\rangle"))
 			return true;
 		else
 			return  false;
@@ -249,10 +262,10 @@ public class FTCRLUtils {
 		if ((start != -1) && (end != -1)){
 			return type.substring(start+1, end);
 		}
-		
+
 		return null;
 	}
-	
+
 	//Determina si un tipo en java es "enum"
 	public static boolean isEnumJava(String type){
 		if (enumTypes.get(type) != null)
@@ -260,17 +273,42 @@ public class FTCRLUtils {
 		else
 			return false;
 	}
-	
+
 	//Retorna el n-esimo elemento de un "enum" de Java
-		public static String getEnumJavaElem(String type, int n){
-			
-			String values = enumTypes.get(type);
-			if (values != null){
-				//Creamos un iterador sobre los elementos
-				ExprIterator itElements = new common.util.ExprIterator(values);
-				n = n % itElements.cardinalidad();
-				return itElements.next(n);
-			} else
-				return "";
-		}
+	public static String getEnumJavaElem(String type, int n){
+
+		String values = enumTypes.get(type);
+		if (values != null){
+			//Creamos un iterador sobre los elementos
+			ExprIterator itElements = new common.util.ExprIterator(values);
+			n = n % itElements.cardinalidad();
+			return itElements.next(n);
+		} else
+			return "";
+	}
+
+	//Determina si una variable en java es "private"
+	public static boolean isPrivate(String var){
+
+		if (privateVars.contains(var))
+			return true;
+		else
+			return false;
+	}
+
+	//Obtiene el nombre del MODULE de la uut
+	public static String extractModuleName(String uut){
+		String[] s = uut.split("MODULE", 2);
+		return s[1].replaceAll("\n", "");
+	}
+
+	//Obtiene el nombre de las variables del uut
+	public static LinkedList<String> extractUUTArgs(String uut){
+		LinkedList<String> l = new LinkedList<String>();
+		uut = uut.substring(uut.indexOf("(")+1, uut.indexOf(")"));
+		String[] args = uut.split(",");
+		for (int i = 0; i < args.length; i++)
+			l.add(args[i]);
+		return l;
+	}
 }
