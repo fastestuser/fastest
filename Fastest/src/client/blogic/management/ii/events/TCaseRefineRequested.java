@@ -1,6 +1,5 @@
 package client.blogic.management.ii.events;
 
-import java.io.*;
 import common.z.AbstractTCase;
 
 /**
@@ -8,17 +7,17 @@ import common.z.AbstractTCase;
  */
 public class TCaseRefineRequested extends Event_{
     private String opName;
-    private AbstractTCase abstractTCase;
+    private AbstractTCase absTCase;
     private String targetLanguaje;
     private String pathUUT;
-    private String refLawName;
+    private String refRuleName;
 
-    public TCaseRefineRequested(String opName, AbstractTCase abstractTCase, String pathUUT, String targetLanguaje, String refLawName){
+    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String pathUUT, String targetLanguaje, String refRuleName){
 		this.opName = opName;
-		this.abstractTCase = abstractTCase;
+		this.absTCase = absTCase;
 		this.targetLanguaje = targetLanguaje;
 		this.pathUUT = pathUUT;
-		this.refLawName = refLawName;
+		this.refRuleName = refRuleName;
 		super.setEventName("tCaseRefineRequested");
 	}
     /**
@@ -38,12 +37,12 @@ public class TCaseRefineRequested extends Event_{
 	}
 
 
-	public void setAbstractTCase(AbstractTCase abstractTCase){
-		this.abstractTCase = abstractTCase;
+	public void setAbstractTCase(AbstractTCase absTCase){
+		this.absTCase = absTCase;
 	}
 
 	public AbstractTCase getAbstractTCase(){
-		return abstractTCase;
+		return absTCase;
 	}
 
 	public String getTargetLanguaje(){
@@ -54,8 +53,8 @@ public class TCaseRefineRequested extends Event_{
 		return pathUUT;
 	}
 	
-	public String getRefLawName(){
-		return refLawName;
+	public String getRefRuleName(){
+		return refRuleName;
 	}
 
 }

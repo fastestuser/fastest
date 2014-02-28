@@ -6,7 +6,7 @@ import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.types.impltypes.*;
 import compserver.abstraction.types.spectypes.*;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 
 public class ScriptTestWriterC implements ScriptTestWriter{
 

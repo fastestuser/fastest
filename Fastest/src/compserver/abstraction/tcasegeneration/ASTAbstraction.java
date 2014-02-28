@@ -7,7 +7,7 @@ import net.sourceforge.czt.z.impl.*;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import compserver.abstraction.*;
 import compserver.abstraction.capture.*;
 import compserver.abstraction.types.spectypes.SpecNode;

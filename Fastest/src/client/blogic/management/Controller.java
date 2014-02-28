@@ -3,8 +3,6 @@ package client.blogic.management;
 import java.util.concurrent.locks.*;
 import java.io.*;
 import java.util.*;
-import java.net.URL;
-
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.RefExpr;
@@ -13,7 +11,7 @@ import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import client.presentation.ClientUI;
 import client.presentation.ClientTextUI;    
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import client.blogic.testing.refinement.RefLawRepository;
 import client.blogic.management.ii.events.*;
 import client.blogic.management.ii.IIComponent;
@@ -608,13 +606,13 @@ public class Controller extends IIComponent {
 			opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
 			String pathUUT = refineAbsTCasesRequested.getPathUUT();
-			String refLawName = refineAbsTCasesRequested.getRefLawName();
+			String refRuleName = refineAbsTCasesRequested.getRefRuleName();
 			Iterator<AbstractTCase> iter = tcaColl.iterator();
 			while (iter.hasNext()) {
-				AbstractTCase absTCase = iter.next();
+				AbstractTCase atc = iter.next();
 				pendingToRef++;
 				TCaseRefineRequested tCaseRefineRequested =
-						new TCaseRefineRequested(opName, absTCase, pathUUT, targetLanguaje, refLawName);
+						new TCaseRefineRequested(opName, atc, pathUUT, targetLanguaje, refRuleName);
 				try {
 					EventAdmin eventAdmin = EventAdmin.getInstance();
 					eventAdmin.announceEvent(tCaseRefineRequested);

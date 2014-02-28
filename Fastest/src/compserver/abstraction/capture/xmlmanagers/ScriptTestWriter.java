@@ -1,7 +1,7 @@
 package compserver.abstraction.capture.xmlmanagers;
 
 import compserver.abstraction.AbstractionLaw;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 
 /**
  * Interface from which inherit the modules that add code for capture the output of the UUT

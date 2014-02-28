@@ -17,7 +17,7 @@ import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import common.z.TClass;
 import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 
 /**
  * Provides general utilities related to Fastest objects.

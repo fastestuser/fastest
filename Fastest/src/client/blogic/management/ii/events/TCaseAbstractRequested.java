@@ -1,6 +1,6 @@
 package client.blogic.management.ii.events;
 
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 import net.sourceforge.czt.z.ast.AxPara;
 

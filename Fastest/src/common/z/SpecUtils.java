@@ -8,6 +8,7 @@ import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.animation.eval.ZLive;
+import client.blogic.management.Controller;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 import common.repository.ConcreteRepository;
@@ -17,6 +18,8 @@ import common.z.czt.visitors.ImpliesPredRemover;
 import common.z.czt.visitors.AndOrPredDistributor;
 import common.z.czt.visitors.NegPredDistributor;
 import common.z.czt.visitors.AndPredClausesExtractor;
+import common.z.czt.visitors.SchemeUnfolder;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,10 +29,6 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AndPredClausesExtractor2;
 import common.z.czt.visitors.OrPredClausesExtractor;
 import common.z.czt.visitors.PredInOrVerifier;
-import compserver.axdef.AxDefsControl;
-import compserver.axdef.AxDefsLoader;
-import compserver.prunning.Theorem;
-import compserver.prunning.Variable;
 import net.sourceforge.czt.z.ast.*;
 
 /**
@@ -52,6 +51,13 @@ public class SpecUtils {
             }
         }
         return constDecl;
+    }
+    
+    public static Spec UnfoldSpec(Spec spec, Controller c){
+    	AbstractRepository<String> opNames = c.getOpsToTestRep();
+		AbstractRepository<String> schPredNames = c.getSchemaPredicatesRep();
+		//System.out.println(SpecUtils.termToLatex(originalSpec));
+		return (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
     }
 
     /**

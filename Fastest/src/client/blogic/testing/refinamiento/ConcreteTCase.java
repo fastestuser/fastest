@@ -1,6 +1,9 @@
-package client.blogic.testing.refinement;
+package client.blogic.testing.refinamiento;
 
 import java.util.*;
+
+import client.blogic.testing.refinement.TCaseAssignment;
+import client.blogic.testing.refinement.Utils;
 import common.z.AbstractTCase;
 
 /**

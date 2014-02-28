@@ -26,6 +26,7 @@ public class FTCRLUtils {
 	static String preamble; //codigo java de la refrule
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
 	
+	
 	public static FTCRLParser getParser(){
 		return parser;
 	}
@@ -48,6 +49,9 @@ public class FTCRLUtils {
 			FTCRLLexer lexer = new FTCRLLexer(input);
 			CommonTokenStream tokens = new CommonTokenStream(lexer);
 			parser = new FTCRLParser(tokens);
+			RefinementRule newRule = new RefinementRule(parser,preamble);
+			RefinementRules.getInstance().addRule("sum", newRule);
+			
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba

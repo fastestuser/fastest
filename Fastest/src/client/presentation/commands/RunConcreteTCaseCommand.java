@@ -5,7 +5,7 @@ import java.util.*;
 
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.AbstractionLaw;

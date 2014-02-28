@@ -2,11 +2,8 @@ package client.blogic.testing.abstraction;
 
 import java.util.*;
 import java.io.*;
-import java.net.URL;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
-import compserver.abstraction.AbstractionUtils;
-import compserver.abstraction.types.impltypes.ImplNode;
 import compserver.abstraction.capture.XMLParser;
 import compserver.abstraction.capture.CapturedVar;
 import common.z.AbstractTCase;

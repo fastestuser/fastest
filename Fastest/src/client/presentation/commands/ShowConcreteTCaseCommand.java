@@ -5,7 +5,7 @@ import java.util.*;
 
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import client.blogic.testing.refinement.Utils;
 
 /**

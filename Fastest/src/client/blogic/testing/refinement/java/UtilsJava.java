@@ -6,7 +6,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.*;
-import client.blogic.testing.refinement.ConcreteTCase;
+
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import client.blogic.testing.refinement.TCaseAssignment;
 
 import net.sourceforge.czt.z.ast.*;
