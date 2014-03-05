@@ -29,7 +29,6 @@ public class FTCRLUtils {
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
 	static LinkedList<String> privateVars = new LinkedList<String>(); //Indica las variables privadas (no publicas en verdad) de java
 
-
 	public static RefinementRuleContext getTree(){
 		return tree;
 	}
@@ -37,7 +36,7 @@ public class FTCRLUtils {
 	public static String getPreamble(){
 		return preamble;
 	}
-
+	
 	public static String preprosesar(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRules = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
@@ -310,5 +309,13 @@ public class FTCRLUtils {
 		for (int i = 0; i < args.length; i++)
 			l.add(args[i]);
 		return l;
+	}
+
+	public static String convertToSeq(String exp, String elemType) {
+		//Si es una secuencia, debemos tomar sus elementos como una tupla
+		if (FTCRLUtils.isSeq(exp)){
+			elemType = "\\num \\cross(" + elemType + ")";
+		}
+		return elemType;
 	}
 }

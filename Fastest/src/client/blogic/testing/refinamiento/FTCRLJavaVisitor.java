@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import common.util.ExprIterator;
 import client.blogic.testing.refinamiento.FTCRLParser.DataStructContext;
 import client.blogic.testing.refinamiento.FTCRLParser.DotSetOperContext;
@@ -30,6 +31,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	private String moduleName = "";
 	//Argumentos del UUT
 	private LinkedList<String> uutArgs= new LinkedList<String>();
+	//Variable para dar nombre a las variables que se crean
+	private static int varNumber = 0;
 
 	public void printDeclaration(String line){
 		declarationList = declarationList.concat(line + ";\n");
@@ -42,9 +45,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
 
+		//Inicializamos los nombres que les daremos a las variables
+		varNumber = 0;
+		
 		//Analizamos el preambulo
 		//PreambleContext preamble = ctx.preamble();
 		//this.visit(preamble);
+		
 		//Cargamos el codigo java
 		extractJavaTypes(FTCRLUtils.getPreamble());
 		//Despues del preambulo, imprimimos la definicion de la clase main
@@ -187,7 +194,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		} else { //Si es un tipo, debo crear un elemento del mismo
 			if (record == null) {
 				//Elijo un nombre random
-				varName = recordType.toLowerCase() + ((int) (Math.random()*100));
+				varName = newVarName(recordType.toLowerCase());
 				printDeclaration(recordType + " " + varName);
 				record = varName;
 			} else {
@@ -201,12 +208,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		String privateFieldVar = "";
 		if (FTCRLUtils.isPrivate(refS)){
 			isPrivate = true;
-			privateFieldVar = varName.toLowerCase() + ((int) (Math.random()*100));
+			privateFieldVar = newVarName(varName.toLowerCase());
 			String field = recordAtribute.substring(1);
 			printDeclaration("Field " + privateFieldVar + " = " + record + ".getClass().getDeclaredField(\"" + field + "\")");
 			printDeclaration(privateFieldVar + ".setAccessible(true)");
 			//Como es private debo crear una nueva variable a usar
-			varName = varName.toLowerCase() + ((int) (Math.random()*100));
+			varName = newVarName(varName.toLowerCase());
 			printDeclaration(varType + " " + varName);
 			//record = varName;
 			recordAtribute = "";
@@ -219,9 +226,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			
 			String elemType = FTCRLUtils.getChildType(zExpr.type, 0);
 			//Si es una lista, debo modificar el tipo del elemento transformandolo en una tupla
-			if (FTCRLUtils.isSeq(zExpr.exp)){
-				elemType = "\\num \\cross(" + elemType + ")";
-			}
+			elemType = FTCRLUtils.convertToSeq(zExpr.exp, elemType);
 			
 			//Iteramos sobre los elementos del conjunto
 			int position = 0;
@@ -460,6 +465,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public void extractJavaTypes(String javaCode){
 
 		this.javaTypesMap = FTCRLUtils.createJavaTypesMap(javaCode);
+	}
+	
+	private String newVarName(String name) {
+		name += varNumber;
+		varNumber++;
+		return name;
 	}
 
 }
