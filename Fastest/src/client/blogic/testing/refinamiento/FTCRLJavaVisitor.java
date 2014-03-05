@@ -47,77 +47,80 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		//Inicializamos los nombres que les daremos a las variables
 		varNumber = 0;
-		
+
 		//Analizamos el preambulo
 		//PreambleContext preamble = ctx.preamble();
 		//this.visit(preamble);
-		
+
 		//Cargamos el codigo java
 		extractJavaTypes(FTCRLUtils.getPreamble());
 		//Despues del preambulo, imprimimos la definicion de la clase main
-		System.out.println("public class main {\n" +
-				"public static void main(String[]) {\n" +
-				"Init init = new Init();" + 
-				"{System.out.print(\"Initialization error\"); System.exit(0);}");
+		//System.out.println("public class main {\n" +
+		//		"public static void main(String[]) {\n" +
+		//		"Init init = new Init();" + 
+		//		"{System.out.print(\"Initialization error\"); System.exit(0);}");
 
 		//Obtenemos en nombre del modulo del UUT
 		UutContext uut = ctx.uut();
 		moduleName = FTCRLUtils.extractModuleName(uut.getText());
 		uutArgs = FTCRLUtils.extractUUTArgs(uut.getText());
-		
+
+		//Creamos la variable test, de la clase que vamos a testear
+		printDeclaration(moduleName + " test = new " + moduleName + "();" );
+
 		//Analizamos las laws
 		LawsContext laws = ctx.laws();
 		this.visit(laws);
-		
-		System.out.print(declarationList);
-		System.out.print(assignmentList);
+
+		//System.out.print(declarationList);
+		//System.out.print(assignmentList);
 
 		//Analizamos la uut
 		this.visit(uut);
 
 		//Cerramos la clase Java y el metodo Main
-		System.out.println("}\n}");
+		//System.out.println("}\n}");
 
 		return null;
 	}	
 
-	//@Override
-	//public Value visitPreamble(FTCRLParser.PreambleContext ctx){
+	//	@Override
+	//	public Value visitPreamble(FTCRLParser.PreambleContext ctx){
 	//
-	//	List<PLCodeContext> list = ctx.pLCode();
-	//	for (PLCodeContext pl : list) {
-	//		String javaCode = pl.anychar().getText();
-	//		extractJavaTypes(javaCode);
+	//		List<PLCodeContext> list = ctx.pLCode();
+	//		for (PLCodeContext pl : list) {
+	//			String javaCode = pl.anychar().getText();
+	//			extractJavaTypes(javaCode);
+	//		}
+	//
+	//		return null;
 	//	}
+
+	//	@Override
+	//	public Value visitUut(FTCRLParser.UutContext ctx){
 	//
-	//	return null;
-	//}
-
-	@Override
-	public Value visitUut(FTCRLParser.UutContext ctx){
-
-
-		List<INameContext> list = ctx.iName();
-		int size = list.size();
-
-		//El ultimo iname, luego de "MODULE", es el nombre de la clase java
-		String javaClass = list.get(size-1).getText();
-		System.out.println(javaClass + " test = new " + javaClass + "();" );
-
-		//Imprimimos la llamada al método de la clase
-		System.out.print("test." + list.get(0).getText() + "(");
-
-		if (size > 2) {
-			int i = 1;
-			System.out.print(list.get(i).getText());
-			for (i = 2; i < size -1; i++) {
-				System.out.print("," + list.get(i).getText());
-			}
-		}
-
-		System.out.println(");");
-		return null;
-	}
+	//
+	//		List<INameContext> list = ctx.iName();
+	//		int size = list.size();
+	//
+	//		//El ultimo iname, luego de "MODULE", es el nombre de la clase java
+	//		String javaClass = list.get(size-1).getText();
+	//		//System.out.println(javaClass + " test = new " + javaClass + "();" );
+	//
+	//		//Imprimimos la llamada al método de la clase
+	//		System.out.print("test." + list.get(0).getText() + "(");
+	//
+	//		if (size > 2) {
+	//			int i = 1;
+	//			System.out.print(list.get(i).getText());
+	//			for (i = 2; i < size -1; i++) {
+	//				System.out.print("," + list.get(i).getText());
+	//			}
+	//		}
+	//
+	//		System.out.println(");");
+	//		return null;
+	//	}
 
 	@Override
 	public Value visitRefinementLaw(FTCRLParser.RefinementLawContext ctx){
@@ -163,6 +166,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		String varName = ""; //java
 		String varType = ""; //java
+		boolean isPrivate = false; //si la variable es privada
 
 		//Calculamos el valor del lado izquierdo
 		String replaceExp = "";
@@ -182,16 +186,30 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		String recordAtribute = FTCRLUtils.recordAtribute(refS);
 		varType = FTCRLUtils.getJavaType(refS, javaTypesMap);
 
-		//Debo refinar element a refType
-		if (Character.isLowerCase(refS.charAt(0))){ //Si es una variable, no debo crear un record
-			varName = recordType;
-			record = varName;
+		//Debo refinar zExpr a varType
+		//Primero vemos si debo crear una variable nueva
+
+		//Si refS es una variable, no debo crear un record 
+		//ya que es un argumento del metodo de la clase a testear.
+		if (Character.isLowerCase(refS.charAt(0))){ 
+			varName = recordType; //Saco la parte de los atributos
 			//Si es una variable que será parte del argumento de la función, debo crearla
 			if (uutArgs.contains(varName)){
-				printDeclaration(varType + " " + varName);
+				printDeclaration(varType + " " + varName); //La declaro
+			} else { //Sino, es un atributo de la clase a testear
+				//Veo primero si es una variable privada
+				if (FTCRLUtils.isPrivate(moduleName + "." + varName))
+					isPrivate = true;
+
+				varType = FTCRLUtils.getJavaType(moduleName + "." + varName, javaTypesMap);
+				recordAtribute = "." + varName;
+				varName = "test";
 			}
 
-		} else { //Si es un tipo, debo crear un elemento del mismo
+			record = varName;
+
+		} else { //Si no es una variable, debo crear un elemento con ese tipo
+
 			if (record == null) {
 				//Elijo un nombre random
 				varName = newVarName(recordType.toLowerCase());
@@ -204,10 +222,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		//Si es "private" en java, debo usar reflection
-		boolean isPrivate = false; //si la variable es privada
 		String privateFieldVar = "";
-		if (FTCRLUtils.isPrivate(refS)){
+		if (FTCRLUtils.isPrivate(refS) || isPrivate){
 			isPrivate = true;
+			//Usamos una variable para el atributo de la clase
 			privateFieldVar = newVarName(varName.toLowerCase());
 			String field = recordAtribute.substring(1);
 			printDeclaration("Field " + privateFieldVar + " = " + record + ".getClass().getDeclaredField(\"" + field + "\")");
@@ -215,7 +233,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Como es private debo crear una nueva variable a usar
 			varName = newVarName(varName.toLowerCase());
 			printDeclaration(varType + " " + varName);
-			//record = varName;
 			recordAtribute = "";
 		}
 
@@ -223,11 +240,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		if ((FTCRLUtils.isSet(zExpr.exp) || FTCRLUtils.isSeq(zExpr.exp)) && (ctx.iExprRefinement().asRefinement() != null) 
 				&& !ctx.iExprRefinement().asRefinement().refinement().isEmpty()) {
 			Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
-			
+
 			String elemType = FTCRLUtils.getChildType(zExpr.type, 0);
 			//Si es una lista, debo modificar el tipo del elemento transformandolo en una tupla
 			elemType = FTCRLUtils.convertToSeq(zExpr.exp, elemType);
-			
+
 			//Iteramos sobre los elementos del conjunto
 			int position = 0;
 			while (itElements.hasNext()){
@@ -236,7 +253,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				if (FTCRLUtils.isSeq(zExpr.exp)){
 					elem = "(" + (position+1) + "," + elem + ")";
 				}
-				
+
 				//Creamos el nuevo reemplazo
 				replaceValue = new Replacement(replaceExp, elem, elemType);
 				visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, new SExpr(varName+recordAtribute, varType), zExpr, position);
@@ -466,7 +483,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		this.javaTypesMap = FTCRLUtils.createJavaTypesMap(javaCode);
 	}
-	
+
 	private String newVarName(String name) {
 		name += varNumber;
 		varNumber++;
