@@ -30,21 +30,26 @@ public class TCaseRefClientRunner implements Runnable {
 	}
 
 	private ConcreteTCase refine(){
-			RefinementRule rule = RefinementRules.getInstance().getRule(refRuleName);
-			ConcreteTCase ctc = new ConcreteTCase();
-			// We set some fields in the concrete case
-			ctc.setPreamble(rule.getPreamble());
-			ctc.setEpilogue("epilogo");
-			ctc.setPathUUT("pathUUT");
-			ctc.setLanguaje("Java");
+		RefinementRule rule = RefinementRules.getInstance().getRule(refRuleName);
+		ConcreteTCase ctc = new ConcreteTCase();
+		// We set some fields in the concrete case
+		ctc.setPreamble(rule.getPreamble());
+		ctc.setEpilogue("epilogo");
+		ctc.setPathUUT("pathUUT");
+		ctc.setLanguaje("Java");
 
-			// We analyze the targetLanguaje and create the corresponding refiner
-			Refiner refiner = null;
-			if(targetLanguaje.equals("Java"))
-				refiner = new RefinerJava();
-			refiner.refineRule(rule, abstractTCase.getMyAxPara());
-			return ctc;
-		}
+		// We analyze the targetLanguaje and create the corresponding refiner
+		Refiner refiner = null;
+		if(targetLanguaje.equals("Java"))
+			refiner = new RefinerJava();
+		String s[] = refiner.refineRuleInString(rule, abstractTCase.getMyAxPara()).split("¬SEPARADOR¬");
+		
+		if(s.length>0)
+			ctc.setDeclaraciones(s[0]);
+		if (s.length>1)
+			ctc.setAsignaciones(s[1]);
+		return ctc;
+	}
 
 	@Override
 	public void run() {

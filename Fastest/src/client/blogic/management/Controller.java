@@ -293,6 +293,7 @@ public class Controller extends IIComponent {
             }
             pendingPrunnings++;*/
 		} else if (event_ instanceof TCaseRefined) {
+			
 			TCaseRefined tCaseRefined = (TCaseRefined) event_;
 			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
 				opRefTCaseMap.get(tCaseRefined.getOpName()).
@@ -307,6 +308,9 @@ public class Controller extends IIComponent {
 			String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
 			System.out.println(tCaseName + " test case refination -> SUCCESS.");
 			pendingToRef--;
+			
+			
+			
 			if (pendingToRef == 0) {
 				if (!refining) {
 					processFinished();

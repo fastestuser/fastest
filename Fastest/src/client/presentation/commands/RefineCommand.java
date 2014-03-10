@@ -149,7 +149,7 @@ public class RefineCommand implements Command {
 		return abstractTCase;
 	}
 
-	private String leerCaso() {
+	private String leerCaso(){
 		try {
 			// Abrimos el archivo
 			FileInputStream fstream = new FileInputStream("/home/joaquin/workspace/Fastest/caso.tex");

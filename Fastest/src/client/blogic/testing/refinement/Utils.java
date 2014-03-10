@@ -561,21 +561,27 @@ public class Utils {
         //--------------------------------------------------------------------------------
         // CONCATENATES the REFINEMENT TEXT of ALL ASSIGNMENTS
         //--------------------------------------------------------------------------------
-        List<TCaseAssignment> assignments = ctc.getAssigments();
-        Iterator<TCaseAssignment> iterAssignments = assignments.iterator();
-        TCaseAssignment assignment;
-        String assignmentRefText;
-
-        while (iterAssignments.hasNext()) {
-            assignment = iterAssignments.next();
-
-            assignmentRefText = assignment.getRefText();
-
-            // CONCATS the REFIMENT TEXT of ASSIGNMENT
-            ctcString = ctcString.concat(
-                    "\t\t" // INDENTATION
-                    + assignmentRefText + "\n" + "\n");
-        }
+        
+        if (ctc.getDeclaraciones()!=null)
+        	ctcString = ctcString.concat(ctc.getDeclaraciones());
+        if (ctc.getAsignaciones()!=null)
+        	ctcString = ctcString.concat(ctc.getAsignaciones());
+        
+//        List<TCaseAssignment> assignments = ctc.getAssigments();
+//        Iterator<TCaseAssignment> iterAssignments = assignments.iterator();
+//        TCaseAssignment assignment;
+//        String assignmentRefText;
+//
+//        while (iterAssignments.hasNext()) {
+//            assignment = iterAssignments.next();
+//
+//            assignmentRefText = assignment.getRefText();
+//
+//            // CONCATS the REFIMENT TEXT of ASSIGNMENT
+//            ctcString = ctcString.concat(
+//                    "\t\t" // INDENTATION
+//                    + assignmentRefText + "\n" + "\n");
+//        }
         //--------------------------------------------------------------------------------
 
 

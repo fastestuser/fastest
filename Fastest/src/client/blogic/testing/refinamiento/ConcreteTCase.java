@@ -12,17 +12,20 @@ import common.z.AbstractTCase;
  */
 
 public class ConcreteTCase {
-    private String preamble;
-    private String epilogue;
+    private String preamble; //
+    private String epilogue; //
     private List<TCaseAssignment> tCaseAssignments = new ArrayList<TCaseAssignment>();
-    private String pathUUT;
-    private String concreteTCaseName;
-    private AbstractTCase abstractTCase;
+    private String declaraciones;
+    private String asignaciones;
+    private String pathUUT; //
+    private String concreteTCaseName; //
+    private AbstractTCase abstractTCase; //
     private String absLawName;
-    private String opName;
-    private String targetLanguaje;
+    private String opName; //
+    private String targetLanguaje; //
     private String initDecls;
 
+    
     public void setPreamble(String preable){
         this.preamble = preable;
     }
@@ -96,5 +99,17 @@ public class ConcreteTCase {
     public String toString(){
 	return Utils.printCTC(concreteTCaseName, this);
     }
+	public String getDeclaraciones() {
+		return declaraciones;
+	}
+	public void setDeclaraciones(String declaraciones) {
+		this.declaraciones = declaraciones;
+	}
+	public String getAsignaciones() {
+		return asignaciones;
+	}
+	public void setAsignaciones(String asignaciones) {
+		this.asignaciones = asignaciones;
+	}
 
 }

@@ -34,6 +34,14 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Variable para dar nombre a las variables que se crean
 	private static int varNumber = 0;
 
+	public String getDeclarationList(){
+		return declarationList;
+	}
+	
+	public String getAssignementList(){
+		return assignmentList;
+	}
+	
 	public void printDeclaration(String line){
 		declarationList = declarationList.concat(line + ";\n");
 	}

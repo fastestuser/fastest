@@ -56,9 +56,9 @@ public class ShowTTCommand implements Command{
 
             TTreeVisitor<Void> tTreeVisitor = null;
             if(showPrunedTestClasses)
-                 tTreeVisitor = new TTreeTextUIPrunePrinter(printer);
+                 tTreeVisitor = new TTreeTextUIPrunePrinter(printer,clientTextUI);
             else
-                 tTreeVisitor = new TTreeTextUIPrinter(printer);
+                 tTreeVisitor = new TTreeTextUIPrinter(printer,clientTextUI);
             
             
             

@@ -3,9 +3,11 @@ package client.blogic.testing.ttree.visitors;
 import java.io.*;
 import java.util.*;
 
+import client.blogic.testing.refinamiento.ConcreteTCase;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TCaseNode;
+import client.presentation.ClientTextUI;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 
@@ -23,15 +25,17 @@ import common.repository.AbstractIterator;
 	private int nroTab = 0;
     private List<Boolean> auxList = new ArrayList<Boolean>();
 	private PrintWriter out;
+	private ClientTextUI clientTextUI;
 
     
     /**
      * Creates instances of TTreeTextUIPrunePrinter.
      * @param out
      */
-	public TTreeTextUIPrunePrinter(PrintWriter out){
+	public TTreeTextUIPrunePrinter(PrintWriter out, ClientTextUI ctui){
         this.out = out;
 		nroTab = 0;
+		this.clientTextUI = ctui;
 	}
 
     
@@ -89,6 +93,10 @@ import common.repository.AbstractIterator;
      */
 	public Void visitTCaseNode(TCaseNode tCaseNode){
 		String tCaseStr = tCaseNode.getValue().getSchName();
+		Map<String, ConcreteTCase> m = clientTextUI.getMyController().getAbsTCaseConcrTCaseMap();
+		String s = "";
+		 if (m.get(tCaseStr)!=null)
+			 s = " > " + m.get(tCaseStr).getConcreteTCaseName();
 		String strTab = getStrTab(nroTab, true);
 		out.println(strTab + tCaseStr);
         out.flush();
