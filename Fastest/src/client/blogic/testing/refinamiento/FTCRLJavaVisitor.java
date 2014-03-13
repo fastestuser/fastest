@@ -478,8 +478,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			String type = "\\num";
 			return new SExpr(value, type);
 		}
-		else if (ctx.DIGIT() != null) { //Operador "."
-			int atributeNumber = Integer.parseInt(ctx.DIGIT().getText());
+		else if (ctx.digit() != null) { //Operador "."
+			int atributeNumber = Integer.parseInt(ctx.digit().getText());
 			for (int i = 1; i < atributeNumber; i++)
 				itElements.next();
 			String value = itElements.next();

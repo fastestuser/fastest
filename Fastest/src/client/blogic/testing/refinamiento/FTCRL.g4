@@ -40,7 +40,7 @@ plcode
 	;
 
 uut
-	:	'@UUT' iName '(' iName? (',' iName)* ')' ('MODULE' iName)? NL
+	:	'@UUT' iName '(' iName? (',' iName)* ')' ('MODULE' iName)? NL?
 	;
 
 epilogue
@@ -150,7 +150,7 @@ funAppExpr
 
 dotSetOper
 	:	'@' ('DOM' | 'RAN' | 'ELEM' | '#')
-	|	DIGIT
+	|	digit
 	|	sName
 	;
 
@@ -182,7 +182,7 @@ file
 	;
 
 name
-	:	LETTER ('_' | DIGIT | LETTER )*
+	:	LETTER ('_' | digit | LETTER )*
 	;
 
 lawName
@@ -213,7 +213,7 @@ path
 	;
 	
 string
-	:	'"' (DIGIT | LETTER)* '"'
+	:	'"' (digit | LETTER)* '"'
 	;
 	
 setExtension
@@ -221,7 +221,7 @@ setExtension
 	;
 
 number
-	:	DIGIT ('0' | DIGIT)*
+	:	DIGIT (digit)*
 	;
 
 pLCode
@@ -229,8 +229,10 @@ pLCode
 	;
 
 anychar
-	:	(ANYCHAR | '#' | DIGIT | LETTER | '.' | '>' | ';' | NL)*
+	:	(ANYCHAR | '#' | digit | LETTER | '.' | '>' | ';' | NL)*
 	;
+	
+digit : '0' | DIGIT; 
 		
 DIGIT : '1'..'9';
 LETTER : 'a'..'z' | 'A'..'Z';

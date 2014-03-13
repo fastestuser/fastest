@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +15,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import client.blogic.management.Controller;
 import client.presentation.ClientUI;
 
-import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;

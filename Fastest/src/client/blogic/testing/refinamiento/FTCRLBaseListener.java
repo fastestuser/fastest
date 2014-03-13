@@ -108,6 +108,9 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterPlcode(FTCRLParser.PlcodeContext ctx) { }
 	@Override public void exitPlcode(FTCRLParser.PlcodeContext ctx) { }
 
+	@Override public void enterDigit(FTCRLParser.DigitContext ctx) { }
+	@Override public void exitDigit(FTCRLParser.DigitContext ctx) { }
+
 	@Override public void enterEpilogue(FTCRLParser.EpilogueContext ctx) { }
 	@Override public void exitEpilogue(FTCRLParser.EpilogueContext ctx) { }
 

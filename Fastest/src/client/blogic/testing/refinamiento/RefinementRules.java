@@ -1,6 +1,7 @@
 package client.blogic.testing.refinamiento;
 
 import java.util.HashMap;
+import java.util.Set;
 import java.util.LinkedList;
 
 
@@ -26,6 +27,17 @@ public class RefinementRules {
 		return rules.get(ruleName);
 	}
 	
+	public void clear(){
+		rules.clear();
+	}
+	
+	public int size(){
+		return rules.size();
+	}
+	
+	public Set<String> getRefRuleNames(){
+        return rules.keySet();
+    }
 	public LinkedList<String> getReferencedVars(){
 		return referencedVars;
 	}

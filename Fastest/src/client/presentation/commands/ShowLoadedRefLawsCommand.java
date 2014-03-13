@@ -5,8 +5,8 @@ import java.io.*;
 import client.presentation.ClientTextUI;
 import java.util.Set;
 import java.util.Iterator;
-import client.blogic.testing.refinement.RefLawRepository;
 import client.blogic.management.Controller;
+import client.blogic.testing.refinamiento.RefinementRules;
 
 /**
  *
@@ -28,13 +28,13 @@ public class ShowLoadedRefLawsCommand implements Command{
         else{
             Controller controller = clientTextUI.getMyController();
 
-            RefLawRepository refLawRepository = controller.getRefLawRepository();
+            RefinementRules refinementRules = controller.getRefRuleRepository();
 
-            if (refLawRepository.size() == 0){
+            if (refinementRules.size() == 0){
                 output.println("There is not any refinement law in the repository.");
             }
             else{
-                Set<String> refLawNames = refLawRepository.getRefLawNames();
+                Set<String> refLawNames = refinementRules.getRefRuleNames();
                 Iterator<String> it = refLawNames.iterator();
                 while(it.hasNext())
                     output.println("* "+ it.next());

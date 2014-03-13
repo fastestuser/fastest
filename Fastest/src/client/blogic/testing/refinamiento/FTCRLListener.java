@@ -105,6 +105,9 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterPlcode(FTCRLParser.PlcodeContext ctx);
 	void exitPlcode(FTCRLParser.PlcodeContext ctx);
 
+	void enterDigit(FTCRLParser.DigitContext ctx);
+	void exitDigit(FTCRLParser.DigitContext ctx);
+
 	void enterEpilogue(FTCRLParser.EpilogueContext ctx);
 	void exitEpilogue(FTCRLParser.EpilogueContext ctx);
 

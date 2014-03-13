@@ -72,6 +72,8 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitPlcode(FTCRLParser.PlcodeContext ctx);
 
+	T visitDigit(FTCRLParser.DigitContext ctx);
+
 	T visitEpilogue(FTCRLParser.EpilogueContext ctx);
 
 	T visitIIdent(FTCRLParser.IIdentContext ctx);

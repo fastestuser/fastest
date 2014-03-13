@@ -5,15 +5,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import java.util.Scanner;
-
 import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
@@ -23,7 +19,7 @@ import client.blogic.testing.refinamiento.javaparser.Java7Parser;
 import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
 
 
-public class FTCRLUtils {
+public final class FTCRLUtils {
 	static RefinementRuleContext tree;
 	static String preamble; //codigo java de la refrule
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
@@ -42,7 +38,16 @@ public class FTCRLUtils {
 		String refRules = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
 		String refRulesAux[] = refRules.split("@PREAMBLE|@LAWS");
 		preamble = refRulesAux[1];
-		return refRulesAux[0] +"@PREAMBLE\n@LAWS"+ refRulesAux[2];
+		String inPre = refRulesAux[0] +"@PREAMBLE\n@LAWS"+ refRulesAux[2];
+		
+		ANTLRInputStream input = new ANTLRInputStream(inPre);
+		FTCRLLexer lexer = new FTCRLLexer(input);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		tree = new FTCRLParser(tokens).refinementRule();
+		String s = tree.accept(new FTCRLPreprocVisitor(tree));
+		//System.out.println("+++++++++\n" + s +"\n +++++++");
+		
+		return s;
 	}
 
 

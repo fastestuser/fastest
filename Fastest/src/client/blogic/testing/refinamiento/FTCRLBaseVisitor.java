@@ -73,6 +73,8 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitPlcode(FTCRLParser.PlcodeContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitDigit(FTCRLParser.DigitContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitEpilogue(FTCRLParser.EpilogueContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitIIdent(FTCRLParser.IIdentContext ctx) { return visitChildren(ctx); }

@@ -12,7 +12,7 @@ import net.sourceforge.czt.z.ast.ZDeclList;
 import client.presentation.ClientUI;
 import client.presentation.ClientTextUI;    
 import client.blogic.testing.refinamiento.ConcreteTCase;
-import client.blogic.testing.refinement.RefLawRepository;
+import client.blogic.testing.refinamiento.RefinementRules;
 import client.blogic.management.ii.events.*;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.testing.ttree.tactics.Tactic;
@@ -77,7 +77,7 @@ public class Controller extends IIComponent {
 	//Map from abstract test case name to refined test cases
 	private Map<String, ConcreteTCase> absTCaseRefTCaseMap;
 	//Refinament Laws Repository
-	private RefLawRepository refLawRepository;
+	private RefinementRules refinementRules;
 	//Indicates the selected refinement law
 	private String selectedRefLaw;
 	// Indicates how many abstract test cases are being calculated
@@ -164,7 +164,7 @@ public class Controller extends IIComponent {
 		blockedAxDefs = new ArrayList<String>();
 		opRefTCaseMap = new HashMap<String, List<ConcreteTCase>>();
 		absTCaseRefTCaseMap = new HashMap<String, ConcreteTCase>();
-		refLawRepository = RefLawRepository.getInstance();
+		refinementRules = RefinementRules.getInstance();
 		selectedRefLaw = null;
 		compilationInfo = null;
 		refining = false;
@@ -308,7 +308,6 @@ public class Controller extends IIComponent {
 			String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
 			System.out.println(tCaseName + " test case refination -> SUCCESS.");
 			pendingToRef--;
-			
 			
 			
 			if (pendingToRef == 0) {
@@ -651,7 +650,7 @@ public class Controller extends IIComponent {
 			blockedAxDefs = new ArrayList<String>();
 			opRefTCaseMap.clear();
 			absTCaseRefTCaseMap.clear();
-			refLawRepository.clear();
+			refinementRules.clear();
 			selectedRefLaw = null;
 			refining = false;
 			FastestUtils.resetTacticsNumbersMap();
@@ -1122,12 +1121,12 @@ public class Controller extends IIComponent {
 		return selectedRefLaw;
 	}
 
-	public RefLawRepository getRefLawRepository() {
-		return refLawRepository;
+	public RefinementRules getRefRuleRepository() {
+		return refinementRules;
 	}
 
-	public void setRefLawRepository(RefLawRepository refLawRepository) {
-		this.refLawRepository = refLawRepository;
+	public void setRefRuleRepository(RefinementRules refRuleRepository) {
+		this.refinementRules = refRuleRepository;
 	}
 
 	public Map<String, ConcreteTCase> getAbsTCaseConcrTCaseMap() {
