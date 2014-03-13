@@ -61,6 +61,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		//Inicializamos los nombres que les daremos a las variables
 		varNumber = 0;
+		//Inicializamos las ref vars
+		referencedVars = RefinementRules.getInstance().getReferencedVars();
 
 		//Analizamos el preambulo
 		//PreambleContext preamble = ctx.preamble();
@@ -82,8 +84,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Creamos la variable test, de la clase que vamos a testear
 		printDeclaration(moduleName + " test = new " + moduleName + "()" );
 
-		referencedVars.add("c");
-		referencedVars.add("b");
 		//Analizamos las laws
 		LawsContext laws = ctx.laws();
 		this.visit(laws);
