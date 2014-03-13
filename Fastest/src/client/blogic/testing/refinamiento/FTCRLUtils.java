@@ -36,7 +36,7 @@ public class FTCRLUtils {
 	public static String getPreamble(){
 		return preamble;
 	}
-	
+
 	public static String preprosesar(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRules = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
@@ -118,7 +118,6 @@ public class FTCRLUtils {
 		ParseTree tree = parser.compilationUnit();
 
 		//Lo visitamos
-		HashMap<String, String> map = new HashMap<String, String>();
 		TypeExtractorVisitor visitor = new TypeExtractorVisitor();
 
 		visitor.visit(tree);
@@ -168,9 +167,8 @@ public class FTCRLUtils {
 
 	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
 	public static boolean isSet(String value) {
-		//Creo que con chequear el inicio y el final es suficiente, porque una expresión de la forma
-		// { ...} ... {...} no debería llegar como argumenta, ya que pide un valor y no una expresion.
-		if (value.startsWith("\\{") && value.endsWith("\\}"))
+
+		if (getType(value).equals("\\power"))
 			return true;
 		else
 			return  false;
@@ -178,9 +176,7 @@ public class FTCRLUtils {
 
 	//Determina si 'value' es una seq. Como entrada toma un valor, no una expresion FTCRL.
 	public static boolean isSeq(String value) {
-		//Creo que con chequear el inicio y el final es suficiente, porque una expresión de la forma
-		// < ...> ... <...> no debería llegar como argumenta, ya que pide un valor y no una expresion.
-		if (value.startsWith("\\langle") && value.endsWith("\\rangle"))
+		if (getType(value).equals("\\seq") || getType(value).equals("\\seq_{1}"))
 			return true;
 		else
 			return  false;
@@ -207,14 +203,21 @@ public class FTCRLUtils {
 			return "";
 	}
 
-	//Determina si es un ARRAY de FTCRL, se utiliza dentro de los AsRefinement
-	public static boolean isArray(String text) {
-		return text.equals("ARRAY");
-	}
+	//
+	//  Metodo para la determinacion del tipo de nodo mas externo de un tipo.
+	//  Ej:  type = A \cross B ----> return \cross
+	//
+	static String getType(String type) {
+		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
+		DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);;
 
-	//Determina si es un RECORD de FTCRL, se utiliza dentro de los AsRefinement
-	public static boolean isRecord(String text) {
-		return text.equals("RECORD");
+		//root es la raiz del arbol, como puede contener parentesis, los elimino
+		while (((String) root.getUserObject()).equals("()")) {
+			root = (DefaultMutableTreeNode) root.getChildAt(0);
+		}
+
+		//se retorna la informacion de la raiz
+		return (String) root.getUserObject();
 	}
 
 	//  Metodo para la determinacion del tipo de un hijo de una expresion Z.
@@ -317,5 +320,47 @@ public class FTCRLUtils {
 			elemType = "\\num \\cross(" + elemType + ")";
 		}
 		return elemType;
+	}
+
+	//Metodo para determinar la referencia cuando se usa REF
+	public static String findReference(String value, String iName, HashMap<String, String> references, LinkedList<String> uutArgs) {
+
+		//Primero busco por el nombre de la variable
+		if (references.get(iName) != null)
+			return references.get(iName);
+		else { //Si no esta, busco por los elementos de la variable
+			String varName = FTCRLUtils.recordType(iName);
+			String atribute = FTCRLUtils.recordAtribute(iName);
+
+			//Miro si la variable, es en realidad un atributo de la clase a testear
+			//ya que en ese caso, debo agregar delante el nombre del elemento de la clase
+			//Y luego debo iterar sobre los elementos de varName
+			//Ej c[0], c[1]
+			int it = 0;
+			String s = "";
+			if (!uutArgs.contains(varName)) //Si es un atributo de la clase
+				varName = "test." + varName;
+
+			while ((s = references.get(varName + "[" + it + "]")) != null){
+				String t = references.get(s + atribute);
+				if ((t != null) && (t.equals(value)))
+					return s + atribute;
+				it++;
+			}
+		}
+
+		return null;
+	}
+
+	//Determina si se debe almacenar el valor de una variable porque puede ser referenciado más tarde
+	public static void saveReference(String var, String value,	HashMap<String, String> references, boolean isRef) {
+		if (isRef) {
+			String varName = var;
+			if (varName.startsWith("test."))
+				varName = var.substring(5);
+			varName = FTCRLUtils.recordType(varName);
+
+			references.put(var, value);
+		}
 	}
 }

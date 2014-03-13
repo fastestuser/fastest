@@ -31,10 +31,13 @@ public class SetRefinement {
 		javaExpr.type = javaElemType;
 
 		if (toType.equals("LIST")){
+			int arrayPos = 0;
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + ".add(" + refinedElem + ")");
+				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl.references, ftcrl.isRef);
+				arrayPos++;
 			}
 		} else if (toType.equals("ARRAY")){
 			int arrayPos = 0;
@@ -42,6 +45,7 @@ public class SetRefinement {
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + "[" + arrayPos + "] = " + refinedElem);
+				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl.references, ftcrl.isRef);
 				arrayPos++;
 			}
 		}

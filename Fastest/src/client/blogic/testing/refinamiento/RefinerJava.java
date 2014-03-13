@@ -13,6 +13,7 @@ public class RefinerJava implements Refiner{
 		
 		String casoString = SpecUtils.termToLatex(atc);
 		casoString = casoString.replace("~", "");
+		casoString = casoString.replace("\\emptyset", "\\{\\}");
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 		visitor.assignTCase(casoString);
 		visitor.visit(rule.getTree());

@@ -1,12 +1,14 @@
 package client.blogic.testing.refinamiento;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 
 
 public class RefinementRules {
 	
 	private HashMap<String,RefinementRule> rules;
 	private static RefinementRules refinementRules;
+	private static LinkedList<String> referencedVars;
 	
 	private RefinementRules(){
 		rules = new HashMap<String,RefinementRule>();
@@ -22,6 +24,18 @@ public class RefinementRules {
 	}
 	public RefinementRule getRule(String ruleName){
 		return rules.get(ruleName);
+	}
+	
+	public LinkedList<String> getReferencedVars(){
+		return referencedVars;
+	}
+	public void generateReferencedVars(String ruleName){
+		RefinementRule rule = rules.get(ruleName);
+		if (rule != null){
+			FTCRLRefExtractorVisitor visitor = new FTCRLRefExtractorVisitor();
+			visitor.visit(rule.getTree());
+			referencedVars = visitor.getReferencedVars();
+		}
 	}
 	
 	

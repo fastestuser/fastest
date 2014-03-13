@@ -1,9 +1,5 @@
 package client.presentation.commands;
 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,12 +36,6 @@ public class RefineCommand implements Command {
 			output.println("Invalid parameters.  Try 'help'.");
 			return;
 		} else {
-			//			ParseTree tree = (ParseTree) FTCRLUtils.getParser().refinementRule();
-			//			FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
-			//			
-			//			String caso = leerCaso();
-			//			visitor.assignTCase(caso);
-			//			visitor.visit(tree);
 
 			try{
 				if (args == null || "".equals(args)){
@@ -87,12 +77,10 @@ public class RefineCommand implements Command {
 				// We check if the name of the abstraction law is contained in the 
 				// repository of loaded laws
 				RefinementRules r = RefinementRules.getInstance();
-				if (RefinementRules.getInstance().getRule(refRuleName)== null){
+				if (r.getRule(refRuleName)== null){
 					output.println("'"+refRuleName+"' is not the name of a loaded refinement law");
 					return;
 				}
-
-				
 				
 				//t.acceptVisitor(new TTreeTextUIPrinter(clientTextUI.getOutput()));
 				// We obtain the abstract test cases to refine. If we try to refine
@@ -124,6 +112,9 @@ public class RefineCommand implements Command {
 					absTCasesColl.add(abstractTCase);
 				}
 
+				//Extraemos las variables que serán referenciadas (REF)
+				RefinementRules refRules = RefinementRules.getInstance();
+				refRules.generateReferencedVars(refRuleName);
 				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl, pathUUT,targetLanguaje,refRuleName));
 
 				synchronized(clientTextUI){
@@ -135,45 +126,13 @@ public class RefineCommand implements Command {
 				e.printStackTrace();
 			}
 		}
-
-
-
-		//System.out.println(leerRegla(caso));
 	}
 
 	private AbstractTCase unfoldCase(AbstractTCase abstractTCase, String opName, TTreeNode opTTreeRoot,Controller controller){
 		Scheme scheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(opName, 5));		
 		AxPara axPara = scheme.getMyAxPara();
 		SpecUtils.setAxParaListOfDecl(abstractTCase.getMyAxPara(), SpecUtils.getAxParaListOfDecl(axPara));
-		//String s = SpecUtils.termToLatex(axPara); 
 		return abstractTCase;
-	}
-
-	private String leerCaso(){
-		try {
-			// Abrimos el archivo
-			FileInputStream fstream = new FileInputStream("/home/joaquin/workspace/Fastest/caso.tex");
-			// Creamos el objeto de entrada
-			DataInputStream entrada = new DataInputStream(fstream);
-			// Creamos el Buffer de Lectura
-			BufferedReader buffer = new BufferedReader(new InputStreamReader(
-					entrada));
-
-			String strLinea, aux;
-			strLinea = "";
-			// Leer el archivo linea por linea
-			while ((aux = buffer.readLine()) != null) {
-				strLinea = strLinea + aux + "\n";
-				// Imprimimos la línea por pantalla
-
-			}
-			entrada.close();
-			return strLinea;
-
-		} catch (Exception e) { // Catch de excepciones
-			System.out.println("Ocurrio un error: " + e.getMessage());
-		}
-		return "null";
 	}
 
 }
