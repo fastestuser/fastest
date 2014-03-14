@@ -3,12 +3,12 @@ package client.blogic.testing.ttree.visitors;
 import client.blogic.testing.ttree.*;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Pred;
-
 import common.z.SpecUtils;
 import common.z.AbstractTCase;
 import common.z.Scheme;
 import common.z.TClass;
 import common.z.czt.visitors.AndPredSimplifier;
+import common.fastest.FastestUtils;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 
@@ -50,11 +50,11 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 		TClass tClass = (TClass) tClassNode.getValue().clone();
 		//TClass tClass = (TClass) tClassNode.getValue();
 		if(tClass.getSchName().equals(schName)){
-			if (unfoldOrder < 0)
-				return tClassNode.getUnfoldedValue();
+			//if (unfoldOrder < 0)
+			//	return tClassNode.getUnfoldedValue();
 			AxPara axPara = tClass.getMyAxPara();
 			Pred pred = SpecUtils.getAxParaPred(axPara);
-			for(int i=0; i< unfoldOrder; i++){
+			for(int i=0; (unfoldOrder == -1) || (i< unfoldOrder); i++){
 				tClassNode = tClassNode.getDadNode();
 				if(tClassNode == null)
 					break;
@@ -93,12 +93,12 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 	public Scheme visitTCaseNode(TCaseNode tCaseNOde){
 		AbstractTCase abstractTCase = (AbstractTCase) tCaseNOde.getValue().clone();
 		if(abstractTCase.getSchName().equals(schName)){
-			if (unfoldOrder == -1)
-				return tCaseNOde.getUnfoldedValue();
+			//if (unfoldOrder == -1)
+			//	return tCaseNOde.getUnfoldedValue();
 			AxPara axPara = abstractTCase.getMyAxPara();
 			Pred pred = SpecUtils.getAxParaPred(axPara);
 			TTreeNode tTreeNode = tCaseNOde;
-			for(int i=0; i< unfoldOrder; i++){
+			for(int i=0; (unfoldOrder == -1) || (i< unfoldOrder); i++){
 				tTreeNode = tTreeNode.getDadNode();
 				if(tTreeNode == null)
 					break;
@@ -107,7 +107,7 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 			}
 			AxPara abstractTCaseAxPara = abstractTCase.getMyAxPara();
 			SpecUtils.setAxParaListOfDecl(abstractTCaseAxPara, SpecUtils.getAxParaListOfDecl(axPara));
-			SpecUtils.setAxParaPred(abstractTCaseAxPara, pred);
+			SpecUtils.setAxParaPred(abstractTCaseAxPara, SpecUtils.simplifyAndPred(pred));
 			return abstractTCase;
 		}
 		else

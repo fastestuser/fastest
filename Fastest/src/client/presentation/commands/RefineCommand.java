@@ -129,7 +129,8 @@ public class RefineCommand implements Command {
 	}
 
 	private AbstractTCase unfoldCase(AbstractTCase abstractTCase, String opName, TTreeNode opTTreeRoot,Controller controller){
-		Scheme scheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(opName, 5));		
+		Scheme scheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(opName, -1));
+		String s = SpecUtils.termToLatex(scheme);
 		AxPara axPara = scheme.getMyAxPara();
 		SpecUtils.setAxParaListOfDecl(abstractTCase.getMyAxPara(), SpecUtils.getAxParaListOfDecl(axPara));
 		return abstractTCase;

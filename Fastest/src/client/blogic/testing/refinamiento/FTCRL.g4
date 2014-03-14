@@ -61,7 +61,7 @@ withSynonym
 	;
 
 refinementLaw
-	:	sName (',' sName)* '==>' refinementSentence (';' NL? refinementSentence)*
+	:	sName (',' sName)* '==>' NL? refinementSentence (';' NL? refinementSentence)*
 	;
 
 refinementSentence
@@ -78,7 +78,7 @@ iExprRefinement
 	;
 
 asRefinement
-	:	dataStruct ('WITH' '[' refinement (';' (NL)? refinement)* ']')?
+	:	dataStruct ('WITH' '[' NL? refinement (';' (NL)? refinement)* ']')?
 	;
 
 withRefinement
