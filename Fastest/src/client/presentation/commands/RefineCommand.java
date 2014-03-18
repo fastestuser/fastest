@@ -15,6 +15,7 @@ import common.z.SpecUtils;
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RefineAbsTCasesRequested;
+import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.RefinementRules;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
@@ -115,7 +116,9 @@ public class RefineCommand implements Command {
 				//Extraemos las variables que serán referenciadas (REF)
 				RefinementRules refRules = RefinementRules.getInstance();
 				refRules.generateReferencedVars(refRuleName);
-				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl, pathUUT,targetLanguaje,refRuleName));
+				
+				FTCRLUtils.setRule(RefinementRules.getInstance().getRule(refRuleName));
+				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl, pathUUT,targetLanguaje));
 
 				synchronized(clientTextUI){
 					clientTextUI.wait();
@@ -130,7 +133,6 @@ public class RefineCommand implements Command {
 
 	private AbstractTCase unfoldCase(AbstractTCase abstractTCase, String opName, TTreeNode opTTreeRoot,Controller controller){
 		Scheme scheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(opName, -1));
-		String s = SpecUtils.termToLatex(scheme);
 		AxPara axPara = scheme.getMyAxPara();
 		SpecUtils.setAxParaListOfDecl(abstractTCase.getMyAxPara(), SpecUtils.getAxParaListOfDecl(axPara));
 		return abstractTCase;

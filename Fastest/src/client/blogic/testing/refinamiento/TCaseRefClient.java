@@ -17,10 +17,9 @@ public class TCaseRefClient extends IIComponent{
 			TCaseRefineRequested tCaseRefineRequested = (TCaseRefineRequested) event_;
 			String opName = tCaseRefineRequested.getOpName();
 			AbstractTCase absTCase = tCaseRefineRequested.getAbstractTCase();
-			String refRuleName = tCaseRefineRequested.getRefRuleName();
 			String pathUUT = tCaseRefineRequested.getPathUUT();
 			String targetLanguaje = tCaseRefineRequested.getTargetLanguaje();
-			(new Thread(new TCaseRefClientRunner(opName, absTCase, pathUUT, targetLanguaje, refRuleName))).start();
+			(new Thread(new TCaseRefClientRunner(opName, absTCase, pathUUT, targetLanguaje))).start();
 		}
 		else
 			throw new IllegalArgumentException();

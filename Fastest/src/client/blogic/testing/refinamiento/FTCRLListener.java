@@ -1,6 +1,6 @@
 // Generated from FTCRL.g4 by ANTLR 4.0
 
-package client.blogic.testing.refinamiento;
+	package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;
@@ -14,9 +14,6 @@ public interface FTCRLListener extends ParseTreeListener {
 
 	void enterSetExtension(FTCRLParser.SetExtensionContext ctx);
 	void exitSetExtension(FTCRLParser.SetExtensionContext ctx);
-
-	void enterPLCode(FTCRLParser.PLCodeContext ctx);
-	void exitPLCode(FTCRLParser.PLCodeContext ctx);
 
 	void enterZExprSeq(FTCRLParser.ZExprSeqContext ctx);
 	void exitZExprSeq(FTCRLParser.ZExprSeqContext ctx);
@@ -75,6 +72,9 @@ public interface FTCRLListener extends ParseTreeListener {
 	void enterLaw(FTCRLParser.LawContext ctx);
 	void exitLaw(FTCRLParser.LawContext ctx);
 
+	void enterRefinementRules(FTCRLParser.RefinementRulesContext ctx);
+	void exitRefinementRules(FTCRLParser.RefinementRulesContext ctx);
+
 	void enterSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
 	void exitSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
 
@@ -113,9 +113,6 @@ public interface FTCRLListener extends ParseTreeListener {
 
 	void enterIIdent(FTCRLParser.IIdentContext ctx);
 	void exitIIdent(FTCRLParser.IIdentContext ctx);
-
-	void enterAnychar(FTCRLParser.AnycharContext ctx);
-	void exitAnychar(FTCRLParser.AnycharContext ctx);
 
 	void enterFunAppExpr(FTCRLParser.FunAppExprContext ctx);
 	void exitFunAppExpr(FTCRLParser.FunAppExprContext ctx);

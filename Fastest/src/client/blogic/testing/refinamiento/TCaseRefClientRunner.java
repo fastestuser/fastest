@@ -14,55 +14,42 @@ public class TCaseRefClientRunner implements Runnable {
 	private ConcreteTCase concreteTCase;
 	private String pathUUT;
 	private String targetLanguaje;
-	private String refRuleName;
 
 	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase,
-			String pathUUT, String targetLanguaje, String refRuleName) {
+			String pathUUT, String targetLanguaje) {
 		this.opName = opName;
 		this.abstractTCase = abstractTCase;
 		this.pathUUT = pathUUT;
 		this.targetLanguaje = targetLanguaje;
-		this.refRuleName = refRuleName;
 	}
 
 	public ConcreteTCase getConcreteTCase() {
 		return this.concreteTCase;
 	}
 
-	private ConcreteTCase refine(){
-		RefinementRule rule = RefinementRules.getInstance().getRule(refRuleName);
-		ConcreteTCase ctc = new ConcreteTCase();
-		// We set some fields in the concrete case
-		ctc.setPreamble(rule.getPreamble());
-		ctc.setEpilogue("epilogo");
-		ctc.setPathUUT("pathUUT");
-		ctc.setLanguaje("Java");
-
-		// We analyze the targetLanguaje and create the corresponding refiner
-		Refiner refiner = null;
-		if(targetLanguaje.equals("Java"))
-			refiner = new RefinerJava();
-		String s[] = refiner.refineRuleInString(rule, abstractTCase.getMyAxPara()).split("¬SEPARADOR¬");
-		
-		if(s.length>0)
-			ctc.setDeclaraciones(s[0]);
-		if (s.length>1)
-			ctc.setAsignaciones(s[1]);
-		return ctc;
-	}
-
 	@Override
 	public void run() {
 		try {
-			concreteTCase = refine();
-			// We set the operation related to this concrete case
-			concreteTCase.setOpName(opName);
-			// We set the name of this concrete test case
+			// We analyze the targetLanguaje and create the corresponding refiner
+			Refiner refiner = null;
+			if(targetLanguaje.equals("Java"))
+				refiner = new RefinerJava();
+		//  if(targetLanguaje.equals("C"))
+		//		refiner = new RefinerC();
+			refiner.refineCase(abstractTCase.getMyAxPara());
 			String abstractName = SpecUtils.getAxParaName(abstractTCase);
-			String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE"))
-					+ "_CTCASE";
+			String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";
+			concreteTCase = new ConcreteTCase();
+			concreteTCase.setOpName(opName);
+			concreteTCase.setPathUUT(this.pathUUT);
+			concreteTCase.setLanguaje(this.targetLanguaje);
 			concreteTCase.setConcreteTCaseName(concreteName);
 			concreteTCase.setAbstractTCase(abstractTCase);
+			concreteTCase.setPreamble(FTCRLUtils.getPreamble());
+			concreteTCase.setEpilogue(FTCRLUtils.getEpilogue());
+			concreteTCase.setDeclaraciones(refiner.getDeclarations());
+			concreteTCase.setAsignaciones(refiner.getAssignements());
+			
 			TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
 			try {
 				EventAdmin eventAdmin = EventAdmin.getInstance();

@@ -1,6 +1,6 @@
 // Generated from FTCRL.g4 by ANTLR 4.0
 
-package client.blogic.testing.refinamiento;
+	package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;
@@ -11,8 +11,6 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 	T visitZExprSet(FTCRLParser.ZExprSetContext ctx);
 
 	T visitSetExtension(FTCRLParser.SetExtensionContext ctx);
-
-	T visitPLCode(FTCRLParser.PLCodeContext ctx);
 
 	T visitZExprSeq(FTCRLParser.ZExprSeqContext ctx);
 
@@ -52,6 +50,8 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitLaw(FTCRLParser.LawContext ctx);
 
+	T visitRefinementRules(FTCRLParser.RefinementRulesContext ctx);
+
 	T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
 
 	T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx);
@@ -77,8 +77,6 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 	T visitEpilogue(FTCRLParser.EpilogueContext ctx);
 
 	T visitIIdent(FTCRLParser.IIdentContext ctx);
-
-	T visitAnychar(FTCRLParser.AnycharContext ctx);
 
 	T visitFunAppExpr(FTCRLParser.FunAppExprContext ctx);
 

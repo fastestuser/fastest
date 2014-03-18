@@ -37,8 +37,6 @@ public final class FTCRLSynonymLawExtractor extends FTCRLBaseVisitor<ParserRuleC
 
 	public ParserRuleContext visitSetExtension(FTCRLParser.SetExtensionContext ctx) { return visitGenerico(ctx); }
 
-	public ParserRuleContext visitPLCode(FTCRLParser.PLCodeContext ctx) { return visitGenerico(ctx); }
-
 	public ParserRuleContext visitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { return visitGenerico(ctx); }
 
 	public ParserRuleContext visitZExprString(FTCRLParser.ZExprStringContext ctx) { return visitGenerico(ctx); }
@@ -100,8 +98,6 @@ public final class FTCRLSynonymLawExtractor extends FTCRLBaseVisitor<ParserRuleC
 	public ParserRuleContext visitEpilogue(FTCRLParser.EpilogueContext ctx) { return visitGenerico(ctx); }
 
 	public ParserRuleContext visitIIdent(FTCRLParser.IIdentContext ctx) { return visitGenerico(ctx); }
-
-	public ParserRuleContext visitAnychar(FTCRLParser.AnycharContext ctx) { return visitGenerico(ctx); }
 
 	public ParserRuleContext visitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { return visitGenerico(ctx); }
 

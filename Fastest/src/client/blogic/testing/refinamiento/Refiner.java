@@ -1,13 +1,9 @@
 package client.blogic.testing.refinamiento;
 
-import java.util.List;
-
 import net.sourceforge.czt.base.ast.Term;
-import client.blogic.testing.refinement.TCaseAssignment;
 
 public interface Refiner {
-
-	public List<TCaseAssignment> refineRule(RefinementRule rule, Term atcPred);
-	public String refineRuleInString(RefinementRule rule, Term atcPred);
-	
+	public void refineCase(Term atcPred);
+	public String getAssignements();
+	public String getDeclarations();
 }

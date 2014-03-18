@@ -1,6 +1,6 @@
 // Generated from FTCRL.g4 by ANTLR 4.0
 
-package client.blogic.testing.refinamiento;
+	package client.blogic.testing.refinamiento;
 
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -17,9 +17,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 
 	@Override public void enterSetExtension(FTCRLParser.SetExtensionContext ctx) { }
 	@Override public void exitSetExtension(FTCRLParser.SetExtensionContext ctx) { }
-
-	@Override public void enterPLCode(FTCRLParser.PLCodeContext ctx) { }
-	@Override public void exitPLCode(FTCRLParser.PLCodeContext ctx) { }
 
 	@Override public void enterZExprSeq(FTCRLParser.ZExprSeqContext ctx) { }
 	@Override public void exitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { }
@@ -78,6 +75,9 @@ public class FTCRLBaseListener implements FTCRLListener {
 	@Override public void enterLaw(FTCRLParser.LawContext ctx) { }
 	@Override public void exitLaw(FTCRLParser.LawContext ctx) { }
 
+	@Override public void enterRefinementRules(FTCRLParser.RefinementRulesContext ctx) { }
+	@Override public void exitRefinementRules(FTCRLParser.RefinementRulesContext ctx) { }
+
 	@Override public void enterSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { }
 	@Override public void exitSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { }
 
@@ -116,9 +116,6 @@ public class FTCRLBaseListener implements FTCRLListener {
 
 	@Override public void enterIIdent(FTCRLParser.IIdentContext ctx) { }
 	@Override public void exitIIdent(FTCRLParser.IIdentContext ctx) { }
-
-	@Override public void enterAnychar(FTCRLParser.AnycharContext ctx) { }
-	@Override public void exitAnychar(FTCRLParser.AnycharContext ctx) { }
 
 	@Override public void enterFunAppExpr(FTCRLParser.FunAppExprContext ctx) { }
 	@Override public void exitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { }

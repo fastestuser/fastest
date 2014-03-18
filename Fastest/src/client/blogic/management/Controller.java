@@ -609,13 +609,11 @@ public class Controller extends IIComponent {
 			opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
 			String pathUUT = refineAbsTCasesRequested.getPathUUT();
-			String refRuleName = refineAbsTCasesRequested.getRefRuleName();
 			Iterator<AbstractTCase> iter = tcaColl.iterator();
 			while (iter.hasNext()) {
 				AbstractTCase atc = iter.next();
 				pendingToRef++;
-				TCaseRefineRequested tCaseRefineRequested =
-						new TCaseRefineRequested(opName, atc, pathUUT, targetLanguaje, refRuleName);
+				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, pathUUT, targetLanguaje);
 				try {
 					EventAdmin eventAdmin = EventAdmin.getInstance();
 					eventAdmin.announceEvent(tCaseRefineRequested);

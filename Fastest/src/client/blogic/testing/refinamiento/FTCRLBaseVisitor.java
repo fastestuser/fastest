@@ -1,6 +1,6 @@
 // Generated from FTCRL.g4 by ANTLR 4.0
 
-package client.blogic.testing.refinamiento;
+	package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;
@@ -12,8 +12,6 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	@Override public T visitZExprSet(FTCRLParser.ZExprSetContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitSetExtension(FTCRLParser.SetExtensionContext ctx) { return visitChildren(ctx); }
-
-	@Override public T visitPLCode(FTCRLParser.PLCodeContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { return visitChildren(ctx); }
 
@@ -53,6 +51,8 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitLaw(FTCRLParser.LawContext ctx) { return visitChildren(ctx); }
 
+	@Override public T visitRefinementRules(FTCRLParser.RefinementRulesContext ctx) { return visitChildren(ctx); }
+
 	@Override public T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx) { return visitChildren(ctx); }
@@ -78,8 +78,6 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	@Override public T visitEpilogue(FTCRLParser.EpilogueContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitIIdent(FTCRLParser.IIdentContext ctx) { return visitChildren(ctx); }
-
-	@Override public T visitAnychar(FTCRLParser.AnycharContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { return visitChildren(ctx); }
 

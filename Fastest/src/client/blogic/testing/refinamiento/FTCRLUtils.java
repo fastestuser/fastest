@@ -13,6 +13,7 @@ import java.util.Scanner;
 import common.util.ExprIterator;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
+import client.blogic.testing.refinamiento.FTCRLParser.RefinementRulesContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
 import client.blogic.testing.refinamiento.javaparser.Java7Parser;
@@ -20,44 +21,57 @@ import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
 
 
 public final class FTCRLUtils {
-	static RefinementRuleContext tree;
-	static String preamble; //codigo java de la refrule
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
 	static LinkedList<String> privateVars = new LinkedList<String>(); //Indica las variables privadas (no publicas en verdad) de java
-
-	public static RefinementRuleContext getTree(){
-		return tree;
+	//es la regla actual, es decir la que elije el usuario en el comando refine
+	static RefinementRule reglaActual;
+	
+	public static void setRule(RefinementRule rule){
+		reglaActual = rule;
 	}
-
+	public static RefinementRuleContext getRule(){
+		return reglaActual.getTree();
+	}
 	public static String getPreamble(){
-		return preamble;
+		return reglaActual.getPreamble();
 	}
-
-	public static String preprosesar(File refRuleFile) throws IOException{
+	public static String getEpilogue(){
+		return reglaActual.getEpilogue();
+	}
+	
+	private static RefinementRuleContext preproc(String ruleString){
+		ANTLRInputStream input = new ANTLRInputStream(ruleString); 
+		FTCRLLexer lexer = new FTCRLLexer(input); 
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		RefinementRuleContext ruleContext = new FTCRLParser(tokens).refinementRule();
+		ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
+		input = new ANTLRInputStream(ruleString);
+		lexer = new FTCRLLexer(input);
+		tokens = new CommonTokenStream(lexer);
+		ruleContext = new FTCRLParser(tokens).refinementRule();
+		return ruleContext;
+	}
+	
+	public static void parse(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
-		String refRules = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
-		String refRulesAux[] = refRules.split("@PREAMBLE|@LAWS");
-		preamble = refRulesAux[1];
-		String inPre = refRulesAux[0] +"@PREAMBLE\n@LAWS"+ refRulesAux[2];
+		String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
 		
-		ANTLRInputStream input = new ANTLRInputStream(inPre);
-		FTCRLLexer lexer = new FTCRLLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		tree = new FTCRLParser(tokens).refinementRule();
-		String s = tree.accept(new FTCRLPreprocVisitor(tree));
-		//System.out.println("+++++++++\n" + s +"\n +++++++");
+		RefinementRuleContext ruleContext;
+		RefinementRule rule;
+		RefinementRules rules = RefinementRules.getInstance();
+		String refRuleAux[],preamble,epilogue,ruleString;
+		String refRulesAux[] = refRulesString.split("@RRULE");
+		int cantHijos = refRulesAux.length;
 		
-		return s;
-	}
-
-
-	public static void parse(String refRules) throws IOException{
-		ANTLRInputStream input = new ANTLRInputStream(refRules);
-		FTCRLLexer lexer = new FTCRLLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		tree = new FTCRLParser(tokens).refinementRule();
-		RefinementRule newRule = new RefinementRule(tree,preamble);
-		RefinementRules.getInstance().addRule(tree.name().getText(), newRule);
+		for (int i = 1; i<cantHijos;i++){
+			refRuleAux = refRulesAux[i].split("@PREAMBLE|@LAWS|@EPILOGUE");
+			preamble = refRuleAux[1];
+			epilogue = refRuleAux.length == 4?refRuleAux[3]:"";
+			ruleString = "@RRULE" + refRuleAux[0] +"@PREAMBLE\n@LAWS"+ refRuleAux[2] ;
+			ruleContext = preproc(ruleString);
+			rule = new RefinementRule(ruleContext, preamble, epilogue);
+			rules.addRule(ruleContext.name().getText(), rule);
+		}
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba

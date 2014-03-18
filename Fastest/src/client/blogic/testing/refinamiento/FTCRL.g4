@@ -1,55 +1,61 @@
 grammar FTCRL;
 
 @header{
-package client.blogic.testing.refinamiento;
+	package client.blogic.testing.refinamiento;
 }
 
 @members{
 }
 
+refinementRules
+	:       refinementRule+
+	;
+
+
 refinementRule
-	:	'@RRULE' name NL
-        preamble
+	:	RRULE name 
+                preamble
 		laws
-		(plcode NL)?
+		(plcode )?
 		uut
-		( epilogue NL)?
+		(epilogue )?
 	;
 
 preamble
-	:	'@PREAMBLE' NL
-		(pLCode NL | name '.@PREAMBLE' NL)*
+	:	PREAMBLE 
+		( name APREAMBLE )*
 	;
 
 laws
-	:	'@LAWS' NL
-		(law NL | reference NL | name '.@LAWS' NL)+
+	:	LAWS 
+		(law  | reference  | name ALAWS )+
 	;
 
 law
-	:	(name ':')? synonymLaw
-	|	(name ':')? refinementLaw
+	:	(name COLON)? synonymLaw
+	|	(name COLON)? refinementLaw
 	;
 
 reference
-	:	name '.' lawName
+	:	name DOT lawName
 	;
 
 plcode
-	:	'@PLCODE' NL pLCode NL
+	:	PLCODE 
 	;
 
 uut
-	:	'@UUT' iName '(' iName? (',' iName)* ')' ('MODULE' iName)? NL?
+	:	UUT iName LB iName? (COMMA iName)* RB (MODULE iName)? ?
 	;
 
+
 epilogue
-	:	'@EPILOGUE' NL
-		(pLCode | name '.@EPILOGUE' NL)+
+	:	EPILOGUE 
+		( name AEPILOGUE )+
 	;
 
 synonymLaw
-	:	name '==' (asSynonym | withSynonym)
+	:	name EQUALQAUAL (asSynonym | withSynonym)
 	;
 
 asSynonym
@@ -61,11 +67,11 @@ withSynonym
 	;
 
 refinementLaw
-	:	sName (',' sName)* '==>' NL? refinementSentence (';' NL? refinementSentence)*
+	:	sName (COMMA sName)* '==>' ? refinementSentence (SEMICOLON ? refinementSentence)*
 	;
 
 refinementSentence
-	:	sName (',' sName)* '==>' refinementSentence
+	:	sName (COMMA sName)* '==>' refinementSentence
 	|	refinement
 	;
 
@@ -74,15 +80,15 @@ refinement
 	;
 	
 iExprRefinement
-	:	iName ('AS' asRefinement | asSynonym)?
+	:	iName (AS asRefinement | asSynonym)?
 	;
 
 asRefinement
-	:	dataStruct ('WITH' '[' NL? refinement (';' (NL)? refinement)* ']')?
+	:	dataStruct (WITH LSB ? refinement (SEMICOLON ()? refinement)* RSB)?
 	;
 
 withRefinement
-	:	exprRefinement (',' NL? exprRefinement)*
+	:	exprRefinement (COMMA ? exprRefinement)*
 	;
 	
 exprRefinement
@@ -90,9 +96,9 @@ exprRefinement
 	;
 
 dataStruct
-	:	'ARRAY'
-	|	'RECORD'
-	|	'MAPPING'
+	:	ARRAY
+	|	RECORD
+	|	MAPPING
 	|	list
 	|	reference2
 	|	enumeration
@@ -117,72 +123,76 @@ zExpr
 	;
 
 zExprSet
-	:	sName ('.' dotSetOper)*
+	:	sName (DOT dotSetOper)*
 	|	setExtension
-	|	zExprSet '@CUP@' zExprSet
+	|	zExprSet CUP zExprSet
 	;
 
 zExprNum
-	:	sName '.' '#'
+	:	sName DOT CARD
 	|	number
-	|	'@AUTOFILL'
-	|	zExprNum 'div' zExprNum
-	|	zExprNum '/' zExprNum
-	|	zExprNum 'mod' zExprNum
-	|	zExprNum '+' zExprNum
+	|	AUTOFILL
+	|	zExprNum DIV zExprNum
+	|	zExprNum SLASH zExprNum
+	|	zExprNum MOD zExprNum
+	|	zExprNum PLUS zExprNum
 	;
 
 zExprString
 	:	string
 	|	number
-	|	'@AUTOFILL'
-	|	sName ('.' (dotSetOper* | '#' | '@STR'))?
-	|	zExprString '++' zExprString
+	|	AUTOFILL
+	|	sName (DOT (dotSetOper* | CARD | STR))?
+	|	zExprString PLUSPLUS zExprString
 	;
 
 zExprSeq
-	:	'<>'
+	:	L R 
 	;
 
 funAppExpr
-	:	iIdent '(' (refinement (',' refinement)* )? ')'
+	:	iIdent LB (refinement (COMMA refinement)* )? RB
 	;
 
 dotSetOper
-	:	'@' ('DOM' | 'RAN' | 'ELEM' | '#')
+	:	ARROBA (DOM | RAN | ELEM | CARD)
 	|	digit
 	|	sName
 	;
 
 list
-	:	'LIST' ( '[' listType (',' iName)? (',' iName)? ']' )?
+	:	LIST ( LSB listType (COMMA iName)? (COMMA iName)? RSB )?
 	;
 
 listType
-	:	'SLL'
-	|	'DLL'
-	|	'CLL'
-	|	'DCLL'
+	:	SLL
+	|	DLL
+	|	CLL
+	|	DCLL
 	;
 
 reference2
-	:	'REF' '[' iName ']'
+	:	REF LSB iName RSB
+	;
+
+number
+	:	DIGIT (digit)*
 	;
 
 enumeration
-	:	'ENUM' ( '[' ( sName '>' ( iName | number )+ ) | number ']')?
+	:	ENUM ( LSB ( sName R ( iName | number )+ ) | number RSB)?
 	;
 
 table
-	:	'TABLE' '[' iName ',' path ',' fName ']'
+	:	TABLE LSB iName COMMA path COMMA fName RSB
 	;
 
 file
-	:	'FILE' '[' path ']'
+	:	FILE LSB path RSB
 	;
 
 name
-	:	LETTER ('_' | digit | LETTER )*
+	:	LETTER (UNDERSCORE | digit | LETTER )*
 	;
 
 lawName
@@ -190,14 +200,14 @@ lawName
 	;
 
 sName
-	:	name '?'?
+	:	name Q?
 	;
 
 iName
 	:	iIdent
-	|	iIdent '[' ']'
-	|	iIdent '.' iIdent
-	|	iIdent '.*'
+	|	iIdent LSB RSB
+	|	iIdent DOT iIdent
+	|	iIdent DOTA
 	;
 
 iIdent
@@ -205,38 +215,79 @@ iIdent
 	;
 	
 fName
-	:	name (('.')? name)*
+	:	name ((DOT)? name)*
 	;
 	
 path
-	:	'.'? '/'? fName ('/' fName)*
+	:	DOT? SLASH? fName (SLASH fName)*
 	;
-	
+
+digit :         ZERO | DIGIT; 
+
 string
-	:	'"' (digit | LETTER)* '"'
+	:	DQUOTE (digit | LETTER)* DQUOTE
 	;
 	
 setExtension
-	:	'\{' '\}'
+	:	LCB RCB
 	;
 
-number
-	:	DIGIT (digit)*
-	;
 
-pLCode
-	:	'\\\\beginJava' NL anychar NL '\\\\endJava'
-	;
-
-anychar
-	:	(ANYCHAR | '#' | digit | LETTER | '.' | '>' | ';' | NL)*
-	;
-	
-digit : '0' | DIGIT; 
-		
+Q : '?';
+EQUALQAUAL : '==';
+PLUSPLUS : '++';
+UNDERSCORE : '_';
+DOTA : '.*';
+L : '<';
+R : '>';
+LB : '(';
+RB : ')';
+SLASH : '/';
+LSB : '[';
+RSB : ']';
+LCB: '\{';
+RCB: '\{';         
+ARROBA : '@';           
+CARD : '#';           
+DQUOTE: '"';           
+ZERO : '0';           
+PLUS : '+';           
+DIV : 'div';
+MOD : 'mod';           
+SEMICOLON : ';';           
+COMMA : ',';           
+STR : '@STR';           
+CUP : '@CUP@';           
+DOT : '.';           
+FILE : 'FILE';           
+TABLE : 'TABLE';           
+ENUM : 'ENUM';           
+REF : 'REF';           
+SLL : 'SLL';
+DLL : 'DLL';
+CLL : 'CLL';
+DCLL : 'DCLL';           
+LIST : 'LIST';           
+DOM : 'DOM';
+RAN : 'RAN';
+ELEM : 'ELEM';
+RECORD : 'RECORD';
+MAPPING : 'MAPPING';
+ARRAY : 'ARRAY';           
+WITH : 'WITH';           
+AS : 'AS';        
+AUTOFILL : '@AUTOFILL';
+EPILOGUE : '@EPILOGUE';
+AEPILOGUE : '.@EPILOGUE';           
+MODULE : 'MODULE';           
+UUT : '@UUT';
+PLCODE : '@PLCODE';
+LAWS : '@LAWS';
+ALAWS : '@LAWS';           
+PREAMBLE : '@PREAMBLE';
+APREAMBLE : '.@PREAMBLE';           
+RRULE : '@RRULE';		
 DIGIT : '1'..'9';
 LETTER : 'a'..'z' | 'A'..'Z';
-NL:	'\n' ;
-WS: 	(' '|'\t'|'\r'|'~')+ {skip();} ;
-ANYCHAR: . ;
-		
+COLON : ':';           
+WS: 	(' '|'\t'|'\r'|'~'|'\n')+ {skip();} ;

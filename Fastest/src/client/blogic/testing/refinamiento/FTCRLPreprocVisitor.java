@@ -2,7 +2,6 @@ package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import client.blogic.testing.refinamiento.FTCRLParser.IExprRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
@@ -48,8 +47,6 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String>{
 	public String visitZExprSet(FTCRLParser.ZExprSetContext ctx) { return visitGenerico(ctx); }
 
 	public String visitSetExtension(FTCRLParser.SetExtensionContext ctx) { return visitGenerico(ctx); }
-
-	public String visitPLCode(FTCRLParser.PLCodeContext ctx) { return visitGenerico(ctx); }
 
 	public String visitZExprSeq(FTCRLParser.ZExprSeqContext ctx) { return visitGenerico(ctx); }
 
@@ -114,8 +111,6 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String>{
 	public String visitEpilogue(FTCRLParser.EpilogueContext ctx) { return visitGenerico(ctx); }
 
 	public String visitIIdent(FTCRLParser.IIdentContext ctx) { return visitGenerico(ctx); }
-
-	public String visitAnychar(FTCRLParser.AnycharContext ctx) { return visitGenerico(ctx); }
 
 	public String visitFunAppExpr(FTCRLParser.FunAppExprContext ctx) { return visitGenerico(ctx); }
 

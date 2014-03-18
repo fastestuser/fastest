@@ -14,16 +14,14 @@ public class RefineAbsTCasesRequested extends Event_{
 	private String opName;
 	private String targetLanguaje;
 	private String pathUUT;
-	private String refRuleName;
 	/**
 	 * Creates instances of RefineAbsTCasesRequested.
 	 */
-	public RefineAbsTCasesRequested(String opName, Collection<AbstractTCase> set, String pathUUT, String targetLanguaje, String refRuleName){
+	public RefineAbsTCasesRequested(String opName, Collection<AbstractTCase> set, String pathUUT, String targetLanguaje){
 		this.absTCasesColl = set;
 		this.opName = opName;
 		this.targetLanguaje = targetLanguaje;
 		this.pathUUT = pathUUT;
-		this.refRuleName = refRuleName;
 		super.setEventName("refineAbsTCasesRequested");
 	}
 
@@ -37,10 +35,6 @@ public class RefineAbsTCasesRequested extends Event_{
 
 	public String getPathUUT(){
 		return pathUUT;
-	}
-
-	public String getRefRuleName(){
-		return refRuleName;
 	}
 
 	public Collection<AbstractTCase> getAbsTCasesColl(){

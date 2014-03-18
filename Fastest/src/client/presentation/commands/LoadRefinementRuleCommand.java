@@ -42,7 +42,7 @@ public class LoadRefinementRuleCommand implements Command{
 			}
 			else{
 				// We parse the refinement law
-				FTCRLUtils.parse(FTCRLUtils.preprosesar(refLawFile));
+				FTCRLUtils.parse(refLawFile);
 			}
 		}
 		catch(Exception e){

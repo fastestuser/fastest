@@ -10,14 +10,12 @@ public class TCaseRefineRequested extends Event_{
     private AbstractTCase absTCase;
     private String targetLanguaje;
     private String pathUUT;
-    private String refRuleName;
 
-    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String pathUUT, String targetLanguaje, String refRuleName){
+    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String pathUUT, String targetLanguaje){
 		this.opName = opName;
 		this.absTCase = absTCase;
 		this.targetLanguaje = targetLanguaje;
 		this.pathUUT = pathUUT;
-		this.refRuleName = refRuleName;
 		super.setEventName("tCaseRefineRequested");
 	}
     /**
@@ -53,8 +51,4 @@ public class TCaseRefineRequested extends Event_{
 		return pathUUT;
 	}
 	
-	public String getRefRuleName(){
-		return refRuleName;
-	}
-
 }

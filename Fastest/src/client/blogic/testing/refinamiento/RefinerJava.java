@@ -1,30 +1,31 @@
 package client.blogic.testing.refinamiento;
 
-import java.util.List;
-
 import common.z.SpecUtils;
 import net.sourceforge.czt.base.ast.Term;
-import client.blogic.testing.refinement.TCaseAssignment;
 
 public class RefinerJava implements Refiner{
-
-	@Override
-	public String refineRuleInString(RefinementRule rule, Term atc) {
+	private String declarationList;
+	private String assignementList;
+	
+	public void refineCase(Term atc) {
 		
 		String casoString = SpecUtils.termToLatex(atc);
 		casoString = casoString.replace("~", "");
 		casoString = casoString.replace("\\emptyset", "\\{\\}");
 		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
 		visitor.assignTCase(casoString);
-		visitor.visit(rule.getTree());
+		visitor.visit(FTCRLUtils.getRule());
 
-		return visitor.getDeclarationList() +"¬SEPARADOR¬"+ visitor.getAssignementList();
+		declarationList =  visitor.getDeclarationList();
+		assignementList =  visitor.getAssignementList();
 	}
 
-	@Override
-	public List<TCaseAssignment> refineRule(RefinementRule rule, Term atcPred) {
-		// TODO Auto-generated method stub
-		return null;
+	public String getAssignements() {
+		return assignementList;
+	}
+
+	public String getDeclarations() {
+		return declarationList;
 	}
 
 
