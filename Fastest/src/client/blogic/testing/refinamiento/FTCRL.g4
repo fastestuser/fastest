@@ -13,22 +13,22 @@ refinementRules
 
 
 refinementRule
-	:	RRULE name 
+	:	RRULE name NL
         preamble
 		laws
-		(plcode)?
+		(plcode NL)?
 		uut
-		(epilogue)?
+		(epilogue NL)?
 	;
 
 preamble
-	:	PREAMBLE 
-		( name APREAMBLE )*
+	:	PREAMBLE NL
+		( name APREAMBLE NL)*
 	;
 
 laws
-	:	LAWS 
-		(law  | reference  | name ALAWS )+
+	:	LAWS NL
+		(law  NL| reference NL | name ALAWS NL)+
 	;
 
 law
@@ -41,17 +41,17 @@ reference
 	;
 
 plcode
-	:	PLCODE 
+	:	PLCODE NL
 	;
 
 uut
-	:	UUT iName LB iName? (COMMA iName)* RB (MODULE iName)? ?
+	:	UUT iName LB iName? (COMMA iName)* RB (MODULE iName)? NL?
 	;
 
 
 epilogue
-	:	EPILOGUE 
-		( name AEPILOGUE )+
+	:	EPILOGUE NL
+		( name AEPILOGUE NL)+
 	;
 
 synonymLaw
@@ -67,7 +67,7 @@ withSynonym
 	;
 
 refinementLaw
-	:	sName (COMMA sName)* '==>' ? refinementSentence (SEMICOLON ? refinementSentence)*
+	:	sName (COMMA sName)* '==>' NL? refinementSentence (SEMICOLON NL? refinementSentence)*
 	;
 
 refinementSentence
@@ -84,11 +84,11 @@ iExprRefinement
 	;
 
 asRefinement
-	:	dataStruct (WITH LSB ? refinement (SEMICOLON ()? refinement)* RSB)?
+	:	dataStruct (WITH LSB NL? refinement (SEMICOLON (NL)? refinement)* RSB)?
 	;
 
 withRefinement
-	:	exprRefinement (COMMA ? exprRefinement)*
+	:	exprRefinement (COMMA NL? exprRefinement)*
 	;
 	
 exprRefinement
@@ -289,5 +289,6 @@ APREAMBLE : '.@PREAMBLE';
 RRULE : '@RRULE';		
 DIGIT : '1'..'9';
 LETTER : 'a'..'z' | 'A'..'Z';
-COLON : ':';           
-WS: 	(' '|'\t'|'\r'|'~'|'\n')+ {skip();} ;
+COLON : ':';
+NL:'\n';           
+WS: 	(' '|'\t'|'\r'|'~')+ {skip();} ;
