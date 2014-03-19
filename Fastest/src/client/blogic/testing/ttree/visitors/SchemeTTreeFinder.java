@@ -8,7 +8,6 @@ import common.z.AbstractTCase;
 import common.z.Scheme;
 import common.z.TClass;
 import common.z.czt.visitors.AndPredSimplifier;
-import common.fastest.FastestUtils;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 
@@ -105,9 +104,10 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 				axPara = tTreeNode.getValue().getMyAxPara();
 				pred = SpecUtils.andPreds(SpecUtils.getAxParaPred(axPara), pred);
 			}
+			pred = pred.accept(new AndPredSimplifier());
 			AxPara abstractTCaseAxPara = abstractTCase.getMyAxPara();
 			SpecUtils.setAxParaListOfDecl(abstractTCaseAxPara, SpecUtils.getAxParaListOfDecl(axPara));
-			SpecUtils.setAxParaPred(abstractTCaseAxPara, SpecUtils.simplifyAndPred(pred));
+			SpecUtils.setAxParaPred(abstractTCaseAxPara, pred);
 			return abstractTCase;
 		}
 		else

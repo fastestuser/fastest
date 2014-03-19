@@ -14,11 +14,11 @@ refinementRules
 
 refinementRule
 	:	RRULE name 
-                preamble
+        preamble
 		laws
-		(plcode )?
+		(plcode)?
 		uut
-		(epilogue )?
+		(epilogue)?
 	;
 
 preamble
@@ -108,10 +108,7 @@ dataStruct
 
 sExprRefinement
 	:	sName
-	|	zExprSet
-	|	zExprNum
-	|	zExprString
-	|	zExprSeq
+	|	zExpr
 	|	funAppExpr
 	;
 
@@ -136,6 +133,7 @@ zExprNum
 	|	zExprNum SLASH zExprNum
 	|	zExprNum MOD zExprNum
 	|	zExprNum PLUS zExprNum
+	|	zExprNum MINUS zExprNum
 	;
 
 zExprString
@@ -180,7 +178,8 @@ number
 	;
 
 enumeration
-	:	ENUM ( LSB ( sName R ( iName | number )+ ) | number RSB)?
+	:	ENUM (LSB sName R ( iName | number ) (COMMA sName R ( iName | number ))* RSB)?
+	|	ENUM (LSB number RSB)?
 	;
 
 table
@@ -251,7 +250,8 @@ ARROBA : '@';
 CARD : '#';           
 DQUOTE: '"';           
 ZERO : '0';           
-PLUS : '+';           
+PLUS : '+';
+MINUS : '-';           
 DIV : 'div';
 MOD : 'mod';           
 SEMICOLON : ';';           

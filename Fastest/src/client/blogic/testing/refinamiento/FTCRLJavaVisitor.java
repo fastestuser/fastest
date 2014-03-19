@@ -43,11 +43,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public String getDeclarationList(){
 		return declarationList;
 	}
-	
+
 	public String getAssignementList(){
 		return assignmentList;
 	}
-	
+
 	public void printDeclaration(String line){
 		declarationList = declarationList.concat(line + ";\n");
 	}
@@ -109,10 +109,19 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			isRef = false;
 			this.visit(it.next());
 		}
-		
+
 		return null;
 	}
 	
+	@Override
+	public Value visitLaw(FTCRLParser.LawContext ctx){
+		if (ctx.refinementLaw() != null){
+			this.visit(ctx.refinementLaw());
+		}
+
+		return null;
+	}
+
 	//	@Override
 	//	public Value visitPreamble(FTCRLParser.PreambleContext ctx){
 	//
@@ -358,6 +367,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				FTCRLUtils.saveReference(javaExpr.exp, reference, references, isRef);
 			}
 
+			//Si es un ENUM
+		} else if (dataStruct.enumeration() != null) {
+			String values;
+			if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""); //Si la expresion de Z es un tipo libre de Z
+			FreeTypesRefinement.refine(zExpr, values, javaExpr, dataStruct.enumeration(),this);
+
 			//Si es una tabla
 		} else if (dataStruct.table() != null) {
 			if (!ctx.refinement().isEmpty()) { //Si tiene WITH
@@ -378,9 +393,9 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Si simplemente es un SName, debe estar en el replacement o en el Map de Z
 		if (ctx.sName()!=null)
 			return visitSName(ctx.sName(),replacement,zValuesMap, zTypesMap);
-		//Si es un ZExprSet, lo visito y devuelvo su SExpr
-		else if(ctx.zExprSet()!=null)
-			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap, zTypesMap);
+		//Si es un ZExpr, lo visito y devuelvo su SExpr
+		else if(ctx.zExpr()!=null)
+			return visitZExpr(ctx.zExpr(),replacement,zValuesMap, zTypesMap);
 		else
 			return null;
 	}
@@ -396,6 +411,19 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 
 		return null;
+	}
+
+	//Este metodo permite visitar un ZExpr para obtener su valor y su tipo.
+	public SExpr visitZExpr(FTCRLParser.ZExprContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+
+		if(ctx.zExprSet() != null)
+			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap, zTypesMap);
+		else if (ctx.zExprNum() != null)
+			return visitZExprNum(ctx.zExprNum(),replacement,zValuesMap, zTypesMap);
+		else if (ctx.zExprString() != null)
+			return visitZExprString(ctx.zExprString(),replacement,zValuesMap, zTypesMap);
+		else
+			return null;
 	}
 
 	//Este metodo permite visitar un ZExprSet para obtener su valor y su tipo.
@@ -436,6 +464,46 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			return null;
 	}
 
+	//Este metodo permite visitar un ZExprNum para obtener su valor y su tipo.
+	private SExpr visitZExprNum(FTCRLParser.ZExprNumContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+		if (ctx.CARD() != null){ //Cardinal
+			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			ExprIterator card = new ExprIterator(sExpr.exp);
+			sExpr.exp = Integer.toString(card.cardinalidad());
+			sExpr.type = "\\num";
+			return sExpr;
+		} else if (ctx.number() != null){ //Es un numero
+			return new SExpr(ctx.number().getText(), "\\num");
+		} else if (ctx.DIV() != null){ //Div
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			String div = Float.toString((int) (Float.parseFloat(sExprLeft.exp) / Float.parseFloat(sExprRight.exp)));
+			return new SExpr(div, "\\num");
+		} else if (ctx.SLASH() != null){ //Slash
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			String slash = Float.toString(Float.parseFloat(sExprLeft.exp) / Float.parseFloat(sExprRight.exp));
+			return new SExpr(slash, "\\num");
+		} else if (ctx.MOD() != null){ //Mod
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			String mod = Float.toString((int) (Float.parseFloat(sExprLeft.exp) % Float.parseFloat(sExprRight.exp)));
+			return new SExpr(mod, "\\num");
+		} else if (ctx.PLUS() != null){ //Plus
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			String plus = Float.toString(Float.parseFloat(sExprLeft.exp) + Float.parseFloat(sExprRight.exp));
+			return new SExpr(plus, "\\num");
+		} else if (ctx.MINUS() != null){ //Minus
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			String minus = Float.toString(Float.parseFloat(sExprLeft.exp) - Float.parseFloat(sExprRight.exp));
+			return new SExpr(minus, "\\num");
+		}
+
+		return null;
+	}
+
 	//Este metodo permite visitar un SName para obtener su valor y su tipo.
 	public SExpr visitSName(FTCRLParser.SNameContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
 
@@ -449,6 +517,32 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//No deberia devolver null
 		else
 			return null;
+	}
+
+	//Este metodo permite visitar un ZExprString para obtener su valor y su tipo.
+	private SExpr visitZExprString(FTCRLParser.ZExprStringContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+		if (ctx.string() != null){ //String
+			return new SExpr(ctx.string().getText(), "\\FTCRLString");
+		} else if (ctx.number() != null){ //Number
+			return new SExpr(ctx.number().getText(), "\\num");
+		} else if (ctx.sName() != null){
+			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			if (ctx.CARD() != null){
+				ExprIterator card = new ExprIterator(sExpr.exp);
+				sExpr.exp = Integer.toString(card.cardinalidad());
+				sExpr.type = "\\num";
+			} else if (ctx.STR() != null){
+				sExpr.exp = sExpr.exp;
+				sExpr.type = "\\FTCRLString";
+			} else if (ctx.dotSetOper() != null){
+				sExpr = visitDotSetOper(ctx.dotSetOper(), sExpr);
+			}
+			return sExpr;
+			
+			//hacer el refinamiento para FTCRLString
+		}
+		//hacer el refinamiento de Strings de FTCRL
+		return null;
 	}
 
 	//Este metodo permite visitar un DotSetOper para obtener su valor y su tipo.
@@ -509,6 +603,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public String refineFromZToJava(SExpr zExpr, String toType, SExpr javaExpr) {
 
 		//En base al tipo en Z de sValue debo utilizar una determinada clase para refinarla
+		String values;
 		if (zExpr.type.equals("\\num") || zExpr.type.equals("\\nat"))
 			return NumRefinement.refine(zExpr, toType, javaExpr, this);
 		else if (FTCRLUtils.isSet(zExpr.type))
@@ -519,9 +614,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			zExpr.exp = zExpr.exp.replaceFirst("^\\\\langle", "\\\\{");
 			zExpr.exp = zExpr.exp.replaceFirst("\\\\rangle$", "\\\\}");
 			return SetRefinement.refine(zExpr, toType, javaExpr, this);
-		} else {
-			//Es un tipo basico o enumerado
+		} else if(FTCRLUtils.isBasicType(zExpr.type)){
+			//Es un tipo basico
 			return GivenTypeRefinement.refine(zExpr, toType, javaExpr, this);
+		} else if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""){
+			return FreeTypesRefinement.refine(zExpr, values, javaExpr, null, this);
+		} else {
+			return "";
 		}
 		//return "";
 	}
@@ -530,6 +629,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Almacena los valores de las variables Z en zValuesMap, y sus tipos en ZTypesMap
 	public void assignTCase(String tcase){
 
+		//this.zValuesMap = FTCRLUtils.createZValuesMap(tcase);
 		this.zValuesMap = FTCRLUtils.createZValuesMap(tcase);
 		this.zTypesMap = FTCRLUtils.createZTypesMap(tcase);
 	}

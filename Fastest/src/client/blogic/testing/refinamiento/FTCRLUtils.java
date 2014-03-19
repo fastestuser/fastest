@@ -4,23 +4,48 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
+import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.BranchList;
+import net.sourceforge.czt.z.ast.FreePara;
+import net.sourceforge.czt.z.ast.Freetype;
+import net.sourceforge.czt.z.ast.FreetypeList;
+import net.sourceforge.czt.z.ast.ParaList;
+import net.sourceforge.czt.z.ast.Sect;
+import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.ZFreetypeList;
+import net.sourceforge.czt.z.ast.ZParaList;
+import net.sourceforge.czt.z.ast.ZSect;
+import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+
 import java.util.Scanner;
+
+import common.fastest.FastestUtils;
 import common.util.ExprIterator;
+import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
+import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRulesContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
 import client.blogic.testing.refinamiento.javaparser.Java7Parser;
 import client.blogic.testing.refinamiento.javaparser.TypeExtractorVisitor;
+import client.presentation.ClientTextUI;
 
 
 public final class FTCRLUtils {
+
+	static ClientTextUI clientTextUI;
 	static HashMap<String, String> enumTypes = new HashMap<String,String>(); //Indica los tipos "enum" de java encontrados en preamble
 	static LinkedList<String> privateVars = new LinkedList<String>(); //Indica las variables privadas (no publicas en verdad) de java
 	//es la regla actual, es decir la que elije el usuario en el comando refine
@@ -35,6 +60,12 @@ public final class FTCRLUtils {
 	public static String getPreamble(){
 		return reglaActual.getPreamble();
 	}
+
+	public static void setClientUI(ClientTextUI clientTextUI) {
+		FTCRLUtils.clientTextUI = clientTextUI;
+
+	}
+
 	public static String getEpilogue(){
 		return reglaActual.getEpilogue();
 	}
@@ -55,14 +86,14 @@ public final class FTCRLUtils {
 	public static void parse(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
-		
+
 		RefinementRuleContext ruleContext;
 		RefinementRule rule;
 		RefinementRules rules = RefinementRules.getInstance();
 		String refRuleAux[],preamble,epilogue,ruleString;
 		String refRulesAux[] = refRulesString.split("@RRULE");
 		int cantHijos = refRulesAux.length;
-		
+
 		for (int i = 1; i<cantHijos;i++){
 			refRuleAux = refRulesAux[i].split("@PREAMBLE|@LAWS|@EPILOGUE");
 			preamble = refRuleAux[1];
@@ -382,4 +413,59 @@ public final class FTCRLUtils {
 			references.put(var, value);
 		}
 	}
+
+	//Determina si es un tipo básico de Z
+	public static boolean isBasicType(String type) {
+		Controller controller = clientTextUI.getMyController();
+		List<String> bs = controller.getBasicTypeNames();
+
+		if (bs.contains(type))
+			return true;
+		return false;
+	}
+
+	//Determina si es un tipo básico de Z
+	public static String isFreeType(String type) {
+		Controller controller = clientTextUI.getMyController();
+		List<String> basicTypeNames = controller.getBasicTypeNames();
+		Spec spec = controller.getOriginalSpec();
+		Iterator<FreePara> freeParasIt = controller.getFreeParas().iterator();
+
+		//Hay que buscar en la especificación para ver si es un tipo enumerado
+		ZParaList zParaList = null;
+		for (Sect sect : spec.getSect()) {
+			if (sect instanceof ZSect) {
+				ParaList paraList = ((ZSect) sect).getParaList();
+				if (paraList instanceof ZParaList) {
+					zParaList = (ZParaList) paraList;
+				}
+			}
+		}
+
+		AxPara schema = SpecUtils.axParaSearch(type, zParaList);
+		String schemaString = SpecUtils.termToLatex(schema);
+		if (schemaString.equals("null")){ //No es un tipo esquema
+			if (!basicTypeNames.contains(type)){ //Es un tipo libre
+				while (freeParasIt.hasNext() && schemaString.equals("null")) {
+					FreePara freePara = freeParasIt.next();
+					FreetypeList freetypeList = freePara.getFreetypeList();
+					if (freetypeList instanceof ZFreetypeListImpl) {
+						ZFreetypeList zFreetypeList = (ZFreetypeListImpl) freetypeList;
+						for (int i = 0; i < zFreetypeList.size(); i++) {
+							Freetype freetype = zFreetypeList.get(i);
+							if (type.equals(freetype.getName().toString())) {
+								BranchList fs = freetype.getBranchList();
+								schemaString = SpecUtils.termToLatex(fs);
+								schemaString = schemaString.replaceAll(" ", "");
+								schemaString = schemaString.replaceAll("\\|", ",");
+								return schemaString;
+							}
+						}
+					}
+				}
+			}
+		}
+		return "";
+	}
+
 }
