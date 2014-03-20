@@ -7,9 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.BranchList;
 import net.sourceforge.czt.z.ast.FreePara;
@@ -22,20 +20,18 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import common.fastest.FastestUtils;
 import common.util.ExprIterator;
 import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
-import client.blogic.testing.refinamiento.FTCRLParser.RefinementRulesContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.javaparser.Java7Lexer;
 import client.blogic.testing.refinamiento.javaparser.Java7Parser;
@@ -83,26 +79,54 @@ public final class FTCRLUtils {
 		return ruleContext;
 	}
 	
+	private static String resolverPreamble(String preamble){
+		RefinementRules rules = RefinementRules.getInstance();
+		String REGEX = "^(\\w*)\\.@PREAMBLE$";
+		Pattern p = Pattern.compile(REGEX,Pattern.MULTILINE);
+		Matcher m = p.matcher(preamble);
+		String unpreambulo = new String();
+		while(m.find()) {
+			unpreambulo = rules.getRule(m.group(1)).getPreamble();
+			preamble = m.replaceFirst(resolverPreamble(unpreambulo));
+			m = p.matcher(preamble);
+		}
+		return preamble;	
+	}
+	private static void preprocPreambles(){
+		RefinementRules rules = RefinementRules.getInstance();
+		Iterator<String> it = rules.getRefRuleNames().iterator();
+		String key,preamble;
+		RefinementRule rule;
+		while (it.hasNext()) {
+			key = it.next().toString();
+			rule = rules.getRule(key);
+			preamble = rule.getPreamble();
+			preamble = resolverPreamble(preamble);
+			rule.setPreamble(preamble);
+		}
+	}
 	public static void parse(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
-
 		RefinementRuleContext ruleContext;
 		RefinementRule rule;
 		RefinementRules rules = RefinementRules.getInstance();
-		String refRuleAux[],preamble,epilogue,ruleString;
+		String refRuleAux[],preamble,epilogue,ruleString,rrule;
 		String refRulesAux[] = refRulesString.split("@RRULE");
 		int cantHijos = refRulesAux.length;
-
 		for (int i = 1; i<cantHijos;i++){
-			refRuleAux = refRulesAux[i].split("@PREAMBLE|@LAWS|@EPILOGUE");
-			preamble = refRuleAux[1];
-			epilogue = refRuleAux.length == 4?refRuleAux[3]:"";
-			ruleString = "@RRULE" + refRuleAux[0] +"@PREAMBLE\n@LAWS"+ refRuleAux[2] ;
-			ruleContext = preproc(ruleString);
+			refRuleAux = refRulesAux[i].split("@PREAMBLE",2);
+			rrule = refRuleAux[0];
+			refRuleAux = refRuleAux[1].split("@LAWS",2);
+			preamble = refRuleAux[0];
+			refRuleAux = refRuleAux[1].split("@EPILOGUE",2);
+			epilogue = refRuleAux.length == 2?refRuleAux[1]:"";
+			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+refRuleAux[0];
+			ruleContext = preproc(ruleString);		
 			rule = new RefinementRule(ruleContext, preamble, epilogue);
 			rules.addRule(ruleContext.name().getText(), rule);
 		}
+		preprocPreambles();
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
