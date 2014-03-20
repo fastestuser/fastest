@@ -1,7 +1,7 @@
 grammar FTCRL;
 
 @header{
-	package client.blogic.testing.refinamiento;
+package client.blogic.testing.refinamiento;
 }
 
 @members{
@@ -140,7 +140,7 @@ zExprString
 	:	string
 	|	number
 	|	AUTOFILL
-	|	sName (DOT (dotSetOper* | CARD | STR))?
+	|	sName (DOT dotSetOper)* (DOT (CARD | ARROBA STR))?
 	|	zExprString PLUSPLUS zExprString
 	;
 
@@ -228,7 +228,7 @@ string
 	;
 	
 setExtension
-	:	LCB RCB
+	:	LCB (number | string) (COMMA (number | string))* RCB
 	;
 
 
@@ -245,7 +245,7 @@ SLASH : '/';
 LSB : '[';
 RSB : ']';
 LCB: '\{';
-RCB: '\{';         
+RCB: '\}';         
 ARROBA : '@';           
 CARD : '#';           
 DQUOTE: '"';           
@@ -256,7 +256,7 @@ DIV : 'div';
 MOD : 'mod';           
 SEMICOLON : ';';           
 COMMA : ',';           
-STR : '@STR';           
+STR : 'STR';           
 CUP : '@CUP@';           
 DOT : '.';           
 FILE : 'FILE';           

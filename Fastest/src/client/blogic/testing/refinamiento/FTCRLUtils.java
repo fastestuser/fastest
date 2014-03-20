@@ -467,5 +467,37 @@ public final class FTCRLUtils {
 		}
 		return "";
 	}
+	public static String concatFTCRLStringSets(SExpr sExprLeft, SExpr sExprRight) {
+		//{a,b,c} ++ {1,2,3}
+		String aux = sExprLeft.exp + "++" + sExprRight.exp;
+		String newSet = "";
+		if (isSet(sExprLeft.type)){
+			ExprIterator it = new ExprIterator(sExprLeft.type);
+			while (it.hasNext()){
+				String e = aux.replaceFirst(sExprLeft.exp, it.next());
+				if (!newSet.equals(""))
+					newSet += ",";
+				newSet += e;
+			}
+		}
+		
+		if (!newSet.equals("")){
+			aux = newSet;
+			newSet = "";
+		}
+		
+		//a++{1,2,3},b++{1,2,3},c++{1,2,3}
+		if (isSet(sExprRight.type)){
+			ExprIterator it = new ExprIterator(sExprRight.type);
+			while (it.hasNext()){
+				String e = aux.replaceFirst(sExprRight.exp, it.next());
+				if (!newSet.equals(""))
+					newSet += ",";
+				newSet += e;
+			}
+		}
+		
+		return newSet;
+	}
 
 }

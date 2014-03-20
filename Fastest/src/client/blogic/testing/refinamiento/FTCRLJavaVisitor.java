@@ -112,7 +112,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		return null;
 	}
-	
+
 	@Override
 	public Value visitLaw(FTCRLParser.LawContext ctx){
 		if (ctx.refinementLaw() != null){
@@ -281,6 +281,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Si es un conjunto y ademas tiene WITH
 		if ((FTCRLUtils.isSet(zExpr.type) || FTCRLUtils.isSeq(zExpr.type)) && (ctx.iExprRefinement().asRefinement() != null) 
 				&& !ctx.iExprRefinement().asRefinement().refinement().isEmpty()) {
+
 			Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
 
 			String elemType = FTCRLUtils.getChildType(zExpr.type, 0);
@@ -522,11 +523,41 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Este metodo permite visitar un ZExprString para obtener su valor y su tipo.
 	private SExpr visitZExprString(FTCRLParser.ZExprStringContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
 		if (ctx.string() != null){ //String
-			return new SExpr(ctx.string().getText(), "\\FTCRLString");
+			String string = ctx.string().getText();
+			string = string.substring(1, string.length()-1);
+			return new SExpr(string, "\\FTCRLString");
 		} else if (ctx.number() != null){ //Number
 			return new SExpr(ctx.number().getText(), "\\num");
-		} else if (ctx.sName() != null){
+		} else if (ctx.sName() != null){ //DOT
 			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+
+			//Y luego visito los DotSetOper, pero antes veo si debo hacer el replace
+			String sName = ctx.sName().getText();
+			List<DotSetOperContext> dot = ctx.dotSetOper();
+			int replacePos = -1;
+			if (replacement != null && !dot.isEmpty()) {
+
+				//En la primer pasada intento hacer el replace
+				for (replacePos++; replacePos < dot.size(); replacePos++){
+					//Primero veo si debo hacer el replace
+					sName = sName.concat("." + dot.get(replacePos).getText());
+					if (sName.equals(replacement.exp)){
+						sExpr = new SExpr(replacement.value, replacement.type);
+						break;
+					}
+				}
+				//Si di la vuelta completa, "reseteo"
+				if (replacePos == dot.size())
+					replacePos = -1;
+			}
+			//Luego visito los DotSetOper que no fueron utilizados en el replace
+			//donde se aplican los operadores a las expresiones
+			for (replacePos++; replacePos < dot.size(); replacePos++){
+				sExpr = visitDotSetOper(dot.get(replacePos), sExpr);
+			}
+
+			//Luego veo si hay un CARD o STR
+
 			if (ctx.CARD() != null){
 				ExprIterator card = new ExprIterator(sExpr.exp);
 				sExpr.exp = Integer.toString(card.cardinalidad());
@@ -534,14 +565,26 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			} else if (ctx.STR() != null){
 				sExpr.exp = sExpr.exp;
 				sExpr.type = "\\FTCRLString";
-			} else if (ctx.dotSetOper() != null){
-				sExpr = visitDotSetOper(ctx.dotSetOper(), sExpr);
 			}
 			return sExpr;
-			
-			//hacer el refinamiento para FTCRLString
+
+		} else if (ctx.PLUSPLUS() != null){ //++
+			SExpr sExprLeft = visitZExprString(ctx.zExprString(0), replacement, zValuesMap, zTypesMap);
+			SExpr sExprRight = visitZExprString(ctx.zExprString(1), replacement, zValuesMap, zTypesMap);
+
+			//Si alguno es un conjunto, debo procesarlos de forma especial
+			if (FTCRLUtils.isSet(sExprLeft.type) || FTCRLUtils.isSet(sExprRight.type)){
+
+				String merge = FTCRLUtils.concatFTCRLStringSets(sExprLeft, sExprRight);
+				return new SExpr(merge, "\\power(\\FTCRLString)");
+				
+
+			} else {
+				String concat = sExprLeft.exp + sExprRight.exp;
+				return new SExpr(concat, "\\FTCRLString");
+			}
+
 		}
-		//hacer el refinamiento de Strings de FTCRL
 		return null;
 	}
 
@@ -619,10 +662,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			return GivenTypeRefinement.refine(zExpr, toType, javaExpr, this);
 		} else if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""){
 			return FreeTypesRefinement.refine(zExpr, values, javaExpr, null, this);
+		} else if (zExpr.type.equals("\\FTCRLString")){
+			return FTCRLStringRefinement.refine(zExpr, toType, javaExpr, this);
 		} else {
 			return "";
 		}
-		//return "";
 	}
 
 	//Este metodo se utiliza para determinar el caso de prueba que se utilizará

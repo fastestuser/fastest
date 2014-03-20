@@ -1,6 +1,6 @@
 // Generated from FTCRL.g4 by ANTLR 4.0
 
-	package client.blogic.testing.refinamiento;
+package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
 import org.antlr.v4.runtime.Token;
