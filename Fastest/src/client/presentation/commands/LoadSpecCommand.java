@@ -171,7 +171,7 @@ public class LoadSpecCommand implements Command {
             controller.setBasicTypeNames(basicTypeNames);
             controller.setFreeParas(freeParas);
             controller.setOriginalSpec(spec);
-            controller.setUnfoldedSpec(spec);
+            //controller.setUnfoldedSpec(spec);
             controller.setLoadedOpsRep(opNamesRep);
             controller.setOpsToTestRep(new ConcreteRepository<String>());
             controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());

@@ -57,7 +57,7 @@ public class GenAllTTCommand implements Command {
 			boolean someEventAnnounced = false;
 			UnfoldedSpecLoaded unfoldedSpecLoaded = new UnfoldedSpecLoaded(unfoldedSpec);
 			eventAdmin.announceEvent(unfoldedSpecLoaded);
-			controller.setUnfoldedSpec(unfoldedSpec);
+			//controller.setUnfoldedSpec(unfoldedSpec);
 
 
 

@@ -108,6 +108,8 @@ public class RefineCommand implements Command {
 					}
 				}
 				else{
+					
+					
 					TTreeNode opTTreeRoot = FastestUtils.getTTreeNode(controller,opName);
 					abstractTCase = unfoldCase(abstractTCase,opName,opTTreeRoot,controller);
 					absTCasesColl.add(abstractTCase);

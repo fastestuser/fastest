@@ -48,12 +48,12 @@ import common.z.czt.visitors.SchemeUnfolder;
  * for each operation) and, if any, the functions of abstraction and refinement.
  * @author Pablo Rodriguez Monetti
  */
-public class Controller extends IIComponent {
+public final class Controller extends IIComponent {
 
 	private SectionManager sectionManager;
 	private String nomTexFileSpec;
 	private Spec originalSpec;
-	private Spec unfoldedSpec;
+	//private Spec unfoldedSpec;
 	// Repository of the loaded operations from the loaded specification
 	private AbstractRepository<String> loadedOpsRep;
 	// Repository of the operations that the user wants to test
@@ -73,7 +73,7 @@ public class Controller extends IIComponent {
 	// predicate of the VIS of the operation
 	private Map<String, List<Pred>> dnfPredListMap;
 	//Map from operations to refined test cases
-	private Map<String, List<ConcreteTCase>> opRefTCaseMap;
+	private Map<String, ConcreteTCase> opRefTCaseMap;
 	//Map from abstract test case name to refined test cases
 	private Map<String, ConcreteTCase> absTCaseRefTCaseMap;
 	//Refinament Laws Repository
@@ -82,7 +82,7 @@ public class Controller extends IIComponent {
 	private String selectedRefLaw;
 	// Indicates how many abstract test cases are being calculated
 	private int pendingAbsTCases;
-	// Indicates how many concrete test cases are being abstracted
+	// Indicates how many abstract test cases are being refined
 	private int pendingCTCases;
 	// Indicates how many abstract test clases are being trying to be pruned
 	private int pendingPrunnings;
@@ -90,7 +90,7 @@ public class Controller extends IIComponent {
 	// test cases
 	private int pendingTTrees;
 	// Indicates if the refining process is active
-	private boolean refining;
+	//private boolean refining;
 	// Indicates how many abstract test cases are being refined
 	private int pendingToRef;
 	// lista de tipos libres
@@ -162,12 +162,12 @@ public class Controller extends IIComponent {
 		dnfPredListMap = new HashMap<String, List<Pred>>();
 		auxiliarDecls = new HashMap<String, ZDeclList>();
 		blockedAxDefs = new ArrayList<String>();
-		opRefTCaseMap = new HashMap<String, List<ConcreteTCase>>();
+		opRefTCaseMap = new HashMap<String, ConcreteTCase>();
 		absTCaseRefTCaseMap = new HashMap<String, ConcreteTCase>();
 		refinementRules = RefinementRules.getInstance();
 		selectedRefLaw = null;
 		compilationInfo = null;
-		refining = false;
+		//refining = false;
 		pendingToRef = 0;
 		pendingAbsTCases = 0;
 		pendingTTrees = 0;
@@ -214,6 +214,7 @@ public class Controller extends IIComponent {
 					}               
 				}
 			}
+			in.close();
 
 		} catch (Exception e) {
 			System.out.println("Error reading file " + configFile.getAbsolutePath() + ".");
@@ -226,8 +227,7 @@ public class Controller extends IIComponent {
 	 * @throws java.lang.IllegalArgumentException if event_ is neither instance of
 	 * AllTCaseGenerated, AllTTreeGenerated, TCaseGenerated nor TTreeGenerated.
 	 */
-	public void manageEvent(Event_ event_)
-			throws IllegalArgumentException {
+	public void manageEvent(Event_ event_) throws IllegalArgumentException {
 		myLock.lock();
 		String opName;
 		if (event_ instanceof TTreeGenerated) {
@@ -293,46 +293,51 @@ public class Controller extends IIComponent {
             }
             pendingPrunnings++;*/
 		} else if (event_ instanceof TCaseRefined) {
-			
 			TCaseRefined tCaseRefined = (TCaseRefined) event_;
-			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
-				opRefTCaseMap.get(tCaseRefined.getOpName()).
-				add(tCaseRefined.getConcreteTCase());
-			} else {
-				List<ConcreteTCase> list = new ArrayList<ConcreteTCase>();
-				list.add(tCaseRefined.getConcreteTCase());
-				opRefTCaseMap.put(tCaseRefined.getOpName(), list);
-			}
-			absTCaseRefTCaseMap.put(tCaseRefined.getAbstractTCase().getSchName(),
-					tCaseRefined.getConcreteTCase());
+			opRefTCaseMap.put(tCaseRefined.getConcreteTCase().getConcreteTCaseName(), tCaseRefined.getConcreteTCase());
+//			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
+//				opRefTCaseMap.get(tCaseRefined.getOpName()).add(tCaseRefined.getConcreteTCase());
+//			} else {
+//				List<ConcreteTCase> list = new ArrayList<ConcreteTCase>();
+//				list.add(tCaseRefined.getConcreteTCase());
+//				opRefTCaseMap.put(tCaseRefined.getOpName(), list);
+			//}
 			String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
+			absTCaseRefTCaseMap.put(tCaseName,tCaseRefined.getConcreteTCase());
 			System.out.println(tCaseName + " test case refination -> SUCCESS.");
 			pendingToRef--;
-			
-			
-			if (pendingToRef == 0) {
-				if (!refining) {
-					processFinished();
-				}
-			}
-		} else if (event_ instanceof AllTCasesRefined) {
-			refining = false;
-			if (pendingToRef == 0) {
+
+			if (pendingToRef == 0) 
 				processFinished();
-			}
+
+				//				if (!refining) {
+				//					processFinished();
+				//				}
+//				try {
+//					EventAdmin eventAdmin = EventAdmin.getInstance();
+//					eventAdmin.announceEvent(new AllTCasesRefined());
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}	
+
+			//		} else if (event_ instanceof AllTCasesRefined) {
+//			//refining = false;
+//			//if (pendingToRef == 0) {
+//				processFinished();
+//			//}
 		} else if (event_ instanceof RefLawSelected) {
 			RefLawSelected refLawSelected = (RefLawSelected) event_;
 			this.selectedRefLaw = refLawSelected.getRefLawName();
 		} else if (event_ instanceof AllTCasesRefineRequested) {
-			refining = true;
-			try {
-				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
-				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
-				EventAdmin eventAdmin = EventAdmin.getInstance();
-				eventAdmin.announceEvent(allTCasesRequested);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			//			refining = true;
+			//			try {
+			//				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
+			//				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
+			//				EventAdmin eventAdmin = EventAdmin.getInstance();
+			//				eventAdmin.announceEvent(allTCasesRequested);
+			//			} catch (Exception e) {
+			//				e.printStackTrace();
+			//			}
 		} else if (event_ instanceof RunFinished) {
 			try {
 				ClientUI clientUI = getMyClientUI();
@@ -368,47 +373,49 @@ public class Controller extends IIComponent {
 					e.printStackTrace();
 				}
 			}
-		} else if (event_ instanceof ScriptModified) {
-			// We must actualize all the maps with ConcreteTCase's information
-			pendingCTCases--;
-			ScriptModified scriptModified = (ScriptModified) event_;
-			ConcreteTCase ctCase = scriptModified.getConcreteTCase();
-			String ctcName = ctCase.getConcreteTCaseName();
-
-			Map<String, ConcreteTCase> auxMap = new HashMap<String, ConcreteTCase>();
-			Set<Map.Entry<String, ConcreteTCase>> set = absTCaseRefTCaseMap.entrySet();
-			Iterator<Map.Entry<String, ConcreteTCase>> iterator = set.iterator();
-			boolean founded = false;
-			while (iterator.hasNext() && !founded) {
-				Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
-				ConcreteTCase auxCTCase = mapEntry.getValue();
-				String absTCaseName = mapEntry.getKey();
-				String ctcAuxName = auxCTCase.getConcreteTCaseName();
-				if (ctcAuxName.equals(ctcName)) {
-					auxMap.put(absTCaseName, auxCTCase);
-					founded = true;
-				}
-			}
-			absTCaseRefTCaseMap.putAll(auxMap);
-
-			Set<Map.Entry<String, List<ConcreteTCase>>> set2 = opRefTCaseMap.entrySet();
-			Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator2 = set2.iterator();
-			while (iterator2.hasNext()) {
-				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator2.next();
-				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-				String opNameSpec = mapEntry.getKey();
-				for (int i = 0; i < auxCTCases.size(); i++) {
-					ConcreteTCase auxCTCase = auxCTCases.get(i);
-					String auxCTCName = auxCTCase.getConcreteTCaseName();
-					if (auxCTCName.equals(ctcName)) {
-						auxCTCases.set(i, ctCase);
-					}
-				}
-			}
-			if (pendingCTCases == 0) {
-				processFinished();
-			}
-		} else if (event_ instanceof PrunningResult) {
+		} 
+//		else if (event_ instanceof ScriptModified) {
+//			// We must actualize all the maps with ConcreteTCase's information
+//			pendingCTCases--;
+//			ScriptModified scriptModified = (ScriptModified) event_;
+//			ConcreteTCase ctCase = scriptModified.getConcreteTCase();
+//			String ctcName = ctCase.getConcreteTCaseName();
+//
+//			Map<String, ConcreteTCase> auxMap = new HashMap<String, ConcreteTCase>();
+//			Set<Map.Entry<String, ConcreteTCase>> set = absTCaseRefTCaseMap.entrySet();
+//			Iterator<Map.Entry<String, ConcreteTCase>> iterator = set.iterator();
+//			boolean founded = false;
+//			while (iterator.hasNext() && !founded) {
+//				Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
+//				ConcreteTCase auxCTCase = mapEntry.getValue();
+//				String absTCaseName = mapEntry.getKey();
+//				String ctcAuxName = auxCTCase.getConcreteTCaseName();
+//				if (ctcAuxName.equals(ctcName)) {
+//					auxMap.put(absTCaseName, auxCTCase);
+//					founded = true;
+//				}
+//			}
+//			absTCaseRefTCaseMap.putAll(auxMap);
+//
+//			Set<Map.Entry<String, List<ConcreteTCase>>> set2 = opRefTCaseMap.entrySet();
+//			Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator2 = set2.iterator();
+//			while (iterator2.hasNext()) {
+//				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator2.next();
+//				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
+//				//String opNameSpec = mapEntry.getKey();
+//				for (int i = 0; i < auxCTCases.size(); i++) {
+//					ConcreteTCase auxCTCase = auxCTCases.get(i);
+//					String auxCTCName = auxCTCase.getConcreteTCaseName();
+//					if (auxCTCName.equals(ctcName)) {
+//						auxCTCases.set(i, ctCase);
+//					}
+//				}
+//			}
+//			if (pendingCTCases == 0) {
+//				processFinished();
+//			}
+//		} 
+		else if (event_ instanceof PrunningResult) {
 			PrunningResult prunningResult = (PrunningResult) event_;
 			String tClassName = prunningResult.getTClassName();
 			String theoremName = prunningResult.getTheoremName();
@@ -433,8 +440,7 @@ public class Controller extends IIComponent {
 			if (pendingPrunnings == 0) {
 				// We check if appears new leaves. In that case we try to prune 
 				// them. In the other case we finish the pruning.
-				AbstractRepository<TClass> newLeaves =
-						PruneUtils.obtainTClasses(this);
+				AbstractRepository<TClass> newLeaves = PruneUtils.obtainTClasses(this);
 				AbstractIterator<TClass> tClassItOld = leaves.createIterator();
 				AbstractIterator<TClass> tClassItNew = newLeaves.createIterator();
 				List<TClass> newList = new ArrayList<TClass>();
@@ -505,22 +511,22 @@ public class Controller extends IIComponent {
 		} else if (event_ instanceof NotTClassLeavesFounded) {
 			pendingTTrees--;
 			if (pendingTTrees == 0) {
-				if (!refining) {
-					System.out.println("Error managing event NotTClassLeavesFounded in Controller");
-					processFinished();
-				}
+				//				if (!refining) {
+				//					System.out.println("Error managing event NotTClassLeavesFounded in Controller");
+				//					processFinished();
+				//				}
 
 			}
 		} else if (event_ instanceof TCaseRequested) {
 			TCaseRequested tCaseStrategyEvent = (TCaseRequested) event_;
 			opName = tCaseStrategyEvent.getOpName();
-			TClass tClass = tCaseStrategyEvent.getTClass();
+			//TClass tClass = tCaseStrategyEvent.getTClass();
 			/*Movido a genalltca command, por problemas de sincronización:
 			if (pendingAbsTCases == 0) {
 				Calendar cal = Calendar.getInstance();
 				inicio = cal.getTimeInMillis();
 			}
-			*/
+			 */
 
 			pendingAbsTCases++;
 		} else if (event_ instanceof TCaseGenerated) {
@@ -529,14 +535,14 @@ public class Controller extends IIComponent {
 			TClass tClass = tCaseGenerated.getTClass();
 			String tClassName = tClass.getSchName();
 			AbstractTCase abstractTCase = tCaseGenerated.getAbstractTCase();
-			
+
 			if (abstractTCase == null) {
 				System.out.println(tClassName + " test case generation -> FAILED.");
-				
+
 			} else if (abstractTCase != null && abstractTCase.getMyAxPara() == null) { //El nodo debe ser pruneado
-			//	System.out.println(tClassName + " test case generation -> FAILED "
-			//			+ "(without performing all the possible evaluations)");
-				
+				//	System.out.println(tClassName + " test case generation -> FAILED "
+				//			+ "(without performing all the possible evaluations)");
+
 				System.out.println(tClassName + " test case generation -> PRUNED.");
 				TTreeNode tClassNode = FastestUtils.getTTreeNode(this, tClassName);
 				TClassNode dadNode = tClassNode.getDadNode();
@@ -579,9 +585,9 @@ public class Controller extends IIComponent {
 						}
 					}
 				}
-				
+
 			} else {
-				String schName = abstractTCase.getSchName();
+				//String schName = abstractTCase.getSchName();
 				System.out.println(tClassName + " test case generation -> SUCCESS.");
 				TClassNode tClassNode = opTTreeMap.get(opName);
 				Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
@@ -590,28 +596,29 @@ public class Controller extends IIComponent {
 			//System.out.println("Quedan: "+pendingAbsTCases);
 			if (pendingAbsTCases == 0) {
 				pendingTTrees = 0;
-				if (refining) {
-					try {
-						EventAdmin eventAdmin = EventAdmin.getInstance();
-						eventAdmin.announceEvent(new AllTCasesRefined());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				} else {
+//				if (refining) {
+//					try {
+//						EventAdmin eventAdmin = EventAdmin.getInstance();
+//						eventAdmin.announceEvent(new AllTCasesRefined());
+//					} catch (Exception e) {
+//						e.printStackTrace();
+//					}
+//				} else {
 					processFinished();
-				}
+				//}
 			}
 		} else if (event_ instanceof RefineAbsTCasesRequested) {
 			Calendar cal = Calendar.getInstance();
 			inicio = cal.getTimeInMillis();
 			RefineAbsTCasesRequested refineAbsTCasesRequested =	(RefineAbsTCasesRequested) event_;
 			Collection<AbstractTCase> tcaColl =	refineAbsTCasesRequested.getAbsTCasesColl();
-			opName = refineAbsTCasesRequested.getOpName();
+			//opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
 			String pathUUT = refineAbsTCasesRequested.getPathUUT();
 			Iterator<AbstractTCase> iter = tcaColl.iterator();
 			while (iter.hasNext()) {
 				AbstractTCase atc = iter.next();
+				opName = SpecUtils.getAxParaName(atc);
 				pendingToRef++;
 				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, pathUUT, targetLanguaje);
 				try {
@@ -621,12 +628,12 @@ public class Controller extends IIComponent {
 					e.printStackTrace();
 				}
 			} // No se si funcionara. Creo que no esta SINCRONiZADO!!!
-			try {
-				EventAdmin eventAdmin = EventAdmin.getInstance();
-				eventAdmin.announceEvent(new AllTCasesRefined());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+			//			try {
+			//				EventAdmin eventAdmin = EventAdmin.getInstance();
+			//				eventAdmin.announceEvent(new AllTCasesRefined());
+			//			} catch (Exception e) {
+			//				e.printStackTrace();
+			//			}
 		} /*else if (event_ instanceof TCaseRefineRequested){
         TCaseRefineRequested tCaseRefineRequested = (TCaseRefineRequested) event_;
         opName = tCaseRefineRequested.getOpName();
@@ -638,7 +645,7 @@ public class Controller extends IIComponent {
         }*/ // Es incorrecto. Se mandara 2 veces a refinar el mismo caso!!!
 		else if (event_ instanceof FastestResetted) {
 			setOriginalSpec(null);
-			setUnfoldedSpec(null);
+			//setUnfoldedSpec(null);
 			setLoadedOpsRep(new ConcreteRepository<String>());
 			setOpsToTestRep(new ConcreteRepository<String>());
 			setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
@@ -650,9 +657,9 @@ public class Controller extends IIComponent {
 			absTCaseRefTCaseMap.clear();
 			refinementRules.clear();
 			selectedRefLaw = null;
-			refining = false;
+			//refining = false;
 			FastestUtils.resetTacticsNumbersMap();
-			
+
 			//agregado sin pensar mucho.
 			classToTestRep = new ConcreteRepository<String>();
 			schemaPredicatesRep = new ConcreteRepository<String>();
@@ -693,26 +700,20 @@ public class Controller extends IIComponent {
 
 		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
 		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-		String opName;
+		//String opName;
 		Scheme tClassScheme = null;
 		while (iterator.hasNext() && tClassScheme == null) {
 			Map.Entry<String, TClassNode> mapEntry = iterator.next();
-			opName = mapEntry.getKey();
+			//opName = mapEntry.getKey();
 			TClassNode opTTreeRoot = mapEntry.getValue();
-
 			tClassScheme = opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(tClassName, 0));
 		}
 
 		AxPara tClassAxPara = tClassScheme.getMyAxPara();
 		Pred tClassAxParaPred = SpecUtils.getAxParaPred(tClassAxPara);
-
 		ContainsTermVerifier ctVerifier = new ContainsTermVerifier();
-
-		Set<Map.Entry<RefExpr, Expr>> axDefsValuesSet =
-				axDefsValues.entrySet();
-
-		Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =
-				axDefsValuesSet.iterator();
+		Set<Map.Entry<RefExpr, Expr>> axDefsValuesSet = axDefsValues.entrySet();
+		Iterator<Map.Entry<RefExpr, Expr>> axDefsValuesIt =	axDefsValuesSet.iterator();
 
 		while (axDefsValuesIt.hasNext()) {
 			Map.Entry<RefExpr, Expr> entry = axDefsValuesIt.next();
@@ -755,9 +756,9 @@ public class Controller extends IIComponent {
 	 * Sets the unfolded specification of the system under test.
 	 * @param spec
 	 */
-	public void setUnfoldedSpec(Spec spec) {
-		unfoldedSpec = spec;
-	}
+//	public void setUnfoldedSpec(Spec spec) {
+//		unfoldedSpec = spec;
+//	}
 
 	/**
 	 * Gets the unfolded specification of the system under test.
@@ -1091,7 +1092,7 @@ public class Controller extends IIComponent {
 		this.blockedAxDefs = blockedAxDefs;
 	}
 
-	public Map<String, List<ConcreteTCase>> getOpTCaseRefinedMap() {
+	public Map<String, ConcreteTCase> getOpTCaseRefinedMap() {
 		return opRefTCaseMap;
 	}
 
@@ -1234,11 +1235,11 @@ public class Controller extends IIComponent {
 	public int getSetlogTimeout(){
 		return setlogTimeout;        
 	}
-	
+
 	public String getSetlogFile(){
 		return setlogFile;        
 	}
-	
+
 	public boolean getSetlogPrint(){
 		return setlogPrint;        
 	}

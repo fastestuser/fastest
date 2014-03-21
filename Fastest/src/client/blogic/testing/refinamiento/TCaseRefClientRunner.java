@@ -15,8 +15,7 @@ public class TCaseRefClientRunner implements Runnable {
 	private String pathUUT;
 	private String targetLanguaje;
 
-	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase,
-			String pathUUT, String targetLanguaje) {
+	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase,String pathUUT, String targetLanguaje) {
 		this.opName = opName;
 		this.abstractTCase = abstractTCase;
 		this.pathUUT = pathUUT;

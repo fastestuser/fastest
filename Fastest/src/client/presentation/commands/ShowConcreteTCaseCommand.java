@@ -3,10 +3,14 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import common.z.AbstractTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.ConcreteTCase;
-import client.blogic.testing.refinement.Utils;
+import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.TTreeNode;
+import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
+import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 
 /**
  * An instance of this class allow the presentation of the concrete test cases which are
@@ -40,66 +44,58 @@ public class ShowConcreteTCaseCommand implements Command{
 			output.println("Invalid parameters.  Try 'help'.");
 			return;
 		}
+		Controller controller = clientTextUI.getMyController();
+		Map<String, ConcreteTCase> opCtcMap = controller.getOpTCaseRefinedMap();
+		Map<String,ConcreteTCase> absCtcMap = controller.getAbsTCaseConcrTCaseMap();
+		if (opCtcMap==null){
+			output.println("There aren't refined cases");
+			return;
+		}
+
 		if(argc>2)
 			folderPath = argv[2];
 
-
 		List<ConcreteTCase> ctCases = new ArrayList<ConcreteTCase>();
-
-		Controller controller = clientTextUI.getMyController();
-		String ctcName = args;
-		Map<String, List<ConcreteTCase>> opCtcMap = controller.getOpTCaseRefinedMap();
-		Set<Map.Entry<String, List<ConcreteTCase>>> set = opCtcMap.entrySet();
-		Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator = set.iterator();
-		if(ctcFilter.equals("-all")){
-			while(iterator.hasNext()){
-				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator.next();
-				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-
-				ctCases.addAll(auxCTCases);
-			}
+		if (opCtcMap.get(ctcFilter)!=null){
+			ctCases.add(opCtcMap.get(ctcFilter));
+		}
+		else if(ctcFilter.equals("-all"))
+			ctCases.addAll(opCtcMap.values());
+		else if (absCtcMap.get(ctcFilter)!=null){
+			ctCases.add(absCtcMap.get(ctcFilter));
 		}
 		else{
-			boolean founded = false;
-			// We obtain all the cases related to an operation if ctcfilter is the
-			// the name of a refined operation, or the concrete test case whose name
-			// matches with ctcfilter, or return with an error message otherwise
-			while(iterator.hasNext() && !founded){
-				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator.next();
-				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-				String opName = mapEntry.getKey();
-				if(opName.equals(ctcFilter)){
-					ctCases.addAll(auxCTCases);
-					founded = true;
-				}
-				else{
-					for(int i=0;i<auxCTCases.size() && !founded;i++){
-						ConcreteTCase auxCTCase = auxCTCases.get(i);
-						String auxCTCName = auxCTCase.getConcreteTCaseName();
-						if(auxCTCName.equals(ctcFilter)){
-							ctCases.add(auxCTCase);
-							founded = true;
-						}
-					}
+
+			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+			Iterator<TClassNode> it = opTTreeMap.values().iterator();
+			Map<String, AbstractTCase> tcaMap = null;
+			TTreeNode ttnode = null;
+			while(it.hasNext()){
+				ttnode = it.next().acceptVisitor(new TTreeNodeFinder(ctcFilter));
+				if (ttnode !=null){
+					tcaMap = ttnode.acceptVisitor(new TCaseNodeFinder());
+					break;
 				}
 			}
-			if(founded==false){
+			if (ttnode !=null){
+				Iterator<String> it2 = tcaMap.keySet().iterator();
+				ConcreteTCase ctc;
+				while (it2.hasNext()){
+					ctc = absCtcMap.get(it2.next());
+					if (ctc !=null)	ctCases.add(ctc );
+				}
+			}
+			else {
 				output.println(ctcFilter+" is not the name of a concrete test case or the name of a refined operation");
 				return;
 			}
 		}
-		if(ctCases.size()==0){
-			output.println(" There aren't refined cases");
-			return;
-		}
+
 		// Now we decide if we print the results in the screen or in files
 		if(folderPath.equals("")){
 			// We must print in the screen
-			for(int i=0;i<ctCases.size();i++){
-				ConcreteTCase auxCTCase = ctCases.get(i);
-				String auxCTCName = auxCTCase.getConcreteTCaseName();
-				System.out.println(Utils.printCTC(auxCTCName,auxCTCase)+"\n\n");
-			}
+			for(int i=0;i<ctCases.size();i++)
+				output.println(ctCases.get(i).toString() + "\n\n");
 		}
 		else{
 			try{
@@ -115,7 +111,7 @@ public class ShowConcreteTCaseCommand implements Command{
 						fileExtension = ".c";
 					File auxFile = new File(folderPath + File.separator + auxCTCName + fileExtension);
 					BufferedWriter auxBW = new BufferedWriter(new FileWriter(auxFile));
-					auxBW.write(Utils.printCTC(auxCTCName,auxCTCase));
+					auxBW.write(auxCTCase.toString());
 					auxBW.close();
 				}
 			}
