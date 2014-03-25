@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.BranchList;
 import net.sourceforge.czt.z.ast.FreePara;
@@ -20,15 +23,18 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
+
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import common.util.ExprIterator;
 import common.z.SpecUtils;
+import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
@@ -46,7 +52,7 @@ public final class FTCRLUtils {
 	static LinkedList<String> privateVars = new LinkedList<String>(); //Indica las variables privadas (no publicas en verdad) de java
 	//es la regla actual, es decir la que elije el usuario en el comando refine
 	static RefinementRule reglaActual;
-	
+
 	public static void setRule(RefinementRule rule){
 		reglaActual = rule;
 	}
@@ -65,7 +71,7 @@ public final class FTCRLUtils {
 	public static String getEpilogue(){
 		return reglaActual.getEpilogue();
 	}
-	
+
 	private static RefinementRuleContext preproc(String ruleString){
 		ANTLRInputStream input = new ANTLRInputStream(ruleString); 
 		FTCRLLexer lexer = new FTCRLLexer(input); 
@@ -78,7 +84,7 @@ public final class FTCRLUtils {
 		ruleContext = new FTCRLParser(tokens).refinementRule();
 		return ruleContext;
 	}
-	
+
 	private static String resolverPreamble(String preamble){
 		RefinementRules rules = RefinementRules.getInstance();
 		String REGEX = "^(\\w*)\\.@PREAMBLE$";
@@ -157,10 +163,11 @@ public final class FTCRLUtils {
 	//Crea un map con los tyipos de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZTypesMap(String tcase){
 
+		HashMap<String,String> types = clientTextUI.getMyController().getUserDefinedTypes();
 		HashMap<String, String> map = new HashMap<String, String>();
 
 		//Limpiamos los espacios y doble barras
-		tcase = tcase.replaceAll(" ", "");
+		//tcase = tcase.replaceAll(" ", "");
 		tcase = tcase.replaceAll("\\\\\\\\", "");
 
 		String lineas[] = tcase.split("\\where");
@@ -174,13 +181,23 @@ public final class FTCRLUtils {
 
 			String vars[] = reg[0].split(","); //Lista de variables
 			for (int j=0; j < vars.length; j++) {
-				map.put(vars[j].replaceAll(" ", ""),type);
+				map.put(vars[j].replaceAll(" ", ""),unfoldTypes(types, type));
 			}
 		}
 
 		return map;
 	}
 
+	private static String unfoldTypes(HashMap<String,String> types, String type) {
+		String unfolded = "";
+		
+		Iterator<String> it = types.keySet().iterator();
+		while (it.hasNext()){
+			String t = it.next();
+			type = type.replaceAll("(^|\\W)" + t + "($|\\W)", "$1" + types.get(t) + "$2");
+		}
+		return type;
+	}
 	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
 	public static HashMap<String, String> createJavaTypesMap(String javaCode){
 
@@ -333,6 +350,9 @@ public final class FTCRLUtils {
 	//Ej: entrada: "LinkedList<String>" -> salida: String
 	public static String getInnerType(String type) {
 		//Hay que controlarla
+		if (type.endsWith("[]"))
+			return type.substring(0, type.length()-2);
+
 		int start = type.indexOf("<");
 		int end = type.lastIndexOf(">");
 		if ((start != -1) && (end != -1)){
@@ -491,37 +511,41 @@ public final class FTCRLUtils {
 		}
 		return "";
 	}
+
+	//No esta en uso aun, y no esta testeada
 	public static String concatFTCRLStringSets(SExpr sExprLeft, SExpr sExprRight) {
 		//{a,b,c} ++ {1,2,3}
-		String aux = sExprLeft.exp + "++" + sExprRight.exp;
+		String aux = "¬A¬" + "++" + "¬B¬";
 		String newSet = "";
 		if (isSet(sExprLeft.type)){
-			ExprIterator it = new ExprIterator(sExprLeft.type);
+			ExprIterator it = new ExprIterator(sExprLeft.exp);
 			while (it.hasNext()){
-				String e = aux.replaceFirst(sExprLeft.exp, it.next());
+				String e = aux.replaceFirst("¬A¬", it.next());
 				if (!newSet.equals(""))
 					newSet += ",";
 				newSet += e;
 			}
+		} else {
+			newSet = aux.replaceFirst("¬A¬", sExprLeft.exp);
 		}
-		
-		if (!newSet.equals("")){
-			aux = newSet;
-			newSet = "";
-		}
-		
+
+		aux = newSet;
+
 		//a++{1,2,3},b++{1,2,3},c++{1,2,3}
 		if (isSet(sExprRight.type)){
-			ExprIterator it = new ExprIterator(sExprRight.type);
+			newSet = "";
+			ExprIterator it = new ExprIterator(sExprRight.exp);
 			while (it.hasNext()){
-				String e = aux.replaceFirst(sExprRight.exp, it.next());
+				String e = aux.replaceAll("¬B¬", it.next());
 				if (!newSet.equals(""))
 					newSet += ",";
 				newSet += e;
 			}
+		} else {
+			newSet = aux.replaceAll("¬B¬", sExprRight.exp);
 		}
-		
-		return newSet;
+
+		return "\\{" + newSet + "\\}";
 	}
 
 }

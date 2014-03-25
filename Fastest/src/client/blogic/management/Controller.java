@@ -3,6 +3,7 @@ package client.blogic.management;
 import java.util.concurrent.locks.*;
 import java.io.*;
 import java.util.*;
+
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.RefExpr;
@@ -97,6 +98,8 @@ public final class Controller extends IIComponent {
 	private List<FreePara> freeParas;
 	// Son los nombres de los tipos basicos
 	private List<String> basicTypeNames;
+	//Los tipos definidos por el usuario
+	private HashMap<String, String> userDefineTypes;
 	// Gives the values assigned to the variables defined in axiomatic
 	// definitions
 	private Map<RefExpr, Expr> axDefsValues;
@@ -1270,6 +1273,16 @@ public final class Controller extends IIComponent {
 
 	public void setInicio(long inicio){
 		this.inicio = inicio;
+	}
+
+	public void setUserDefinedTypes(HashMap<String, String> userDefinedTypes) {
+		this.userDefineTypes = userDefinedTypes;
+		
+	}
+	
+	public HashMap<String, String> getUserDefinedTypes() {
+		return this.userDefineTypes;
+		
 	}
 
 }

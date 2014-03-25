@@ -141,7 +141,8 @@ zExprString
 	|	number
 	|	AUTOFILL
 	|	sName (DOT dotSetOper)* (DOT (CARD | ARROBA STR))?
-	|	zExprString PLUSPLUS zExprString
+	|	zExprSet PLUSPLUS (zExprString | zExprSet)
+	|	zExprString PLUSPLUS (zExprString | zExprSet)
 	;
 
 zExprSeq

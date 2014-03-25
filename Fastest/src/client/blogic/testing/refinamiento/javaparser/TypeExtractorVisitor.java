@@ -58,7 +58,12 @@ public class TypeExtractorVisitor extends Java7ParserBaseVisitor{
 		
 		Iterator<VariableDeclaratorContext> it = ctx.variableDeclarator().iterator();
 		while (it.hasNext()) {
-			String var = it.next().Identifier().getText();
+			VariableDeclaratorContext elem = it.next();
+			//Cargamos el tipo como Array si tiene "[]"
+			int i = elem.LBRACKET().size();
+			for (int j = 0; j < i; j++)
+				type = type.concat("[]");
+			String var = elem.Identifier().getText();
 			map.put(visitedClass + "." + var,type);
 			if (!isPublic) //Si no es publica, debo agregarla a la lista de variables privadas
 				privateVars.add(visitedClass + "." + var);
@@ -80,7 +85,12 @@ public class TypeExtractorVisitor extends Java7ParserBaseVisitor{
 		String type = ctx.type().getText();
 		Iterator<VariableDeclaratorContext> it = ctx.variableDeclarator().iterator();
 		while (it.hasNext()) {
-			String var = it.next().Identifier().getText();
+			VariableDeclaratorContext elem = it.next();
+			//Cargamos el tipo como Array si tiene "[]"
+			int i = elem.LBRACKET().size();
+			for (int j = 0; j < i; j++)
+				type = type.concat("[]");
+			String var = elem.Identifier().getText();
 			map.put(var, type);
 		}
 		

@@ -6,6 +6,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import common.util.ExprIterator;
 import client.blogic.testing.refinamiento.FTCRLParser.DataStructContext;
 import client.blogic.testing.refinamiento.FTCRLParser.DotSetOperContext;
@@ -13,8 +17,12 @@ import client.blogic.testing.refinamiento.FTCRLParser.LawContext;
 import client.blogic.testing.refinamiento.FTCRLParser.LawsContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementSentenceContext;
+import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SNameContext;
 import client.blogic.testing.refinamiento.FTCRLParser.UutContext;
+import client.blogic.testing.refinamiento.FTCRLParser.ZExprContext;
+import client.blogic.testing.refinamiento.FTCRLParser.ZExprSetContext;
+import client.blogic.testing.refinamiento.FTCRLParser.ZExprStringContext;
 import client.blogic.testing.refinamiento.basicrefinement.*;
 
 public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
@@ -461,8 +469,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 			return s;
 
-		} else
-			return null;
+		} else if (ctx.setExtension() != null){ //Conjunto por extension
+			return new SExpr(ctx.getText(), "\\power\\num");
+		}
+		return null;
 	}
 
 	//Este metodo permite visitar un ZExprNum para obtener su valor y su tipo.
@@ -525,7 +535,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		if (ctx.string() != null){ //String
 			String string = ctx.string().getText();
 			string = string.substring(1, string.length()-1);
-			return new SExpr(string, "\\FTCRLString");
+			return new SExpr(string, "FTCRLString");
 		} else if (ctx.number() != null){ //Number
 			return new SExpr(ctx.number().getText(), "\\num");
 		} else if (ctx.sName() != null){ //DOT
@@ -557,31 +567,62 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			}
 
 			//Luego veo si hay un CARD o STR
-
 			if (ctx.CARD() != null){
 				ExprIterator card = new ExprIterator(sExpr.exp);
 				sExpr.exp = Integer.toString(card.cardinalidad());
 				sExpr.type = "\\num";
 			} else if (ctx.STR() != null){
 				sExpr.exp = sExpr.exp;
-				sExpr.type = "\\FTCRLString";
+				sExpr.type = "FTCRLString";
 			}
 			return sExpr;
 
 		} else if (ctx.PLUSPLUS() != null){ //++
-			SExpr sExprLeft = visitZExprString(ctx.zExprString(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprString(ctx.zExprString(1), replacement, zValuesMap, zTypesMap);
+			//Cada hijo puede ser un FTCRLString o un conjunto
+			ParseTree l = ctx.getChild(0);
+			SExpr sExprL = new SExpr();
+			if (l instanceof ZExprStringContext)
+				sExprL = visitZExprString((ZExprStringContext)l, replacement, zValuesMap, zTypesMap);
+			else
+				sExprL = visitZExprSet((ZExprSetContext)l, replacement, zValuesMap, zTypesMap);
+			ParseTree r = ctx.getChild(2);
+			SExpr sExprR = new SExpr();
+			if (r instanceof ZExprStringContext)
+				sExprR = visitZExprString((ZExprStringContext)r, replacement, zValuesMap, zTypesMap);
+			else
+				sExprR = visitZExprSet((ZExprSetContext)r, replacement, zValuesMap, zTypesMap);
 
 			//Si alguno es un conjunto, debo procesarlos de forma especial
-			if (FTCRLUtils.isSet(sExprLeft.type) || FTCRLUtils.isSet(sExprRight.type)){
+			if (FTCRLUtils.isSet(sExprL.type) || FTCRLUtils.isSet(sExprR.type)){
 
-				String merge = FTCRLUtils.concatFTCRLStringSets(sExprLeft, sExprRight);
-				return new SExpr(merge, "\\power(\\FTCRLString)");
-				
+				String merge = FTCRLUtils.concatFTCRLStringSets(sExprL, sExprR);
+				ExprIterator it = new ExprIterator(merge);
+				String set = "";
+				SExpr elem = new SExpr();
+				String elemType = "";
+				while (it.hasNext()){
+					String e = it.next();
+					ANTLRInputStream in = new ANTLRInputStream(e);
+					FTCRLLexer lexer = new FTCRLLexer(in);
+					CommonTokenStream tokens = new CommonTokenStream(lexer);
+					FTCRLParser parser = new FTCRLParser(tokens);
+					SExprRefinementContext tree = parser.sExprRefinement();
+					elem = visitSExprRefinement(tree, replacement, zValuesMap, zTypesMap);
+					if (!set.equals(""))
+						set += ",";
+					else //Solo para el primer "elem"
+						elemType = elem.type;
+					set += elem.exp;
+				}
+				return new SExpr("\\{" + set + "\\}", "\\power(" + elemType + ")");
+
 
 			} else {
-				String concat = sExprLeft.exp + sExprRight.exp;
-				return new SExpr(concat, "\\FTCRLString");
+				String concat = sExprL.exp + sExprR.exp;
+				if (sExprL.type.equals("FTCRLString") || sExprR.type.equals("FTCRLString"))
+					return new SExpr(concat, "FTCRLString");
+				else
+					return new SExpr(concat, "\\num");
 			}
 
 		}
@@ -644,7 +685,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//y typeVariable es l,
 	//debera hacer las asignaciones: l.add(1); l.add(2); l.add(3) 
 	public String refineFromZToJava(SExpr zExpr, String toType, SExpr javaExpr) {
-
 		//En base al tipo en Z de sValue debo utilizar una determinada clase para refinarla
 		String values;
 		if (zExpr.type.equals("\\num") || zExpr.type.equals("\\nat"))
@@ -657,13 +697,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			zExpr.exp = zExpr.exp.replaceFirst("^\\\\langle", "\\\\{");
 			zExpr.exp = zExpr.exp.replaceFirst("\\\\rangle$", "\\\\}");
 			return SetRefinement.refine(zExpr, toType, javaExpr, this);
+		} else if (zExpr.type.equals("FTCRLString")){
+			return FTCRLStringRefinement.refine(zExpr, toType, javaExpr, this);
 		} else if(FTCRLUtils.isBasicType(zExpr.type)){
 			//Es un tipo basico
 			return GivenTypeRefinement.refine(zExpr, toType, javaExpr, this);
 		} else if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""){
 			return FreeTypesRefinement.refine(zExpr, values, javaExpr, null, this);
-		} else if (zExpr.type.equals("\\FTCRLString")){
-			return FTCRLStringRefinement.refine(zExpr, toType, javaExpr, this);
 		} else {
 			return "";
 		}

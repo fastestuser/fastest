@@ -3,7 +3,6 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
-
 import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.Key;
 import net.sourceforge.czt.session.Source;
@@ -12,7 +11,6 @@ import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.parser.util.CztError;
 import net.sourceforge.czt.parser.util.CztErrorList;
 import net.sourceforge.czt.z.ast.*;
-
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.management.Controller;
@@ -32,8 +30,10 @@ import common.z.czt.visitors.EmptySetReplacer;
 import common.z.czt.visitors.FreeTypeNamesExtractor;
 import common.z.czt.visitors.OpNamesExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
+import common.z.czt.visitors.UserDefinedTypesExtractor;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
+
 import java.util.List;
 
 
@@ -150,6 +150,10 @@ public class LoadSpecCommand implements Command {
             // The specification is traverse to identify the free types
             List<String> freeTypeNames = spec.accept(new FreeTypeNamesExtractor());
 
+            //Buscamos tambien los tipos definidos a partir de otros tipos
+            HashMap<String,String> userDefinedTypes = spec.accept(new UserDefinedTypesExtractor());
+            controller.setUserDefinedTypes(userDefinedTypes);
+            
             Map<RefExpr, Expr> axDefsValues = new HashMap<RefExpr, Expr>();
             Map<String, Expr> axDefsRequired = new HashMap<String, Expr>();
             Map<String, List<String>> basicAxDefs = new HashMap<String, List<String>>();

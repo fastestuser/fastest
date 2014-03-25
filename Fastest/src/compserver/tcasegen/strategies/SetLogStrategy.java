@@ -50,8 +50,6 @@ public final class SetLogStrategy implements TCaseStrategy{
 		Controller controller = clientUI.getMyController();
 		String tClassName = tClass.getSchName();
 
-
-
 		System.out.println("Trying to generate a test case for the class: " + tClassName);
 
 		List<FreePara> freeParas = controller.getFreeParas();
