@@ -46,38 +46,44 @@ public class ShowConcreteTCaseCommand implements Command{
 		}
 		Controller controller = clientTextUI.getMyController();
 		Map<String, ConcreteTCase> opCtcMap = controller.getOpTCaseRefinedMap();
-		Map<String,ConcreteTCase> absCtcMap = controller.getAbsTCaseConcrTCaseMap();
+		Map<String, ConcreteTCase> absCtcMap = controller.getAbsTCaseConcrTCaseMap();
 		if (opCtcMap==null){
 			output.println("There aren't refined cases");
 			return;
 		}
-
 		if(argc>2)
 			folderPath = argv[2];
 
 		List<ConcreteTCase> ctCases = new ArrayList<ConcreteTCase>();
+		//si es una solo caso concreto
 		if (opCtcMap.get(ctcFilter)!=null){
 			ctCases.add(opCtcMap.get(ctcFilter));
 		}
 		else if(ctcFilter.equals("-all"))
 			ctCases.addAll(opCtcMap.values());
-		else if (absCtcMap.get(ctcFilter)!=null){
+		//si es un solo caso abstracto del arbol, es decir una hoja
+		else if (absCtcMap.get(ctcFilter)!=null)
 			ctCases.add(absCtcMap.get(ctcFilter));
-		}
-		else{
-
+		else {
 			Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-			Iterator<TClassNode> it = opTTreeMap.values().iterator();
+			TClassNode opTTreeRoot = opTTreeMap.get(ctcFilter);
 			Map<String, AbstractTCase> tcaMap = null;
-			TTreeNode ttnode = null;
-			while(it.hasNext()){
-				ttnode = it.next().acceptVisitor(new TTreeNodeFinder(ctcFilter));
-				if (ttnode !=null){
-					tcaMap = ttnode.acceptVisitor(new TCaseNodeFinder());
-					break;
+			//si es una operacion z
+			if(opTTreeRoot != null	)
+				tcaMap = opTTreeRoot.acceptVisitor(new TCaseNodeFinder());
+			//si es cualquier otra operacion z del arbol
+			else{
+				Iterator<TClassNode> it = opTTreeMap.values().iterator();
+				TTreeNode ttnode = null;
+				while(it.hasNext()){
+					ttnode = it.next().acceptVisitor(new TTreeNodeFinder(ctcFilter));
+					if (ttnode !=null){
+						tcaMap = ttnode.acceptVisitor(new TCaseNodeFinder());
+						break;
+					}
 				}
 			}
-			if (ttnode !=null){
+			if (tcaMap !=null){
 				Iterator<String> it2 = tcaMap.keySet().iterator();
 				ConcreteTCase ctc;
 				while (it2.hasNext()){
@@ -86,11 +92,11 @@ public class ShowConcreteTCaseCommand implements Command{
 				}
 			}
 			else {
-				output.println(ctcFilter+" is not the name of a concrete test case or the name of a refined operation");
+				output.println(ctcFilter+" is not the name of a concrete test case or the name of a z operation in the testing tree");
 				return;
 			}
 		}
-
+		
 		// Now we decide if we print the results in the screen or in files
 		if(folderPath.equals("")){
 			// We must print in the screen
