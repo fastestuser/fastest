@@ -52,7 +52,7 @@ public class AbstractCommand implements Command{
 
 		//If not, we check if name is the name of a concrete test case and obtain it
 		if(!isOp)
-			concreteTCase = FastestUtils.getConcreteTCase(controller, name);
+			concreteTCase = FastestUtils.getConcreteTCase(controller. name);
 
 		
 		if(!isOp && concreteTCase == null){

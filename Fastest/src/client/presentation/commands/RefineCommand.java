@@ -72,22 +72,15 @@ public class RefineCommand implements Command {
 				}
 				//If not, we check if name is the name of an abstract test case or a name of a ttree node
 				if(!isOp){
-					abstractTCase = FastestUtils.getAbstractTCase(controller, opName);
-					if (abstractTCase != null){
-						tcaMap = new HashMap<String, AbstractTCase>();
-						tcaMap.put(opName, abstractTCase);
-					}
-					else {
-							Iterator<TClassNode> it = opTTreeMap.values().iterator();
-							TTreeNode ttnode = null;
-							while(it.hasNext()){
-								ttnode = it.next().acceptVisitor(new TTreeNodeFinder(opName));
-								if (ttnode !=null){
-									tcaMap = ttnode.acceptVisitor(new TCaseNodeFinder());
-									break;
-								}
-							}
+					Iterator<TClassNode> it = opTTreeMap.values().iterator();
+					TTreeNode ttnode = null;
+					while(it.hasNext()){
+						ttnode = it.next().acceptVisitor(new TTreeNodeFinder(opName));
+						if (ttnode !=null){
+							tcaMap = ttnode.acceptVisitor(new TCaseNodeFinder());
+							break;
 						}
+					}
 				}
 				if (tcaMap==null){
 					output.println("'" + opName + "' is neither the name of a loaded operation, nor an abstract Test Case nor a Test Class."); 

@@ -2,7 +2,6 @@ package common.fastest;
 
 import java.util.*;
 import java.io.*;
-import java.net.URL;
 
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
@@ -13,16 +12,12 @@ import common.repository.AbstractIterator;
 import client.blogic.testing.ttree.*;
 import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.tactics.Tactic;
-import common.z.AbstractTCase;
 import common.z.SpecUtils;
-import common.z.TClass;
-import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
-import client.blogic.testing.refinamiento.ConcreteTCase;
 
 /**
  * Provides general utilities related to Fastest objects.
  */
-public class FastestUtils {
+public final class FastestUtils {
 
 	public static String allNonBasicAxDefReplaced(AxPara axPara, Controller controller){
 		//We check to see if all the non basic axDefs in the TClass has been replaced,
@@ -167,7 +162,7 @@ public class FastestUtils {
 		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
 		while (iterator.hasNext()) {
 			Map.Entry<String, TClassNode> mapEntry = iterator.next();
-			String opTTreeName = mapEntry.getKey();
+			//String opTTreeName = mapEntry.getKey();
 			TClassNode tTree = mapEntry.getValue();
 			TTreeNode tTreeNode = tTree.acceptVisitor(new TTreeNodeFinder(tNodeName));
 			if (tTreeNode != null) {
@@ -204,62 +199,40 @@ public class FastestUtils {
 					tactic.resetNumbersMap();
 				}
 			}
+			in.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	/**
-	 * Returns an AbstractTCase stored in the controller whose name is the string
-	 * that is passed as argument, if it exists, or null otherwise
-	 * @param controller A reference to the controller
-	 * @param tCaseName the string to search
-	 */
-	public static AbstractTCase getAbstractTCase(Controller controller, String tCaseName) {
-		// We look for the abstract case whose name is tCaseName
-		AbstractTCase abstractTCase = null;
-		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
-		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
-		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
-		boolean tcaFounded = false;
-		while (iterator.hasNext() && !tcaFounded) {
-			Map.Entry<String, TClassNode> mapEntry = iterator.next();
-			String opName = mapEntry.getKey();
-			TClassNode opTTreeRoot = mapEntry.getValue();
-			Map<String, AbstractTCase> tcaMap = opTTreeRoot.acceptVisitor(new TCaseNodeFinder());
-			Set<String> keySet = tcaMap.keySet();
-			if (keySet.contains(tCaseName)) {
-				tcaFounded = true;
-				abstractTCase = tcaMap.get(tCaseName);
-			}
-		}
-		return abstractTCase;
-	}
+//	/**
+//	 * Returns an AbstractTCase stored in the controller whose name is the string
+//	 * that is passed as argument, if it exists, or null otherwise
+//	 * @param controller A reference to the controller
+//	 * @param tCaseName the string to search
+//	 */
+//	public static AbstractTCase getAbstractTCase(Controller controller, String tCaseName) {
+//		// We look for the abstract case whose name is tCaseName
+//		AbstractTCase abstractTCase = null;
+//		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+//		Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
+//		Iterator<Map.Entry<String, TClassNode>> iterator = set.iterator();
+//		boolean tcaFounded = false;
+//		while (iterator.hasNext() && !tcaFounded) {
+//			Map.Entry<String, TClassNode> mapEntry = iterator.next();
+//			String opName = mapEntry.getKey();
+//			TClassNode opTTreeRoot = mapEntry.getValue();
+//			Map<String, AbstractTCase> tcaMap = opTTreeRoot.acceptVisitor(new TCaseNodeFinder());
+//			Set<String> keySet = tcaMap.keySet();
+//			if (keySet.contains(tCaseName)) {
+//				tcaFounded = true;
+//				abstractTCase = tcaMap.get(tCaseName);
+//			}
+//		}
+//		return abstractTCase;
+//	}
 
-	/**
-	 * Returns a ConcreteTCase stored in the controller whose name is the string
-	 * that is passed as argument, if it exists, or null otherwise
-	 * @param controller A reference to the controller
-	 * @param ctcName the string to search
-	 */
-	public static ConcreteTCase getConcreteTCase(Controller controller, String ctcName) {
-
-		Map<String, List<ConcreteTCase>> opCtcMap = controller.getOpTCaseRefinedMap();
-		Set<Map.Entry<String, List<ConcreteTCase>>> set = opCtcMap.entrySet();
-		Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator = set.iterator();
-		while (iterator.hasNext()) {
-			Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator.next();
-			List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-			for (int i = 0; i < auxCTCases.size(); i++) {
-				ConcreteTCase auxCase = auxCTCases.get(i);
-				String auxCaseName = auxCase.getConcreteTCaseName();
-				if (auxCaseName.equals(ctcName)) {
-					return auxCase;
-				}
-			}
-		}
-		return null;
-	}
+	
 
 	/**
 	 * Returns the name of the operation related to a class name. This method exploits the particular way of

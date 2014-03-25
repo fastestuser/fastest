@@ -41,7 +41,7 @@ public class RunConcreteTCaseCommand implements Command{
 	runCode = runCode.replace("(.*)",ctcName);
 
 	// We look for the concrete case with name ctcName
-	ConcreteTCase ctCase = FastestUtils.getConcreteTCase(controller, ctcName);
+	ConcreteTCase ctCase = controller.getOpTCaseRefinedMap().get(ctcName); 
 	if(ctCase==null){
 		System.out.println(ctcName+" is not the name of a refined case");
 		return;
