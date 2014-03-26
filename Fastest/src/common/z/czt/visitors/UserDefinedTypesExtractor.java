@@ -34,8 +34,9 @@ TermVisitor<HashMap<String,String>> {
 					Decl constDecl = zDeclList.get(0);
 					if (constDecl instanceof ConstDecl){
 						Expr expr = ((ConstDecl) constDecl).getExpr();
-						if (expr instanceof RefExpr) //Un RefExpr comunmente es un nuevo tipo
+						if (expr instanceof RefExpr){ //Un RefExpr comunmente es un nuevo tipo
 							userDefinedTypes.put(((ConstDecl) constDecl).getZName().toString(), SpecUtils.termToLatex(expr));
+							}
 					}
 				}
 			}

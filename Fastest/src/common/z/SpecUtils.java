@@ -19,10 +19,8 @@ import common.z.czt.visitors.AndOrPredDistributor;
 import common.z.czt.visitors.NegPredDistributor;
 import common.z.czt.visitors.AndPredClausesExtractor;
 import common.z.czt.visitors.SchemeUnfolder;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.parser.z.ParseUtils;
 import common.z.czt.UniqueZLive;
@@ -35,7 +33,7 @@ import net.sourceforge.czt.z.ast.*;
  * Provides general  utilities related to Z constructions.
  * @author Pablo Rodriguez Monetti
  */
-public class SpecUtils {
+public final class SpecUtils {
 
     public static ConstDecl getConstDecl(AxPara axPara) {
         ConstDecl constDecl = null;

@@ -1,9 +1,7 @@
 package client.presentation.commands;
 
 import java.io.*;
-
 import net.sourceforge.czt.z.ast.*;
-
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import common.z.SpecUtils;
@@ -13,7 +11,7 @@ import common.z.SpecUtils;
  * if any.
  * @author Pablo Rodriguez Monetti
  */
-public class ShowSpecCommand implements Command {
+public final class ShowSpecCommand implements Command {
 
     /**
      * Runs this command.

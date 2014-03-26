@@ -189,14 +189,20 @@ public final class FTCRLUtils {
 	}
 
 	private static String unfoldTypes(HashMap<String,String> types, String type) {
-		String unfolded = "";
-		
 		Iterator<String> it = types.keySet().iterator();
+		String t,aux,ntipo = null;
 		while (it.hasNext()){
-			String t = it.next();
-			type = type.replaceAll("(^|\\W)" + t + "($|\\W)", "$1" + types.get(t) + "$2");
+			t = it.next();
+			aux = types.get(t);
+			aux = aux.replace("\\", "¬¬");
+			aux = aux.replace('¬', '\\');
+			ntipo = type.replaceAll("(^|\\W)" + t + "($|\\W)", "$1" + aux + "$2");
+			if (!ntipo.equals(type)){
+				ntipo = unfoldTypes(types,ntipo);
+				type = ntipo;
+			}
 		}
-		return type;
+		return ntipo;
 	}
 	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
 	public static HashMap<String, String> createJavaTypesMap(String javaCode){

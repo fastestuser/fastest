@@ -64,7 +64,7 @@ import net.sourceforge.czt.z.visitor.SpecVisitor;
  *
  * @author Pablo Rodriguez Monetti
  */
-public class SchemeUnfolder implements SpecVisitor<Term>,
+public final class SchemeUnfolder implements SpecVisitor<Term>,
         AxParaVisitor<Term>,
         AndExprVisitor<Term>,
         OrExprVisitor<Term>,
@@ -82,8 +82,7 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
     private Map<String, AxPara> unfoldedAxParas;
     private ZParaList zParaList;
 
-    public SchemeUnfolder(AbstractRepository<String> opNames,
-            AbstractRepository<String> schPredNames) {
+    public SchemeUnfolder(AbstractRepository<String> opNames,AbstractRepository<String> schPredNames) {
         this.opNames = opNames;
         this.schPredNames = schPredNames;
         //MODIFICADO
@@ -482,9 +481,9 @@ public class SchemeUnfolder implements SpecVisitor<Term>,
             }
 
             unfoldedAxParaSchExpr = SpecUtils.getAxParaSchExpr(unfoldedAxPara);
-
-
-            AbstractRepository<String> varNameRep = SpecUtils.getVarNames(unfoldedAxParaSchExpr);
+            AbstractRepository<String> varNameRep = null;
+            if (unfoldedAxParaSchExpr != null)
+            	varNameRep = SpecUtils.getVarNames(unfoldedAxParaSchExpr);
             PrimeVarsMaker primeVisitor = new PrimeVarsMaker(varNameRep);
 
             boolean isSelOpOrSelPred = false;

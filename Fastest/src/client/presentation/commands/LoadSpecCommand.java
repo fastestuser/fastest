@@ -358,8 +358,7 @@ public class LoadSpecCommand implements Command {
             (rt.exec(cmdScriptExec)).waitFor();
 
             String typeCheckOutputMsg = "";
-            BufferedReader in = new BufferedReader(
-                    new FileReader(typeCheckOutputFile));
+            BufferedReader in = new BufferedReader(new FileReader(typeCheckOutputFile));
 
             String typeCheckOutputLine;
             while ((typeCheckOutputLine = in.readLine()) != null) {
@@ -368,11 +367,13 @@ public class LoadSpecCommand implements Command {
 
             if (!typeCheckOutputMsg.isEmpty()) {
                 output.println(typeCheckOutputMsg);
+                in.close();
                 return false;
             }
 
             (new File(cmdScriptFileName)).delete();
             typeCheckOutputFile.delete();
+            in.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -445,8 +446,7 @@ public class LoadSpecCommand implements Command {
             File pythonErrOutputFile = new File(pythonErrOutputFilePath);
 
             String pythonErrOutputMsg = "";
-            BufferedReader in = new BufferedReader(
-                    new FileReader(pythonErrOutputFile));
+            BufferedReader in = new BufferedReader(new FileReader(pythonErrOutputFile));
 
             String pythonErrOutputLine;
             while ((pythonErrOutputLine = in.readLine()) != null) {
@@ -455,11 +455,13 @@ public class LoadSpecCommand implements Command {
 
             if (!pythonErrOutputMsg.isEmpty()) {
                 output.println(pythonErrOutputMsg);
+                in.close();
                 return false;
             }
 
             pythonErrOutputFile.delete();
             scriptFile.delete();
+            in.close();
             return true;
         } catch (Exception e) {
             e.printStackTrace();

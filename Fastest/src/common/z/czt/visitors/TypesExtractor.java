@@ -9,27 +9,11 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import client.presentation.ClientTextUI;
-
+import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.VarDeclVisitor;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.FreePara;
-import net.sourceforge.czt.z.ast.Freetype;
-import net.sourceforge.czt.z.ast.FreetypeList;
-import net.sourceforge.czt.z.ast.Name;
-import net.sourceforge.czt.z.ast.Para;
-import net.sourceforge.czt.z.ast.ParaList;
-import net.sourceforge.czt.z.ast.Sect;
-import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.TypeAnn;
+import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.VarDecl;
-import net.sourceforge.czt.z.ast.ZNameList;
-import net.sourceforge.czt.z.ast.ZParaList;
-import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-import net.sourceforge.czt.z.impl.ZParaListImpl;
 import common.z.SpecUtils;
-import common.z.UtilSymbols;
 import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
@@ -39,8 +23,8 @@ import compserver.tcasegen.strategies.setlog.TypeManagerParser;
  * to generate a Z test case
  */
 
-public class TypesExtractor
-implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>
+public final class TypesExtractor
+implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>, RefExprVisitor<HashSet<String>>
 {
 
 	public HashSet<String> visitTerm(Term term)
@@ -71,6 +55,12 @@ implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>
 		return list;
 	}
 
+	public HashSet<String> visitRefExpr(RefExpr refExpr){
+        HashSet<String> list = new HashSet<String>();
+        list.add(refExpr.getName().toString());
+        return list;
+	}
+	
 	public HashSet<String> visitVarDecl(VarDecl varDecl)
 	{
 		String typeExpr = SpecUtils.termToLatex(varDecl.getExpr());

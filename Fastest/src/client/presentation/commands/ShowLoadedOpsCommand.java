@@ -18,7 +18,7 @@ import client.blogic.management.Controller;
  * tested.
  * @author Pablo Rodriguez Monetti
  */
-public class ShowLoadedOpsCommand implements Command{ 
+public final class ShowLoadedOpsCommand implements Command{ 
 
     /**
      * Runs this command.
@@ -34,8 +34,9 @@ public class ShowLoadedOpsCommand implements Command{
 		else{
 			Controller controller = clientTextUI.getMyController();
 			Spec spec = null;
+			// CAMBIAR ESTO!! que no unfoldee para fijarce esto
 			if (controller.getOriginalSpec() != null)
-				spec = controller.getUnfoldedSpec();
+				spec = controller.getOriginalSpec();
 			
 			if (spec == null)
 				output.println("There is not any specification loaded.");
