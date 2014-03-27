@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,7 +33,6 @@ import java.util.regex.Pattern;
 
 import common.util.ExprIterator;
 import common.z.SpecUtils;
-import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
@@ -114,6 +112,7 @@ public final class FTCRLUtils {
 	public static void parse(File refRuleFile) throws IOException{
 		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
 		String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
+		refRuleFileStream.close();
 		RefinementRuleContext ruleContext;
 		RefinementRule rule;
 		RefinementRules rules = RefinementRules.getInstance();

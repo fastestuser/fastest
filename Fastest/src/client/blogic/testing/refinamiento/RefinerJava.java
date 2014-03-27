@@ -3,7 +3,7 @@ package client.blogic.testing.refinamiento;
 import common.z.SpecUtils;
 import net.sourceforge.czt.base.ast.Term;
 
-public class RefinerJava implements Refiner{
+public final class RefinerJava implements Refiner{
 	private String declarationList;
 	private String assignementList;
 	

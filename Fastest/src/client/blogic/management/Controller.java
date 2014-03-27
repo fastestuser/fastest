@@ -21,7 +21,7 @@ import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
-import client.blogic.testing.ttree.visitors.TCaseDadFinder;
+//import client.blogic.testing.ttree.visitors.TCaseDadFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
@@ -84,7 +84,7 @@ public final class Controller extends IIComponent {
 	// Indicates how many abstract test cases are being calculated
 	private int pendingAbsTCases;
 	// Indicates how many abstract test cases are being refined
-	private int pendingCTCases;
+	//private int pendingCTCases;
 	// Indicates how many abstract test clases are being trying to be pruned
 	private int pendingPrunnings;
 	// Indicates how many test trees are being considered for obtaining abstract
@@ -99,7 +99,7 @@ public final class Controller extends IIComponent {
 	// Son los nombres de los tipos basicos
 	private List<String> basicTypeNames;
 	//Los tipos definidos por el usuario
-	private HashMap<String, String> userDefineTypes;
+	private HashMap<String, String> userDefinedTypes;
 	// Gives the values assigned to the variables defined in axiomatic
 	// definitions
 	private Map<RefExpr, Expr> axDefsValues;
@@ -168,13 +168,15 @@ public final class Controller extends IIComponent {
 		opRefTCaseMap = new HashMap<String, ConcreteTCase>();
 		absTCaseRefTCaseMap = new HashMap<String, ConcreteTCase>();
 		refinementRules = RefinementRules.getInstance();
+		basicTypeNames = null;
+		userDefinedTypes = null;
 		selectedRefLaw = null;
 		compilationInfo = null;
 		//refining = false;
 		pendingToRef = 0;
 		pendingAbsTCases = 0;
 		pendingTTrees = 0;
-		pendingCTCases = 0;
+		//pendingCTCases = 0;
 		pendingPrunnings = 0;
 		leaves = new ConcreteRepository<TClass>();
 		inicioPoda = 0;
@@ -331,17 +333,19 @@ public final class Controller extends IIComponent {
 		} else if (event_ instanceof RefLawSelected) {
 			RefLawSelected refLawSelected = (RefLawSelected) event_;
 			this.selectedRefLaw = refLawSelected.getRefLawName();
-		} else if (event_ instanceof AllTCasesRefineRequested) {
-			//			refining = true;
-			//			try {
-			//				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
-			//				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
-			//				EventAdmin eventAdmin = EventAdmin.getInstance();
-			//				eventAdmin.announceEvent(allTCasesRequested);
-			//			} catch (Exception e) {
-			//				e.printStackTrace();
-			//			}
-		} else if (event_ instanceof RunFinished) {
+		} 
+//		else if (event_ instanceof AllTCasesRefineRequested) {
+//			//			refining = true;
+//			//			try {
+//			//				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
+//			//				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
+//			//				EventAdmin eventAdmin = EventAdmin.getInstance();
+//			//				eventAdmin.announceEvent(allTCasesRequested);
+//			//			} catch (Exception e) {
+//			//				e.printStackTrace();
+//			//			}
+//		} 
+		else if (event_ instanceof RunFinished) {
 			try {
 				ClientUI clientUI = getMyClientUI();
 				if (clientUI instanceof ClientTextUI) {
@@ -353,30 +357,31 @@ public final class Controller extends IIComponent {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} else if (event_ instanceof TCaseAbstracted) {
-			TCaseAbstracted caseAbstracted = (TCaseAbstracted) event_;
-			String brotherName = caseAbstracted.getBrotherName();
-			AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
-			String opNameSource = caseAbstracted.getOpName();
-			TClassNode tClassNode = opTTreeMap.get(opNameSource);
-			String dadName = tClassNode.acceptVisitor(new TCaseDadFinder(brotherName));
-			Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
-			System.out.println(dadName + " test case abstraction -> SUCCESS.");
-			pendingCTCases--;
-			if (pendingCTCases == 0) {
-				try {
-					ClientUI clientUI = getMyClientUI();
-					if (clientUI instanceof ClientTextUI) {
-						synchronized (clientUI) {
-							clientUI.notify();
-						}
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
 		} 
+//		else if (event_ instanceof TCaseAbstracted) {
+//			TCaseAbstracted caseAbstracted = (TCaseAbstracted) event_;
+//			String brotherName = caseAbstracted.getBrotherName();
+//			AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
+//			String opNameSource = caseAbstracted.getOpName();
+//			TClassNode tClassNode = opTTreeMap.get(opNameSource);
+//			String dadName = tClassNode.acceptVisitor(new TCaseDadFinder(brotherName));
+//			Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
+//			System.out.println(dadName + " test case abstraction -> SUCCESS.");
+//			pendingCTCases--;
+//			if (pendingCTCases == 0) {
+//				try {
+//					ClientUI clientUI = getMyClientUI();
+//					if (clientUI instanceof ClientTextUI) {
+//						synchronized (clientUI) {
+//							clientUI.notify();
+//						}
+//					}
+//
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		} 
 //		else if (event_ instanceof ScriptModified) {
 //			// We must actualize all the maps with ConcreteTCase's information
 //			pendingCTCases--;
@@ -505,13 +510,16 @@ public final class Controller extends IIComponent {
 			}
 		} else if (event_ instanceof AllTCasesRequested) {
 			pendingTTrees++;
-		} else if (event_ instanceof TCaseAddCaptureCodeRequested) {
-			Calendar cal = Calendar.getInstance();
-			inicio = cal.getTimeInMillis();
-			pendingCTCases++;
-		} else if (event_ instanceof TCaseAbstractRequested) {
-			pendingCTCases++;
-		} else if (event_ instanceof NotTClassLeavesFounded) {
+		} 
+//		else if (event_ instanceof TCaseAddCaptureCodeRequested) {
+//			Calendar cal = Calendar.getInstance();
+//			inicio = cal.getTimeInMillis();
+//			pendingCTCases++;
+//		} 
+//		 else if (event_ instanceof TCaseAbstractRequested) {
+//			pendingCTCases++;
+//		} 
+		 else if (event_ instanceof NotTClassLeavesFounded) {
 			pendingTTrees--;
 			if (pendingTTrees == 0) {
 				//				if (!refining) {
@@ -660,6 +668,7 @@ public final class Controller extends IIComponent {
 			absTCaseRefTCaseMap.clear();
 			refinementRules.clear();
 			selectedRefLaw = null;
+			userDefinedTypes = null; 
 			//refining = false;
 			FastestUtils.resetTacticsNumbersMap();
 
@@ -669,7 +678,7 @@ public final class Controller extends IIComponent {
 			dnfPredListMap = new HashMap<String, List<Pred>>();
 			pendingAbsTCases = 0;
 			nomTexFileSpec = null;
-			pendingCTCases = 0;
+			//pendingCTCases = 0;
 			pendingPrunnings = 0;
 			pendingTTrees = 0;
 			pendingToRef = 0;
@@ -1276,12 +1285,12 @@ public final class Controller extends IIComponent {
 	}
 
 	public void setUserDefinedTypes(HashMap<String, String> userDefinedTypes) {
-		this.userDefineTypes = userDefinedTypes;
+		this.userDefinedTypes = userDefinedTypes;
 		
 	}
 	
 	public HashMap<String, String> getUserDefinedTypes() {
-		return this.userDefineTypes;
+		return this.userDefinedTypes;
 		
 	}
 

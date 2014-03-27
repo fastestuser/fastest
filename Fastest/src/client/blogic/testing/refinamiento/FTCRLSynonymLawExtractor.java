@@ -5,7 +5,7 @@ import client.blogic.testing.refinamiento.FTCRLParser.SynonymLawContext;
 import client.blogic.testing.refinamiento.FTCRLParser.WithRefinementContext;
 
 /* dado un arbol y un nombre de synonimo en String, te devuelve el 
- * WithRefinement de WithSynonym de SynonymLaws 
+ * WithRefinement de WithSynonym de SynonymLaws. Se usa en PrePrcoVisitor. 
  * */
 public final class FTCRLSynonymLawExtractor extends FTCRLBaseVisitor<ParserRuleContext>{
 

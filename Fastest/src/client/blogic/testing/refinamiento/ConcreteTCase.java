@@ -3,7 +3,6 @@ package client.blogic.testing.refinamiento;
 import java.util.*;
 
 import client.blogic.testing.refinement.TCaseAssignment;
-import client.blogic.testing.refinement.Utils;
 import common.z.AbstractTCase;
 
 /**
@@ -97,7 +96,7 @@ public class ConcreteTCase {
     }
     @Override
     public String toString(){
-	return Utils.printCTC(concreteTCaseName, this);
+	return CTCPrinter.printCTC(concreteTCaseName, this);
     }
 	public String getDeclaraciones() {
 		return declaraciones;

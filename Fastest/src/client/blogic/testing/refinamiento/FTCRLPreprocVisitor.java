@@ -6,6 +6,17 @@ import client.blogic.testing.refinamiento.FTCRLParser.IExprRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
 
+/* Esto lo que hace es reemplazar el numero de la regla por la regla correspondiente ej:
+ * a ==> .... l15
+ * ...
+ * l15: REGLA 
+ * 
+ * lo cambia por
+ * 
+ * a == ....REGLA
+ * ...
+ * l15: REGLA
+ * */
 public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String>{
 
 	private ParserRuleContext root;
