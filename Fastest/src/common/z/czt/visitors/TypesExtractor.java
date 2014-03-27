@@ -2,6 +2,7 @@ package common.z.czt.visitors;
 
 import net.sourceforge.czt.base.ast.*;
 import net.sourceforge.czt.base.visitor.*;
+
 import java.util.*;
 
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -37,7 +38,7 @@ implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>, RefExp
 				if(array!=null){
 					for (int i = 0; i < array.length; i++) {
 						final Object object = array[i];
-						if (object instanceof Term && object != null){
+						if ((object instanceof Term) && (object != null)){
 							auxTerm = (Term) object;
 							if(auxTerm!=null){
 								HashSet<String> auxList = auxTerm.accept(this);
@@ -55,12 +56,6 @@ implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>, RefExp
 		return list;
 	}
 
-	public HashSet<String> visitRefExpr(RefExpr refExpr){
-        HashSet<String> list = new HashSet<String>();
-        list.add(refExpr.getName().toString());
-        return list;
-	}
-	
 	public HashSet<String> visitVarDecl(VarDecl varDecl)
 	{
 		String typeExpr = SpecUtils.termToLatex(varDecl.getExpr());
@@ -81,6 +76,12 @@ implements TermVisitor<HashSet<String>>, VarDeclVisitor<HashSet<String>>, RefExp
         
         return getTypeLeafs(tree);
 		
+	}
+	
+	public HashSet<String> visitRefExpr(RefExpr refExpr){
+		HashSet<String> list = new HashSet<String>();
+		list.add(refExpr.getName().toString());
+		return list;
 	}
 
 	private HashSet<String> getTypeLeafs(DefaultMutableTreeNode tree) {

@@ -13,8 +13,18 @@ public class NumRefinement {
 	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
 
 		String value = refineTo(zExpr, javaExpr);
+		
+		//Si es una tabla, debo guardar el valor en la tabla
+		int i = javaExpr.exp.lastIndexOf(".");
+		String table = "";
+		if (i >= 0){
+			table = javaExpr.exp.substring(0, i);
+		}
+		
+		if (ftcrl.currentTable != null && ftcrl.currentTable.varName.equals(table)){//Puede ser una tabla
+			ftcrl.currentTable.saveValues(value, javaExpr.exp.substring(i+1));
 		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
-		if ((javaExpr != null) && (javaExpr.exp != "")) {
+		} else if ((value != "") && (javaExpr != null) && (javaExpr.exp != "")) {
 			ftcrl.printAssignment(javaExpr.exp + " = " + value);
 			ftcrl.references.put(javaExpr.exp, value);
 			FTCRLUtils.saveReference(javaExpr.exp, value, ftcrl.references, ftcrl.isRef);
@@ -24,6 +34,7 @@ public class NumRefinement {
 	}
 
 	public static String refineTo(SExpr zExpr, SExpr javaExpr){
+
 		if (javaExpr.type.equals("int") || javaExpr.type.equals("short") ||
 				javaExpr.type.equals("long") || javaExpr.type.equals("byte") ||
 				javaExpr.type.equals("Integer") || javaExpr.type.equals("Short") ||
@@ -42,7 +53,7 @@ public class NumRefinement {
 			int n = (int)Float.parseFloat(zExpr.exp);
 			return FTCRLUtils.getEnumJavaElem(javaExpr.type, n);
 		}
-		
+
 
 		return "";
 

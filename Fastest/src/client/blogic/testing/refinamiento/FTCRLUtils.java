@@ -472,6 +472,13 @@ public final class FTCRLUtils {
 			return true;
 		return false;
 	}
+	
+	public static boolean isCrossProduct(String type) {
+		String nodeType = getType(type);
+		if (nodeType.equals("\\cross"))
+			return true;
+		return false;
+	}
 
 	//Determina si es un tipo básico de Z
 	public static String isFreeType(String type) {
@@ -490,7 +497,7 @@ public final class FTCRLUtils {
 				}
 			}
 		}
-
+		
 		AxPara schema = SpecUtils.axParaSearch(type, zParaList);
 		String schemaString = SpecUtils.termToLatex(schema);
 		if (schemaString.equals("null")){ //No es un tipo esquema
@@ -552,5 +559,12 @@ public final class FTCRLUtils {
 
 		return "\\{" + newSet + "\\}";
 	}
-
+	public static String getColumnType(String refS, RefinementTable currentTable) {
+		String column = refS;
+		int pos = currentTable.columnName.indexOf(column);
+		if (pos >= 0){
+			return currentTable.columnType.get(pos);
+		}
+		return null;
+	}
 }
