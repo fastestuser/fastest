@@ -3,6 +3,8 @@
 package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.ParserRuleContext;
 
 public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements FTCRLVisitor<T> {
 	@Override public T visitRefinement(FTCRLParser.RefinementContext ctx) { return visitChildren(ctx); }

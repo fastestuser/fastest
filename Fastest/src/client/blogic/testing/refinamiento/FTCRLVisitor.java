@@ -3,6 +3,7 @@
 package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.tree.*;
+import org.antlr.v4.runtime.Token;
 
 public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 	T visitRefinement(FTCRLParser.RefinementContext ctx);

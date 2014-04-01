@@ -2,11 +2,10 @@ package client.presentation.commands;
 
 import java.io.*;
 
+import org.antlr.v4.runtime.RecognitionException;
+
 import client.presentation.ClientTextUI;
 import client.blogic.testing.refinamiento.FTCRLUtils;
-import client.blogic.testing.refinement.RefLawRepository;
-import client.blogic.testing.refinement.Utils;
-import client.blogic.management.Controller;
 
 
 public class LoadRefinementRuleCommand implements Command{
@@ -46,8 +45,12 @@ public class LoadRefinementRuleCommand implements Command{
 				FTCRLUtils.parse(refLawFile);
 			}
 		}
+		catch(RecognitionException e){
+			output.println("The FTCRL file have syntax errors.");
+			output.println(e.getMessage());
+		}
 		catch(Exception e){
-			output.println("The TCRL file have syntax errors.");
+			output.println("The FTCRL file have syntax errors.");
 			e.printStackTrace(output);
 		}
 	}

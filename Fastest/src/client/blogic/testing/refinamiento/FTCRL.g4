@@ -8,7 +8,7 @@ package client.blogic.testing.refinamiento;
 }
 
 refinementRules
-	:       refinementRule+
+	:       refinementRule+ EOF
 	;
 
 

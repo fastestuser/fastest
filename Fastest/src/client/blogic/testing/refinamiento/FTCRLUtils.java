@@ -75,7 +75,9 @@ public final class FTCRLUtils {
 		ANTLRInputStream input = new ANTLRInputStream(ruleString); 
 		FTCRLLexer lexer = new FTCRLLexer(input); 
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		RefinementRuleContext ruleContext = new FTCRLParser(tokens).refinementRule();
+		FTCRLParser parser = new FTCRLParser(tokens);
+		parser.setErrorHandler(new ExceptionErrorStrategy());
+		RefinementRuleContext ruleContext = parser.refinementRule();
 		ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
 		input = new ANTLRInputStream(ruleString);
 		lexer = new FTCRLLexer(input);
