@@ -17,7 +17,7 @@ public class FTCRLStringRefinement {
 		if ((javaExpr != null) && (javaExpr.exp != "")) {
 			ftcrl.printAssignment(javaExpr.exp + " = " + value);
 			ftcrl.references.put(javaExpr.exp, value);
-			FTCRLUtils.saveReference(javaExpr.exp, value, ftcrl.references, ftcrl.isRef);
+			FTCRLUtils.saveReference(javaExpr.exp, value, ftcrl);
 		}
 		//Y sino devuelvo el valor refinado en vez de la variable Java
 		return value;
@@ -25,7 +25,7 @@ public class FTCRLStringRefinement {
 
 	public static String refineTo(SExpr zExpr, SExpr javaExpr){
 		if (javaExpr.type.equals("String")){
-			return "\"" + zExpr.exp + "\"";
+			return "new String(\"" + zExpr.exp + "\")";
 		} 		
 
 		return "";

@@ -18,7 +18,7 @@ public class SetRefinement {
 		if ((javaExpr != null) && (javaExpr.exp != "")){
 			javaVar = javaExpr.exp;
 		} else {
-			javaVar = "newSetVar"; //Cambiar
+			javaVar = ftcrl.newVarName("set");
 		}
 
 		//Obtenemos los elementos del conjunto y determinamos el tipo de los elementos
@@ -36,7 +36,7 @@ public class SetRefinement {
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + ".add(" + refinedElem + ")");
-				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl.references, ftcrl.isRef);
+				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl);
 				arrayPos++;
 			}
 		} else if (toType.equals("ARRAY")){
@@ -45,7 +45,7 @@ public class SetRefinement {
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + "[" + arrayPos + "] = " + refinedElem);
-				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl.references, ftcrl.isRef);
+				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, ftcrl);
 				arrayPos++;
 			}
 		}

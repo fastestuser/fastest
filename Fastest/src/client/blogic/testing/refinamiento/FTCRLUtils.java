@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -243,9 +244,10 @@ public final class FTCRLUtils {
 				type = getJavaType(javaExp.substring(0, lastPoint), javaTypes);
 				type = javaTypes.get(type + atribute);
 				return type;
+			} else { //Es un tipo, como "String"
+				return javaExp;
 			}
 		}
-		return "";
 
 	}
 
@@ -281,14 +283,14 @@ public final class FTCRLUtils {
 	//Determina la clase en Java que representa 'refS'
 	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
 	//y name un atributo de la misma, retorna "A"
-	public static String recordType(String refS) {
+	public static String extractName(String refS) {
 		return refS.split("[.]", 2)[0];
 	}
 
 	//Determina el atributo en Java que se utiliza en 'refS'
 	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
 	//y name un atributo de la misma, retorna ".name"
-	public static String recordAtribute(String refS) {
+	public static String extractAtribute(String refS) {
 		//Hay que controlarla.
 		//Hay que devolver todos los atributos si tiene varios?
 		//o solo el primero?
@@ -413,23 +415,25 @@ public final class FTCRLUtils {
 		return l;
 	}
 
-	public static String convertToSeq(String exp, String elemType) {
+	public static String elementType(String type) {
+
+		String elemType = FTCRLUtils.getChildType(type, 0);
 		//Si es una secuencia, debemos tomar sus elementos como una tupla
-		if (FTCRLUtils.isSeq(exp)){
+		if (FTCRLUtils.isSeq(type)){
 			elemType = "\\num \\cross(" + elemType + ")";
 		}
 		return elemType;
 	}
 
 	//Metodo para determinar la referencia cuando se usa REF
-	public static String findReference(String value, String iName, HashMap<String, String> references, LinkedList<String> uutArgs) {
+	public static String findReference(String value, String iName, FTCRLJavaVisitor ftcrl) {
 
 		//Primero busco por el nombre de la variable
-		if (references.get(iName) != null)
-			return references.get(iName);
+		if (ftcrl.references.get(iName) != null)
+			return ftcrl.references.get(iName);
 		else { //Si no esta, busco por los elementos de la variable
-			String varName = FTCRLUtils.recordType(iName);
-			String atribute = FTCRLUtils.recordAtribute(iName);
+			String varName = FTCRLUtils.extractName(iName);
+			String atribute = FTCRLUtils.extractAtribute(iName);
 
 			//Miro si la variable, es en realidad un atributo de la clase a testear
 			//ya que en ese caso, debo agregar delante el nombre del elemento de la clase
@@ -437,11 +441,11 @@ public final class FTCRLUtils {
 			//Ej c[0], c[1]
 			int it = 0;
 			String s = "";
-			if (!uutArgs.contains(varName)) //Si es un atributo de la clase
-				varName = "test." + varName;
+			if (!ftcrl.uutArgs.contains(varName)) //Si es un atributo de la clase
+				varName = ftcrl.testingVar + "." + varName;
 
-			while ((s = references.get(varName + "[" + it + "]")) != null){
-				String t = references.get(s + atribute);
+			while ((s = ftcrl.references.get(varName + "[" + it + "]")) != null){
+				String t = ftcrl.references.get(s + atribute);
 				if ((t != null) && (t.equals(value)))
 					return s + atribute;
 				it++;
@@ -452,14 +456,14 @@ public final class FTCRLUtils {
 	}
 
 	//Determina si se debe almacenar el valor de una variable porque puede ser referenciado más tarde
-	public static void saveReference(String var, String value,	HashMap<String, String> references, boolean isRef) {
-		if (isRef) {
+	public static void saveReference(String var, String value, FTCRLJavaVisitor ftcrl) {
+		if (ftcrl.isRef) {
 			String varName = var;
-			if (varName.startsWith("test."))
+			if (varName.startsWith(ftcrl.testingVar + "."))
 				varName = var.substring(5);
-			varName = FTCRLUtils.recordType(varName);
+			varName = FTCRLUtils.extractName(varName);
 
-			references.put(var, value);
+			ftcrl.references.put(var, value);
 		}
 	}
 
@@ -472,7 +476,7 @@ public final class FTCRLUtils {
 			return true;
 		return false;
 	}
-	
+
 	public static boolean isCrossProduct(String type) {
 		String nodeType = getType(type);
 		if (nodeType.equals("\\cross"))
@@ -497,7 +501,7 @@ public final class FTCRLUtils {
 				}
 			}
 		}
-		
+
 		AxPara schema = SpecUtils.axParaSearch(type, zParaList);
 		String schemaString = SpecUtils.termToLatex(schema);
 		if (schemaString.equals("null")){ //No es un tipo esquema
@@ -559,6 +563,7 @@ public final class FTCRLUtils {
 
 		return "\\{" + newSet + "\\}";
 	}
+
 	public static String getColumnType(String refS, RefinementTable currentTable) {
 		String column = refS;
 		int pos = currentTable.columnName.indexOf(column);
@@ -566,5 +571,57 @@ public final class FTCRLUtils {
 			return currentTable.columnType.get(pos);
 		}
 		return null;
+	}
+	public static boolean newRecordNeeded(String record, String javaType) {
+		if (record == null)
+			return true;
+
+		String recordType = javaType.toLowerCase();
+		if (!record.startsWith(recordType))
+			return true;
+
+		return false;
+	}
+	
+	public static boolean isVariable(String s) {
+		if (!Character.isLowerCase(s.charAt(0)))
+			return false;
+		if (s.equals("int"))
+			return false;
+		if (s.equals("short"))
+			return false;
+		if (s.equals("long"))
+			return false;
+		if (s.equals("byte"))
+			return false;
+		if (s.equals("char"))
+			return false;
+		if (s.equals("float"))
+			return false;
+		if (s.equals("double"))
+			return false;
+		if (s.equals("enum"))
+			return false;
+		if (s.equals("class"))
+			return false;
+		
+		return true;
+	}
+	public static void closeTables(HashSet<RefinementTable> openedTables, FTCRLJavaVisitor ftcrl) {
+		
+		Iterator<RefinementTable> it = openedTables.iterator();
+		while (it.hasNext()){
+			RefinementTable t = it.next();
+			ftcrl.printDeclaration(t.stmt + ".close()");
+		}
+		
+	}
+	public static void closeFiles(HashSet<String> openedFiles, FTCRLJavaVisitor ftcrl) {
+		Iterator<String> it = openedFiles.iterator();
+		while (it.hasNext()){
+			String t = it.next();
+			ftcrl.printAssignment("close(" + t + ")");
+		}
+		
 	}
 }

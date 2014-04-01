@@ -30,7 +30,7 @@ public class FreeTypesRefinement {
 		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
 		if ((javaExpr != null) && (javaExpr.exp != "")) {
 			ftcrl.printAssignment(javaExpr.exp + " = " + value);
-			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, ftcrl.references, ftcrl.isRef);
+			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, ftcrl);
 		}
 		//Y sino devuelvo el valor refinado en vez de la variable Java
 		return value;
@@ -44,7 +44,7 @@ public class FreeTypesRefinement {
 			if (context != null){
 				List<SNameContext> snames = context.sName();
 				if (snames.isEmpty())
-					return zExpr.exp;
+					return javaExpr.type + "." + zExpr.exp;
 				else {
 					int pos = 0;
 					for (; pos < snames.size(); pos++)
@@ -52,7 +52,7 @@ public class FreeTypesRefinement {
 							break;
 					if (pos >= context.iName().size())
 						return ""; //Error!
-					return context.iName(pos).getText();
+					return javaExpr.type + "." + context.iName(pos).getText();
 				}
 			}
 		} else if (javaExpr.type.equals("int") || javaExpr.type.equals("short") ||
@@ -65,7 +65,11 @@ public class FreeTypesRefinement {
 					int k = 0;
 					while (!values[k].equals(zExpr.exp))
 						k++;
-					return Integer.toString(k + m);
+					if (Character.isLowerCase(javaExpr.type.charAt(0)))
+							return Integer.toString(k + m);
+					else
+						return "new " + javaExpr.type + "(" + Integer.toString(k + m) + ")";
+					
 				} else { //Estoy en el caso ENUM[c1 > n1 ... cn > nn]
 					List<SNameContext> snames = context.sName();
 					int pos = 0;
@@ -74,7 +78,10 @@ public class FreeTypesRefinement {
 							break;
 					if (pos >= context.number().size())
 						return ""; //Error!
-					return context.number(pos).getText();
+					if (Character.isLowerCase(javaExpr.type.charAt(0)))
+						return context.number(pos).getText();
+					else
+						return "new " + javaExpr.type + "(" + context.number(pos).getText() + ")";
 				}
 				
 			}
@@ -101,7 +108,10 @@ public class FreeTypesRefinement {
 			}
 			//Convertimos a char el valor del entero
 			zExpr.exp = value;
-			return NumRefinement.refineTo(zExpr, javaExpr);
+			if (Character.isLowerCase(javaExpr.type.charAt(0)))
+				return NumRefinement.refineTo(zExpr, javaExpr);
+			else
+				return "new " + javaExpr.type + "(" + NumRefinement.refineTo(zExpr, javaExpr) + ")";
 		}
 
 		return "";

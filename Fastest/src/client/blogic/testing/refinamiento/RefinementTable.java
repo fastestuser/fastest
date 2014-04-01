@@ -7,23 +7,26 @@ import java.util.Scanner;
 
 public class RefinementTable {
 	
-	public String varName = "";
+	public String stmt;
+	public String t = "";
 	public String c = "";
 	public int size = 0;
 	public LinkedList<String> columnName, columnType, columnSize; //Almacenan los datos de la tabla
 	public String values[]; //Almacena los datos que se insertarán al finalizar el refinamiento del WITH
 	                                 //Despues debe vaciarse y volver a empezar
 	
-	public RefinementTable(String varName, String c, String p, String f, FTCRLJavaVisitor ftcrl) {
-		this.varName = varName;
+	public RefinementTable(String t, String c, String p, String f, FTCRLJavaVisitor ftcrl) {
+		this.t = t;
 		this.c = c;
 		columnName = new LinkedList<String>();
 		columnType = new LinkedList<String>();
 		columnSize = new LinkedList<String>();
 		columnSize = new LinkedList<String>();
+		stmt = ftcrl.newVarName("stmt");
 		
-		ftcrl.printDeclaration("Statement stmt = init." + c + ".createStatement()");
-		ftcrl.printDeclaration("stmt.executeUpdate(\"delete " + varName + "\")");
+		ftcrl.printDeclaration("Statement " + stmt + " = init." + c + ".createStatement()");
+		ftcrl.printDeclaration(stmt + ".executeUpdate(\"delete " + t + "\")");
+		ftcrl.openedTables.add(this);
 		
 		try {
 			String path = p;

@@ -2,6 +2,7 @@ package client.blogic.testing.refinamiento;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import common.util.ExprIterator;
-import client.blogic.testing.refinamiento.FTCRLParser.AsRefinementContext;
 import client.blogic.testing.refinamiento.FTCRLParser.DataStructContext;
 import client.blogic.testing.refinamiento.FTCRLParser.DotSetOperContext;
 import client.blogic.testing.refinamiento.FTCRLParser.INameContext;
@@ -39,9 +39,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Module del UUT
 	private String moduleName = "";
 	//Argumentos del UUT
-	private LinkedList<String> uutArgs= new LinkedList<String>();
-	//Tabla actual, para cuando refinamos una tabla
+	public LinkedList<String> uutArgs= new LinkedList<String>();
+	//Tabla acutla, para cuando refinamos a una tabla
 	public RefinementTable currentTable;
+	//Tablas abiertas, para cuando refinamos una tabla
+	public HashSet<RefinementTable> openedTables = new HashSet<RefinementTable>();
+	//Archivos abiertos, para cuando refinamos un file
+	public HashSet<String> openedFiles = new HashSet<String>();
 	//Variable para dar nombre a las variables que se crean
 	private static int varNumber = 0;
 	//Map con los valores almacenados por los REF
@@ -50,6 +54,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public static LinkedList<String> referencedVars = new LinkedList<String>();
 	//Variables auxiliar para determinar si se debe guardar una referencia
 	public boolean isRef;
+	//Variable auxiliar para determinar el nombre de la variable de testing "test"
+	public String testingVar;
 
 	public String getDeclarationList(){
 		return declarationList;
@@ -84,12 +90,17 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		uutArgs = FTCRLUtils.extractUUTArgs(uut.getText());
 
 		//Creamos la variable test, de la clase que vamos a testear
-		printDeclaration(moduleName + " test = new " + moduleName + "()" );
+		testingVar = newVarName("test");
+		printDeclaration(moduleName + " " + testingVar + " = new " + moduleName + "()" );
 
 		//Analizamos las laws
 		LawsContext laws = ctx.laws();
 		this.visit(laws);
-
+		
+		//Cerramos tablas y archivos
+		FTCRLUtils.closeTables(openedTables, this);
+		FTCRLUtils.closeFiles(openedFiles, this);
+		
 		//Analizamos la uut
 		this.visit(uut);
 
@@ -105,7 +116,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public Value visitLaws(FTCRLParser.LawsContext ctx){
 		Iterator<LawContext> it = ctx.law().iterator();
 		while (it.hasNext()){
-			isRef = false;
+			isRef = false; //Reseteamos la variable para determinar si es referenciada una variable
 			this.visit(it.next());
 		}
 
@@ -126,7 +137,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		//Imprimimos la llamada al método de la clase
 		List<INameContext> list = ctx.iName();
-		String line = "test." + list.get(0).getText() + "(";
+		String line = testingVar + "." + list.get(0).getText() + "(";
 		//Agregamos los argumentos
 		Iterator<String> it = uutArgs.iterator();
 		if (it.hasNext())
@@ -197,11 +208,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 		SExpr zExpr = FTCRLUtils.sExpr(replaceExp, replaceValue, zValuesMap, zTypesMap);
 
-		
+
 		//Luego el lado derecho
 		String refS = ctx.iExprRefinement().iName().getText();
-		String var = FTCRLUtils.recordType(refS);
-		String atribute = FTCRLUtils.recordAtribute(refS);
+		String var = FTCRLUtils.extractName(refS);
+		String atribute = FTCRLUtils.extractAtribute(refS);
 		varType = FTCRLUtils.getJavaType(refS, javaTypesMap);
 
 		//Debo refinar zExpr a varType
@@ -211,7 +222,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Esta variable será consultada más tarde al refinar otras variables
 		if (referencedVars.contains(var))
 			isRef = true;
-		
+
 		//Veo si es privada. En ese caso hay que definirla usando reflection
 		if (FTCRLUtils.isPrivate(refS))
 			isPrivate = true;
@@ -220,7 +231,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Primero vemos si debo crear una variable nueva (record)
 		//Si refS es una variable, no debo crear un record 
 		//ya que es un argumento del metodo de la clase a testear.
-		if (Character.isLowerCase(refS.charAt(0))){ 
+		if (FTCRLUtils.isVariable(refS)){ 
 			varName = var;
 			//Si es una variable que será parte del argumento de la función, debo crearla
 			if (uutArgs.contains(varName)){
@@ -232,7 +243,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				//Obtengo su tipo
 				varType = FTCRLUtils.getJavaType(moduleName + "." + varName, javaTypesMap);
 				//Y cambio su nombre, ya que es en realidad un atributo de la clase principal
-				varName = "test." + varName;
+				varName = testingVar + "." + varName;
 			}
 
 			record = varName;
@@ -244,15 +255,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				varName = newVarName(var.toLowerCase());
 				printDeclaration(var + " " + varName);
 				record = varName;
-			} else {
-				//Uso un record ya creado
+			} else				//Uso un record ya creado
 				varName = record;
-			}
 		}
 
 		//Puede ser que la variable haga referencia a una tabla.
 		//En ese caso, obtengo el tipo al que hay que refinar, a partir de los datos de sus columnas
-		if (currentTable != null && currentTable.varName.equals(varName))
+		if (currentTable != null && currentTable.t.equals(var))
 			varType = FTCRLUtils.getColumnType(atribute.replaceFirst(".", ""), currentTable);
 
 		//Si es "private" en java, debo usar reflection
@@ -269,21 +278,22 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			atribute = "";
 		}
 
-		//Si es un conjunto o una secuencia y hay que refinar con un WITH
+		//Si es un conjunto (o secuencia) y hay que refinar con un WITH
 		//hay que iterar sobre sus elementos
-		if ((FTCRLUtils.isSet(zExpr.type) || FTCRLUtils.isSeq(zExpr.type)) && (ctx.iExprRefinement().asRefinement() != null) 
-				&& !ctx.iExprRefinement().asRefinement().refinement().isEmpty()) {
+		boolean isSet = FTCRLUtils.isSet(zExpr.type) || FTCRLUtils.isSeq(zExpr.type);
+		boolean hasWith = (ctx.iExprRefinement().asRefinement() != null) && !ctx.iExprRefinement().asRefinement().refinement().isEmpty();
 
-			Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
+		if (isSet &&  hasWith) {
 
-			String elemType = FTCRLUtils.getChildType(zExpr.type, 0);
-			//Si es una lista, debo modificar el tipo del elemento transformandolo en una tupla
-			elemType = FTCRLUtils.convertToSeq(zExpr.type, elemType);
+			//Calculamos el tipo de cada elemento
+			String elemType = FTCRLUtils.elementType(zExpr.type);
 
 			//Iteramos sobre los elementos del conjunto
+			Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
 			int position = 0;
 			while (itElements.hasNext()){
 				String elem = itElements.next();
+
 				//Si es una lista, debo modificar el elemento transformandolo en una tupla
 				if (FTCRLUtils.isSeq(zExpr.type)){
 					elem = "(" + (position+1) + "," + elem + ")";
@@ -291,21 +301,13 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 				//Creamos el nuevo reemplazo
 				replaceValue = new Replacement(replaceExp, elem, elemType);
-				visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, new SExpr(varName+atribute, varType), zExpr, position);
+				SExpr javaExpr = new SExpr(varName+atribute, varType);
+				visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, javaExpr, zExpr, position);
 
 				//Incrementamos la posición del nodo
 				//Esto se usa en los array, para saber en que posición va
 				position++;
 			}
-			//Si no es un conjunto pero tiene WITH
-		} else if (!FTCRLUtils.isSet(zExpr.type) && (ctx.iExprRefinement().asRefinement() != null) 
-				&& !ctx.iExprRefinement().asRefinement().refinement().isEmpty()) {
-
-			//Creamos el nuevo reemplazo
-			replaceValue = new Replacement(replaceExp, zExpr.exp, zExpr.type);
-			visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, new SExpr(varName+atribute, varType), zExpr, 0);
-
-			//No tiene WITH
 		} else {
 			visitIExprRefinement(ctx.iExprRefinement(), null, record, new SExpr(varName + atribute, varType), zExpr);
 		}
@@ -313,7 +315,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Si la variable es privada debemos usar reflection
 		if (isPrivate){
 			printAssignment(privateFieldVar + ".set(" + record + ", " + varName + ")");
-			FTCRLUtils.saveReference(record, varName, references, isRef);
+			FTCRLUtils.saveReference(record, varName, this);
 			return record;
 		}
 
@@ -324,14 +326,15 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, Replacement replaceValue, String record, SExpr javaExpr, SExpr zExpr, int position){
 
 		DataStructContext dataStruct = ctx.dataStruct();
+		boolean hasWITH = !ctx.refinement().isEmpty();
 
 		//Si es un LIST
 		if (dataStruct.list() != null) {
-			if (!ctx.refinement().isEmpty()) { //Si tiene WITH
+			if (hasWITH) { //Si tiene WITH
 				//Si es una lista, no pasamos ningun record (por eso null), ya que no se utilizan "mas abajo" en el arbol
 				String withVariable = refineWITH(ctx.refinement(), replaceValue, null);
 				printAssignment(javaExpr.exp + ".add(" + withVariable + ")");
-				FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", withVariable, references, isRef);
+				FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", withVariable, this);
 			} else {
 				refineFromZToJava(zExpr, "LIST", javaExpr);
 			}
@@ -343,21 +346,21 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 			//Si es un ARRAY
 		} else if (dataStruct.getText().equals("ARRAY")) {
-			if (!ctx.refinement().isEmpty()) { //Si tiene WITH
+			if (hasWITH) { //Si tiene WITH
 				//Si es una array, no pasamos ningun record (por eso null), ya que no se utilizan "mas abajo" en el arbol
 				String withVariable = refineWITH(ctx.refinement(), replaceValue, null);
 				printAssignment(javaExpr.exp + "[" + position + "] = " + withVariable);
-				FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", withVariable, references, isRef);
+				FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", withVariable, this);
 			} else {
 				refineFromZToJava(zExpr, "ARRAY", javaExpr);
 			}
 
 			//Si es un REF
 		} else if (dataStruct.reference2() != null) {
-			String reference = FTCRLUtils.findReference(zExpr.exp, dataStruct.reference2().iName().getText(), references, uutArgs);
+			String reference = FTCRLUtils.findReference(zExpr.exp, dataStruct.reference2().iName().getText(), this);
 			if (reference != null){
 				printAssignment(javaExpr.exp + " = " + reference);
-				FTCRLUtils.saveReference(javaExpr.exp, reference, references, isRef);
+				FTCRLUtils.saveReference(javaExpr.exp, reference, this);
 			}
 
 			//Si es un ENUM
@@ -370,16 +373,20 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		} else if (dataStruct.table() != null) {
 
 			RefinementTable table = this.currentTable;
-			if (table == null || !table.varName.equals(javaExpr.exp)){
+			//'t' es el nombre de la tabla. Es basicamente el nombre del archivo
+			String t = FTCRLUtils.extractName(dataStruct.table().fName().getText());
+			//if (javaExpr.exp.startsWith("test."))
+			//	tableName = "test." + tableName;
+			if (table == null || !table.t.equals(t)){
 				String c = dataStruct.table().iName().getText();
 				String p = dataStruct.table().path().getText();
 				String f = dataStruct.table().fName().getText();
-				table = new RefinementTable(javaExpr.exp, c, p, f, this);
+				table = new RefinementTable(t, c, p, f, this);
 				//Seteamos la nueva table actual (falta ver de almacenar la vieja, para cuando hay tablas dentro de tablas)
 				this.currentTable = table;
 			}
 
-			if (!ctx.refinement().isEmpty()) { //Si tiene WITH
+			if (hasWITH) { //Si tiene WITH
 
 				//Simplemente visito los refinements
 				refineWITH(ctx.refinement(), replaceValue, null);
@@ -393,8 +400,68 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Imprimimos
 			String values = currentTable.printValues();
 			currentTable.resetValues();
-			printDeclaration("stmt.executeUpdate(\"insert into " + table.varName + " values(" + values + ")\")");
-			printDeclaration("stmt.close()");
+			printDeclaration(table.stmt + ".executeUpdate(\"insert into " + currentTable.t + " values(" + values + ")\")");
+			
+
+		} else if (dataStruct.getText().equals("MAPPING")) { //Si es un MAPPING
+			//Debo visitar los refinements,
+			//pero separando la parte de la Key del Valor
+
+			//El tipo en Java debe ser un HashMap<A,B>
+			String types[] = FTCRLUtils.getInnerType(javaExpr.type).split(",", 2);
+			String keyType = types[0];
+			String valueType = types[1];
+
+			//Debo dividir la lista de refinements, en sublistas.
+			//Una para refinar la clave, y otra el valor.
+			List<RefinementContext> rs = ctx.refinement();
+			List<RefinementContext> ks = new ArrayList<FTCRLParser.RefinementContext>();
+			List<RefinementContext> vs = new ArrayList<FTCRLParser.RefinementContext>();
+			
+			//Si la key y el valor son del mismo tipo
+			//los refinamiento son mitad de cada uno
+			int size = rs.size();
+			if (keyType.equals(valueType)){
+				int i = 0;
+				for (; i < size/2; i++)
+					ks.add(rs.get(i));
+				for (; i < size; i++)
+					vs.add(rs.get(i));
+			} else { //Sino, veo cuales son de la key y cuales del valor
+				for (int i = 0; i < size; i++)
+					if (rs.get(i).getText().contains(keyType))
+						ks.add(rs.get(i));
+					else
+						vs.add(rs.get(i));
+			}
+			
+			String key = refineWITH(ks, replaceValue, null);
+			String value = refineWITH(vs, replaceValue, null);
+			
+			printAssignment(javaExpr.exp + ".put(" + key + ", " + value + ")");
+		
+		} else if (dataStruct.file() != null) { //Si es un FILE
+			
+			if (!openedFiles.contains(javaExpr.exp)){
+				printAssignment(javaExpr.exp + " = open(" + dataStruct.file().path().getText() + ")");
+				openedFiles.add(javaExpr.exp);
+			}
+			
+			if (!hasWITH){
+				
+				SExpr stringExpr = new SExpr("", "String");
+				String value = refineFromZToJava(zExpr, "FILE", stringExpr);
+				printAssignment("write(" + javaExpr.exp + ", " + value + ")");
+				
+			} else {
+				
+				Iterator<RefinementContext> it = ctx.refinement().iterator();
+				while (it.hasNext()){
+					String var = this.visitRefinement(it.next(), null, null, replaceValue);
+					printAssignment("write(" + javaExpr.exp + ", str(" + var + "))");
+				}
+				
+			}
 		}
 
 		return null;
@@ -417,9 +484,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public Value visitIExprRefinement(FTCRLParser.IExprRefinementContext ctx, Replacement replacement, String record, SExpr javaExpr, SExpr zExpr){
 
 		if (ctx.asRefinement() != null) {
+
 			//visito el asRefinement, pasando el nombre de la variable y el valor en Z a refinar
-			
-			visitAsRefinement(ctx.asRefinement(), replacement, record, javaExpr, zExpr, -1);
+			visitAsRefinement(ctx.asRefinement(), replacement, record, javaExpr, zExpr, 0);
+
 		} else {
 			refineFromZToJava(zExpr, "BASIC", javaExpr);
 		}
@@ -482,7 +550,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 	//Este metodo permite visitar un ZExprNum para obtener su valor y su tipo.
 	private SExpr visitZExprNum(FTCRLParser.ZExprNumContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
-		
+
 		if (ctx.CARD() != null){ //Cardinal
 			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
 			ExprIterator card = new ExprIterator(sExpr.exp);
@@ -674,6 +742,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 	private String refineWITH(List<RefinementContext> refinements, Replacement replace, String record) {
 
+		//En casos donde se generen varias variables, se devuelven en la lista
 		Iterator<RefinementContext> it = refinements.iterator();
 		while (it.hasNext()){
 
@@ -689,7 +758,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//y typeVariable es l,
 	//debera hacer las asignaciones: l.add(1); l.add(2); l.add(3) 
 	public String refineFromZToJava(SExpr zExpr, String toType, SExpr javaExpr) {
-	
+
 		//En base al tipo en Z de sValue debo utilizar una determinada clase para refinarla
 		String values;
 		if (zExpr.type.equals("\\num") || zExpr.type.equals("\\nat"))
@@ -731,8 +800,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		this.javaTypesMap = FTCRLUtils.createJavaTypesMap(javaCode);
 	}
 
-	private String newVarName(String name) {
-		
+	public String newVarName(String name) {
+
 		name += varNumber;
 		varNumber++;
 		return name;

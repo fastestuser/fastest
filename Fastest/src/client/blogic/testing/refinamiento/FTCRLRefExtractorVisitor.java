@@ -16,7 +16,7 @@ public class FTCRLRefExtractorVisitor extends FTCRLBaseVisitor<Value> {
 	@Override
 	public Value visitReference2(Reference2Context ctx){
 
-		String ref = FTCRLUtils.recordType(ctx.iName().getText());
+		String ref = FTCRLUtils.extractName(ctx.iName().getText());
 		if (!referencedVars.contains(ref))
 			referencedVars.add(ref);
 
