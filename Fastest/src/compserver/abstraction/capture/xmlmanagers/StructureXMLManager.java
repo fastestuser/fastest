@@ -41,15 +41,15 @@ public class StructureXMLManager {
 		String fieldName = fieldNode.getName();
 		ImplNode fieldType = fieldNode.getType();
 		String captureCode = "";
-		String xmlCode = "";
-		xmlCode += "<elementID>\\n";
-		xmlCode += fieldName+"\\n";
-		xmlCode += "</elementID>\\n";
-		xmlCode += "<elementValue>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		captureCode += WritersManager.getCaptureCode(varName,fieldType, fileDescriptor,returnID)+"\n";
-		xmlCode = "</elementValue>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+		String xmlCode = ""
+		+ "<elementID>\\n"
+		+ fieldName+"\\n"
+		+ "</elementID>\\n"
+		+ "<elementValue>\\n";
+		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+		+ WritersManager.getCaptureCode(varName,fieldType, fileDescriptor,returnID)+"\n";
+		xmlCode = "</elementValue>\\n"
+		+ returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
 		return captureCode;
 	}
 }

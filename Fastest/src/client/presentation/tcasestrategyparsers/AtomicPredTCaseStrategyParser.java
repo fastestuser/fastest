@@ -6,13 +6,11 @@
 package client.presentation.tcasestrategyparsers;
 
 import java.util.*;
-import java.io.*;
 import java.math.*;
 
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -46,11 +44,6 @@ import common.z.czt.UniqueZLive;
 import compserver.tcasegen.fm.FiniteModel;
 import compserver.tcasegen.fm.SetFiniteModel;
 import common.z.TClass;
-import common.z.czt.CztPrinter;
-import net.sourceforge.czt.animation.eval.TextUI;
-import net.sourceforge.czt.animation.eval.ZLive;
-import common.z.czt.UniqueZLive;
-import net.sourceforge.czt.session.Markup;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.*;
@@ -84,15 +77,12 @@ public class AtomicPredTCaseStrategyParser implements TCaseStrategyParser{
             final String argv[] = args.split(" ");
             int argc = argv.length;                   
             
-            
             AtomicPredTCaseStrategy atomicPredTCaseStrategy = (AtomicPredTCaseStrategy) tcs;
             IntFiniteModel intFiniteModel = new GivenIntFiniteModel();
             NatFiniteModel natFiniteModel = new GivenNatFiniteModel();
             boolean btSizeSetted = false;
             boolean nzSizeSetted = false;
             boolean sizeSetted = false;
-
-
 
             for(int index = 0, argCount=1; index < argc; index += argCount ){
                 if(argv[index].equals("-size")){
@@ -117,21 +107,22 @@ public class AtomicPredTCaseStrategyParser implements TCaseStrategyParser{
                     nzSizeSetted = true;
                 }
                 else if(argv[index].equals("-fm")){
-                    String option = "";
-                    int fmOptionArgListSize = 0;
+                    //String option = "";
+                    StringBuilder option = new StringBuilder();
+                	int fmOptionArgListSize = 0;
                     for(int k=index; k<argv.length; k++){
                         fmOptionArgListSize++;
-                        option += argv[k] + " ";
+                        option.append(argv[k] + " ");
                     }
                     
-                    final String parts[] = option.split("\"",3);
+                    final String parts[] = option.toString().split("\"",3);
                     String listOfFMStr = parts[1];
 
                     fmOptionArgListSize -= parts[2].length();
 
                     String finiteModels[] = listOfFMStr.split(";");
                     ZLive zLive = UniqueZLive.getInstance();
-                    TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+                    //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
                     Map<Expr, FiniteModel> exprMap = new HashMap<Expr,FiniteModel>();
                     for(int k=0; k < finiteModels.length;k++){
                         String finiteModel = finiteModels[k];
@@ -139,7 +130,7 @@ public class AtomicPredTCaseStrategyParser implements TCaseStrategyParser{
                         String varOrType = finiteModelParts[0].trim();
                         String exprStr = finiteModelParts[1];
 
-                        int beginIndex = exprStr.indexOf("\\upto");
+                        //int beginIndex = exprStr.indexOf("\\upto");
 
                         if(varOrType.equals("\num") && exprStr.equals("Seeds") ){
                             intFiniteModel = new SeedsIntFiniteModel();
@@ -205,8 +196,6 @@ public class AtomicPredTCaseStrategyParser implements TCaseStrategyParser{
                                             "test class.");
                                     return false;
                                 }
-
-                                
 
                                 // We parse exprStr as a Latex expression
                                 //System.out.println("La frase es '" + exprStr + "'");

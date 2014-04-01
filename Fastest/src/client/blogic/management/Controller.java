@@ -625,13 +625,12 @@ public final class Controller extends IIComponent {
 			Collection<AbstractTCase> tcaColl =	refineAbsTCasesRequested.getAbsTCasesColl();
 			//opName = refineAbsTCasesRequested.getOpName();
 			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
-			String pathUUT = refineAbsTCasesRequested.getPathUUT();
 			Iterator<AbstractTCase> iter = tcaColl.iterator();
 			while (iter.hasNext()) {
 				AbstractTCase atc = iter.next();
 				opName = SpecUtils.getAxParaName(atc);
 				pendingToRef++;
-				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, pathUUT, targetLanguaje);
+				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, targetLanguaje);
 				try {
 					EventAdmin eventAdmin = EventAdmin.getInstance();
 					eventAdmin.announceEvent(tCaseRefineRequested);

@@ -1,6 +1,5 @@
 package compserver.prunning.operators;
 
-import java.util.*;
 import common.z.TClass;
 import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.Pred;
@@ -23,13 +22,13 @@ public class SeOperator implements Operator
 	public String addSemantic(String originalPred)
 	{
 		String[] partsPred = originalPred.split(";");
-		String newPred = "";
+		StringBuilder newPred = new StringBuilder();
 		for(int i=0;i<partsPred.length;i++)
-			newPred+=partsPred[i].replaceAll("\\\\se\\( (.*) \\)", "\\\\{[^:\n]*? $1 .*?\\\\}")+";";
-		newPred = newPred.substring(0,newPred.length()-1);
+			newPred.append(partsPred[i].replaceAll("\\\\se\\( (.*) \\)", "\\\\{[^:\n]*? $1 .*?\\\\}")+";");
+		//newPred.toString().substring(0,newPred.length()-1);
 
 		//String newPred = originalPred.replaceAll("\\\\se\\( (.*) \\)", "\\\\{[^:]*? $1 .*?\\\\}");
-		return newPred;
+		return newPred.toString().substring(0,newPred.length()-1);
 	}
     /**
      * Returns a boolean value that indicates if an expression is the scope of a set extension

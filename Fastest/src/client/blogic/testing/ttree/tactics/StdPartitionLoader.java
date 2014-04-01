@@ -41,18 +41,19 @@ public class StdPartitionLoader {
      */
     public void loadStdPartitions() {
 
-        StdPartitionsControl stdPartitionsControl =
-                StdPartitionsControl.getInstance();
+        StdPartitionsControl stdPartitionsControl = StdPartitionsControl.getInstance();
 
         try {
             BufferedReader in = new BufferedReader(new FileReader(fileName));
             String line;
-            String text = "";
+            //String text = "";
+            StringBuilder text = new StringBuilder();
             while ((line = in.readLine()) != null) {
-                text += line;
+                text.append(line);
             }
+            in.close();
             // We extract the standard partitions's definitions  from the file.
-            String stdPartitionArr[] = text.split("end operator;");
+            String stdPartitionArr[] = text.toString().split("end operator;");
 
             ZLive zLive = UniqueZLive.getInstance();
             for (int i = 0; i < stdPartitionArr.length; i++) {
@@ -71,15 +72,13 @@ public class StdPartitionLoader {
 
                 // We extract the operator from the first line of the definition
                 int endOperatorIndex = stsPartitionHeader.lastIndexOf(":");
-                String operatorStr = stsPartitionHeader.substring(0,
-                        endOperatorIndex).trim();
+                String operatorStr = stsPartitionHeader.substring(0,endOperatorIndex).trim();
                 //System.out.println("'" + operatorStr + "'");          
                 stdPartition.setOperator(operatorStr);
 
                 // We extract the formal parameters from the definition
                 int firstParamIndex = stsPartitionHeader.lastIndexOf("(") + 1;
-                String paramStr = stsPartitionHeader.substring(firstParamIndex,
-                        stsPartitionHeader.length() - 1);
+                String paramStr = stsPartitionHeader.substring(firstParamIndex,stsPartitionHeader.length() - 1);
                 String formalParamArr[] = paramStr.split(",");
                 List<String> formalParamList = new ArrayList<String>();
                 for (int j = 0; j < formalParamArr.length; j++) {
@@ -91,15 +90,15 @@ public class StdPartitionLoader {
                 List<Pred> predList = new ArrayList<Pred>();
                 for (int j = 1; j < stdPartitionLines.length; j++) {
                     String predStrArr[] = stdPartitionLines[j].split(",");
-                    String predStr = predStrArr[0];
+                    //String predStr = predStrArr[0];
+                    StringBuilder predStr = new StringBuilder(predStrArr[0]);
                     for (int k = 1; k < predStrArr.length; k++) {
-                        predStr += " \\land " + predStrArr[k].trim();
+                    	predStr.append(" \\land " + predStrArr[k].trim());
                     }
-
                     // We convert the expression that contains the operator from
                     // Latex to AST
                     Pred parsedPred = (Pred) ParseUtils.parsePred(
-                            new StringSource(predStr), zLive.getCurrentSection(),
+                            new StringSource(predStr.toString()), zLive.getCurrentSection(),
                             zLive.getSectionManager());
                     if (parsedPred instanceof AndPred) {
                         AndPred andPred = (AndPred) parsedPred;

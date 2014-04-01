@@ -45,7 +45,7 @@ public class CTCPrinter {
 				if (preambleLine.contains(packageChar) || preambleLine.contains(importChar)) 
 					ctcString.append(preambleLine + "\n");
 				else 
-					preambleWithOutPackageAndImports.concat(preambleLine + "\n");
+					preambleWithOutPackageAndImports = preambleWithOutPackageAndImports.concat(preambleLine + "\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

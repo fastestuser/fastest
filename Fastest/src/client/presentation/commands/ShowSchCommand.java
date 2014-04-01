@@ -57,14 +57,14 @@ public class ShowSchCommand implements Command {
                 } else if (argv[index].equals("-o")) {
                     String fileName = argv[index + 1];
                     printer = new PrintWriter(new FileWriter(fileName));
-                    String latexPreface = "\\documentclass{article}\n";
-                    latexPreface += "\\usepackage{czt}\n";
-                    latexPreface += "\\newenvironment{machine}[1]{\n";
-                    latexPreface += "\\begin{tabular}{@{\\qquad}l}";
-                    latexPreface += "\\textbf{\\kern-1em machine}\\ #1\\\\ }{\n";
-                    latexPreface += "\\\\ \\textbf{\\kern-1em end} ";
-                    latexPreface += "\\end{tabular} }\n";
-                    latexPreface += "\\begin{document}\n";
+                    String latexPreface = "\\documentclass{article}\n"
+                    + "\\usepackage{czt}\n"
+                    + "\\newenvironment{machine}[1]{\n"
+                    + "\\begin{tabular}{@{\\qquad}l}"
+                    + "\\textbf{\\kern-1em machine}\\ #1\\\\ }{\n"
+                    + "\\\\ \\textbf{\\kern-1em end} "
+                    + "\\end{tabular} }\n"
+                    + "\\begin{document}\n";
                     printer.println(latexPreface);
                     printer.flush();
                     argCount = 2;

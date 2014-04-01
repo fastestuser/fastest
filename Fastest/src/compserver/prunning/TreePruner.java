@@ -1,26 +1,13 @@
 package compserver.prunning;
 
-import java.io.*;
 import java.util.*;
 
 import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.visitors.TTreeFromPruner;
 import client.blogic.testing.ttree.visitors.TTreeBelowPruner;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractRepository;
 import common.z.SpecUtils;
-import net.sourceforge.czt.z.ast.AxPara;
-import common.z.SpecUtils;
-import common.z.czt.visitors.DeleteParenAnn;
 import common.z.TClass;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.Pred;
-import common.repository.AbstractIterator;
-import compserver.prunning.typechecking.ParamExaminerPred;
-import net.sourceforge.czt.session.SectionManager;
 import compserver.prunning.operators.SpecialLine;
 import compserver.prunning.operators.OperatorAnalizer;
 import compserver.prunning.typechecking.TypeChecker;

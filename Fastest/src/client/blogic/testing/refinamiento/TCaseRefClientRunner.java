@@ -12,13 +12,11 @@ public class TCaseRefClientRunner implements Runnable {
 	private String opName;
 	private AbstractTCase abstractTCase;
 	private ConcreteTCase concreteTCase;
-	private String pathUUT;
 	private String targetLanguaje;
 
-	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase,String pathUUT, String targetLanguaje) {
+	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase, String targetLanguaje) {
 		this.opName = opName;
 		this.abstractTCase = abstractTCase;
-		this.pathUUT = pathUUT;
 		this.targetLanguaje = targetLanguaje;
 	}
 
@@ -40,7 +38,6 @@ public class TCaseRefClientRunner implements Runnable {
 			String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";
 			concreteTCase = new ConcreteTCase();
 			concreteTCase.setOpName(opName);
-			concreteTCase.setPathUUT(this.pathUUT);
 			concreteTCase.setLanguaje(this.targetLanguaje);
 			concreteTCase.setConcreteTCaseName(concreteName);
 			concreteTCase.setAbstractTCase(abstractTCase);

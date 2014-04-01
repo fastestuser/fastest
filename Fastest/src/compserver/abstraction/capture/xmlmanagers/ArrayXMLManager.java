@@ -1,8 +1,6 @@
 package compserver.abstraction.capture.xmlmanagers;
 
-import java.util.*;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 
 /**
  * Provides utilities for interpret and encode values of an array in XML format
@@ -41,41 +39,41 @@ public class ArrayXMLManager {
 		// We create the index used for iterate using indexNumber
 		String index = "i"+indexNumber;
 
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 
-		captureCode += "{\n";
+		captureCode.append("{\n");
 		String xmlCode = "<array>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 
-		captureCode += "int "+index+";\n";
-		captureCode += "for("+index+"=0;"+index+"<"+realSize+";"+index+"++){\n";
+		captureCode.append("int "+index+";\n");
+		captureCode.append("for("+index+"=0;"+index+"<"+realSize+";"+index+"++){\n");
 		// We create an auxiliar name corresponding to an entry in the array
 		String entryName = varName+"["+index+"]";
-		captureCode += getArrayEntryCode(entryName,fileDescriptor,returnID, arrayType, index);
-		captureCode += "}\n";
+		captureCode.append(getArrayEntryCode(entryName,fileDescriptor,returnID, arrayType, index));
+		captureCode.append("}\n");
 		//captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
 		/*for(int i=0;i<arraySize;i++){
 			captureCode += getArrayEntryCode(varName,i,fileDescriptor,returnID, arrayType);
 		}*/
 		xmlCode = "</array>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		captureCode += "}\n";
-		return captureCode;
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
+		captureCode.append("}\n");
+		return captureCode.toString();
 	}
 	private static String getArrayEntryCode(String entryName, String fileDescriptor, String returnID, ImplNode arrayType, String index){
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 		//String entryArrayName = varName+"[i]";
-		String xmlCode = "";
-		xmlCode += "<arrayEntry>\\n";
-		xmlCode += "<index>\\n";
-		xmlCode += "%d\\n";
-		xmlCode += "</index>\\n";
-		xmlCode += "<indexValue>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\","+index+");\n";
-		captureCode += WritersManager.getCaptureCode(entryName, arrayType, fileDescriptor, returnID)+"\n";
-		xmlCode = "</indexValue>\\n";
-		xmlCode += "</arrayEntry>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		return captureCode;
+		String xmlCode = ""
+		+ "<arrayEntry>\\n"
+		+ "<index>\\n"
+		+ "%d\\n"
+		+ "</index>\\n"
+		+ "<indexValue>\\n";
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\","+index+");\n");
+		captureCode.append(WritersManager.getCaptureCode(entryName, arrayType, fileDescriptor, returnID)+"\n");
+		xmlCode = "</indexValue>\\n"
+		+ "</arrayEntry>\\n";
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
+		return captureCode.toString();
 	}
 }

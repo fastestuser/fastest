@@ -49,20 +49,20 @@ public class PSSETactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* PSSE (Proper Subset of Set Extension). This tactic uses\n";
-        description += "  the same concept of test of ISE tactic but applied \n";
-        description += "  to set inclusions. \n";
-        description += "  PSSE tactic helps to test operations including predicates like\n";
-        description += "  expr \\subset \\{expr(1),...,expr(n)\\}.\n";
-        description += "  When PSSE is applied it generates 2^n-1 test classes where a \n";
-        description += "  predicate of the form expr = A(i) with i in {1..n} and \n";
-        description += "  A(i) in power set of \\{expr(1),...,expr(n)\\}.\n";
-        description += "  Usage: addtactic <op_name> PSSE <expression>\n";
-        description += "  where op_name is the name of a selected operation\n";
-        description += "  and expression is a Z expression written in Latex.\n";
-        description += "  It is assumed that  \\subset operator appears in the expression\n";
-        description += "  and this in turn appears in the predicate\n";
-        description += "  of the selected operation.\n";
+        description = "* PSSE (Proper Subset of Set Extension). This tactic uses\n"
+        + "  the same concept of test of ISE tactic but applied \n"
+        + "  to set inclusions. \n"
+        + "  PSSE tactic helps to test operations including predicates like\n"
+        + "  expr \\subset \\{expr(1),...,expr(n)\\}.\n"
+        + "  When PSSE is applied it generates 2^n-1 test classes where a \n"
+        + "  predicate of the form expr = A(i) with i in {1..n} and \n"
+        + "  A(i) in power set of \\{expr(1),...,expr(n)\\}.\n"
+        + "  Usage: addtactic <op_name> PSSE <expression>\n"
+        + "  where op_name is the name of a selected operation\n"
+        + "  and expression is a Z expression written in Latex.\n"
+        + "  It is assumed that  \\subset operator appears in the expression\n"
+        + "  and this in turn appears in the predicate\n"
+        + "  of the selected operation.\n";
     }
 
     /**

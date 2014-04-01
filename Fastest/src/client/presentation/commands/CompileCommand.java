@@ -44,7 +44,7 @@ public class CompileCommand implements Command{
 			String mode = "single";
 			String compileCode="";
 			String ctcName="";
-			String opName="";
+			//String opName="";
 			if(parts[0].equals("-all")){
 				mode = "complete";
 				compileCode = parts[1].substring(1,parts[1].length()-1);
@@ -56,7 +56,7 @@ public class CompileCommand implements Command{
 			else if(parts[0].equals("-op")){
 				mode = "operation";
 				String parts2[] = parts[1].split("[ ]+",2);
-				opName = parts2[0];
+				//opName = parts2[0];
 				compileCode = parts2[1].substring(1,parts2[1].length()-1);
 			}
 

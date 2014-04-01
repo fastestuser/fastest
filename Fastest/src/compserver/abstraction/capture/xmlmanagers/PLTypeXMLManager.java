@@ -1,6 +1,5 @@
 package compserver.abstraction.capture.xmlmanagers;
 
-import java.util.*;
 import compserver.abstraction.types.impltypes.*;
 
 /**
@@ -38,8 +37,8 @@ public class PLTypeXMLManager {
 		String captureCode = returnID+" = ";
 		String xmlCode1 = "";
 		String xmlCode2 = "";
-		xmlCode1 += "<intValue>\\n";
-		xmlCode2 += "</intValue>\\n";
+		xmlCode1 += "<intValue>\\n"
+		+ "</intValue>\\n";
 		captureCode += "fprintf("+fileDescriptor+",\""+xmlCode1+"%d\\n"+xmlCode2+"\","+varName+");";
 		return captureCode;
 	}
@@ -47,8 +46,8 @@ public class PLTypeXMLManager {
 		String captureCode = returnID+" = ";
 		String xmlCode1 = "";
 		String xmlCode2 = "";
-		xmlCode1 += "<floatValue>\\n";
-		xmlCode2 += "</floatValue>\\n";
+		xmlCode1 += "<floatValue>\\n"
+		+ "</floatValue>\\n";
 		captureCode += "fprintf("+fileDescriptor+",\""+xmlCode1+"%f\\n"+xmlCode2+"\","+varName+");";
 		return captureCode;
 	}
@@ -56,8 +55,8 @@ public class PLTypeXMLManager {
 		String captureCode = returnID+" = ";
 		String xmlCode1 = "";
 		String xmlCode2 = "";
-		xmlCode1 += "<doubleValue>\\n";
-		xmlCode2 += "</doubleValue>\\n";
+		xmlCode1 += "<doubleValue>\\n"
+		+ "</doubleValue>\\n";
 		captureCode += "fprintf("+fileDescriptor+",\""+xmlCode1+"%f\\n"+xmlCode2+"\","+varName+");";
 		return captureCode;
 	}
@@ -65,8 +64,8 @@ public class PLTypeXMLManager {
 		String captureCode = returnID+" = ";
 		String xmlCode1 = "";
 		String xmlCode2 = "";
-		xmlCode1 += "<charValue>\\n";
-		xmlCode2 += "</charValue>\\n";
+		xmlCode1 += "<charValue>\\n"
+		+ "</charValue>\\n";
 		captureCode += "fprintf("+fileDescriptor+",\""+xmlCode1+"%c\\n"+xmlCode2+"\","+varName+");";
 		return captureCode;
 	}
@@ -74,8 +73,8 @@ public class PLTypeXMLManager {
 		String captureCode = returnID+" = ";
 		String xmlCode1 = "";
 		String xmlCode2 = "";
-		xmlCode1 += "<stringValue>\\n";
-		xmlCode2 += "</stringValue>\\n";
+		xmlCode1 += "<stringValue>\\n"
+		+ "</stringValue>\\n";
 		captureCode += "fprintf("+fileDescriptor+",\""+xmlCode1+"%s\\n"+xmlCode2+"\","+varName+");";
 		return captureCode;
 	}

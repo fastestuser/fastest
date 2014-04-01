@@ -13,7 +13,6 @@ import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.StringToNumReplacer;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import compserver.tcasegen.strategies.setlog.TypeManagerParser;
-import net.sourceforge.czt.animation.eval.ExprComparator;
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.oz.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
@@ -119,9 +118,8 @@ public final class ConstantCreator {
 					//String schemaNode = SetLogUtils.toTreeNorm(schemaTypeComplete).toString();
 					ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(schemaTypeComplete);
 					boolean out = true;
-					while ((out == true) && (tiposDecl.hasNext())) {
+					while ((out == true) && (tiposDecl.hasNext())) 
 						out = soloTipoFinito(SetLogUtils.toTreeNorm(tiposDecl.next()));
-					}
 					if (out == false)
 						return false;
 				}
@@ -206,7 +204,6 @@ public final class ConstantCreator {
 	/* Dado un tipo y una variable, genera un terminal canonico para el tipo de tal manera que no sea
 	 * ninunga de las constantes que estan asociadas en valoresProhibidos, prueba MAXTRYCTEINF veces como maximo.*/
 	private String cteInfinita(DefaultMutableTreeNode nodo, String var) {
-
 		boolean esProhibida = true;
 		String cte = null;
 		int i = 0;
@@ -218,7 +215,6 @@ public final class ConstantCreator {
 		}
 		cte = (i == 100)? "" : cte;
 		return cte;
-
 	}
 
 	/*
@@ -245,7 +241,6 @@ public final class ConstantCreator {
 
 		// si esta formado solo por tipos finitos
 		salida = cteDesigual(nodo, var);
-
 		return salida;
 	}
 
@@ -286,11 +281,11 @@ public final class ConstantCreator {
 		if (tipoCompleto.startsWith("SchemaType")) {
 			ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipoCompleto);
 			ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipoCompleto);
-			String salida = "";
+			StringBuilder salida = new StringBuilder();
 			while (tiposDecl.hasNext())
-				salida += ","+ cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next());
+				salida.append(","+ cteCanonica(SetLogUtils.toTreeNorm(tiposDecl.next()),varsDecl.next()));
 
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
 		}
@@ -325,7 +320,7 @@ public final class ConstantCreator {
 
 		char c = exprS.charAt(0);
 		String ct = nodo.toString();
-		String salida = "";
+		StringBuilder salida = new StringBuilder();
 
 		if (exprS.startsWith("int(")) {
 
@@ -353,8 +348,7 @@ public final class ConstantCreator {
 			cte = cteRestringuida(nodo, exprS);
 			if (slVars != null)
 				slVars.put(exprS, new StringPointer(cte));
-			salida = cte;
-			return salida;
+			return cte;
 		}
 		// si es constante la meto
 		if (SetLogUtils.esSLCteSimple(exprS)) {
@@ -364,15 +358,15 @@ public final class ConstantCreator {
 			// caso [X,Y]
 			int i = 0;
 			while (expr.hasNext()) {
-				salida += ","+ cte((DefaultMutableTreeNode) nodo.getChildAt(i),	expr.next());
+				salida.append(","+ cte((DefaultMutableTreeNode) nodo.getChildAt(i),	expr.next()));
 				i++;
 			}
 			while (i < nodo.getChildCount()) {
-				salida += ","+ cte((DefaultMutableTreeNode) nodo.getChildAt(i), "X"	+ i);
+				salida.append(","+ cte((DefaultMutableTreeNode) nodo.getChildAt(i), "X"	+ i));
 				i++;
 			}
 
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "(" + salida.substring(1) + ")";
 			return "()";
 		}
@@ -385,22 +379,22 @@ public final class ConstantCreator {
 				// ->NUM|NAT (izq)
 				DefaultMutableTreeNode nauxHijo = (DefaultMutableTreeNode) ((nodo.getChildAt(0)).getChildAt(0)).getChildAt(1);
 				naux.add(nauxHijo);
-				return salida = cte(naux, exprS);
+				return cte(naux, exprS);
 			}
 
 			while (expr.hasNext())
-				salida += ","+ cte((DefaultMutableTreeNode) nodo.getChildAt(0),	expr.next());
+				salida.append(","+ cte((DefaultMutableTreeNode) nodo.getChildAt(0),	expr.next()));
 
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "{" + salida.substring(1) + "}";
 			return "{}";
 
 		}
 		if (ct.equals("\\seq")) {
 			while (expr.hasNext())
-				salida += ","+ cte((DefaultMutableTreeNode) nodo.getChildAt(0),	expr.next());
+				salida.append(","+ cte((DefaultMutableTreeNode) nodo.getChildAt(0),	expr.next()));
 
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "[" + salida.substring(1) + "]";
 			return "[]";
 		}
@@ -410,13 +404,13 @@ public final class ConstantCreator {
 		ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipos.get(ct));
 		while (expr.hasNext()) {
 			varsDecl.next();
-			salida += ","+ cte(SetLogUtils.toTreeNorm(tiposDecl.next()), expr.next());
+			salida.append(","+ cte(SetLogUtils.toTreeNorm(tiposDecl.next()), expr.next()));
 		}
 		while (tiposDecl.hasNext())
-			salida += ","+ cte(SetLogUtils.toTreeNorm(tiposDecl.next()), varsDecl.next().toUpperCase()); // Se pasa a mayus para que
+			salida.append(","+ cte(SetLogUtils.toTreeNorm(tiposDecl.next()), varsDecl.next().toUpperCase())); // Se pasa a mayus para que
 		// lo tome como variable
 
-		if (!salida.isEmpty())
+		if (!salida.toString().isEmpty())
 			return "[" + salida.substring(1) + "]";
 		return "[]";
 

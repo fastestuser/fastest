@@ -2,7 +2,6 @@ package compserver.abstraction.capture.xmlmanagers;
 
 import java.util.*;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 
 /**
  * Provides utilities for interpret and encode values of a list in XML format
@@ -22,61 +21,61 @@ public class ListXMLManager {
 
 		ImplNodeList listNode = (ImplNodeList) implNode;
 		String linkType = listNode.getLinkType();
-		String listName = listNode.getName();
+		//String listName = listNode.getName();
 		String linkNextName = listNode.getLinkNextName();
 		List<ImplNodeField> fields = listNode.getFields();
 
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 		String xmlCode = "";
 		xmlCode += "<list>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 		if(linkType.equals("SLL")||linkType.equals("DLL")){
 			// Tengo que crear una variable auxiliar para recorrer
-			captureCode += "if("+varName+ " != NULL){\n";
-			captureCode += "auxList"+varName+" = "+varName+";\n";
-			captureCode += "while(auxList"+varName+"!=NULL){\n";
+			captureCode.append("if("+varName+ " != NULL){\n"
+			+ "auxList"+varName+" = "+varName+";\n"
+			+ "while(auxList"+varName+"!=NULL){\n");
 			xmlCode = "<listNode>\\n";
-			captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+			captureCode.append("\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 
 
 			for(int i=0;i<fields.size();i++){
 				ImplNodeField field = fields.get(i);
 				String fieldName = field.getName();
 				xmlCode = "<field>\\n";
-				captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-				captureCode += "\t"+ getFieldCode("auxList"+varName+"->"+fieldName,field, fileDescriptor,returnID);
+				captureCode.append("\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+				+ "\t"+ getFieldCode("auxList"+varName+"->"+fieldName,field, fileDescriptor,returnID));
 				xmlCode = "</field>\\n";
-				captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+				captureCode.append("\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 			}
 			xmlCode = "</listNode>\\n";
-			captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-			captureCode += "\t"+"auxList"+varName+" = auxList"+varName+"->"+linkNextName+";\n}\n}\n";
+			captureCode.append("\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+			+ "\t"+"auxList"+varName+" = auxList"+varName+"->"+linkNextName+";\n}\n}\n");
 		}
 		else if(linkType.equals("CLL")||linkType.equals("DCLL")){
 			// Tengo que crear una variable auxiliar para recorrer
 			// Estoy asumiendo que tiene un elemento - ARREGLAR
 			//captureCode += "struct "+listName+" *auxList = "+varName+";\n";
-			captureCode += "auxList"+varName+" = "+varName+";\n";
-			captureCode += "do{";
+			captureCode.append("auxList"+varName+" = "+varName+";\n"
+			+ "do{");
 			xmlCode = "<listNode>\\n";
-			captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+			captureCode.append("\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 			for(int i=0;i<fields.size();i++){
 				ImplNodeField field = fields.get(i);
 				String fieldName = field.getName();
 				xmlCode = "<field>\\n";
-				captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-				captureCode += "\t"+ getFieldCode("auxList"+varName+"->"+fieldName,field, fileDescriptor,returnID);
+				captureCode.append( "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+				+ "\t"+ getFieldCode("auxList"+varName+"->"+fieldName,field, fileDescriptor,returnID));
 				xmlCode = "</field>\\n";
-				captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
+				captureCode.append( "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
 			}
 			xmlCode = "</listNode>\\n";
-			captureCode += "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-			captureCode += "\t"+"auxList"+varName+" = auxList"+varName+"->"+linkNextName+";\n}";
-			captureCode += "while(auxList"+varName+"!="+varName+");";
+			captureCode.append( "\t"+returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+			+ "\t"+"auxList"+varName+" = auxList"+varName+"->"+linkNextName+";\n}"
+			+ "while(auxList"+varName+"!="+varName+");");
 		}
 		xmlCode = "</list>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		return captureCode;
+		captureCode.append( returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
+		return captureCode.toString();
 	}
 	private static String getFieldCode(String varName, ImplNodeField fieldNode, String fileDescriptor, String returnID){
 		String fieldName = fieldNode.getName();

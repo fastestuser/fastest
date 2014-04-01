@@ -55,16 +55,16 @@ public class SSETactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* SSE (Subset of Set Extension). It is identical to PSSE tactic \n";
-        description += "  but it applies to predicates of the form  \n";
-        description += "  expr \\subseteq \\{expr(1),...,expr(n)\\} in which case\\}\n";
-        description += "  it generate 2^n by considering also \\{expr(1),...,expr(n)\\}.\n";
-        description += "  Usage: addtactic <op_name> SSE <expression>\n";
-        description += "  where op_name is the name of a selected operation\n";
-        description += "  and expression is a Z expression written in Latex.\n";
-        description += "  It is assumed that  \\subseteq operator appears in the expression\n";
-        description += "  and this in turn appears in the predicate\n";
-        description += "  of the selected operation.\n";
+        description = "* SSE (Subset of Set Extension). It is identical to PSSE tactic \n"
+        + "  but it applies to predicates of the form  \n"
+        + "  expr \\subseteq \\{expr(1),...,expr(n)\\} in which case\\}\n"
+        + "  it generate 2^n by considering also \\{expr(1),...,expr(n)\\}.\n"
+        + "  Usage: addtactic <op_name> SSE <expression>\n"
+        + "  where op_name is the name of a selected operation\n"
+        + "  and expression is a Z expression written in Latex.\n"
+        + "  It is assumed that  \\subseteq operator appears in the expression\n"
+        + "  and this in turn appears in the predicate\n"
+        + "  of the selected operation.\n";
     }
 
     /**

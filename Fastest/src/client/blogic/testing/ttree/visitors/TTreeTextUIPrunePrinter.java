@@ -105,19 +105,20 @@ import common.repository.AbstractIterator;
 
 
 	private String getStrTab(int nroTab, boolean withName){
-		String strTab = "";
+		//String strTab = "";
+		StringBuilder strTab = new StringBuilder();
 		for(int i=0; i<nroTab-1; i++){
             if(auxList.get(i).booleanValue())
-                strTab += "  |\t";
+                strTab.append("  |\t");
             else
-                strTab += "  \t";
+                strTab.append("  \t");
         }
 			
 		if(nroTab>0 && withName)
-			strTab += "  !______";                  
+			strTab.append("  !______");                  
         else if(nroTab>0 && auxList.get(nroTab-1).booleanValue())
-            strTab += "  |";
-		return strTab;
+            strTab.append("  |");
+		return strTab.toString();
 	}
 
 

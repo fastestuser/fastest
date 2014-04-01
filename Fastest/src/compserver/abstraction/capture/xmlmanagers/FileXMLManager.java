@@ -1,8 +1,6 @@
 package compserver.abstraction.capture.xmlmanagers;
 
-import java.util.*;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 
 /**
  * Provides utilities for interpret and encode values of a file in XML format
@@ -29,28 +27,28 @@ public class FileXMLManager {
 		String path = fileNode.getPath();
 
 		String captureCode = "";
-		String xmlCode = "<file>\\n";
-		xmlCode += "<name>\\n";
-		xmlCode += name+"\\n";
-		xmlCode += "</name>\\n";
-		xmlCode += "<path>\\n";
-		xmlCode += path+"\\n";
-		xmlCode += "</path>\\n";
-		xmlCode += "<delimiter>\\n";
-		xmlCode += delimiter+"\\n";
-		xmlCode += "</delimiter>\\n";
-		xmlCode += "<structure>\\n";
-		xmlCode += structure+"\\n";
-		xmlCode += "</structure>\\n";
+		String xmlCode = "<file>\\n"
+		+ "<name>\\n"
+		+ name+"\\n"
+		+ "</name>\\n"
+		+ "<path>\\n"
+		+ path+"\\n"
+		+ "</path>\\n"
+		+ "<delimiter>\\n"
+		+ delimiter+"\\n"
+		+ "</delimiter>\\n"
+		+ "<structure>\\n"
+		+ structure+"\\n"
+		+ "</structure>\\n";
 		if(!eol.equals("")){
-		xmlCode += "<eol>\\n";
-		xmlCode += eol+"\\n";
-		xmlCode += "</eol>\\n";
+		xmlCode += "<eol>\\n"
+		+ eol+"\\n"
+		+ "</eol>\\n";
 		}
 		if(!eof.equals("")){
-		xmlCode += "<eof>\\n";
-		xmlCode += eol+"\\n";
-		xmlCode += "</eof>\\n";
+		xmlCode += "<eof>\\n"
+		+ eol+"\\n"
+		+ "</eof>\\n";
 		}
 		xmlCode += "</file>\\n";
 		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";

@@ -35,24 +35,24 @@ class _2MILSorter{
 		try{	
 			String linea = "";
 			List<TextModule> moduleList = new ArrayList<TextModule>();
-			int nroTextModules = 0;
-			int nroHTextModules = 0;
+			//			int nroTextModules = 0;
+			//			int nroHTextModules = 0;
 			BufferedReader in = new BufferedReader(new FileReader(args[0]));
-			String moduleStr = "";
+			StringBuilder moduleStr = new StringBuilder();
 			String keyStr = "";
 			while((linea = in.readLine())!= null)	 {	
-				int lineLength = linea.length();
+				//int lineLength = linea.length();
 				if(linea.startsWith("\\begin{module}")){
-						moduleStr += linea + "\n";
-						keyStr = linea.substring(15);
+					moduleStr.append(linea + "\n");
+					keyStr = linea.substring(15);
 				}
 				else if(linea.startsWith("\\begin{hmodule}")){
-						moduleStr += linea + "\n";
-						keyStr = linea.substring(16);
+					moduleStr.append(linea + "\n");
+					keyStr = linea.substring(16);
 				}
 				else if(linea.equals("\\end{module}") || linea.equals("\\end{hmodule}")){
-						moduleStr += linea + "\n";
-					TextModule module = new TextModule(keyStr, moduleStr);
+					moduleStr.append(linea + "\n");
+					TextModule module = new TextModule(keyStr, moduleStr.toString());
 					int i=0;
 					for(i=0; i< moduleList.size(); i++){
 						TextModule auxTextModule = moduleList.get(i);
@@ -62,25 +62,25 @@ class _2MILSorter{
 						}
 					}
 					moduleList.add(i, module);
-					moduleStr = "";
+					moduleStr.setLength(0);
 				}
 				else if(!moduleStr.equals("")){
-					moduleStr += linea + "\n";
+					moduleStr.append(linea + "\n");
 				}
-				
+
 			}
-		
+			in.close();
 			int moduleListSize = moduleList.size(); 
 
-			
+
 			for(int i=0; i< moduleListSize; i++){
 				TextModule auxTextModule = moduleList.get(i);
 				System.out.println(auxTextModule.getContent());
 				System.out.println("\n");
 			}
-			
 
-	
+
+
 		}
 		catch(Exception e){
 			e.printStackTrace();

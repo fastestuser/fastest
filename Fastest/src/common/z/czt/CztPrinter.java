@@ -596,10 +596,10 @@ public class CztPrinter {
     }
 
     private static String getStrTab(int n) {
-        String strTab = "";
+        StringBuilder strTab = new StringBuilder();
         for (int i = 0; i < n; i++) {
-            strTab += "\t";
+            strTab.append("\t");
         }
-        return strTab;
+        return strTab.toString();
     }
 }

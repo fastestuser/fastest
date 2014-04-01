@@ -66,29 +66,29 @@ public class SEQTactic  extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* SEQ (Strong Existential Quantifier). This tactic \n";
-        description += "  generates new test classes from a test class that \n";
-        description += "  has, in its predicate, either an existencial  \n";
-        description += "  quantification or the negation of an universal  \n";
-        description += "  quantification. The new test classes ALWAYS conform \n";
-        description += "  a partition of the original test class. The tactic \n";
-        description += "  takes as parameter the existencial quantification (or\n";
-        description += "  the negation of the universal quantification) and a  \n";
-        description += "  finite model for each bounded variable of the  \n";
-        description += "  quantification. It is also possible to specify a  \n";
-        description += "  finite model for the type of any of the bounded  \n";
-        description += "  variables, in place of a finite model for each specific   \n";
-        description += "  variable of that type.\n";
-        description += "  Usage: addtactic <op_name> SEQ '\"'<quantification>'\"' \n";
-        description += "       '\"'<bindings>'\"'\n";
-        description += "  where quantification and bindings must be enclosed\n";
-        description += "  between quotes. quantification must be a sequence of \n";
-        description += "  assignations divided by ';' such that each assignation \n";
-        description += "  is denoted by '==', has the name of a bounded variable \n";
-        description += "  or a type of a bounded variable as left member and a\n";
-        description += "  a set of values of the appropiate type as right member.\n";
-        description += "  Example: addtactic Op SEQ \"\\exists i,j: \\nat @ i>2 \n";
-        description += "  \\land j>3\" \"i==\\{1,2\\};j==\\{8,9,10\\}\" \n";
+        description = "* SEQ (Strong Existential Quantifier). This tactic \n"
+        + "  generates new test classes from a test class that \n"
+        + "  has, in its predicate, either an existencial  \n"
+        + "  quantification or the negation of an universal  \n"
+        + "  quantification. The new test classes ALWAYS conform \n"
+        + "  a partition of the original test class. The tactic \n"
+        + "  takes as parameter the existencial quantification (or\n"
+        + "  the negation of the universal quantification) and a  \n"
+        + "  finite model for each bounded variable of the  \n"
+        + "  quantification. It is also possible to specify a  \n"
+        + "  finite model for the type of any of the bounded  \n"
+        + "  variables, in place of a finite model for each specific   \n"
+        + "  variable of that type.\n"
+        + "  Usage: addtactic <op_name> SEQ '\"'<quantification>'\"' \n"
+        + "       '\"'<bindings>'\"'\n"
+        + "  where quantification and bindings must be enclosed\n"
+        + "  between quotes. quantification must be a sequence of \n"
+        + "  assignations divided by ';' such that each assignation \n"
+        + "  is denoted by '==', has the name of a bounded variable \n"
+        + "  or a type of a bounded variable as left member and a\n"
+        + "  a set of values of the appropiate type as right member.\n"
+        + "  Example: addtactic Op SEQ \"\\exists i,j: \\nat @ i>2 \n"
+        + "  \\land j>3\" \"i==\\{1,2\\};j==\\{8,9,10\\}\" \n";
 
     }
 

@@ -39,13 +39,13 @@ public final class AxDefsChecker
 		axDefsIt = axDefsControl.createIterator();
 		strPred = SpecUtils.termToLatex(pred);
 		String[] parts = strPred.split("\n");
-		String auxPred = "";
+		StringBuilder auxPred = new StringBuilder();
 		for(int i=0;i<parts.length;i++){
 			if(parts[i].endsWith(" \\\\"))
 				parts[i] = parts[i].substring(0, parts[i].length() -3)+" \n";
-			auxPred+=parts[i];
+			auxPred.append(parts[i]);
 		}
-		strPred = auxPred;
+		strPred = auxPred.toString();
 		currentAxDef = "";
 	}
 	/**
@@ -248,13 +248,13 @@ public final class AxDefsChecker
 							}
 
 							String[] parts = finalStrPred.split("\n");
-							String auxPred = "";
+							StringBuilder auxPred = new StringBuilder();
 							for(int j=0;j<parts.length;j++){
 								if(parts[j].endsWith(" \\\\"))
 									parts[j] = parts[j].substring(0, parts[j].length() -3)+"\n";
-								auxPred+=parts[j];
+								auxPred.append(parts[j]);
 							}
-							finalStrPred = auxPred;
+							finalStrPred = auxPred.toString();
 							finalStrPred = finalStrPred.replace("\\", "\\\\");
 							String originalPattern = auxPattern.pattern();
 							strPred = strPred.replaceFirst(originalPattern, finalStrPred);

@@ -29,14 +29,14 @@ public class TheoremsChecker
 		Pred tClassPred = SpecUtils.getAxParaPred(axParaAux);
 		strPred = SpecUtils.termToLatex(tClassPred);
 		String[] parts = strPred.split("\n");
-		String auxPred = "";
+		StringBuilder auxPred = new StringBuilder();
 		for(int i=0;i<parts.length;i++){
 			if(parts[i].endsWith(" \\\\"))
 				parts[i] = parts[i].substring(0, parts[i].length() -3)+"\n";
-			auxPred+=parts[i];
+			auxPred.append(parts[i]);
 		}
-		strPred = auxPred;
-		originalPred = auxPred;
+		strPred = auxPred.toString();
+		originalPred = auxPred.toString();
 		currentTheorem = "";
 	}
 	/**

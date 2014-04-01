@@ -357,15 +357,15 @@ public class LoadSpecCommand implements Command {
             bw.close();
             (rt.exec(cmdScriptExec)).waitFor();
 
-            String typeCheckOutputMsg = "";
+            StringBuilder typeCheckOutputMsg = new StringBuilder();
             BufferedReader in = new BufferedReader(new FileReader(typeCheckOutputFile));
 
             String typeCheckOutputLine;
             while ((typeCheckOutputLine = in.readLine()) != null) {
-                typeCheckOutputMsg += "\n" + typeCheckOutputLine;
+                typeCheckOutputMsg.append("\n" + typeCheckOutputLine);
             }
 
-            if (!typeCheckOutputMsg.isEmpty()) {
+            if (!typeCheckOutputMsg.toString().isEmpty()) {
                 output.println(typeCheckOutputMsg);
                 in.close();
                 return false;
@@ -445,15 +445,15 @@ public class LoadSpecCommand implements Command {
 
             File pythonErrOutputFile = new File(pythonErrOutputFilePath);
 
-            String pythonErrOutputMsg = "";
+            StringBuilder pythonErrOutputMsg = new StringBuilder();
             BufferedReader in = new BufferedReader(new FileReader(pythonErrOutputFile));
 
             String pythonErrOutputLine;
             while ((pythonErrOutputLine = in.readLine()) != null) {
-                pythonErrOutputMsg += "\n" + pythonErrOutputLine;
+                pythonErrOutputMsg.append("\n" + pythonErrOutputLine);
             }
 
-            if (!pythonErrOutputMsg.isEmpty()) {
+            if (!pythonErrOutputMsg.toString().isEmpty()) {
                 output.println(pythonErrOutputMsg);
                 in.close();
                 return false;

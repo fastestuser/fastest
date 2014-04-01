@@ -1,9 +1,7 @@
 package compserver.abstraction.capture.xmlmanagers;
 
 import java.util.*;
-import java.net.URL;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 
 /**
  * Provides utilities for interpret and encode values of the screen in XML format
@@ -26,10 +24,10 @@ public class ScreenXMLManager {
 			ImplNodeEnumeration enumeration = screenPlane.getEnumeration();
 			// Al igual que en file postergo la lectura para no leer 2 veces
 			// Registro el tipo de pantalla que se trata y, si tiene, la enum
-			String xmlCode = "<screen>\\n";
-			xmlCode += "<screentype>\\n";
-			xmlCode += "plane\\n";
-			xmlCode += "</screentype>\\n";
+			String xmlCode = "<screen>\\n"
+			+ "<screentype>\\n"
+			+ "plane\\n"
+			+ "</screentype>\\n";
 			if(enumeration!=null){
 			xmlCode += "<enum>\\n";
 			Map<String, String> enumElements = enumeration.getElements();
@@ -42,13 +40,13 @@ public class ScreenXMLManager {
 				String value = entry.getValue();
 				//System.out.println("La clave es: "+key);
 				//System.out.println("El valor es: "+value);
-				xmlCode += "<implvalue>\\n";
-				xmlCode += key+"\\n";
-				xmlCode += "</implvalue>\\n";
-				xmlCode += "<specvalue>\\n";
-				xmlCode += value+"\\n";
-				xmlCode += "</specvalue>\\n";
-				xmlCode += "</enumentry>\\n";
+				xmlCode += "<implvalue>\\n"
+				+ key+"\\n"
+				+ "</implvalue>\\n"
+				+ "<specvalue>\\n"
+				+ value+"\\n"
+				+ "</specvalue>\\n"
+				+ "</enumentry>\\n";
 			}
 			xmlCode += "</enum>\\n";
 			}
@@ -63,25 +61,25 @@ public class ScreenXMLManager {
 			int rowUB = screenTable.getRowUpperBound();
 			int columnLB = screenTable.getColumnLowerBound();
 			int columnUB = screenTable.getColumnUpperBound();
-			String xmlCode = "<screen>\\n";
-			xmlCode += "<screentype>\\n";
-			xmlCode += "table\\n";
-			xmlCode += "</screentype>\\n";
-			xmlCode += "<delimiter>\\n";
-			xmlCode += delimiter+"\\n";
-			xmlCode += "</delimiter>\\n";
-			xmlCode += "<rowLowerBound>\\n";
-			xmlCode += rowLB+"\\n";
-			xmlCode += "</rowLowerBound>\\n";
-			xmlCode += "<rowUpperBound>\\n";
-			xmlCode += rowUB+"\\n";
-			xmlCode += "</rowUpperBound>\\n";
-			xmlCode += "<columnLowerBound>\\n";
-			xmlCode += columnLB+"\\n";
-			xmlCode += "</columnLowerBound>\\n";
-			xmlCode += "<columnUpperBound>\\n";
-			xmlCode += columnUB+"\\n";
-			xmlCode += "</columnUpperBound>\\n";
+			String xmlCode = "<screen>\\n"
+			+ "<screentype>\\n"
+			+ "table\\n"
+			+ "</screentype>\\n"
+			+ "<delimiter>\\n"
+			+ delimiter+"\\n"
+			+ "</delimiter>\\n"
+			+ "<rowLowerBound>\\n"
+			+ rowLB+"\\n"
+			+ "</rowLowerBound>\\n"
+			+ "<rowUpperBound>\\n"
+			+ rowUB+"\\n"
+			+ "</rowUpperBound>\\n"
+			+ "<columnLowerBound>\\n"
+			+ columnLB+"\\n"
+			+ "</columnLowerBound>\\n"
+			+ "<columnUpperBound>\\n"
+			+ columnUB+"\\n"
+			+ "</columnUpperBound>\\n";
 			if(enumeration!=null){
 			xmlCode += "<enum>\\n";
 			Map<String, String> enumElements = enumeration.getElements();
@@ -91,14 +89,14 @@ public class ScreenXMLManager {
 				xmlCode += "<enumentry>\\n";
 				Map.Entry<String,String> entry = it.next();
 				String key = entry.getKey();
-				String value = entry.getValue();
-				xmlCode += "<implvalue>\\n";
-				xmlCode += key+"\\n";
-				xmlCode += "</implvalue>\\n";
-				xmlCode += "<specvalue>\\n";
-				xmlCode += value+"\\n";
-				xmlCode += "</specvalue>\\n";
-				xmlCode += "</enumentry>\\n";
+				String value = entry.getValue()
+				+ "<implvalue>\\n"
+				+ key+"\\n"
+				+ "</implvalue>\\n"
+				+ "<specvalue>\\n";
+				value += value +"\\n"
+				+ "</specvalue>\\n"
+				+ "</enumentry>\\n";
 			}
 			xmlCode += "</enum>\\n";
 			}

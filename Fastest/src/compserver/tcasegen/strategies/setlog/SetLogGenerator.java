@@ -83,7 +83,7 @@ public final class SetLogGenerator {
 	}
 
 	private static String runSetLog(String setLogInput, String setlogFile, int timeout){
-		String setlogOutput = "";
+		StringBuilder setlogOutput = new StringBuilder();
 		try{
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
@@ -93,8 +93,9 @@ public final class SetLogGenerator {
 			String path = location.getFile();
 			if (path.endsWith("/")) //Al correrlo desde eclipse, el path termina en /bin/, con lo cual se elimina primero la ultima /
 				path = path.substring(0, path.lastIndexOf("/"));
-			path = path.substring(0, path.lastIndexOf("/")); //Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
-			path = path + "/lib/setlog/"; //Por ultimo agregamos la direccion de setlog
+			//Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
+			//Por ultimo agregamos la direccion de setlog
+			path = path.substring(0, path.lastIndexOf("/")) + "/lib/setlog/"; 
 			path = URLDecoder.decode(path, "UTF-8");
 
 			String goal = "consult('" + path + setlogFile + "')."//"setlog4617.pl')."
@@ -123,10 +124,9 @@ public final class SetLogGenerator {
 				else if (s.equals("_RET = time_out.") || s.startsWith("ERROR:") || s.startsWith("***WARNING***")) //No encontro solucion
 					return null;
 				else if ((!s.equals("")) && (!s.startsWith("true.")) && (!s.startsWith("_CONSTR"))) {
-					setlogOutput = setlogOutput.concat(s + "\n");
+					setlogOutput.append(s + "\n");
 				}else if(s.startsWith("_CONSTR")){
-					setlogOutput = s +"\n"+ setlogOutput;
-					//setlogOutput = setlogOutput  + "\n" + s;
+					setlogOutput.insert(0,s +"\n"+ setlogOutput);
 					break;
 				}
 			}
@@ -142,6 +142,6 @@ public final class SetLogGenerator {
 			e.printStackTrace();
 			return null;
 		}
-		return setlogOutput;
+		return setlogOutput.toString();
 	}
 }

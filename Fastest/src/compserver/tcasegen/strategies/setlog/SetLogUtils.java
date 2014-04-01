@@ -48,45 +48,46 @@ public final class SetLogUtils {
 			return "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprS) + ")";
 
 		if (ct.equals("\\pfun")||ct.equals("\\fun")||ct.equals("\\ffun")||ct.equals("\\rel")){
-			String salida = "";
+			StringBuilder salida = new StringBuilder();
 			String coma = ct.equals("\\rel")?",":"\\mapsto ";
 			ExprIterator exprAux;
 			while(expr.hasNext()){
 				exprAux = new ExprIterator(expr.next());
-				salida += "," + "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprAux.next()) + coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),exprAux.next()) + ")";
+				salida.append("," + "(" + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),exprAux.next()) + 
+						coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(1),exprAux.next()) + ")");
 			}
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "\\{" + salida.substring(1) + "\\}";
 			return "\\emptyset";
 		}
 
 		if (ct.equals("\\cross")){
-			String salida = "";
+			StringBuilder salida = new StringBuilder();
 			String coma = nodo.getChildCount()>2?",":" \\mapsto ";
 			int i = 0;
 			while(expr.hasNext()){
-				salida += coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(i),expr.next());
+				salida.append(coma + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(i),expr.next()));
 				i++;
 			}
 			return "(" + salida.substring(coma.length()) + ")";
 		}
 
 		if (ct.equals("\\power")){
-			String salida = "";
+			StringBuilder salida = new StringBuilder();
 			while(expr.hasNext()){
-				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+				salida.append("," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()));
 			}
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "\\{" + salida.substring(1) + "\\}";
 			return "\\emptyset";
 		}
 
 		if (ct.equals("\\seq")){
-			String salida = "";
+			StringBuilder salida = new StringBuilder();
 			while(expr.hasNext())
-				salida += "," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next());
+				salida.append("," + setLogToLatexCharsReplacer((DefaultMutableTreeNode) nodo.getChildAt(0),expr.next()));
 
-			if (!salida.isEmpty())
+			if (!salida.toString().isEmpty())
 				return "\\langle " + salida.substring(1) + "\\rangle";
 			return "\\langle\\rangle";
 		}
@@ -99,13 +100,14 @@ public final class SetLogUtils {
 			if (tipocompleto.startsWith("SchemaType")){
 				ExprIterator tiposDecl = SetLogUtils.schemaToTypeExprIterator(tipocompleto);
 				ExprIterator varsDecl = SetLogUtils.schemaToVarExprIterator(tipocompleto);
-				String c,v,salida="";
+				String c,v;
+				StringBuilder salida = new StringBuilder();
 				while(tiposDecl.hasNext()){
 					c = tiposDecl.next();
 					v = varsDecl.next();
-					salida += "," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(c),expr.next()); 
+					salida.append("," + v + "==" + setLogToLatexCharsReplacer(SetLogUtils.toTreeNorm(c),expr.next())); 
 				}
-				if (!salida.isEmpty())
+				if (!salida.toString().isEmpty())
 					return "\\lblot " + salida.substring(1) + " \\rblot";
 				return "\\lblot\\rblot";
 			}
@@ -202,15 +204,16 @@ public final class SetLogUtils {
 		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		ExprIterator expr = new ExprIterator(tipoCompleto);
-		String elem,aux[],salida="";
+		String elem,aux[];
+		StringBuilder salida = new StringBuilder();
 		while(expr.hasNext()){
 			elem = expr.next();
 			aux = elem.split(":");
-			salida += "," + aux[0];
+			salida.append("," + aux[0]);
 			//System.out.println(elem);
 		}
-		salida = "{" + salida.substring(1) + "}";
-		return new ExprIterator(salida);
+		String s = "{" + salida.substring(1) + "}";
+		return new ExprIterator(s);
 	}
 
 	public static ExprIterator schemaToTypeExprIterator(String tipoCompleto){
@@ -220,14 +223,15 @@ public final class SetLogUtils {
 		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		tipoCompleto = tipoCompleto.substring(tipoCompleto.indexOf(':')+1);
 		ExprIterator expr = new ExprIterator(tipoCompleto);
-		String elem,aux[],salida="";
+		String elem,aux[];
+		StringBuilder salida = new StringBuilder();
 		while(expr.hasNext()){
 			elem = expr.next();
 			aux = elem.split(":");
-			salida += "," + aux[1];
+			salida.append("," + aux[1]);
 			//System.out.println(elem);
 		}
-		salida = "{" + salida.substring(1) + "}";
-		return new ExprIterator(salida);
+		String s = "{" + salida.substring(1) + "}";
+		return new ExprIterator(s);
 	}
 }

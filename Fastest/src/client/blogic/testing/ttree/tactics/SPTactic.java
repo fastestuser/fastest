@@ -51,17 +51,17 @@ public class SPTactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* SP (Standard Partitions). This tactic uses a predeﬁned\n";
-        description += "  partition of some mathematical operator (see \n";
-        description += "  \"Standard domains for Z operators\" at page 165 of \n";
-        description += "  Stocks’ Ph.D. thesis).\n";
-        description += "  Usage: addtactic <op_name> SP <operator> <expression>\n";
-        description += "  where op_name is the name of a selected operation,\n";
-        description += "  operator is the Latex string of a Z operator, and\n ";
-        description += " expression is a Z expression written in Latex. It is\n";
-        description += "  assumed that operator appears in the expression and\n";
-        description += "  this in turn appears in the predicate of the selected\n";
-        description += "  operation.\n";
+        description = "* SP (Standard Partitions). This tactic uses a predeﬁned\n"
+        + "  partition of some mathematical operator (see \n"
+        + "  \"Standard domains for Z operators\" at page 165 of \n"
+        + "  Stocks’ Ph.D. thesis).\n"
+        + "  Usage: addtactic <op_name> SP <operator> <expression>\n"
+        + "  where op_name is the name of a selected operation,\n"
+        + "  operator is the Latex string of a Z operator, and\n "
+        + " expression is a Z expression written in Latex. It is\n"
+        + "  assumed that operator appears in the expression and\n"
+        + "  this in turn appears in the predicate of the selected\n"
+        + "  operation.\n";
     }
 
 
@@ -119,8 +119,7 @@ public class SPTactic extends AbstractTactic {
 
             }
             int tClassNumber = tClassNumbersMap.get(opName).intValue();
-            String tClassName = opName + "_SP_"
-                    + tClassNumber;
+            String tClassName = opName + "_SP_" + tClassNumber;
             tClassNumbersMap.put(opName, tClassNumber + 1);
             AxPara newAxPara = (AxPara) tClassAxPara.accept(cloneVisitor);
 

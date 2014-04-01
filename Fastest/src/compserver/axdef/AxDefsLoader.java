@@ -263,20 +263,20 @@ public final class AxDefsLoader {
 				newPred = RegExUtils.addEscapeCharacters(newPred);
 				//System.out.println("Despues newPred:\n"+newPred);
 				String[] parts = newPred.split(";");
-				String auxPred = "";
+				StringBuilder auxPred = new StringBuilder();
 
 				if (axDefType.equals("Equivalence")){
 					for(int x=0;x<parts.length-1;x++){
 						//auxPred+="^[ ]*"+parts[x].trim()+"[ ]*$|";
-						auxPred+="[ ]*"+parts[x].trim()+"[ ]*|";
+						auxPred.append("[ ]*"+parts[x].trim()+"[ ]*|");
 					}
 					//auxPred+="^[ ]*"+parts[parts.length-1].trim()+"[ ]*$";
-					auxPred+="[ ]*"+parts[parts.length-1].trim()+"[ ]*";
+					auxPred.append("[ ]*"+parts[parts.length-1].trim()+"[ ]*");
 				} else {
 					for(int x=0;x<parts.length-1;x++){
-						auxPred+=parts[x].trim();
+						auxPred.append(parts[x].trim());
 					}
-					auxPred+=parts[parts.length-1].trim();
+					auxPred.append(parts[parts.length-1].trim());
 				}
 
 				String functionName = null;
@@ -284,23 +284,23 @@ public final class AxDefsLoader {
 				if (axDefType.equals("Synonym")){
 					functionName = axDefName.split("_")[1];
 				}
-
-				if(auxPred.contains("(.*)~(.*)")){
-					auxPred = auxPred.replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
+				String auxauxPred = null;
+				if(auxPred.toString().contains("(.*)~(.*)")){
+					auxauxPred = auxPred.toString().replace("(.*)~(.*)","([^ (]+.*)~(.*[^ )]+)");
 				}
 				// Asi estaba
-				else if((auxPred.contains(replacement+"~"+replacement)) && (axDefType.equals("Equivalence"))){
-					auxPred = auxPred.replace(replacement+"~"+replacement,"([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				else if((auxPred.toString().contains(replacement+"~"+replacement)) && (axDefType.equals("Equivalence"))){
+					auxauxPred = auxPred.toString().replace(replacement+"~"+replacement,"([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
 				}
-				else if((auxPred.contains("~"+replacement)) && (axDefType.equals("Synonym"))){
-					auxPred = auxPred.replace("~"+replacement, "[¬]((?:(?!" + functionName + ")[^¬])+)[¬]");
+				else if((auxPred.toString().contains("~"+replacement)) && (axDefType.equals("Synonym"))){
+					auxauxPred = auxPred.toString().replace("~"+replacement, "[¬]((?:(?!" + functionName + ")[^¬])+)[¬]");
 				}
 
-				else if(auxPred.contains(replacement+"~.*")){
-					auxPred = auxPred.replace(replacement+"~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
+				else if(auxPred.toString().contains(replacement+"~.*")){
+					auxauxPred = auxPred.toString().replace(replacement+"~.*","([^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))~(?:[^ ]+\t(?:[(][^()]*[)])\t(?:[(](?:[^ ]+\t(?:[(][^()]*[)]))[)]))");
 				}
 				//System.out.println("El auxPred:\n"+auxPred);
-				String[] auxPatterns = auxPred.split("\\|");
+				String[] auxPatterns = auxauxPred.split("\\|");
 				//System.out.println("El tamaño es: "+auxPatterns.length);
 				//Pattern regex = Pattern.compile(auxPred,Pattern.MULTILINE);
 				//System.out.println("PAtron:\n"+regex);

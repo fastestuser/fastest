@@ -17,25 +17,15 @@ import compserver.prunning.rewriting.rwrules.RWRuleOperator;
 import common.repository.AbstractIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern; 
-import net.sourceforge.czt.session.*;
 import net.sourceforge.czt.z.ast.DeclList; // PRUEBA
 import net.sourceforge.czt.base.ast.Term; // PRUEBA
 import net.sourceforge.czt.z.ast.VarDecl; // PRUEBA
 import common.z.SpecUtils; // PRUEBA
 import net.sourceforge.czt.z.ast.AxPara; // PRUEBA
-import net.sourceforge.czt.z.ast.ZFactory; // PRUEBA
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.ExprList;
-import net.sourceforge.czt.z.ast.ZExprList;
-import net.sourceforge.czt.z.ast.ZStrokeList;
-import net.sourceforge.czt.z.impl.ZExprListImpl;
-import net.sourceforge.czt.z.impl.ZFactoryImpl;
-import net.sourceforge.czt.z.impl.ZNameListImpl;
-import net.sourceforge.czt.z.ast.ZNameList;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.PowerExpr;
-import common.z.czt.visitors.CZTReplacer;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.ZSect;
@@ -43,8 +33,6 @@ import net.sourceforge.czt.z.ast.Para;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.Expr;
-import common.z.UtilSymbols;
-import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.Decl;
 import compserver.prunning.typechecking.SubTyping;
 import net.sourceforge.czt.z.ast.Name;
@@ -52,7 +40,6 @@ import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
 import common.z.czt.visitors.DeleteParenAnn;
 import common.regex.RegExUtils;
-import common.util.MathUtils;
 import compserver.prunning.operators.*;
 
 /**
@@ -98,9 +85,9 @@ public class TheoremsLoader {
 			// We load the operators
 			BufferedReader inOp = new BufferedReader(new FileReader(operatorsFileName));
 			String line;
-			String ops = "";
 			while((line = inOp.readLine())!= null)
 				operatorsList.add(line);
+			inOp.close();
 			// We obtain the rewrite rules for easy manipulation
 			RWRulesControl rwRulesControl = RWRulesControl.getInstance();
 			List<RWRuleOperator> rulesOperator = new ArrayList<RWRuleOperator>();
@@ -116,17 +103,17 @@ public class TheoremsLoader {
 
 			// We load the theorems
 			BufferedReader in = new BufferedReader(new FileReader(theoremsFileName));
-			String text = "";
+			StringBuilder text = new StringBuilder();
 			while((line = in.readLine())!= null)
-				text += line+"\n";
-
+				text.append(line+"\n");
+			in.close();
 			// We split the string to separate the theorems's definitions
-			String theoremsArr[] = text.split("end");
+			String theoremsArr[] = text.toString().split("end");
 
 
 			zLive = UniqueZLive.getInstance();
-			TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
-			PrintWriter printWriter = new PrintWriter(System.out, true);
+			new TextUI(zLive, new PrintWriter(System.out, true));
+			new PrintWriter(System.out, true);
 			for(int i=0; i< theoremsArr.length-1; i++){
 				String thmDefinition = theoremsArr[i];
 				Theorem theorem = new Theorem();
@@ -623,13 +610,13 @@ public class TheoremsLoader {
 		String parts[] = originalExpr.split(";");
 		String definition = defTheorem;
 		definition = definition.substring(0, definition.length()-13);
-		definition += "\n\\where \n";
+		StringBuilder d = new StringBuilder(definition + "\n\\where \n");
 		for(int i=0;i<parts.length-1;i++)
-			definition+= parts[i]+" \\\\";
-		definition += parts[parts.length -1]+"\n\\end{schema}";
+			d.append(parts[i]+" \\\\");
+		d.append( parts[parts.length -1]+"\n\\end{schema}");
 		Term parsedTerm = null;
 		try{
-			parsedTerm = ParseUtils.parse(new StringSource(definition), zLive.getSectionManager());
+			parsedTerm = ParseUtils.parse(new StringSource(d.toString()), zLive.getSectionManager());
 		}
 		catch(Exception e){
 			System.out.println("Excepcion");

@@ -7,9 +7,7 @@ import java.util.*;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.base.util.XmlReader;
 import net.sourceforge.czt.base.util.XmlWriter;
-import net.sourceforge.czt.z.jaxb.JaxbXmlReader;
 import net.sourceforge.czt.z.jaxb.JaxbXmlWriter;
 
 import common.z.AbstractTCase;
@@ -18,7 +16,6 @@ import common.z.TClassImpl;
 import common.z.SpecUtils;
 import compserver.tcasegen.TCaseGen;
 import compserver.tcasegen.strategies.TCaseStrategy;
-import net.sourceforge.czt.session.SectionManager;
 import compserver.prunning.TreePruner;
 import compserver.prunning.ResultPrune;
 import java.util.zip.ZipInputStream;

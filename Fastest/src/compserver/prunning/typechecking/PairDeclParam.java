@@ -7,7 +7,6 @@ import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.VarDecl;
 
-import common.z.czt.visitors.CZTCloner;
 import common.z.SpecUtils;
 
 public class PairDeclParam{

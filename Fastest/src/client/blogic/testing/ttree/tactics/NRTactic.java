@@ -47,14 +47,14 @@ public class NRTactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* NR (Numeric Ranges). This tactic takes as input the \n";
-        description += "  name of a natural or integer variable declared in the \n";
-        description += "  specified operation and a list of numbers. If the list \n";
-        description += "  contains n numbers then 2*n + 1 classes will be generated. \n";
-        description += "  For example, if the first argument is x and the list contains\n";
-        description += "  the numeric contants a and b then the classes are five: \n";
-        description += "  x < a, x = a, x > a \\land x < b, x = b, x > b. \n";
-        description += "  Usage: addtactic Op NR <variable> <list_of_constants>.\n";
+        description = "* NR (Numeric Ranges). This tactic takes as input the \n"
+        + "  name of a natural or integer variable declared in the \n"
+        + "  specified operation and a list of numbers. If the list \n"
+        + "  contains n numbers then 2*n + 1 classes will be generated. \n"
+        + "  For example, if the first argument is x and the list contains\n"
+        + "  the numeric contants a and b then the classes are five: \n"
+        + "  x < a, x = a, x > a \\land x < b, x = b, x > b. \n"
+        + "  Usage: addtactic Op NR <variable> <list_of_constants>.\n";
     }
 
     /**

@@ -30,9 +30,9 @@ public class DNFTactic extends AbstractTactic {
     public DNFTactic() {
         dnfTacticInfo = new DNFTacticInfo();
         description = "* DNF (Disjunctive Normal Form). This tactic is applied "
-                + "\n  by default.\n";
-        description += "  Usage: addtactic <op_name> DNF\n";
-        description += "  where op_name is the name of a selected operation.\n";
+        + "\n  by default.\n"
+        + "  Usage: addtactic <op_name> DNF\n"
+        + "  where op_name is the name of a selected operation.\n";
     }
 
     /**

@@ -1,6 +1,6 @@
 package compserver.abstraction.capture.xmlmanagers;
 
-import java.util.*;
+
 import compserver.abstraction.types.impltypes.*;
 
 /**
@@ -20,12 +20,12 @@ public class PointerXMLManager {
 	public static String getCaptureCode(String varName, ImplNode implNode, String fileDescriptor, String returnID){
 		ImplNodePointer pointerNode = (ImplNodePointer) implNode;
 		ImplNode pointerType = pointerNode.getType();
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 		String xmlCode = "<pointerValue>\\n";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		captureCode += WritersManager.getCaptureCode(varName,pointerType, fileDescriptor,returnID);
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n"
+		+ WritersManager.getCaptureCode(varName,pointerType, fileDescriptor,returnID));
 		xmlCode = "</pointerValue>";
-		captureCode += returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n";
-		return captureCode;
+		captureCode.append(returnID+" = fprintf("+fileDescriptor+",\""+xmlCode+"\");\n");
+		return captureCode.toString();
 	}
 }

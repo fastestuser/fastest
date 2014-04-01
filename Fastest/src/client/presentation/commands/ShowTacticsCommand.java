@@ -6,7 +6,6 @@
 package client.presentation.commands;
 
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 import client.blogic.testing.ttree.tactics.Tactic;
 
@@ -43,17 +42,19 @@ public class ShowTacticsCommand implements Command{
                 while((line = in.readLine())!= null){
                     tacticNameList.add(line);
                 }
-
+                in.close();
+                StringBuilder descriptionAux = new StringBuilder();
                 for(int i=0; i<tacticNameList.size(); i++){
                     String tacticName = tacticNameList.get(i);
                     Class tacticClass = Class.forName("client.blogic.testing.ttree.tactics." + tacticName + "Tactic");
             			Object object = tacticClass.newInstance();
         			if (object instanceof Tactic){
                         Tactic tactic = (Tactic) object;
-                        description += "\n";
-                        description += tactic.getDescription();
+                        descriptionAux.append("\n");
+                        descriptionAux.append(tactic.getDescription());
                     }
-                }        
+                }
+                description = descriptionAux.toString();
             }
     		catch(Exception e){
     			e.printStackTrace();

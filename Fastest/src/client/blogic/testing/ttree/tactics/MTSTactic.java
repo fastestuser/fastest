@@ -49,13 +49,13 @@ public class MTSTactic  extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* MTS (Mandatory Test Set). This tactic allows the user\n";
-        description += "  to partition the input domain giving a finite set of values\n";
-        description += "  for a variable or expression. If the expression is e and the\n";
-        description += "  set is {v_1,v_2,...,v_n} n+1 classes will be generated: the\n";
-        description += "  first n has a predicate of the form e = v_i and the\n";
-        description += "  predicate of the last one is e \\notin {v_1,v_2,...,v_n}.\n";
-        description += "  Usage: addtactic Op MTS \"<expr>\" <set>.\n";
+        description = "* MTS (Mandatory Test Set). This tactic allows the user\n"
+        + "  to partition the input domain giving a finite set of values\n"
+        + "  for a variable or expression. If the expression is e and the\n"
+        + "  set is {v_1,v_2,...,v_n} n+1 classes will be generated: the\n"
+        + "  first n has a predicate of the form e = v_i and the\n"
+        + "  predicate of the last one is e \\notin {v_1,v_2,...,v_n}.\n"
+        + "  Usage: addtactic Op MTS \"<expr>\" <set>.\n";
 
     }
 
@@ -73,13 +73,8 @@ public class MTSTactic  extends AbstractTactic {
                 accept(new CZTCloner());
         List<TClass> tClassList = new ArrayList<TClass>();
 
-
-        List<AxPara> axParaList = new ArrayList<AxPara>();
-
-
         AxPara tClassAxPara = tClass.getMyAxPara();
         CZTCloner cloneVisitor = new CZTCloner();
-
 
         String opName = SpecUtils.getAxParaName(opAxPara);
         Integer tClassInteger = tClassNumbersMap.get(opName);
@@ -94,7 +89,6 @@ public class MTSTactic  extends AbstractTactic {
         ZExprList zExprList = setExpr.getZExprList();
 
         List<Pred> predList = new ArrayList<Pred>();
-
 
         for (int j = 0; j < zExprList.size(); j++) {
 
@@ -113,7 +107,6 @@ public class MTSTactic  extends AbstractTactic {
             predList.add(memPred);
         }
 
-
         ZExprList innerZExprList = zFactory.createZExprList();
         innerZExprList.add(expr);
         innerZExprList.add(setExpr);
@@ -128,7 +121,6 @@ public class MTSTactic  extends AbstractTactic {
         MemPred memPred = zFactory.createMemPred(outerZExprList, Boolean.TRUE);
 
         predList.add(memPred);
-
 
         for (int j = 0; j < predList.size(); j++) {
 
@@ -196,7 +188,6 @@ public class MTSTactic  extends AbstractTactic {
         String exprBeingParsing = exprStr;
         try {
 
-
             Term exprParsed = ParseUtils.parsePred(new StringSource(exprStr),
                     zLive.getCurrentSection(), zLive.getSectionManager());
 
@@ -222,7 +213,6 @@ public class MTSTactic  extends AbstractTactic {
                 System.out.println("The specified set must not be empty.");
                 return false;
             }
-
 
             // We check if the expression has the type of the elements of the set
             AxPara opAxPara = (AxPara) originalOp.getMyAxPara();

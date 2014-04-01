@@ -1,11 +1,9 @@
 package compserver.abstraction.capture.xmlmanagers;
 
-import java.net.URL;
 import java.util.*;
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 import client.blogic.testing.refinamiento.ConcreteTCase;
 
 public class ScriptTestWriterC implements ScriptTestWriter{
@@ -54,8 +52,8 @@ public class ScriptTestWriterC implements ScriptTestWriter{
 		}
 		codes.add(setLastAssigmentsTag());
 		try{
-		URL url = ScriptTestWriterC.class.getResource("ScriptTestWriterC.class");
-		String urlStr = url.toString();
+		ScriptTestWriterC.class.getResource("ScriptTestWriterC.class");
+		//String urlStr = url.toString();
 		//String currentDir = urlStr.substring(9,urlStr.indexOf("fastest.jar")); //MODIFICADO
 		String currentDir = ""; //MODIFICADO
 		declarations.add("FILE *xmlFile;\n");
@@ -72,10 +70,10 @@ public class ScriptTestWriterC implements ScriptTestWriter{
 			e.printStackTrace(System.out);
 		}
 		// We add the declarations to the initDecls
-		String initDecls = "";
+		StringBuilder initDecls = new StringBuilder();
 		for(int i=0;i<declarations.size();i++){
 			String declaration = declarations.get(i);
-			initDecls += declaration;
+			initDecls.append(declaration);
 		}
 		/*String prologue = script.getPreamble()+"\n";
 		for(int i=0;i<declarations.size();i++){
@@ -83,13 +81,13 @@ public class ScriptTestWriterC implements ScriptTestWriter{
 			prologue += declaration;
 		}
 		script.setPreamble(prologue);*/
-		script.setInitDeclarations(initDecls);
+		script.setInitDeclarations(initDecls.toString());
 		// We add the capture code to the script
 		String epilogue = script.getEpilogue();
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 		for(int i=0;i<codes.size();i++){
 			String code = codes.get(i);
-			captureCode += code+"\n";
+			captureCode.append(code+"\n");
 		}	
 		epilogue = captureCode + epilogue;
 		script.setEpilogue(epilogue);

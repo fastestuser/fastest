@@ -2,7 +2,6 @@ package compserver.abstraction.capture.xmlmanagers;
 
 import java.util.*;
 import compserver.abstraction.types.impltypes.*;
-import compserver.abstraction.types.spectypes.*;
 
 /**
  * Provides utilities for interpret and encode values of an enumeration in XML format
@@ -22,7 +21,7 @@ public class EnumerationXMLManager {
 		ImplNodeEnumeration enumNode = (ImplNodeEnumeration) implNode;
 		ImplNode enumType = enumNode.getEnumType();
 		Map<String,String> elements = enumNode.getElements();
-		String captureCode = "";
+		StringBuilder captureCode = new StringBuilder();
 
 		if(enumType instanceof ImplNodePLType){
 			ImplNodePLType nodePLType = (ImplNodePLType) enumType;
@@ -35,14 +34,14 @@ public class EnumerationXMLManager {
 				String implName = mapEntry.getKey();
 				String specName = mapEntry.getValue();
 				if(plType.equals("string")){
-					captureCode += "if(strcmp("+varName+",\""+implName+"\") == 0){\n";
-					captureCode += PLTypeXMLManager.getCaptureCode("\""+specName+"\"",nodePLType,fileDescriptor,returnID);
-					captureCode += "}\n";
+					captureCode.append("if(strcmp("+varName+",\""+implName+"\") == 0){\n"
+					+ PLTypeXMLManager.getCaptureCode("\""+specName+"\"",nodePLType,fileDescriptor,returnID)
+					+ "}\n");
 				}
 				else{
-					captureCode += "if("+varName+" == "+implName+"){\n";
-					captureCode += PLTypeXMLManager.getCaptureCode(implName,nodePLType, fileDescriptor,returnID);
-					captureCode += "}\n";
+					captureCode.append("if("+varName+" == "+implName+"){\n"
+					+ PLTypeXMLManager.getCaptureCode(implName,nodePLType, fileDescriptor,returnID)
+					+ "}\n");
 				}
 				
 			} 
@@ -55,6 +54,6 @@ public class EnumerationXMLManager {
 				System.out.println("No nulo");
 			return null;
 		}
-		return captureCode;
+		return captureCode.toString();
 	}
 }

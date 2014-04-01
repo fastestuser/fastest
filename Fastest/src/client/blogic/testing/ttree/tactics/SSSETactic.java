@@ -49,19 +49,19 @@ public class SSSETactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* SSSE (Sub Set of Set Extension). This tactic generates \n";
-        description += " as many test classes as elements a set extension has. \n";
-        description += " In other words, if in your model there is some predicate \n";
-        description += " x \\subseteq \\{x1,x2,x3\\},then by applying this tactic to this expresion \n";
-        description += " you will get three test classes:\n";
-        description += " one in which x equals x1, one in which x equals x2 and the\n";
-        description += " third in which x equals x3.\n";
-        description += "  Usage: addtactic <op_name> SSSE <expression>\n";
-        description += "  where op_name is the name of a selected operation\n";
-        description += "  and expression is a Z expression written in Latex.\n ";
-        description += "  It is assumed that  \\subseteq operator appears in the expression\n";
-        description += "  and this in turn appears in the predicate\n";
-        description += "  of the selected operation.\n";
+        description = "* SSSE (Sub Set of Set Extension). This tactic generates \n"
+        + " as many test classes as elements a set extension has. \n"
+        + " In other words, if in your model there is some predicate \n"
+        + " x \\subseteq \\{x1,x2,x3\\},then by applying this tactic to this expresion \n"
+        + " you will get three test classes:\n"
+        + " one in which x equals x1, one in which x equals x2 and the\n"
+        + " third in which x equals x3.\n"
+        + "  Usage: addtactic <op_name> SSSE <expression>\n"
+        + "  where op_name is the name of a selected operation\n"
+        + "  and expression is a Z expression written in Latex.\n "
+        + "  It is assumed that  \\subseteq operator appears in the expression\n"
+        + "  and this in turn appears in the predicate\n"
+        + "  of the selected operation.\n";
     }  // VER - Agregar descripcion
 
     /**

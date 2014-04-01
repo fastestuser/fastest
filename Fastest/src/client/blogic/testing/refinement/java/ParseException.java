@@ -3,7 +3,7 @@
 //********************************************************************************
 //							        PAQUETE
 //********************************************************************************
-// Este es el PAQUETE en FASTEST al cual pertenecerán las CLASES generadas
+// Este es el PAQUETE en FASTEST al cual pertenecerï¿½n las CLASES generadas
 // por javaCC para el REFINAMIENTO a JAVAS
 package client.blogic.testing.refinement.java;
 
@@ -119,29 +119,31 @@ public class ParseException extends Exception {
       }
       expected.append(eol).append("    ");
     }
-    String retval = "Encountered \"";
+    // String retval = "Encountered \"";
+    StringBuilder retval = new StringBuilder("Encountered \"");
     Token tok = currentToken.next;
     for (int i = 0; i < maxSize; i++) {
-      if (i != 0) retval += " ";
+      if (i != 0) retval.append(" ");
       if (tok.kind == 0) {
-        retval += tokenImage[0];
+        retval.append(tokenImage[0]);
         break;
       }
-      retval += " " + tokenImage[tok.kind];
-      retval += " \"";
-      retval += add_escapes(tok.image);
-      retval += " \"";
+      retval.append(" " + tokenImage[tok.kind] + " \"" + add_escapes(tok.image) + " \"");
+//      retval += " \"";
+//      retval += add_escapes(tok.image);
+//      retval += " \"";
       tok = tok.next; 
     }
-    retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn;
-    retval += "." + eol;
+    retval.append("\" at line " + currentToken.next.beginLine + ", column " + 
+    		currentToken.next.beginColumn +	"." + eol);
+    //retval += "." + eol;
     if (expectedTokenSequences.length == 1) {
-      retval += "Was expecting:" + eol + "    ";
+      retval.append("Was expecting:" + eol + "    ");
     } else {
-      retval += "Was expecting one of:" + eol + "    ";
+      retval.append("Was expecting one of:" + eol + "    ");
     }
-    retval += expected.toString();
-    return retval;
+    retval.append(expected.toString());
+    return retval.toString();
   }
 
   /**

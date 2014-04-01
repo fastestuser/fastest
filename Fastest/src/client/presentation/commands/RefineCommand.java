@@ -17,6 +17,7 @@ import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RefineAbsTCasesRequested;
 import client.blogic.testing.refinamiento.FTCRLUtils;
+import client.blogic.testing.refinamiento.ImportsResolver;
 import client.blogic.testing.refinamiento.RefinementRules;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
@@ -102,18 +103,22 @@ public class RefineCommand implements Command {
 				
 				// We check if the name of the abstraction law is contained in the 
 				// repository of loaded laws
-				RefinementRules r = RefinementRules.getInstance();
-				if (r.getRule(refRuleName)== null){
+				RefinementRules refRules = RefinementRules.getInstance();
+				if (refRules.getRule(refRuleName)== null){
 					output.println("'"+refRuleName+"' is not the name of a loaded refinement law");
 					return;
 				}
 
 				//Extraemos las variables que serán referenciadas (REF)
-				RefinementRules refRules = RefinementRules.getInstance();
 				refRules.generateReferencedVars(refRuleName);
 				
-				FTCRLUtils.setRule(RefinementRules.getInstance().getRule(refRuleName));
-				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl, pathUUT,targetLanguaje));
+				//se resuelven los import con el uutPath
+				String preamble = refRules.getRule(refRuleName).getPreamble();
+				preamble = ImportsResolver.resolver(preamble, pathUUT);
+				refRules.getRule(refRuleName).setPreamble(preamble);
+				
+				FTCRLUtils.setRule(refRules.getRule(refRuleName));
+				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl,targetLanguaje));
 
 				synchronized(clientTextUI){
 					clientTextUI.wait();

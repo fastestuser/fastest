@@ -31,7 +31,8 @@ public final class ExpressionDelimiter {
 		int cantP = 0;
 		pred = pred.substring(nomvar.length());
 		int length = pred.length();
-		String salida = "",prima = "";
+		StringBuilder salida = new StringBuilder();
+		String prima = "";
 		int i,prinArg=0,iprimaf = 0;
 		SPrima sp = new SPrima();
 		char c ;
@@ -52,22 +53,22 @@ public final class ExpressionDelimiter {
 				cantP--;
 			
 			if (cantP < 0 ){ 
-				salida += pred.substring(prinArg,i) + "¬" ;
+				salida.append(pred.substring(prinArg,i) + "¬" );
 				argcint--;
 			}
 			
 			if (prinDeArg(cantP,pred,i)){
-				salida += "¬"; 
+				salida.append("¬"); 
 				prinArg = i+1;
 			}
 			
 			if (finDeArg(cantP,pred,i) ){
 				if (!prima.isEmpty()){
-					salida +=  prima + pred.substring(iprimaf,i+1) + "¬" ;
+					salida.append(prima + pred.substring(iprimaf,i+1) + "¬" );
 					prima = "";
 				}
 				else
-					salida += pred.substring(prinArg,i+1) + "¬" ;
+					salida.append(pred.substring(prinArg,i+1) + "¬" );
 				argcint--;
 			}
 		}
@@ -98,7 +99,8 @@ public final class ExpressionDelimiter {
 		int length = pred.length();
 		SPrima sp = new SPrima();
 		sp.salida = "";
-		String salida = "",pedazo="";
+		StringBuilder salida = new StringBuilder();
+		String pedazo="";
 		int c=0,f=0;
 		int i; 
 		// "sssssss f x (f x y) ddd f x y hhh"
@@ -112,19 +114,20 @@ public final class ExpressionDelimiter {
 				sp = marcarPredPrima(pred.substring(i),nomvar,argc);
 				c = i + sp.i + nomvar.length();
 				i = c;
-				salida += pedazo + sp.salida ;
+				salida.append(pedazo + sp.salida);
 			}
 		}
 		
-		salida = salida + pred.substring(c,pred.length());
-		salida = salida.replace("{", "$");
-		salida = salida.replace("$", "\\{");
-		salida = salida.replace("}", "$");
-		salida = salida.replace("$", "\\}");
-		salida = salida.replace("[", "\\langle");
-		salida = salida.replace("]", "\\rangle");
+		salida.append(pred.substring(c,pred.length()));
+		String s = salida.toString();
+		s = s.replace("{", "$");
+		s = s.replace("$", "\\{");
+		s = s.replace("}", "$");
+		s = s.replace("$", "\\}");
+		s = s.replace("[", "\\langle");
+		s = s.replace("]", "\\rangle");
 		
-		return salida ;
+		return s ;
 	} 
 	
 	//For testing

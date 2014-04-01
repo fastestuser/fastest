@@ -47,19 +47,19 @@ public class ISETactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* ISE (In Set Extension). This tactic generates as many test\n";
-        description += "  classes as elements a set extension has. In other words, if in \n";
-        description += "  your model there is some predicate expr \\in \\{x1,x2,x3\\},\n";
-        description += "  then by applying this tactic to this expresion \n";
-        description += "  you will get three test classes:\n";
-        description += "  one in which expr equals x1, one in which expr equals x2 and the\n";
-        description += "  third in which expr equals x3.\n";
-        description += "  Usage: addtactic <op_name> ISE <expression>\n";
-        description += "  where op_name is the name of a selected operation\n";
-        description += "  and expression is a Z expression written in Latex.\n";
-        description += "  It is assumed that  \\in operator appears in the expression\n";
-        description += "  and this in turn appears in the predicate\n";
-        description += "  of the selected operation.\n";
+        description = "* ISE (In Set Extension). This tactic generates as many test\n"
+        + "  classes as elements a set extension has. In other words, if in \n"
+        + "  your model there is some predicate expr \\in \\{x1,x2,x3\\},\n"
+        + "  then by applying this tactic to this expresion \n"
+        + "  you will get three test classes:\n"
+        + "  one in which expr equals x1, one in which expr equals x2 and the\n"
+        + "  third in which expr equals x3.\n"
+        + "  Usage: addtactic <op_name> ISE <expression>\n"
+        + "  where op_name is the name of a selected operation\n"
+        + "  and expression is a Z expression written in Latex.\n"
+        + "  It is assumed that  \\in operator appears in the expression\n"
+        + "  and this in turn appears in the predicate\n"
+        + "  of the selected operation.\n";
     }
 
     /**

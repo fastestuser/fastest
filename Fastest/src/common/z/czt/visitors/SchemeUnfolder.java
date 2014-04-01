@@ -294,8 +294,7 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                                      */
 
                                     zDeclList.remove(j);
-                                    deltaSize += SpecUtils.insertZDeclList(zDeclList,
-                                            zDeclList2, j);
+                                    deltaSize += SpecUtils.insertZDeclList(zDeclList,zDeclList2, j);
                                     if (pred2 != null) {
                                         zSchText.setPred(SpecUtils.andPreds(pred, pred2));
                                     }

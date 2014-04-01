@@ -49,18 +49,18 @@ public class FTTactic extends AbstractTactic {
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
-        description = "* FT (Free Type). This tactic generates as many test\n";
-        description += "  classes as elements a free type (enumerated) has. In\n";
-        description += "  other words if your model has type\n";
-        description += "  COLOUR ::= red | blue | green and some operation uses c\n";
-        description += "  of type COLOUR, then by applying this tactic you will\n";
-        description += "  get three test classes: one in which c equals red , the\n";
-        description += "  other in which c equals blue, and the third where c\n";
-        description += "  equals green.\n";
-        description += "  Usage: addtactic <op_name> FT <var_name>\n";
-        description += "  where op_name is the name of a selected operation\n";
-        description += "  and var_name is the name of a variable whose type is\n";
-        description += "  a free type.\n";
+        description = "* FT (Free Type). This tactic generates as many test\n"
+        + "  classes as elements a free type (enumerated) has. In\n"
+        + "  other words if your model has type\n"
+        + "  COLOUR ::= red | blue | green and some operation uses c\n"
+        + "  of type COLOUR, then by applying this tactic you will\n"
+        + "  get three test classes: one in which c equals red , the\n"
+        + "  other in which c equals blue, and the third where c\n"
+        + "  equals green.\n"
+        + "  Usage: addtactic <op_name> FT <var_name>\n"
+        + "  where op_name is the name of a selected operation\n"
+        + "  and var_name is the name of a variable whose type is\n"
+        + "  a free type.\n";
     }
 
     /**

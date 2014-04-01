@@ -57,7 +57,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 
 		//Buscamos los tipos que aparecen en tClass, para incluir
 		//su informacion en la entrada del parser
-		String schemas = "", antlrInput = "";
+		StringBuilder schemas = new StringBuilder();
+		StringBuilder antlrInput = new StringBuilder();
 
 		ZParaList zParaList = null;
 		for (Sect sect : spec.getSect()) {
@@ -86,7 +87,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 				if (schemaString.equals("null")){ //No es un tipo esquema
 					if (basicTypeNames.contains(schemaName)){ //Es un tipo basico
 						schemaString = "\\begin{zed}\n" + "[" + schemaName + "]\n" + "\\end{zed}\n\n";
-						antlrInput = schemaString + antlrInput;
+						antlrInput.insert(0,schemaString);
+						//antlrInput = schemaString + antlrInput;
 					} else { //Es un tipo libre
 						while (freeParasIt.hasNext() && schemaString.equals("null")) {
 							FreePara freePara = freeParasIt.next();
@@ -97,7 +99,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 									Freetype freetype = zFreetypeList.get(i);
 									if (schemaName.equals(freetype.getName().toString())) {
 										schemaString = "\\begin{zed}\n" + SpecUtils.termToLatex(freetype) + "\n" + "\\end{zed}\n\n";
-										antlrInput = schemaString + antlrInput;
+										antlrInput.insert(0,schemaString);
+										//antlrInput = schemaString + antlrInput;
 										break;
 									}
 								}
@@ -113,21 +116,21 @@ public final class SetLogStrategy implements TCaseStrategy{
 					HashSet<String> auxTypes = schema.accept(extractor);
 					types.addAll(auxTypes);
 					typesIt = types.iterator();
-					schemas = schemaString + schemas;
+					schemas.insert(0, schemaString);
+					//schemas = schemaString + schemas;
 				}
 				typesPrinted.add(schemaName);
 			}
 		}
 
 		//Armamos la entrada para el parser
-		antlrInput = antlrInput.concat(schemas);
-		antlrInput = antlrInput.concat(SpecUtils.termToLatex(tClass.getMyAxPara()));
+		antlrInput.append(schemas + SpecUtils.termToLatex(tClass.getMyAxPara()));
 
 		int setlogTimeout = controller.getSetlogTimeout();
 		String setlogFile = controller.getSetlogFile();
 		boolean setlogPrint = controller.getSetlogPrint();
 		//Generamos el caso de prueba
-		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput, setlogFile, setlogTimeout, setlogPrint,clientUI);
+		HashMap<String, String> zVars = SetLogGenerator.generate(antlrInput.toString(), setlogFile, setlogTimeout, setlogPrint,clientUI);
 
 		if (zVars == null) //No encontro caso
 			return null;

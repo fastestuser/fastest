@@ -7,17 +7,9 @@ import java.util.regex.Pattern;
 import java.util.*;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.VarDecl;
-import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.Name;
 import net.sourceforge.czt.z.ast.Decl;
-import common.z.czt.UniqueZLive;
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.session.*;
-import common.z.czt.visitors.DeleteParenAnn;
-import net.sourceforge.czt.base.ast.Term;
-import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.z.ast.Pred;
 
 
 /**
@@ -69,51 +61,51 @@ public class RWRuleLawImpl implements RWRuleLaw{
 		Matcher matcher = regexPattern.matcher(predicate);
 
 		if(matcher.matches()){
-		boolean founded = false;
-		for(int i=1;i<=matcher.groupCount() && !founded;i++){
-			if(matcher.group(i)!=null){
-			founded = true;
-			String defArr[] = definition.split("\r\n|\r|\n");
-			List<String> formalNames = new ArrayList<String>();
-			boolean founded2 = false;
-			for(int j=0; j< defArr.length && !founded2; j++){
-			Matcher auxMatcher = regexPattern.matcher(defArr[j]);
-			if(auxMatcher.matches()){
-				if(auxMatcher.group(i)!=null){
-				founded2 = true;
-				i+=1;
-				listTypes.clear();
-				listStrExpr.clear();
-				//mapFR.clear();
-				while(matcher.group(i)!=null){
-				listStrExpr.add(matcher.group(i));
-				formalNames.add(auxMatcher.group(i));
-				mapFR.put(auxMatcher.group(i),matcher.group(i));
-				boolean varFounded = false;
-				for(int k=0;k<zDeclList.size() && !varFounded;k++){
-					Decl decl = zDeclList.get(k);
-					if(decl instanceof VarDecl){
-						VarDecl varDecl = (VarDecl) decl;
-						Name name = varDecl.getZNameList().get(0);
-						if(name instanceof ZName){
-						ZName zName = (ZName) name;
-						String formalName = zName.getWord().toString();
-						if(formalName.equals(auxMatcher.group(i))){
-							varFounded = true;
-							Expr expr = varDecl.getExpr();
-							listTypes.add(expr);
-						}
+			boolean founded = false;
+			for(int i=1;i<=matcher.groupCount() && !founded;i++){
+				if(matcher.group(i)!=null){
+					founded = true;
+					String defArr[] = definition.split("\r\n|\r|\n");
+					List<String> formalNames = new ArrayList<String>();
+					boolean founded2 = false;
+					for(int j=0; j< defArr.length && !founded2; j++){
+						Matcher auxMatcher = regexPattern.matcher(defArr[j]);
+						if(auxMatcher.matches()){
+							if(auxMatcher.group(i)!=null){
+								founded2 = true;
+								i+=1;
+								listTypes.clear();
+								listStrExpr.clear();
+								//mapFR.clear();
+								while(matcher.group(i)!=null){
+									listStrExpr.add(matcher.group(i));
+									formalNames.add(auxMatcher.group(i));
+									mapFR.put(auxMatcher.group(i),matcher.group(i));
+									boolean varFounded = false;
+									for(int k=0;k<zDeclList.size() && !varFounded;k++){
+										Decl decl = zDeclList.get(k);
+										if(decl instanceof VarDecl){
+											VarDecl varDecl = (VarDecl) decl;
+											Name name = varDecl.getZNameList().get(0);
+											if(name instanceof ZName){
+												ZName zName = (ZName) name;
+												String formalName = zName.getWord().toString();
+												if(formalName.equals(auxMatcher.group(i))){
+													varFounded = true;
+													Expr expr = varDecl.getExpr();
+													listTypes.add(expr);
+												}
+											}
+										}
+									}
+									i+=1;
+								}
+							}
 						}
 					}
 				}
-				i+=1;
-				}
-				}
 			}
-			}
-			}
-		}
-		return true;
+			return true;
 		}
 		return false;
 	}
@@ -138,9 +130,9 @@ public class RWRuleLawImpl implements RWRuleLaw{
 						realPar = realPar.replaceAll("\\(","\\\\(");
 						realPar = realPar.replaceAll("\\)","\\\\)");
 
-     newPred = Pattern.compile("^"+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(realPar+" ");
-     newPred = Pattern.compile(" "+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(" "+realPar+" ");
-     newPred = Pattern.compile(" "+formalName+"$",Pattern.MULTILINE).matcher(newPred).replaceAll(" "+realPar);
+						newPred = Pattern.compile("^"+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(realPar+" ");
+						newPred = Pattern.compile(" "+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(" "+realPar+" ");
+						newPred = Pattern.compile(" "+formalName+"$",Pattern.MULTILINE).matcher(newPred).replaceAll(" "+realPar);
 					}
 					/*else{
      newPred = Pattern.compile("^"+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll("(.*) ");
@@ -152,12 +144,12 @@ public class RWRuleLawImpl implements RWRuleLaw{
 			}
 		}
 		String newPredLines[] = newPred.split("\r\n|\r|\n");
-		String auxPred = "";
+		StringBuilder auxPred = new StringBuilder();
 		for(int i=0;i<newPredLines.length-1;i++){
-			auxPred+= newPredLines[i]+";";
+			auxPred.append(newPredLines[i]+";");
 		}
-		auxPred+=newPredLines[newPredLines.length-1];
-		newPred = auxPred;
+		auxPred.append(newPredLines[newPredLines.length-1]);
+		newPred = auxPred.toString();
 		return newPred;
 	}
 
@@ -175,11 +167,11 @@ public class RWRuleLawImpl implements RWRuleLaw{
 					String formalName = zName.getWord().toString();
 					if(mapFR.get(formalName)==null){
 
-			newPred = Pattern.compile("^"+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll("(.*) ");
-			newPred = Pattern.compile(" "+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(" (.*) ");
-			newPred = Pattern.compile(" "+formalName+"$",Pattern.MULTILINE).matcher(newPred).replaceAll(" (.*)");
-			}
-			}
+						newPred = Pattern.compile("^"+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll("(.*) ");
+						newPred = Pattern.compile(" "+formalName+" ",Pattern.MULTILINE).matcher(newPred).replaceAll(" (.*) ");
+						newPred = Pattern.compile(" "+formalName+"$",Pattern.MULTILINE).matcher(newPred).replaceAll(" (.*)");
+					}
+				}
 			}
 		}
 		newPred = newPred.replaceAll("\n",";");
@@ -191,7 +183,7 @@ public class RWRuleLawImpl implements RWRuleLaw{
 	{
 		return listStrExpr;
 	}
-	
+
 	public List<Expr> getTypes()
 	{
 		return listTypes;

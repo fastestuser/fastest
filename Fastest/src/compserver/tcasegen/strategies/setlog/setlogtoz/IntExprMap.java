@@ -187,6 +187,7 @@ public final class IntExprMap {
 	/* Dado un numero natural y un tipo devuelve una expresion terminal del tipo */
 	private  String f(DefaultMutableTreeNode nodo, int num){
 		String salida = "";
+		StringBuilder s = new StringBuilder();
 		String ct = nodo.toString();
 		DefaultMutableTreeNode hijoIzq = null;
 		if(!nodo.isLeaf())
@@ -206,12 +207,12 @@ public final class IntExprMap {
 				//numi - 1 es el numero decimal que representa la constante
 				//el cual es la posicion del bit encendido - 1
 				aux = (ctHijo.equals("\\power")||ctHijo.equals("\\seq"))? numi-1 : numi;
-				salida += ","  + f(hijoIzq,aux);
+				s.append(","  + f(hijoIzq,aux));
 				i++;
 				numi = n[i];
 			}
-			if(!salida.isEmpty())
-				salida = p1 + salida.substring(1) + p2;
+			if(!s.toString().isEmpty())
+				salida = p1 + s.substring(1) + p2;
 			else
 				salida = p1 + p2;
 		}else if(ct.equals("\\cross")){
@@ -264,11 +265,11 @@ public final class IntExprMap {
 				if (nodeValue == 0) //No se necesito calcular su valor, lo pongo en 1
 					nodeValue = 1;
 
-				salida += ","  + f(node,nodeValue-aux);
+				s.append(","  + f(node,nodeValue-aux));
 			}
 
-			if(!salida.isEmpty())
-				salida = "[" + salida.substring(1) + "]";
+			if(!s.toString().isEmpty())
+				salida = "[" + s.substring(1) + "]";
 			else
 				salida = "[" + "]";
 
