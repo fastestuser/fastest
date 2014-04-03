@@ -206,7 +206,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Si no hay SExpr, debe obtener el valor de la variable Z
 			replaceExp = zVars.get(0);
 		}
-		SExpr zExpr = FTCRLUtils.sExpr(replaceExp, replaceValue, zValuesMap, zTypesMap);
+		SExpr zExpr = FTCRLUtils.sExpr(replaceExp, replaceValue, this);
 
 
 		//Luego el lado derecho
@@ -309,7 +309,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				position++;
 			}
 		} else {
-			visitIExprRefinement(ctx.iExprRefinement(), null, record, new SExpr(varName + atribute, varType), zExpr);
+			visitIExprRefinement(ctx.iExprRefinement(), replaceValue, record, new SExpr(varName + atribute, varType), zExpr);
 		}
 
 		//Si la variable es privada debemos usar reflection
@@ -468,14 +468,14 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//Este metodo permite visitar un SExprRefinement para obtener su valor y su tipo.
-	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement){
 
 		//Si simplemente es un SName, debe estar en el replacement o en el Map de Z
 		if (ctx.sName()!=null)
-			return visitSName(ctx.sName(),replacement,zValuesMap, zTypesMap);
+			return visitSName(ctx.sName(),replacement);
 		//Si es un ZExpr, lo visito y devuelvo su SExpr
 		else if(ctx.zExpr()!=null)
-			return visitZExpr(ctx.zExpr(),replacement,zValuesMap, zTypesMap);
+			return visitZExpr(ctx.zExpr(),replacement);
 		else
 			return null;
 	}
@@ -496,25 +496,25 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//Este metodo permite visitar un ZExpr para obtener su valor y su tipo.
-	public SExpr visitZExpr(FTCRLParser.ZExprContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+	public SExpr visitZExpr(FTCRLParser.ZExprContext ctx,Replacement replacement){
 
 		if(ctx.zExprSet() != null)
-			return visitZExprSet(ctx.zExprSet(),replacement,zValuesMap, zTypesMap);
+			return visitZExprSet(ctx.zExprSet(),replacement);
 		else if (ctx.zExprNum() != null)
-			return visitZExprNum(ctx.zExprNum(),replacement,zValuesMap, zTypesMap);
+			return visitZExprNum(ctx.zExprNum(),replacement);
 		else if (ctx.zExprString() != null)
-			return visitZExprString(ctx.zExprString(),replacement,zValuesMap, zTypesMap);
+			return visitZExprString(ctx.zExprString(),replacement);
 		else
 			return null;
 	}
 
 	//Este metodo permite visitar un ZExprSet para obtener su valor y su tipo.
-	private SExpr visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+	private SExpr visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement) {
 
 		//En el primer caso, el ZExprSet se conforma de un SName, y quizas un dotSetOperator
 		if (ctx.sName() != null){
 			//Del sName debo obtener el SExpr correspondiente
-			SExpr s = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			SExpr s = visitSName(ctx.sName(), replacement);
 			//Y luego visito los DotSetOper, pero antes veo si debo hacer el replace
 			String sName = ctx.sName().getText();
 			List<DotSetOperContext> dot = ctx.dotSetOper();
@@ -549,10 +549,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//Este metodo permite visitar un ZExprNum para obtener su valor y su tipo.
-	private SExpr visitZExprNum(FTCRLParser.ZExprNumContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+	private SExpr visitZExprNum(FTCRLParser.ZExprNumContext ctx,Replacement replacement) {
 
 		if (ctx.CARD() != null){ //Cardinal
-			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			SExpr sExpr = visitSName(ctx.sName(), replacement);
 			ExprIterator card = new ExprIterator(sExpr.exp);
 			sExpr.exp = Integer.toString(card.cardinalidad());
 			sExpr.type = "\\num";
@@ -560,28 +560,28 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		} else if (ctx.number() != null){ //Es un numero
 			return new SExpr(ctx.number().getText(), "\\num");
 		} else if (ctx.DIV() != null){ //Div
-			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 			String div = Float.toString((int) (Float.parseFloat(sExprLeft.exp) / Float.parseFloat(sExprRight.exp)));
 			return new SExpr(div, "\\num");
 		} else if (ctx.SLASH() != null){ //Slash
-			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 			String slash = Float.toString(Float.parseFloat(sExprLeft.exp) / Float.parseFloat(sExprRight.exp));
 			return new SExpr(slash, "\\num");
 		} else if (ctx.MOD() != null){ //Mod
-			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 			String mod = Float.toString((int) (Float.parseFloat(sExprLeft.exp) % Float.parseFloat(sExprRight.exp)));
 			return new SExpr(mod, "\\num");
 		} else if (ctx.PLUS() != null){ //Plus
-			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 			String plus = Float.toString(Float.parseFloat(sExprLeft.exp) + Float.parseFloat(sExprRight.exp));
 			return new SExpr(plus, "\\num");
 		} else if (ctx.MINUS() != null){ //Minus
-			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement, zValuesMap, zTypesMap);
-			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement, zValuesMap, zTypesMap);
+			SExpr sExprLeft = visitZExprNum(ctx.zExprNum(0), replacement);
+			SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 			String minus = Float.toString(Float.parseFloat(sExprLeft.exp) - Float.parseFloat(sExprRight.exp));
 			return new SExpr(minus, "\\num");
 		}
@@ -590,7 +590,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//Este metodo permite visitar un SName para obtener su valor y su tipo.
-	public SExpr visitSName(FTCRLParser.SNameContext ctx,Replacement replacement,HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap){
+	public SExpr visitSName(FTCRLParser.SNameContext ctx,Replacement replacement){
 
 		String s = ctx.getText();
 		//Si el replacement es el SName, devuelvo directamente su valor y tipo
@@ -605,7 +605,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	}
 
 	//Este metodo permite visitar un ZExprString para obtener su valor y su tipo.
-	private SExpr visitZExprString(FTCRLParser.ZExprStringContext ctx,Replacement replacement, HashMap<String, String> zValuesMap, HashMap<String, String> zTypesMap) {
+	private SExpr visitZExprString(FTCRLParser.ZExprStringContext ctx,Replacement replacement) {
 		if (ctx.string() != null){ //String
 			String string = ctx.string().getText();
 			string = string.substring(1, string.length()-1);
@@ -613,7 +613,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		} else if (ctx.number() != null){ //Number
 			return new SExpr(ctx.number().getText(), "\\num");
 		} else if (ctx.sName() != null){ //DOT
-			SExpr sExpr = visitSName(ctx.sName(), replacement, zValuesMap, zTypesMap);
+			SExpr sExpr = visitSName(ctx.sName(), replacement);
 
 			//Y luego visito los DotSetOper, pero antes veo si debo hacer el replace
 			String sName = ctx.sName().getText();
@@ -656,15 +656,15 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			ParseTree l = ctx.getChild(0);
 			SExpr sExprL = new SExpr();
 			if (l instanceof ZExprStringContext)
-				sExprL = visitZExprString((ZExprStringContext)l, replacement, zValuesMap, zTypesMap);
+				sExprL = visitZExprString((ZExprStringContext)l, replacement);
 			else
-				sExprL = visitZExprSet((ZExprSetContext)l, replacement, zValuesMap, zTypesMap);
+				sExprL = visitZExprSet((ZExprSetContext)l, replacement);
 			ParseTree r = ctx.getChild(2);
 			SExpr sExprR = new SExpr();
 			if (r instanceof ZExprStringContext)
-				sExprR = visitZExprString((ZExprStringContext)r, replacement, zValuesMap, zTypesMap);
+				sExprR = visitZExprString((ZExprStringContext)r, replacement);
 			else
-				sExprR = visitZExprSet((ZExprSetContext)r, replacement, zValuesMap, zTypesMap);
+				sExprR = visitZExprSet((ZExprSetContext)r, replacement);
 
 			//Si alguno es un conjunto, debo procesarlos de forma especial
 			if (FTCRLUtils.isSet(sExprL.type) || FTCRLUtils.isSet(sExprR.type)){
@@ -681,7 +681,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 					CommonTokenStream tokens = new CommonTokenStream(lexer);
 					FTCRLParser parser = new FTCRLParser(tokens);
 					SExprRefinementContext tree = parser.sExprRefinement();
-					elem = visitSExprRefinement(tree, replacement, zValuesMap, zTypesMap);
+					elem = visitSExprRefinement(tree, replacement);
 					if (!set.equals(""))
 						set += ",";
 					else //Solo para el primer "elem"

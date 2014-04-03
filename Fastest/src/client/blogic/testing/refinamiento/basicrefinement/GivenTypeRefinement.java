@@ -23,10 +23,10 @@ public class GivenTypeRefinement {
 		String parts[] = javaExpr.exp.split("\\.");
 		String table = "";
 		String column = "";
-		if (parts[0].equals(ftcrl.testingVar)){
+		if (parts[0].equals(ftcrl.testingVar) && parts.length == 3){
 			table = parts[1];
 			column = parts[2];
-		} else {
+		} else if (parts.length == 2){
 			table = parts[0];
 			column = parts[1];
 		}

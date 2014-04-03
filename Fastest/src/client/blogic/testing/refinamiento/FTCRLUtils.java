@@ -192,7 +192,8 @@ public final class FTCRLUtils {
 
 	private static String unfoldTypes(HashMap<String,String> types, String type) {
 		Iterator<String> it = types.keySet().iterator();
-		String t,aux,ntipo = null;
+		String t,aux = null;
+		String ntipo = type;
 		while (it.hasNext()){
 			t = it.next();
 			aux = types.get(t);
@@ -254,15 +255,15 @@ public final class FTCRLUtils {
 	}
 
 	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
-	public static SExpr sExpr(String exp, Replacement replacement, HashMap<String,String> zValuesMap, HashMap<String,String> zTypesMap) {
+	public static SExpr sExpr(String exp, Replacement replacement, FTCRLJavaVisitor ftcrl) {
 		ANTLRInputStream in = new ANTLRInputStream(exp);
 		FTCRLLexer lexer = new FTCRLLexer(in);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		FTCRLParser parser = new FTCRLParser(tokens);
 		ParseTree tree = parser.sExprRefinement();
 
-		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
-		return visitor.visitSExprRefinement((SExprRefinementContext) tree,replacement,zValuesMap, zTypesMap);
+		//FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
+		return ftcrl.visitSExprRefinement((SExprRefinementContext) tree,replacement);
 	}
 
 	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
