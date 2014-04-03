@@ -25,9 +25,16 @@ public class ImportsResolver {
 			for (i = 1;i<=length-2;i++){
 				imports.add(aux[i].replace(" ", "").replace("\n",""));
 			}
-			String aux2[] = (aux[i]).split(";");
-			imports.add(aux2[0].replace(" ", "").replace("\n", "")+";");
-			codigo = new String(aux[i].substring((aux2[0]+";").length()));
+			String aux2[] = null;
+			if (aux.length > 1){
+				aux2 = (aux[i]).split(";");
+				imports.add(aux2[0].replace(" ", "").replace("\n", "")+";");
+				codigo = new String(aux[i].substring((aux2[0]+";").length()));
+			}
+			else{
+				codigo = new String(programa);
+			}
+
 		}
 	}
 
@@ -78,14 +85,14 @@ public class ImportsResolver {
 		importsExpandidos = new HashSet<String>();
 		imports = new StringBuilder();
 		path = uutPath.charAt(uutPath.length()-1)=='/'?uutPath:uutPath+"/";
-//		File preamblePath = new File(path + "archivo7.java");
-//		FileInputStream preambleFile = null;
-//		try {
-//			preambleFile = new FileInputStream(preamblePath.getAbsolutePath());
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		//		File preamblePath = new File(path + "archivo7.java");
+		//		FileInputStream preambleFile = null;
+		//		try {
+		//			preambleFile = new FileInputStream(preamblePath.getAbsolutePath());
+		//		} catch (FileNotFoundException e) {
+		//			// TODO Auto-generated catch block
+		//			e.printStackTrace();
+		//		}
 		//String preambleString = new Scanner(preambleFile,"UTF-8").useDelimiter("\\A").next();
 		String s = resolverString("preamble",preamble);
 		return new String(imports.toString() +"\n" + s);
