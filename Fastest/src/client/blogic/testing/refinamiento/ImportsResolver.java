@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.Scanner;
 
 
-public class ImportsResolver {
+public final class ImportsResolver {
 
 	private  static String path;
 	private  static HashSet<String> importsExpandidos;

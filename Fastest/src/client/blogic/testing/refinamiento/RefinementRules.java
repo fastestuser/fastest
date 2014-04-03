@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.LinkedList;
 
 
-public class RefinementRules {
+public final class RefinementRules {
 	
 	private HashMap<String,RefinementRule> rules;
 	private static RefinementRules refinementRules;

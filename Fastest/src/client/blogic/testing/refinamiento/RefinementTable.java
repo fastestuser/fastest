@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-public class RefinementTable {
+public final class RefinementTable {
 	
 	public String stmt;
 	public String t = "";
