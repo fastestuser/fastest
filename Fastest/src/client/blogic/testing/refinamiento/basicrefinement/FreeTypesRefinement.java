@@ -30,7 +30,7 @@ public class FreeTypesRefinement {
 		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
 		if ((javaExpr != null) && (javaExpr.exp != "")) {
 			ftcrl.printAssignment(javaExpr.exp + " = " + value);
-			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, ftcrl);
+			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, zExpr.exp, ftcrl);
 		}
 		//Y sino devuelvo el valor refinado en vez de la variable Java
 		return value;

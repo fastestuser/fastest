@@ -205,6 +205,7 @@ public final class FTCRLUtils {
 				type = ntipo;
 			}
 		}
+		ntipo = ntipo.replaceAll(" ", "");
 		return ntipo;
 	}
 	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
@@ -433,7 +434,7 @@ public final class FTCRLUtils {
 
 		//Primero busco por el nombre de la variable
 		if (ftcrl.references.get(iName) != null)
-			return ftcrl.references.get(iName);
+			return ftcrl.references.get(iName).type;
 		else { //Si no esta, busco por los elementos de la variable
 			String varName = FTCRLUtils.extractName(iName);
 			String atribute = FTCRLUtils.extractAtribute(iName);
@@ -443,14 +444,14 @@ public final class FTCRLUtils {
 			//Y luego debo iterar sobre los elementos de varName
 			//Ej c[0], c[1]
 			int it = 0;
-			String s = "";
+			SExpr s = null;
 			if (!ftcrl.uutArgs.contains(varName)) //Si es un atributo de la clase
 				varName = ftcrl.testingVar + "." + varName;
 
 			while ((s = ftcrl.references.get(varName + "[" + it + "]")) != null){
-				String t = ftcrl.references.get(s + atribute);
-				if ((t != null) && (t.equals(value)))
-					return s + atribute;
+				SExpr t = ftcrl.references.get(s.type + atribute);
+				if ((t != null) && (t.exp.equals(value)))
+					return s.type + atribute;
 				it++;
 			}
 		}
@@ -459,14 +460,14 @@ public final class FTCRLUtils {
 	}
 
 	//Determina si se debe almacenar el valor de una variable porque puede ser referenciado más tarde
-	public static void saveReference(String var, String value, FTCRLJavaVisitor ftcrl) {
+	public static void saveReference(String var, String zValue, String javaValue, FTCRLJavaVisitor ftcrl) {
 		if (ftcrl.isRef) {
 			String varName = var;
 			if (varName.startsWith(ftcrl.testingVar + "."))
 				varName = var.substring(5);
 			varName = FTCRLUtils.extractName(varName);
 
-			ftcrl.references.put(var, value);
+			ftcrl.references.put(var, new SExpr(zValue, javaValue));
 		}
 	}
 
