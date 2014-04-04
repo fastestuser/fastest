@@ -40,6 +40,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	private String moduleName = "";
 	//Argumentos del UUT
 	public LinkedList<String> uutArgs= new LinkedList<String>();
+	//Linea de impresion del UUT
+	public String uutLine = "";
 	//Tabla acutla, para cuando refinamos a una tabla
 	public RefinementTable currentTable;
 	//Tablas abiertas, para cuando refinamos una tabla
@@ -147,7 +149,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 		line += ")";
 
-		printAssignment(line);
+		uutLine = line;
 		return null;
 	}
 
