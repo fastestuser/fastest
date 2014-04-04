@@ -113,7 +113,7 @@ public class RefineCommand implements Command {
 				
 				//se resuelven los import con el uutPath
 				String preamble = refRules.getRule(refRuleName).getPreamble();
-				preamble = ImportsResolver.resolver(preamble, pathUUT);
+				preamble = ImportsResolver.resolver(preamble, pathUUT,output);
 				refRules.getRule(refRuleName).setPreamble(preamble);
 				
 				FTCRLUtils.setRule(refRules.getRule(refRuleName));

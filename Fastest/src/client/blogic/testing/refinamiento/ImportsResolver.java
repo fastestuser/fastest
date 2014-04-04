@@ -3,6 +3,7 @@ package client.blogic.testing.refinamiento;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public final class ImportsResolver {
 	private  static String path;
 	private  static HashSet<String> importsExpandidos;
 	private  static StringBuilder imports;
+	private  static PrintWriter output;
 
 	private static class Programa{
 		public HashSet<String> imports;
@@ -47,6 +49,8 @@ public final class ImportsResolver {
 			String fileString = new Scanner(fileStream,"UTF-8").useDelimiter("\\A").next();
 			return fileString;
 		} catch (FileNotFoundException e) {
+			output.println("warning: class " + importPath.substring(0, importPath.length()-1) + " not found in path " + 
+					file.getAbsolutePath() + "\nmaybe you should change uutpath: " + path);
 			return "";
 		}
 
@@ -81,10 +85,11 @@ public final class ImportsResolver {
 		return salida.toString();
 	}
 
-	public static String resolver(String preamble,String uutPath){
+	public static String resolver(String preamble,String uutPath, PrintWriter out){
 		importsExpandidos = new HashSet<String>();
 		imports = new StringBuilder();
 		path = uutPath.charAt(uutPath.length()-1)=='/'?uutPath:uutPath+"/";
+		output = out;
 		//		File preamblePath = new File(path + "archivo7.java");
 		//		FileInputStream preambleFile = null;
 		//		try {
