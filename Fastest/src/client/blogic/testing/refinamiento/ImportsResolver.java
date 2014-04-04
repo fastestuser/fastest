@@ -49,7 +49,7 @@ public final class ImportsResolver {
 			String fileString = new Scanner(fileStream,"UTF-8").useDelimiter("\\A").next();
 			return fileString;
 		} catch (FileNotFoundException e) {
-			output.println("warning: class " + importPath.substring(0, importPath.length()-1) + " not found in path " + 
+			output.println("Warning: Class " + importPath.substring(0, importPath.length()-1) + " not found in path " + 
 					file.getAbsolutePath() + "\nmaybe you should change uutpath: " + path);
 			return "";
 		}

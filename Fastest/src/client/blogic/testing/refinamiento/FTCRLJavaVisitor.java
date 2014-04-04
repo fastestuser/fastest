@@ -208,7 +208,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 		SExpr zExpr = FTCRLUtils.sExpr(replaceExp, replaceValue, this);
 
-
 		//Luego el lado derecho
 		String refS = ctx.iExprRefinement().iName().getText();
 		String var = FTCRLUtils.extractName(refS);
@@ -266,16 +265,19 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		//Si es "private" en java, debo usar reflection
 		String privateFieldVar = "";
+		String field = "";
 		if (isPrivate){
 			//Usamos una variable para el atributo de la clase
-			privateFieldVar = newVarName(varName.toLowerCase());
-			String field = atribute.substring(1);
+			privateFieldVar = newVarName("field" + varType);
+			field = atribute.substring(1);
 			printDeclaration("Field " + privateFieldVar + " = " + record + ".getClass().getDeclaredField(\"" + field + "\")");
 			printDeclaration(privateFieldVar + ".setAccessible(true)");
 			//Como es private debo crear una nueva variable a usar
-			varName = newVarName(varName.toLowerCase());
-			printDeclaration(varType + " " + varName);
+			record = newVarName(varType.toLowerCase());
+			printDeclaration(varType + " " + record);
+			//varName = varName + "." + atribute;
 			atribute = "";
+			//record = varName;
 		}
 
 		//Si es un conjunto (o secuencia) y hay que refinar con un WITH
@@ -316,9 +318,9 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		//Si la variable es privada debemos usar reflection
 		if (isPrivate){
-			printAssignment(privateFieldVar + ".set(" + record + ", " + varName + ")");
-			FTCRLUtils.saveReference(record, zExpr.exp, varName, this);
-			return record;
+			printAssignment(privateFieldVar + ".set(" + varName + ", " + record + ")");
+			FTCRLUtils.saveReference(varName + "." + field, zExpr.exp, record, this);
+			return varName;
 		}
 
 		return varName;
