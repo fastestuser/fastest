@@ -61,6 +61,11 @@ public final class FTCRLUtils {
 	public static String getPreamble(){
 		return reglaActual.getPreamble();
 	}
+	
+	public static String getPlCode() {
+		// TODO Auto-generated method stub
+		 return reglaActual.getPlcode();
+	}
 
 	public static void setClientUI(ClientTextUI clientTextUI) {
 		FTCRLUtils.clientTextUI = clientTextUI;
@@ -119,20 +124,34 @@ public final class FTCRLUtils {
 		RefinementRuleContext ruleContext;
 		RefinementRule rule;
 		RefinementRules rules = RefinementRules.getInstance();
-		String refRuleAux[],preamble,epilogue,ruleString,rrule;
+		String refRuleAux[],preamble,epilogue,ruleString,rrule,plcode = null,laws;
 		String refRulesAux[] = refRulesString.split("@RRULE");
 		int cantHijos = refRulesAux.length;
 		for (int i = 1; i<cantHijos;i++){
+			
 			refRuleAux = refRulesAux[i].split("@PREAMBLE",2);
 			rrule = refRuleAux[0];
+			
 			refRuleAux = refRuleAux[1].split("@LAWS",2);
 			preamble = refRuleAux[0];
+			
+			refRuleAux = refRuleAux[1].split("@PLCODE",2);
+			laws = refRuleAux[0];
+			if (refRuleAux.length == 2){ //tiene plcode
+				refRuleAux = refRuleAux[1].split("@UUT");
+				plcode = refRuleAux[0].substring(1);
+			}
+			
+			
 			refRuleAux = refRuleAux[1].split("@EPILOGUE",2);
-			epilogue = refRuleAux.length == 2?refRuleAux[1]:"";
-			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+refRuleAux[0];
-			ruleContext = preproc(ruleString);		
-			rule = new RefinementRule(ruleContext, preamble, epilogue);
+			epilogue = (refRuleAux.length == 2?refRuleAux[1]:"");
+			
+			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+refRuleAux[0];
+			ruleContext = preproc(ruleString);	
+			
+			rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
 			rules.addRule(ruleContext.name().getText(), rule);
+			
 		}
 		preprocPreambles();
 	} 

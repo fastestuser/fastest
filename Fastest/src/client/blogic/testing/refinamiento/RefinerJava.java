@@ -6,6 +6,7 @@ import net.sourceforge.czt.base.ast.Term;
 public final class RefinerJava implements Refiner{
 	private String declarationList;
 	private String assignementList;
+	private String uutLine;
 	
 	public void refineCase(Term atc) {
 		
@@ -18,6 +19,7 @@ public final class RefinerJava implements Refiner{
 
 		declarationList =  visitor.getDeclarationList();
 		assignementList =  visitor.getAssignementList();
+		uutLine = visitor.uutLine;
 	}
 
 	public String getAssignements() {
@@ -26,6 +28,10 @@ public final class RefinerJava implements Refiner{
 
 	public String getDeclarations() {
 		return declarationList;
+	}
+	
+	public String getUutLine(){
+		return uutLine;
 	}
 
 

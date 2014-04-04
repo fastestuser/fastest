@@ -6,4 +6,5 @@ public interface Refiner {
 	public void refineCase(Term atcPred);
 	public String getAssignements();
 	public String getDeclarations();
+	public String getUutLine();
 }

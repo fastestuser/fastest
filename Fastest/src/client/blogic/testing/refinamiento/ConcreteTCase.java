@@ -16,13 +16,14 @@ public class ConcreteTCase {
     private List<TCaseAssignment> tCaseAssignments = new ArrayList<TCaseAssignment>();
     private String declaraciones;
     private String asignaciones;
-    private String pathUUT; //
     private String concreteTCaseName; //
     private AbstractTCase abstractTCase; //
     private String absLawName;
     private String opName; //
     private String targetLanguaje; //
     private String initDecls;
+    private String uutLine;
+    private String plCode;
 
     
     public void setPreamble(String preable){
@@ -57,12 +58,6 @@ public class ConcreteTCase {
 
     public List<TCaseAssignment> getAssigments(){
         return tCaseAssignments;
-    }
-    public void setPathUUT(String pathUUT){
-	this.pathUUT = pathUUT;
-    }
-    public String getPathUUT(){
-	return pathUUT;
     }
     public void setConcreteTCaseName(String concreteTCaseName){
 	this.concreteTCaseName = concreteTCaseName;
@@ -109,6 +104,18 @@ public class ConcreteTCase {
 	}
 	public void setAsignaciones(String asignaciones) {
 		this.asignaciones = asignaciones;
+	}
+	public String getUutLine() {
+		return uutLine;
+	}
+	public void setUutLine(String uutLine) {
+		this.uutLine = uutLine;
+	}
+	public String getPlCode() {
+		return plCode;
+	}
+	public void setPlCode(String plcode) {
+		this.plCode = plcode;
 	}
 
 }

@@ -85,6 +85,15 @@ public class CTCPrinter {
 		ctcString.append(assign);
 		//if (ctc.getAsignaciones()!=null)  ctcString.append(ctc.getAsignaciones());
 
+		//cocnats the plcode
+		String plcode = ctc.getPlCode();
+		if (plcode != null)
+			plcode = "\t\t" + plcode.replaceAll("\\n", "\n\t\t");
+		ctcString.append(plcode);
+		String uutline = ctc.getUutLine().replaceFirst("\\\t\\\t$", "");
+		//concats the uutline
+		ctcString.append(uutline+"\n");
+		
 		// CONCATS the EPILOGUE
 		String epilogue = ctc.getEpilogue();
 		if (!epilogue.isEmpty() || !epilogue.equals("")){

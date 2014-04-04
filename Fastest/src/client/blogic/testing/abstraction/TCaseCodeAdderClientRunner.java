@@ -45,7 +45,6 @@ public class TCaseCodeAdderClientRunner implements Runnable
 		ScriptTestWriter writer = factory.createScriptTestWriter();
 
 		// We change the visibility of the UUT
-		String pathUUT = cTCase.getPathUUT();
 		List<ImplNode> monitoredVars = AbstractionUtils.getMonitoredVariables(absLaw);
 		//changer.changeVisibility(pathUUT,monitoredVars);
 

@@ -43,8 +43,10 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setAbstractTCase(abstractTCase);
 			concreteTCase.setPreamble(FTCRLUtils.getPreamble());
 			concreteTCase.setEpilogue(FTCRLUtils.getEpilogue());
+			concreteTCase.setPlCode(FTCRLUtils.getPlCode());
 			concreteTCase.setDeclaraciones(refiner.getDeclarations());
 			concreteTCase.setAsignaciones(refiner.getAssignements());
+			concreteTCase.setUutLine(refiner.getUutLine());
 			
 			TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
 			try {
