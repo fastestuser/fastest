@@ -53,28 +53,51 @@ public class CTCPrinter {
 
 		// PRINT the TEST CLASS HEADER
 		ctcString.append("\npublic class " + testName + "\n{\n");
-		
+
 		// CONCATENATES the PREAMBLE WITHOUT PACKAGE and IMPORTS
 		ctcString = ctcString.append(preambleWithOutPackageAndImports);
-		
+
 		// PRINT the RUNTEST CLASS HEADER
-		ctcString = ctcString.append("\npublic static void main(String[] args)\n{\ntry{\n");
-		
+		ctcString = ctcString.append("\npublic static void main(String[] args)\n{\n\ttry{\n");
+
 		// CONCATENATES the REFINEMENT TEXT of ALL ASSIGNMENTS
-		if (ctc.getDeclaraciones()!=null) ctcString.append(ctc.getDeclaraciones());
-		if (ctc.getAsignaciones()!=null)  ctcString.append(ctc.getAsignaciones());
-		
+//		if (ctc.getDeclaraciones()!=null){
+//			BufferedReader declReader = new BufferedReader(new StringReader(ctc.getDeclaraciones()));
+//			String declLine;
+//			try {
+//				while ((declLine = declReader.readLine()) != null) {
+//					ctcString.append("\t\t" + declLine + "\n");
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+
+		String decl = ctc.getDeclaraciones();
+		if (decl != null)
+			decl = "\t\t" + decl.replaceAll("\\n", "\n\t\t");
+		ctcString.append(decl);
+		String assign = ctc.getAsignaciones();
+		if (assign != null){
+			assign = assign.replaceAll("\\n", "\n\t\t");
+			assign = assign.replaceFirst("\\\t\\\t$", "");
+		}
+		ctcString.append(assign);
+		//if (ctc.getAsignaciones()!=null)  ctcString.append(ctc.getAsignaciones());
+
 		// CONCATS the EPILOGUE
 		String epilogue = ctc.getEpilogue();
 		if (!epilogue.isEmpty() || !epilogue.equals("")){
-			ctcString = ctcString.append("//--------------------------------------------------------------------------------\n");
-			ctcString = ctcString.append("//                                   EPILOGUE\n");
-			ctcString = ctcString.append("//--------------------------------------------------------------------------------\n");
+			ctcString = ctcString.append("\t//--------------------------------------------------------------------------------\n");
+			ctcString = ctcString.append("\t//                                   EPILOGUE\n");
+			ctcString = ctcString.append("\t//--------------------------------------------------------------------------------\n");
+			epilogue = epilogue.replaceAll("\\n", "\n\t\t");
+			//epilogue = epilogue.replaceFirst("\\\t\\\t$", "");
 			ctcString.append(epilogue + "\n");
 		}
-		
+
 		// CLOSE the CATCH BLOCK.
-		ctcString = ctcString.append("}\ncatch(Exception e){\n\te.printStackTrace(System.out);\n\t}");
+		ctcString = ctcString.append("\t}\n\tcatch(Exception e){\n\t\te.printStackTrace(System.out);\n\t}");
 		// CLOSE the RUNTEST CLASS.
 		ctcString = ctcString.append("\n}\n");
 		// CLOSE the TEST CLASS.

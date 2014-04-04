@@ -104,10 +104,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Analizamos la uut
 		this.visit(uut);
 
-		System.out.println("-----------------------------------------");
-		System.out.print(declarationList);
-		System.out.print(assignmentList);
-		System.out.println("-----------------------------------------");
+		//System.out.println("-----------------------------------------");
+		//System.out.print(declarationList);
+		//System.out.print(assignmentList);
+		//System.out.println("-----------------------------------------");
 
 		return null;
 	}	
@@ -308,8 +308,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				//Esto se usa en los array, para saber en que posición va
 				position++;
 			}
-		} else if (hasWith){
-			visitIExprRefinement(ctx.iExprRefinement(), replaceValue, null, zExpr, new SExpr(varName + atribute, varType));
+		//} else if (hasWith){
+		//	visitIExprRefinement(ctx.iExprRefinement(), replaceValue, null, zExpr, new SExpr(varName + atribute, varType));
 		} else {
 			visitIExprRefinement(ctx.iExprRefinement(), replaceValue, record + atribute, zExpr, new SExpr(varName + atribute, varType));
 		}
@@ -345,7 +345,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		} else if (dataStruct.getText().equals("RECORD")) {
 			//Si es un record, pasamos "mas abajo" en el árbol el record creado
 			String withVariable = refineWITH(ctx.refinement(), replaceValue, record);
-			printAssignment(javaExpr.exp + " = " + withVariable);
+			//printAssignment(javaExpr.exp + " = " + withVariable);
 			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, withVariable, this);
 
 			//Si es un ARRAY
