@@ -31,7 +31,6 @@ public class RefineAST{
 		// We set some fields in the concrete case
 		ctc.setPreamble(ast.getPreamble());
 		ctc.setEpilogue(ast.getEpilogue());
-		ctc.setPathUUT(pathUUT);
 		ctc.setLanguaje(targetLanguaje);
 
 		// We analyze the targetLanguaje and create the corresponding refiner

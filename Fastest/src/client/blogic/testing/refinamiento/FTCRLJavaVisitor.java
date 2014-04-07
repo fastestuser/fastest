@@ -98,11 +98,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		//Analizamos las laws
 		LawsContext laws = ctx.laws();
 		this.visit(laws);
-		
+
 		//Cerramos tablas y archivos
 		FTCRLUtils.closeTables(openedTables, this);
 		FTCRLUtils.closeFiles(openedFiles, this);
-		
+
 		//Analizamos la uut
 		this.visit(uut);
 
@@ -149,7 +149,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		}
 		line += ")";
 
-		uutLine = line;
+		uutLine = line + ";";
 		return null;
 	}
 
@@ -312,8 +312,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				//Esto se usa en los array, para saber en que posición va
 				position++;
 			}
-		//} else if (hasWith){
-		//	visitIExprRefinement(ctx.iExprRefinement(), replaceValue, null, zExpr, new SExpr(varName + atribute, varType));
+			//} else if (hasWith){
+			//	visitIExprRefinement(ctx.iExprRefinement(), replaceValue, null, zExpr, new SExpr(varName + atribute, varType));
 		} else {
 			visitIExprRefinement(ctx.iExprRefinement(), replaceValue, record + atribute, zExpr, new SExpr(varName + atribute, varType));
 		}
@@ -409,7 +409,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			String values = currentTable.printValues();
 			currentTable.resetValues();
 			printDeclaration(table.stmt + ".executeUpdate(\"insert into " + currentTable.t + " values(" + values + ")\")");
-			
+
 
 		} else if (dataStruct.getText().equals("MAPPING")) { //Si es un MAPPING
 			//Debo visitar los refinements,
@@ -425,7 +425,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			List<RefinementContext> rs = ctx.refinement();
 			List<RefinementContext> ks = new ArrayList<FTCRLParser.RefinementContext>();
 			List<RefinementContext> vs = new ArrayList<FTCRLParser.RefinementContext>();
-			
+
 			//Si la key y el valor son del mismo tipo
 			//los refinamiento son mitad de cada uno
 			int size = rs.size();
@@ -442,33 +442,33 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 					else
 						vs.add(rs.get(i));
 			}
-			
+
 			String key = refineWITH(ks, replaceValue, null);
 			String value = refineWITH(vs, replaceValue, null);
-			
+
 			printAssignment(javaExpr.exp + ".put(" + key + ", " + value + ")");
-		
+
 		} else if (dataStruct.file() != null) { //Si es un FILE
-			
+
 			if (!openedFiles.contains(javaExpr.exp)){
 				printAssignment(javaExpr.exp + " = open(" + dataStruct.file().path().getText() + ")");
 				openedFiles.add(javaExpr.exp);
 			}
-			
+
 			if (!hasWITH){
-				
+
 				SExpr stringExpr = new SExpr("", "String");
 				String value = refineFromZToJava(zExpr, "FILE", stringExpr);
 				printAssignment("write(" + javaExpr.exp + ", " + value + ")");
-				
+
 			} else {
-				
+
 				Iterator<RefinementContext> it = ctx.refinement().iterator();
 				while (it.hasNext()){
 					String var = this.visitRefinement(it.next(), null, null, replaceValue);
 					printAssignment("write(" + javaExpr.exp + ", str(" + var + "))");
 				}
-				
+
 			}
 		}
 
@@ -714,35 +714,54 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//para llevar la cuenta de cuando hay que hacer el replace.
 	private SExpr visitDotSetOper(DotSetOperContext ctx, SExpr v) {
 
-		//si es una tupla con (,), le pongo corchetes para que sea conjunto y asi poder usar su iterador
-		v.exp = (v.exp.charAt(0)=='(')?"{"+v.exp.substring(1, v.exp.length()-1)+"}":v.exp;
-		ExprIterator itElements = new common.util.ExprIterator(v.exp);
+		if (FTCRLUtils.isCrossProduct(v.type)) {
+			//si es una tupla con (,), le pongo corchetes para que sea conjunto y asi poder usar su iterador
+			v.exp = (v.exp.charAt(0)=='(')?"{"+v.exp.substring(1, v.exp.length()-1)+"}":v.exp;
+			ExprIterator itElements = new common.util.ExprIterator(v.exp);
 
-		String oper = ctx.getText();
-		if(oper.contains("DOM")){ //Operador DOM
-			String value = itElements.next();
-			String type = FTCRLUtils.getChildType(v.type, 0); //A \cross B --> A
-			return new SExpr(value, type);
-		}
-		else if(oper.contains("RAN")){ //Operador RAN
-			itElements.next();
-			String value = itElements.next();
-			String type = FTCRLUtils.getChildType(v.type, 1); //A \cross B --> B
-			return new SExpr(value, type);
-
-		}
-		else if(oper.contains("#")){ //Operador Cardinalidad
-			String value = String.valueOf(itElements.cardinalidad());
-			String type = "\\num";
-			return new SExpr(value, type);
-		}
-		else if (ctx.digit() != null) { //Operador "."
-			int atributeNumber = Integer.parseInt(ctx.digit().getText());
-			for (int i = 1; i < atributeNumber; i++)
+			String oper = ctx.getText();
+			if(oper.contains("DOM")){ //Operador DOM
+				String value = itElements.next();
+				String type = FTCRLUtils.getChildType(v.type, 0); //A \cross B --> A
+				return new SExpr(value, type);
+			}
+			else if(oper.contains("RAN")){ //Operador RAN
 				itElements.next();
-			String value = itElements.next();
-			String type = FTCRLUtils.getChildType(v.type, atributeNumber-1);
-			return new SExpr(value, type);
+				String value = itElements.next();
+				String type = FTCRLUtils.getChildType(v.type, 1); //A \cross B --> B
+				return new SExpr(value, type);
+
+			}
+			else if(oper.contains("#")){ //Operador Cardinalidad
+				String value = String.valueOf(itElements.cardinalidad());
+				String type = "\\num";
+				return new SExpr(value, type);
+			}
+			else if (ctx.digit() != null) { //Operador "."
+				int atributeNumber = Integer.parseInt(ctx.digit().getText());
+				for (int i = 1; i < atributeNumber; i++)
+					itElements.next();
+				String value = itElements.next();
+				String type = FTCRLUtils.getChildType(v.type, atributeNumber-1);
+				return new SExpr(value, type);
+			}
+		} else { //Es un conjunto
+			
+			ExprIterator itElements = new common.util.ExprIterator(v.exp);
+			String oper = ctx.getText();
+			String returnValue = "";
+			
+			while (itElements.hasNext()){
+				String setElem = itElements.next();
+				String elem = FTCRLUtils.getDotSetElemFromSet(setElem, oper);
+				if (!returnValue.equals(""))
+					returnValue += ",";
+				returnValue += elem;
+			}
+			
+			String type = FTCRLUtils.getDotSetTypeFromSet(v.type, oper);
+			return new SExpr("\\{" + returnValue + "\\}", "\\power(" + type + ")");
+			
 		}
 		//si era un conjunto o una tupla devuelvo o un conjunto o un elemento
 		return null;

@@ -3,6 +3,7 @@ package client.blogic.testing.refinamiento;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,6 +36,7 @@ import java.util.regex.Pattern;
 import common.util.ExprIterator;
 import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
+import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.FTCRLParser.RefinementRuleContext;
 import client.blogic.testing.refinamiento.FTCRLParser.SExprRefinementContext;
@@ -124,7 +126,7 @@ public final class FTCRLUtils {
 		RefinementRuleContext ruleContext;
 		RefinementRule rule;
 		RefinementRules rules = RefinementRules.getInstance();
-		String refRuleAux[],preamble,epilogue,ruleString,rrule,plcode = null,laws;
+		String refRuleAux[],preamble, uut, epilogue,ruleString,rrule,plcode = "",laws;
 		String refRulesAux[] = refRulesString.split("@RRULE");
 		int cantHijos = refRulesAux.length;
 		for (int i = 1; i<cantHijos;i++){
@@ -136,17 +138,26 @@ public final class FTCRLUtils {
 			preamble = refRuleAux[0];
 			
 			refRuleAux = refRuleAux[1].split("@PLCODE",2);
-			laws = refRuleAux[0];
 			if (refRuleAux.length == 2){ //tiene plcode
+				laws = refRuleAux[0];
 				refRuleAux = refRuleAux[1].split("@UUT");
 				plcode = refRuleAux[0].substring(1);
+			} else {
+				refRuleAux = refRuleAux[0].split("@UUT");
+				laws = refRuleAux[0];
+				plcode = "";
 			}
 			
-			
 			refRuleAux = refRuleAux[1].split("@EPILOGUE",2);
-			epilogue = (refRuleAux.length == 2?refRuleAux[1]:"");
+			if (refRuleAux.length == 2){ //tiene epilogue
+				epilogue = refRuleAux[1];
+			} else {
+				epilogue = "";
+			}
+
+			uut = refRuleAux[0];
 			
-			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+refRuleAux[0];
+			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+uut;
 			ruleContext = preproc(ruleString);	
 			
 			rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
@@ -559,13 +570,13 @@ public final class FTCRLUtils {
 		if (isSet(sExprLeft.type)){
 			ExprIterator it = new ExprIterator(sExprLeft.exp);
 			while (it.hasNext()){
-				String e = aux.replaceFirst("¬A¬", it.next());
+				String e = aux.replaceFirst("¬A¬", "\"" + it.next() + "\"");
 				if (!newSet.equals(""))
 					newSet += ",";
 				newSet += e;
 			}
 		} else {
-			newSet = aux.replaceFirst("¬A¬", sExprLeft.exp);
+			newSet = aux.replaceFirst("¬A¬", "\"" + sExprLeft.exp + "\"");
 		}
 
 		aux = newSet;
@@ -575,13 +586,13 @@ public final class FTCRLUtils {
 			newSet = "";
 			ExprIterator it = new ExprIterator(sExprRight.exp);
 			while (it.hasNext()){
-				String e = aux.replaceAll("¬B¬", it.next());
+				String e = aux.replaceAll("¬B¬", "\"" + it.next() + "\"");
 				if (!newSet.equals(""))
 					newSet += ",";
 				newSet += e;
 			}
 		} else {
-			newSet = aux.replaceAll("¬B¬", sExprRight.exp);
+			newSet = aux.replaceAll("¬B¬", "\"" + sExprRight.exp + "\"");
 		}
 
 		return "\\{" + newSet + "\\}";
@@ -646,5 +657,119 @@ public final class FTCRLUtils {
 			ftcrl.printAssignment("close(" + t + ")");
 		}
 		
+	}
+	
+	//Metodo auxiliar para DotSetOper cuando se trabaja sobre conjuntos
+	public static String getDotSetElemFromSet(String setElem, String oper) {
+		
+		ExprIterator itElements = new common.util.ExprIterator(setElem);
+		if(oper.contains("DOM")){ //Operador DOM
+			String value = itElements.next();
+			return value;
+		}
+		else if(oper.contains("RAN")){ //Operador RAN
+			itElements.next();
+			String value = itElements.next();
+			return value;
+		}
+		else if(oper.contains("#")){ //Operador Cardinalidad
+			String value = String.valueOf(itElements.cardinalidad());
+			return value;
+		}
+		return "";
+	}
+	
+	//
+	//  Metodo para obtener los tipos de los hijos.
+	//  Se usa para unificar los tipos de funciones, conjuntos y secuencias
+	//  Acepta solo: A \pfun B
+	//               \power (A cross) B
+	//               \seq A
+	//               A \cross B 
+	//
+	static ArrayList<String> childsTypes(String type) {
+		
+		DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
+		ArrayList<String> childsTypes = new ArrayList<String>();
+		DefaultMutableTreeNode aux;
+		String rootType = (String) root.getUserObject();
+		
+		while (rootType.equals("()")) {
+				root = (DefaultMutableTreeNode) root.getChildAt(0);
+				rootType = (String) root.getUserObject();
+		}
+		
+		if (rootType.equals("\\power")) {
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) root.getChildAt(0);
+			String childType = (String) child.getUserObject();
+			
+			while (childType.equals("()")) {
+				child = (DefaultMutableTreeNode) child.getChildAt(0);
+				childType = (String) child.getUserObject();
+			}
+			
+			if (childType.equals("\\cross")) { //Cambiar para multiples cross?
+				int childsAmount = child.getChildCount();
+				for (int i = 0; i < childsAmount; i++) {
+					aux = (DefaultMutableTreeNode) child.getChildAt(i);
+					while (((String) aux.getUserObject()).equals("()"))
+						aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+					childsTypes.add(printTreeWithParenthesis(aux));
+				}
+			}
+		
+		}
+		else if (isSeq(rootType)) { //Entonces empieza con pfun, rel etc
+
+			childsTypes.add("\\nat");
+			aux = (DefaultMutableTreeNode) root.getChildAt(0);
+			while (((String) aux.getUserObject()).equals("()"))
+				aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			childsTypes.add(printTreeWithParenthesis(aux));
+
+		}
+		else if (rootType.equals("\\cross")) {
+		
+			int childsAmount = root.getChildCount();
+			for (int i = 0; i < childsAmount; i++) {
+				aux = (DefaultMutableTreeNode) root.getChildAt(i);
+				while (((String) aux.getUserObject()).equals("()"))
+					aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+				childsTypes.add(printTreeWithParenthesis(aux));
+			}
+		}
+		
+		else { //Entonces empieza con pfun, rel etc
+
+		aux = (DefaultMutableTreeNode) root.getChildAt(0);
+		while (((String) aux.getUserObject()).equals("()"))
+			aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+		childsTypes.add(printTreeWithParenthesis(aux));
+		
+		aux = (DefaultMutableTreeNode) root.getChildAt(1);
+		while (((String) aux.getUserObject()).equals("()"))
+			aux = (DefaultMutableTreeNode) aux.getChildAt(0);
+			
+		childsTypes.add(printTreeWithParenthesis(aux));
+		}
+		
+		return childsTypes;
+	}
+	
+	
+	public static String getDotSetTypeFromSet(String exp, String oper) {
+
+		if(oper.contains("DOM")){ //Operador DOM
+			ArrayList<String> childTypes = childsTypes(exp);
+			return childTypes.get(0);
+		}
+		else if(oper.contains("RAN")){ //Operador RAN
+			ArrayList<String> childTypes = childsTypes(exp);
+			return childTypes.get(1);
+		}
+		else if(oper.contains("#")){ //Operador Cardinalidad
+			return "\\num";
+		}
+		return null;
 	}
 }
