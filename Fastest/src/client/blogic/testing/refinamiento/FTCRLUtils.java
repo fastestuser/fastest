@@ -287,6 +287,9 @@ public final class FTCRLUtils {
 
 	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
 	public static SExpr sExpr(String exp, Replacement replacement, FTCRLJavaVisitor ftcrl) {
+		if (replacement != null && replacement.exp != null && replacement.exp.equals(exp))
+			return new SExpr(replacement.value, replacement.type);
+		
 		ANTLRInputStream in = new ANTLRInputStream(exp);
 		FTCRLLexer lexer = new FTCRLLexer(in);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
