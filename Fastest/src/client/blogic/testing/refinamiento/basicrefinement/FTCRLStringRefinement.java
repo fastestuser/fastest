@@ -4,26 +4,11 @@
 
 package client.blogic.testing.refinamiento.basicrefinement;
 
-import client.blogic.testing.refinamiento.FTCRLJavaVisitor;
-import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.SExpr;
 
-public class FTCRLStringRefinement {
+public class FTCRLStringRefinement extends Refinement{
 
-	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
-
-		String value = refineTo(zExpr, javaExpr);
-		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
-		if ((javaExpr != null) && (javaExpr.exp != "")) {
-			ftcrl.printAssignment(javaExpr.exp + " = " + value);
-			//ftcrl.references.put(javaExpr.exp, value);
-			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, value, ftcrl);
-		}
-		//Y sino devuelvo el valor refinado en vez de la variable Java
-		return value;
-	}
-
-	public static String refineTo(SExpr zExpr, SExpr javaExpr){
+	public String refineTo(SExpr zExpr, SExpr javaExpr){
 		if (javaExpr.type.equals("String")){
 			return "new String(\"" + zExpr.exp + "\")";
 		} 		

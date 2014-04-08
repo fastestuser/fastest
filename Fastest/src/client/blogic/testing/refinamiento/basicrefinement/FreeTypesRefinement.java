@@ -12,31 +12,19 @@ import client.blogic.testing.refinamiento.FTCRLParser.SNameContext;
 import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.SExpr;
 
-public class FreeTypesRefinement {
+public class FreeTypesRefinement extends Refinement{
 
 	private static String[] values;
 	private static EnumerationContext context;
 
 
-	public static String refine(SExpr zExpr, String values, SExpr javaExpr, EnumerationContext enumerationContext, FTCRLJavaVisitor ftcrl){
-
-		//LLenamos una lista con los valores primero
-		FreeTypesRefinement.values = values.split(",");
-
-		//Guardamos el contenido del Enumeration Context
-		FreeTypesRefinement.context = enumerationContext;
-
-		String value = refineTo(zExpr, javaExpr);
-		//Si hay una variable en Java a utilizar, le asigno el valor refinado, y devuelvo la variable como salida 
-		if ((javaExpr != null) && (javaExpr.exp != "")) {
-			ftcrl.printAssignment(javaExpr.exp + " = " + value);
-			FTCRLUtils.saveReference(javaExpr.exp, zExpr.exp, zExpr.exp, ftcrl);
-		}
-		//Y sino devuelvo el valor refinado en vez de la variable Java
-		return value;
+	public FreeTypesRefinement(EnumerationContext enumerationContext, String values) {
+		this.context = enumerationContext;
+		this.values = values.split(",");;
+		
 	}
 
-	private static String refineTo(SExpr zExpr, SExpr javaExpr){
+	public String refineTo(SExpr zExpr, SExpr javaExpr){
 		if (javaExpr.type.equals("String"))
 			return "\"" + zExpr.exp + "\"";
 
@@ -66,10 +54,10 @@ public class FreeTypesRefinement {
 					while (!values[k].equals(zExpr.exp))
 						k++;
 					if (Character.isLowerCase(javaExpr.type.charAt(0)))
-							return Integer.toString(k + m);
+						return Integer.toString(k + m);
 					else
 						return "new " + javaExpr.type + "(" + Integer.toString(k + m) + ")";
-					
+
 				} else { //Estoy en el caso ENUM[c1 > n1 ... cn > nn]
 					List<SNameContext> snames = context.sName();
 					int pos = 0;
@@ -83,7 +71,7 @@ public class FreeTypesRefinement {
 					else
 						return "new " + javaExpr.type + "(" + context.number(pos).getText() + ")";
 				}
-				
+
 			}
 		} else if (javaExpr.type.equals("char") || javaExpr.type.equals("Character")){
 			String value = "";
@@ -104,14 +92,15 @@ public class FreeTypesRefinement {
 						return ""; //Error!
 					value = context.number(pos).getText();
 				}
-				
+
 			}
 			//Convertimos a char el valor del entero
 			zExpr.exp = value;
+			Refinement refinement = new NumRefinement();
 			if (Character.isLowerCase(javaExpr.type.charAt(0)))
-				return NumRefinement.refineTo(zExpr, javaExpr);
+				return refinement.refineTo(zExpr, javaExpr);
 			else
-				return "new " + javaExpr.type + "(" + NumRefinement.refineTo(zExpr, javaExpr) + ")";
+				return "new " + javaExpr.type + "(" + refinement.refineTo(zExpr, javaExpr) + ")";
 		}
 
 		return "";

@@ -225,7 +225,7 @@ path
 digit :         ZERO | DIGIT; 
 
 string
-	:	DQUOTE (digit | LETTER)* DQUOTE
+	:	DQUOTE (.*?) DQUOTE
 	;
 	
 setExtension

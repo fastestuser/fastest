@@ -251,9 +251,12 @@ public final class ConstantCreator {
 		if (ct.equals("\\num") || ct.contains("nat"))
 			return this.getNumber();
 
-		if (ct.equals("\\cross"))
-			return "[" + cteCanonica(nodo.getChildAt(0), var) + ","	+ cteCanonica(nodo.getChildAt(1), var) + "]";
-
+		if (ct.equals("\\cross")){
+			String returnValue = "";
+			for (int pos = 0; pos < nodo.getChildCount(); pos++)
+				returnValue += "," + cteCanonica(nodo.getChildAt(pos), var);
+			return "[" + returnValue.substring(1) + "]";
+		}
 		if (ct.equals("\\power"))
 			return "{" + cteCanonica(nodo.getChildAt(0), var) + "}";
 

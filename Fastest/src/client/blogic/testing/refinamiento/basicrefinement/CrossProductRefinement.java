@@ -9,9 +9,9 @@ import client.blogic.testing.refinamiento.FTCRLJavaVisitor;
 import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.SExpr;
 
-public class CrossProductRefinement {
+public class CrossProductRefinement extends Refinement{
 
-	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
 
 		if (toType.equals("TABLE") && ftcrl.currentTable != null){
 			
@@ -36,7 +36,39 @@ public class CrossProductRefinement {
 					column++;
 				}
 			}
+		} else if (toType.equals("FILE")) {
+			
+			//Debemos refinar cada elemento de la tupla a una linea del archivo
+			String tuple = zExpr.exp;
+			tuple = tuple.replaceFirst("\\(", "{");
+			tuple = tuple.replaceFirst("\\)", "}");
+			ExprIterator itElements = new common.util.ExprIterator(zExpr.exp);
+			
+			//El archivo lo obtenemos de la expresión Java
+			String tableName = javaExpr.exp;
+			if (tableName.startsWith(ftcrl.testingVar+"."))
+				tableName = tableName.substring(ftcrl.testingVar.length()+1);
+			String writer = ftcrl.openedFiles.get(tableName);
+			
+			int pos = 0;
+			while (itElements.hasNext()){
+				//Debemos refinar cada elemento de la tupla a una columna de la tabla
+				String elem = itElements.next();
+				String elemType = FTCRLUtils.getChildType(zExpr.type, pos);
+				String value = ftcrl.refineFromZToJava(new SExpr(elem, elemType), "FILE", javaExpr);
+				if (!value.equals(""))
+					ftcrl.printAssignment(writer+".println(str("+value+"))");
+				
+				pos++;
+			}
+			
 		}
+		
 		return "";
+	}
+
+	@Override
+	public String refineTo(SExpr zExpr, SExpr javaExpr) {
+		return null;
 	}
 }

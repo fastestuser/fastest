@@ -10,9 +10,9 @@ import client.blogic.testing.refinamiento.FTCRLJavaVisitor;
 import client.blogic.testing.refinamiento.FTCRLUtils;
 import client.blogic.testing.refinamiento.SExpr;
 
-public class SetRefinement {
+public class SetRefinement extends Refinement{
 
-	public static String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
 		//Primero vemos donde hay que almacenar lo que refinaremos
 		String javaVar = "";
 		if ((javaExpr != null) && (javaExpr.exp != "")){
@@ -25,15 +25,14 @@ public class SetRefinement {
 		Iterator<String> itElements = new common.util.ExprIterator(zExpr.exp);
 		String zElemType = FTCRLUtils.getChildType(zExpr.type, 0);
 
-		//Obtenemos el tipo de los nodos del conjunto
-		String javaElemType = FTCRLUtils.getInnerType(javaExpr.type);
-		javaExpr.exp = "";
-		javaExpr.type = javaElemType;
-
 		if (toType.equals("LIST")){
 			int arrayPos = 0;
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+				//Obtenemos el tipo de los nodos del conjunto
+				String javaElemType = FTCRLUtils.getInnerType(javaExpr.type);
+				javaExpr.exp = "";
+				javaExpr.type = javaElemType;
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + ".add(" + refinedElem + ")");
 				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, zElemExpr.exp, ftcrl);
@@ -43,14 +42,25 @@ public class SetRefinement {
 			int arrayPos = 0;
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+				//Obtenemos el tipo de los nodos del conjunto
+				String javaElemType = FTCRLUtils.getInnerType(javaExpr.type);
+				javaExpr.exp = "";
+				javaExpr.type = javaElemType;
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + "[" + arrayPos + "] = " + refinedElem);
 				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, zElemExpr.exp, ftcrl);
 				arrayPos++;
 			}
+		} else if (toType.equals("FILE")){
+			if (FTCRLUtils.isCrossProduct(zElemType)){
+				while (itElements.hasNext()){
+					SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
+					if (FTCRLUtils.isCrossProduct(zElemType))
+						new CrossProductRefinement().refine(zElemExpr, "FILE", javaExpr ,ftcrl);
+				}
+			}
 		}
 		return javaVar;
 
 	}
-
 }

@@ -47,7 +47,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Tablas abiertas, para cuando refinamos una tabla
 	public HashSet<RefinementTable> openedTables = new HashSet<RefinementTable>();
 	//Archivos abiertos, para cuando refinamos un file
-	public HashSet<String> openedFiles = new HashSet<String>();
+	public HashMap<String, String> openedFiles = new HashMap<String, String>();
 	//Variable para dar nombre a las variables que se crean
 	private static int varNumber = 0;
 	//Map con los valores almacenados por los REF
@@ -100,8 +100,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		this.visit(laws);
 
 		//Cerramos tablas y archivos
-		FTCRLUtils.closeTables(openedTables, this);
-		FTCRLUtils.closeFiles(openedFiles, this);
+		FTCRLUtils.closeTables(this);
+		FTCRLUtils.closeFiles(this);
 
 		//Analizamos la uut
 		this.visit(uut);
@@ -374,8 +374,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Si es un ENUM
 		} else if (dataStruct.enumeration() != null) {
 			String values;
-			if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""); //Si la expresion de Z es un tipo libre de Z
-			FreeTypesRefinement.refine(zExpr, values, javaExpr, dataStruct.enumeration(),this);
+			if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""){ //Si la expresion de Z es un tipo libre de Z
+				Refinement refinement = new FreeTypesRefinement(dataStruct.enumeration(), values);
+				refinement.refine(zExpr, "BASIC", javaExpr, this);
+			}
 
 			//Si es una TABLE
 		} else if (dataStruct.table() != null) {
@@ -449,25 +451,36 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			printAssignment(javaExpr.exp + ".put(" + key + ", " + value + ")");
 
 		} else if (dataStruct.file() != null) { //Si es un FILE
+			String tableName = javaExpr.exp;
+			if (tableName.startsWith(testingVar+"."))
+				tableName = tableName.substring(testingVar.length()+1);
 
-			if (!openedFiles.contains(javaExpr.exp)){
-				printAssignment(javaExpr.exp + " = open(" + dataStruct.file().path().getText() + ")");
-				openedFiles.add(javaExpr.exp);
+			if (!openedFiles.keySet().contains(tableName)){
+				String writer = newVarName(FTCRLUtils.extractName(tableName));
+				printDeclaration("PrintWriter "+writer+" = new PrinterWriter(\""+
+						dataStruct.file().path().getText()+"/"+tableName+"\", \"UTF-8\")");
+				openedFiles.put(tableName, writer);
 			}
 
-			if (!hasWITH){
-
-				SExpr stringExpr = new SExpr("", "String");
-				String value = refineFromZToJava(zExpr, "FILE", stringExpr);
-				printAssignment("write(" + javaExpr.exp + ", " + value + ")");
-
-			} else {
+			if (hasWITH){
 
 				Iterator<RefinementContext> it = ctx.refinement().iterator();
 				while (it.hasNext()){
 					String var = this.visitRefinement(it.next(), null, null, replaceValue);
-					printAssignment("write(" + javaExpr.exp + ", str(" + var + "))");
+					printAssignment(openedFiles.get(tableName)+".println(str("+var+"))");
 				}
+
+			} else if(FTCRLUtils.isCrossProduct(zExpr.type)) {
+				new CrossProductRefinement().refine(zExpr, "FILE", javaExpr, this);
+
+			} else if(FTCRLUtils.isSet(zExpr.type)){
+				new SetRefinement().refine(zExpr, "FILE", javaExpr, this);
+
+			} else {
+
+				SExpr stringExpr = new SExpr("", "String");
+				String value = refineFromZToJava(zExpr, "FILE", stringExpr);
+				printAssignment(openedFiles.get(tableName)+".println("+value+")");
 
 			}
 		}
@@ -479,7 +492,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement){
 		if (replacement != null && replacement.exp != null && replacement.exp.equals(ctx.getText()))
 			return new SExpr(replacement.value, replacement.type);
-		
+
 		//Si simplemente es un SName, debe estar en el replacement o en el Map de Z
 		if (ctx.sName()!=null)
 			return visitSName(ctx.sName(),replacement);
@@ -509,7 +522,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	public SExpr visitZExpr(FTCRLParser.ZExprContext ctx,Replacement replacement){
 		if (replacement != null && replacement.exp != null && replacement.exp.equals(ctx.getText()))
 			return new SExpr(replacement.value, replacement.type);
-		
+
 		if(ctx.zExprSet() != null)
 			return visitZExprSet(ctx.zExprSet(),replacement);
 		else if (ctx.zExprNum() != null)
@@ -524,7 +537,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	private SExpr visitZExprSet(FTCRLParser.ZExprSetContext ctx,Replacement replacement) {
 		if (replacement != null && replacement.exp != null && replacement.exp.equals(ctx.getText()))
 			return new SExpr(replacement.value, replacement.type);
-		
+
 		//En el primer caso, el ZExprSet se conforma de un SName, y quizas un dotSetOperator
 		if (ctx.sName() != null){
 			//Del sName debo obtener el SExpr correspondiente
@@ -566,7 +579,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	private SExpr visitZExprNum(FTCRLParser.ZExprNumContext ctx,Replacement replacement) {
 		if (replacement != null && replacement.exp != null && replacement.exp.equals(ctx.getText()))
 			return new SExpr(replacement.value, replacement.type);
-		
+
 		if (ctx.CARD() != null){ //Cardinal
 			SExpr sExpr = visitSName(ctx.sName(), replacement);
 			ExprIterator card = new ExprIterator(sExpr.exp);
@@ -624,7 +637,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	private SExpr visitZExprString(FTCRLParser.ZExprStringContext ctx,Replacement replacement) {
 		if (replacement != null && replacement.exp != null && replacement.exp.equals(ctx.getText()))
 			return new SExpr(replacement.value, replacement.type);
-		
+
 		if (ctx.string() != null){ //String
 			String string = ctx.string().getText();
 			string = string.substring(1, string.length()-1);
@@ -757,11 +770,11 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 				return new SExpr(value, type);
 			}
 		} else { //Es un conjunto
-			
+
 			ExprIterator itElements = new common.util.ExprIterator(v.exp);
 			String oper = ctx.getText();
 			String returnValue = "";
-			
+
 			while (itElements.hasNext()){
 				String setElem = itElements.next();
 				String elem = FTCRLUtils.getDotSetElemFromSet(setElem, oper);
@@ -769,10 +782,10 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 					returnValue += ",";
 				returnValue += elem;
 			}
-			
+
 			String type = FTCRLUtils.getDotSetTypeFromSet(v.type, oper);
 			return new SExpr("\\{" + returnValue + "\\}", "\\power(" + type + ")");
-			
+
 		}
 		//si era un conjunto o una tupla devuelvo o un conjunto o un elemento
 		return null;
@@ -797,29 +810,32 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//debera hacer las asignaciones: l.add(1); l.add(2); l.add(3) 
 	public String refineFromZToJava(SExpr zExpr, String toType, SExpr javaExpr) {
 
+		Refinement refinement = null;
+
 		//En base al tipo en Z de sValue debo utilizar una determinada clase para refinarla
 		String values;
 		if (zExpr.type.equals("\\num") || zExpr.type.equals("\\nat"))
-			return NumRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new NumRefinement();
 		else if (FTCRLUtils.isSet(zExpr.type))
-			return SetRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new SetRefinement();
 		else if (FTCRLUtils.isSeq(zExpr.type)){
 			//Si es una lista refino como si fuese un conjunto
 			zExpr.type = "\\power(" + FTCRLUtils.getChildType(zExpr.type,0) + ")";
 			zExpr.exp = zExpr.exp.replaceFirst("^\\\\langle", "\\\\{");
 			zExpr.exp = zExpr.exp.replaceFirst("\\\\rangle$", "\\\\}");
-			return SetRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new SetRefinement();
 		} else if (zExpr.type.equals("FTCRLString")){
-			return FTCRLStringRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new FTCRLStringRefinement();
 		} else if(FTCRLUtils.isBasicType(zExpr.type)){
 			//Es un tipo basico
-			return GivenTypeRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new GivenTypeRefinement();
 		} else if ((values = FTCRLUtils.isFreeType(zExpr.type)) != ""){
-			return FreeTypesRefinement.refine(zExpr, values, javaExpr, null, this);
+			refinement = new FreeTypesRefinement(null, values);
 		} else if (FTCRLUtils.isCrossProduct(zExpr.type)){
-			return CrossProductRefinement.refine(zExpr, toType, javaExpr, this);
+			refinement = new CrossProductRefinement();
 		}
-		return "";
+
+		return refinement.refine(zExpr, toType, javaExpr, this);
 	}
 
 	//Este metodo se utiliza para determinar el caso de prueba que se utilizará

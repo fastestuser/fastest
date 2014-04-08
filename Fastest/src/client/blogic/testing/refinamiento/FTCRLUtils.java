@@ -65,7 +65,6 @@ public final class FTCRLUtils {
 	}
 	
 	public static String getPlCode() {
-		// TODO Auto-generated method stub
 		 return reglaActual.getPlcode();
 	}
 
@@ -644,20 +643,20 @@ public final class FTCRLUtils {
 		
 		return true;
 	}
-	public static void closeTables(HashSet<RefinementTable> openedTables, FTCRLJavaVisitor ftcrl) {
+	public static void closeTables(FTCRLJavaVisitor ftcrl) {
 		
-		Iterator<RefinementTable> it = openedTables.iterator();
+		Iterator<RefinementTable> it = ftcrl.openedTables.iterator();
 		while (it.hasNext()){
 			RefinementTable t = it.next();
 			ftcrl.printDeclaration(t.stmt + ".close()");
 		}
 		
 	}
-	public static void closeFiles(HashSet<String> openedFiles, FTCRLJavaVisitor ftcrl) {
-		Iterator<String> it = openedFiles.iterator();
+	public static void closeFiles(FTCRLJavaVisitor ftcrl) {
+		Iterator<String> it = ftcrl.openedFiles.keySet().iterator();
 		while (it.hasNext()){
 			String t = it.next();
-			ftcrl.printAssignment("close(" + t + ")");
+			ftcrl.printAssignment("close(" + ftcrl.openedFiles.get(t) + ")");
 		}
 		
 	}
