@@ -28,7 +28,7 @@ preamble
 
 laws
 	:	LAWS NL
-		(law  NL| reference NL | name ALAWS NL)+
+		(law  NL| reference NL | name DOT ALAWS NL)+
 	;
 
 law
