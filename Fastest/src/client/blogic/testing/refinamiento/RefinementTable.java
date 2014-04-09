@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.Scanner;
 
+import client.blogic.testing.refinamiento.java.FTCRLJavaVisitor;
+
 public final class RefinementTable {
 	
 	public String stmt;
@@ -74,5 +76,13 @@ public final class RefinementTable {
 		for (int i = 0; i < size; i++){
 			values[i] = "";
 		}
+	}
+	
+	public String getColumnType(String column) {
+		int pos = columnName.indexOf(column);
+		if (pos >= 0){
+			return columnType.get(pos);
+		}
+		return null;
 	}
 }

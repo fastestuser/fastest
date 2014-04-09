@@ -2,6 +2,7 @@ package client.blogic.testing.abstraction;
 
 import java.util.*;
 import java.io.*;
+
 import client.blogic.testing.refinamiento.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.capture.XMLParser;
@@ -9,7 +10,6 @@ import compserver.abstraction.capture.CapturedVar;
 import common.z.AbstractTCase;
 import net.sourceforge.czt.z.ast.AxPara;
 import compserver.abstraction.tcasegeneration.*;
-
 import client.blogic.management.ii.events.TCaseAbstracted;
 import client.blogic.management.ii.EventAdmin;
 

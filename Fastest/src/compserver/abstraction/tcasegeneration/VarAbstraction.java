@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.math.BigInteger;
+
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.impl.*;
 import common.z.AbstractTCase;
@@ -12,7 +13,7 @@ import common.z.UtilSymbols;
 import compserver.abstraction.types.impltypes.*;
 import compserver.abstraction.types.spectypes.*;
 import compserver.abstraction.capture.*;
-import client.blogic.testing.refinement.ConstantStore;
+import client.blogic.testing.refinementOld.ConstantStore;
 import compserver.abstraction.*;
 
 

@@ -2,7 +2,7 @@ package client.blogic.testing.refinamiento;
 
 import java.util.*;
 
-import client.blogic.testing.refinement.TCaseAssignment;
+import client.blogic.testing.refinementOld.TCaseAssignment;
 import common.z.AbstractTCase;
 
 /**

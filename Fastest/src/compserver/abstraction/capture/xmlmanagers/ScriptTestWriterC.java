@@ -1,6 +1,7 @@
 package compserver.abstraction.capture.xmlmanagers;
 
 import java.util.*;
+
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.types.impltypes.*;

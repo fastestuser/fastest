@@ -3,8 +3,10 @@ package client.presentation.commands;
 import java.io.*;
 
 import client.presentation.ClientTextUI;
+
 import java.util.Set;
 import java.util.Iterator;
+
 import client.blogic.management.Controller;
 import client.blogic.testing.refinamiento.RefinementRules;
 

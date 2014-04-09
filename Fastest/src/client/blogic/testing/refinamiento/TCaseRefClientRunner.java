@@ -4,6 +4,7 @@ import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRefined;
+import client.blogic.testing.refinamiento.java.RefinerJava;
 
 /**
  * @author Hache

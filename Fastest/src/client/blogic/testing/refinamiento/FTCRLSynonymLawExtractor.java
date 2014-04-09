@@ -1,6 +1,7 @@
 package client.blogic.testing.refinamiento;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+
 import client.blogic.testing.refinamiento.FTCRLParser.SynonymLawContext;
 import client.blogic.testing.refinamiento.FTCRLParser.WithRefinementContext;
 
