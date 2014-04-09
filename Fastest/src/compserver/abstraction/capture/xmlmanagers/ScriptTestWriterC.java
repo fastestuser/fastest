@@ -5,7 +5,7 @@ import java.util.*;
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.types.impltypes.*;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 
 public class ScriptTestWriterC implements ScriptTestWriter{
 

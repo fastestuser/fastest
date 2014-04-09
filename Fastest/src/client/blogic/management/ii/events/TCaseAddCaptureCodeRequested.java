@@ -1,6 +1,6 @@
 package client.blogic.management.ii.events;
 
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 
 public class TCaseAddCaptureCodeRequested extends Event_{

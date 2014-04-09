@@ -1,7 +1,7 @@
 package client.blogic.testing.refinementOld.java;
 
 //--------------------------------------------------------------------------------
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.refinementOld.TCaseAssignment;
 //--------------------------------------------------------------------------------
 import net.sourceforge.czt.base.ast.ListTerm;

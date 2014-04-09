@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.Iterator;
 
 import client.blogic.management.Controller;
-import client.blogic.testing.refinamiento.RefinementRules;
+import client.blogic.testing.refinement.RefinementRules;
 
 /**
  *

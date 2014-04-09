@@ -2,7 +2,7 @@ package client.blogic.testing.abstraction;
 
 import java.util.*;
 
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.capture.xmlmanagers.ScriptTestWriter;
 import compserver.abstraction.capture.xmlmanagers.ScriptTestWriterC;

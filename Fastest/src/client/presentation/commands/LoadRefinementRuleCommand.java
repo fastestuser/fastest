@@ -5,7 +5,7 @@ import java.io.*;
 import org.antlr.v4.runtime.RecognitionException;
 
 import client.presentation.ClientTextUI;
-import client.blogic.testing.refinamiento.FTCRLUtils;
+import client.blogic.testing.refinement.FTCRLUtils;
 
 
 public class LoadRefinementRuleCommand implements Command{

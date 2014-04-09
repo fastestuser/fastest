@@ -6,7 +6,7 @@ import java.util.*;
 import common.z.AbstractTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.TCaseNodeFinder;

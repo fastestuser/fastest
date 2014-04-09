@@ -9,7 +9,7 @@ import java.util.*;
 
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.impl.*;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.refinementOld.TCaseAssignment;
 import client.blogic.testing.refinementOld.java.*;
 import client.blogic.testing.refinementOld.java.TCRL_Parser.*;

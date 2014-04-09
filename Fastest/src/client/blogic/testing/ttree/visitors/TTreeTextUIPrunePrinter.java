@@ -3,7 +3,7 @@ package client.blogic.testing.ttree.visitors;
 import java.io.*;
 import java.util.*;
 
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TCaseNode;

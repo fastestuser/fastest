@@ -13,7 +13,7 @@ import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.events.TCaseGenerated;
 import client.blogic.management.ii.events.TCaseRefineRequestedJAVA;
 import client.blogic.management.ii.events.RefLawSelected;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 
 /**
  * Represents test case refinement to run as a client.

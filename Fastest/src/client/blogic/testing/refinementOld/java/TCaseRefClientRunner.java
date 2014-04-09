@@ -6,7 +6,7 @@ import common.z.TClass;
 import common.z.AbstractTCase;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRefinedJAVA;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.refinementOld.*;
 
 /**

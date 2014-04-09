@@ -4,7 +4,7 @@ import java.util.*;
 import java.io.*;
 import java.net.URL;
 
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import client.blogic.management.ii.events.RunFinished;
 import compserver.abstraction.AbstractionLaw;

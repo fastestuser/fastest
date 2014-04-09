@@ -2,7 +2,7 @@ package client.blogic.testing.refinementOld;
 
 import java.util.*;
 
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import net.sourceforge.czt.z.ast.*;
 import common.z.AbstractTCase;
 import common.z.SpecUtils;

@@ -6,7 +6,7 @@ import client.blogic.management.ii.events.TCaseAbstractRequested;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
-import client.blogic.testing.refinamiento.ConcreteTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 import net.sourceforge.czt.z.ast.AxPara;
 
