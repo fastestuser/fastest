@@ -10,7 +10,7 @@ import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;
 import client.blogic.testing.refinement.FTCRLParser.EnumerationContext;
 import client.blogic.testing.refinement.FTCRLParser.SNameContext;
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
+import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public class FreeTypesRefinement extends Refinement{
 

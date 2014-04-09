@@ -8,11 +8,11 @@ import java.util.Iterator;
 
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
+import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public class SetRefinement extends Refinement{
 
-	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl){
 		//Primero vemos donde hay que almacenar lo que refinaremos
 		String javaVar = "";
 		if ((javaExpr != null) && (javaExpr.exp != "")){

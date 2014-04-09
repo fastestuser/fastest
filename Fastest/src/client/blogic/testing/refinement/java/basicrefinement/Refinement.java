@@ -2,11 +2,11 @@ package client.blogic.testing.refinement.java.basicrefinement;
 
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
+import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public abstract class Refinement {
 
-	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl){
 
 		//Si es un file, modificamos el javaExpr para que sea un String
 		if (toType.equals("FILE"))

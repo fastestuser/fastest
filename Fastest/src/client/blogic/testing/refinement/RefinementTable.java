@@ -5,9 +5,7 @@ import java.io.FileReader;
 import java.util.LinkedList;
 import java.util.Scanner;
 
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
-
-public final class RefinementTable {
+public class RefinementTable {
 	
 	public String stmt;
 	public String t = "";
@@ -17,7 +15,7 @@ public final class RefinementTable {
 	public String values[]; //Almacena los datos que se insertarán al finalizar el refinamiento del WITH
 	                                 //Despues debe vaciarse y volver a empezar
 	
-	public RefinementTable(String t, String c, String p, String f, FTCRLJavaVisitor ftcrl) {
+	public RefinementTable(String t, String c, String p, String f, FTCRLtoCodeVisitor ftcrl) {
 		this.t = t;
 		this.c = c;
 		columnName = new LinkedList<String>();
@@ -26,8 +24,7 @@ public final class RefinementTable {
 		columnSize = new LinkedList<String>();
 		stmt = ftcrl.newVarName("stmt");
 		
-		ftcrl.printDeclaration("Statement " + stmt + " = init." + c + ".createStatement()");
-		ftcrl.printDeclaration(stmt + ".executeUpdate(\"delete " + t + "\")");
+		openTable(ftcrl);
 		ftcrl.openedTables.add(this);
 		
 		try {
@@ -84,5 +81,9 @@ public final class RefinementTable {
 			return columnType.get(pos);
 		}
 		return null;
+	}
+	
+	public void openTable(FTCRLtoCodeVisitor ftcrl) {
+		//No imprime nada, el mensaje depende del lenguaje
 	}
 }

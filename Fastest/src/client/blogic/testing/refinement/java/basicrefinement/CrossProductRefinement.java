@@ -7,11 +7,11 @@ package client.blogic.testing.refinement.java.basicrefinement;
 import common.util.ExprIterator;
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
+import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public class CrossProductRefinement extends Refinement{
 
-	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLJavaVisitor ftcrl){
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl){
 
 		if (toType.equals("TABLE") && ftcrl.currentTable != null){
 			

@@ -4,9 +4,7 @@ package client.blogic.testing.refinement.java;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -14,10 +12,10 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import common.util.ExprIterator;
-import client.blogic.testing.refinement.FTCRLBaseVisitor;
 import client.blogic.testing.refinement.FTCRLLexer;
 import client.blogic.testing.refinement.FTCRLParser;
 import client.blogic.testing.refinement.FTCRLUtils;
+import client.blogic.testing.refinement.FTCRLtoCodeVisitor;
 import client.blogic.testing.refinement.RefinementRules;
 import client.blogic.testing.refinement.RefinementTable;
 import client.blogic.testing.refinement.Replacement;
@@ -35,54 +33,7 @@ import client.blogic.testing.refinement.java.javaparser.Java7Lexer;
 import client.blogic.testing.refinement.java.javaparser.Java7Parser;
 import client.blogic.testing.refinement.java.javaparser.TypeExtractorVisitor;
 
-public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
-
-	private String declarationList = ""; //String donde se acumulan las sentencias de declaracion
-	private String assignmentList = "";  //String donde se acumulan las sentencias de asignacion
-	//Map con los valores de las variables Z, obtenidos de la especificaciones
-	private HashMap<String,String> zValuesMap = new HashMap<String,String>();
-	//Map con los tipos de las variables Z, obtenidos de la especificaciones
-	private HashMap<String,String> zTypesMap = new HashMap<String,String>();
-	//Map con los tipos de las variables java, obtenidos del codigo enunciado en las reglas de refinamiento
-	public HashMap<String,String> javaTypesMap = new HashMap<String,String>();
-	//Module del UUT
-	private String moduleName = "";
-	//Argumentos del UUT
-	public LinkedList<String> uutArgs= new LinkedList<String>();
-	//Linea de impresion del UUT
-	public String uutLine = "";
-	//Tabla acutla, para cuando refinamos a una tabla
-	public RefinementTable currentTable;
-	//Tablas abiertas, para cuando refinamos una tabla
-	public HashSet<RefinementTable> openedTables = new HashSet<RefinementTable>();
-	//Archivos abiertos, para cuando refinamos un file
-	public HashMap<String, String> openedFiles = new HashMap<String, String>();
-	//Variable para dar nombre a las variables que se crean
-	private static int varNumber = 0;
-	//Map con los valores almacenados por los REF
-	public HashMap<String, SExpr> references = new HashMap<String, SExpr>();
-	//Variables que deben ser almacenadas, porque van a ser referenciadas
-	public static LinkedList<String> referencedVars = new LinkedList<String>();
-	//Variables auxiliar para determinar si se debe guardar una referencia
-	public boolean isRef;
-	//Variable auxiliar para determinar el nombre de la variable de testing "test"
-	public String testingVar;
-
-	public String getDeclarationList(){
-		return declarationList;
-	}
-
-	public String getAssignementList(){
-		return assignmentList;
-	}
-
-	public void printDeclaration(String line){
-		declarationList = declarationList.concat(line + ";\n");
-	}
-
-	public void printAssignment(String line){
-		assignmentList = assignmentList.concat(line + ";\n");
-	}
+public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
@@ -212,7 +163,8 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			//Si no hay SExpr, debe obtener el valor de la variable Z
 			replaceExp = zVars.get(0);
 		}
-		SExpr zExpr = FTCRLUtils.sExpr(replaceExp, replaceValue, this);
+		
+		SExpr zExpr = determineSExpr(replaceExp, replaceValue, this);
 
 		//Luego el lado derecho
 		String refS = ctx.iExprRefinement().iName().getText();
@@ -389,13 +341,12 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 			RefinementTable table = this.currentTable;
 			//'t' es el nombre de la tabla. Es basicamente el nombre del archivo
 			String t = FTCRLUtils.extractName(dataStruct.table().fName().getText());
-			//if (javaExpr.exp.startsWith("test."))
-			//	tableName = "test." + tableName;
+
 			if (table == null || !table.t.equals(t)){
 				String c = dataStruct.table().iName().getText();
 				String p = dataStruct.table().path().getText();
 				String f = dataStruct.table().fName().getText();
-				table = new RefinementTable(t, c, p, f, this);
+				table = new RefinementJavaTable(t, c, p, f, this);
 				//Seteamos la nueva table actual (falta ver de almacenar la vieja, para cuando hay tablas dentro de tablas)
 				this.currentTable = table;
 			}
@@ -855,7 +806,7 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 	//Almacena los tipos de las variables Z en javaTypesMap
 	public void extractJavaTypes(String javaCode){
 
-		this.javaTypesMap = createJavaTypesMap(javaCode);
+		this.codeTypesMap = createJavaTypesMap(javaCode);
 	}
 
 	//Crea un map con los tipos de las variables de java, a partir del codigo fuente
@@ -876,13 +827,6 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 		FTCRLUtils.setEnumTypes(visitor.getEnumTypes()); //Almacenamos los tipos "enum" en FTCRLUtils
 		FTCRLUtils.setPrivateVars(visitor.getPrivateVars()); //Almacenamos las variables privadas en FTCRLUtils
 		return visitor.getMap(); //retornamos el map con los tipos de las variables
-	}
-
-	public String newVarName(String name) {
-
-		name += varNumber;
-		varNumber++;
-		return name;
 	}
 
 	public boolean isVariable(String s) {
@@ -925,5 +869,19 @@ public class FTCRLJavaVisitor extends FTCRLBaseVisitor<Value> {
 
 		return null;
 	}
+	
+	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol
+		public static SExpr determineSExpr(String exp, Replacement replacement, FTCRLtoJavaVisitor ftcrl) {
+			if (replacement != null && replacement.exp != null && replacement.exp.equals(exp))
+				return new SExpr(replacement.value, replacement.type);
+
+			ANTLRInputStream in = new ANTLRInputStream(exp);
+			FTCRLLexer lexer = new FTCRLLexer(in);
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			FTCRLParser parser = new FTCRLParser(tokens);
+			ParseTree tree = parser.sExprRefinement();
+
+			return ftcrl.visitSExprRefinement((SExprRefinementContext) tree,replacement);
+		}
 
 }

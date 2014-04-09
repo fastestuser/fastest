@@ -15,7 +15,7 @@ public final class RefinerJava implements Refiner{
 		String casoString = SpecUtils.termToLatex(atc);
 		casoString = casoString.replace("~", "");
 		casoString = casoString.replace("\\emptyset", "\\{\\}");
-		FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
+		FTCRLtoJavaVisitor visitor = new FTCRLtoJavaVisitor();
 		visitor.assignTCase(casoString);
 		visitor.visit(FTCRLUtils.getRule());
 

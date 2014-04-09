@@ -29,22 +29,19 @@ import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-
 import common.util.ExprIterator;
 import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinement.FTCRLParser.RefinementRuleContext;
-import client.blogic.testing.refinement.FTCRLParser.SExprRefinementContext;
-import client.blogic.testing.refinement.java.FTCRLJavaVisitor;
+import client.blogic.testing.refinement.FTCRLtoCodeVisitor;
 import client.presentation.ClientTextUI;
 
 
 public final class FTCRLUtils {
 
 	static ClientTextUI clientTextUI;
-	//Indica los tipos "enum" de java encontrados en preamble
+	//Indica los tipos "enum" encontrados en preamble
 	static HashMap<String, String> enumTypes = new HashMap<String,String>();
 	//Indica las variables no publicas encontradas
 	static LinkedList<String> privateVars = new LinkedList<String>();
@@ -249,14 +246,14 @@ public final class FTCRLUtils {
 		return ntipo;
 	}
 
-	//Este método debe obtener el tipo de una expresion de código funete (java):
+	//Este método debe obtener el tipo de una expresion de código fuente:
 	//- una variable: "a"
 	//- una variable de una clase: "A.name"
 	//- el argumento de un metodo: "arg"
-	public static String getCodeExpressionType(String javaExp, FTCRLJavaVisitor ftcrl){
+	public static String getCodeExpressionType(String codeExp, FTCRLtoCodeVisitor ftcrl){
 
-		HashMap<String, String> types = ftcrl.javaTypesMap;
-		String type = types.get(javaExp);
+		HashMap<String, String> types = ftcrl.codeTypesMap;
+		String type = types.get(codeExp);
 		if (type != null)
 			return type;
 		else {
@@ -264,32 +261,17 @@ public final class FTCRLUtils {
 			//ej: A.b.name, donde A.b es un B
 			//obtenemos el ultimo argumento,
 			//y buscamos el tipo de la primer parte
-			int lastPoint = javaExp.lastIndexOf(".");
+			int lastPoint = codeExp.lastIndexOf(".");
 			if (lastPoint != -1){
-				String atribute = javaExp.substring(lastPoint);
-				type = getCodeExpressionType(javaExp.substring(0, lastPoint), ftcrl);
+				String atribute = codeExp.substring(lastPoint);
+				type = getCodeExpressionType(codeExp.substring(0, lastPoint), ftcrl);
 				type = types.get(type + atribute);
 				return type;
 			} else { //Es un tipo, como "String"
-				return javaExp;
+				return codeExp;
 			}
 		}
 
-	}
-
-	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol y visitarlo
-	public static SExpr sExpr(String exp, Replacement replacement, FTCRLJavaVisitor ftcrl) {
-		if (replacement != null && replacement.exp != null && replacement.exp.equals(exp))
-			return new SExpr(replacement.value, replacement.type);
-
-		ANTLRInputStream in = new ANTLRInputStream(exp);
-		FTCRLLexer lexer = new FTCRLLexer(in);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		FTCRLParser parser = new FTCRLParser(tokens);
-		ParseTree tree = parser.sExprRefinement();
-
-		//FTCRLJavaVisitor visitor = new FTCRLJavaVisitor();
-		return ftcrl.visitSExprRefinement((SExprRefinementContext) tree,replacement);
 	}
 
 	//Determina si 'value' es un conjunto. Como entrada toma un valor, no una expresion FTCRL.
@@ -370,14 +352,14 @@ public final class FTCRLUtils {
 		return "";
 	}
 
-	//Determina la clase en Java que representa 'refS'
+	//Determina la clase en en el codigo que representa 'refS'
 	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
 	//y name un atributo de la misma, retorna "A"
 	public static String extractName(String refS) {
 		return refS.split("[.]", 2)[0];
 	}
 
-	//Determina el atributo en Java que se utiliza en 'refS'
+	//Determina el atributo en de la clase en el codigo que se utiliza en 'refS'
 	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
 	//y name un atributo de la misma, retorna ".name"
 	public static String extractAtribute(String refS) {
@@ -578,7 +560,7 @@ public final class FTCRLUtils {
 	}
 
 	//Metodo para determinar la referencia cuando se usa REF
-	public static String findReference(String value, String iName, FTCRLJavaVisitor ftcrl) {
+	public static String findReference(String value, String iName, FTCRLtoCodeVisitor ftcrl) {
 
 		//Primero busco por el nombre de la variable
 		if (ftcrl.references.get(iName) != null)
@@ -608,14 +590,14 @@ public final class FTCRLUtils {
 	}
 
 	//Determina si se debe almacenar el valor de una variable porque puede ser referenciado más tarde
-	public static void saveReference(String var, String zValue, String javaValue, FTCRLJavaVisitor ftcrl) {
+	public static void saveReference(String var, String zValue, String codeValue, FTCRLtoCodeVisitor ftcrl) {
 		if (ftcrl.isRef) {
 			String varName = var;
 			if (varName.startsWith(ftcrl.testingVar + "."))
 				varName = var.substring(5);
 			varName = FTCRLUtils.extractName(varName);
 
-			ftcrl.references.put(var, new SExpr(zValue, javaValue));
+			ftcrl.references.put(var, new SExpr(zValue, codeValue));
 		}
 	}
 
@@ -654,7 +636,7 @@ public final class FTCRLUtils {
 		return "\\{" + newSet + "\\}";
 	}
 
-	public static void closeTables(FTCRLJavaVisitor ftcrl) {
+	public static void closeTables(FTCRLtoCodeVisitor ftcrl) {
 
 		Iterator<RefinementTable> it = ftcrl.openedTables.iterator();
 		while (it.hasNext()){
@@ -663,7 +645,7 @@ public final class FTCRLUtils {
 		}
 
 	}
-	public static void closeFiles(FTCRLJavaVisitor ftcrl) {
+	public static void closeFiles(FTCRLtoCodeVisitor ftcrl) {
 		Iterator<String> it = ftcrl.openedFiles.keySet().iterator();
 		while (it.hasNext()){
 			String t = it.next();
