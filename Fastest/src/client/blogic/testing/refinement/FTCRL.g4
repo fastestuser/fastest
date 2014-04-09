@@ -1,7 +1,7 @@
 grammar FTCRL;
 
 @header{
-package client.blogic.testing.refinamiento;
+package client.blogic.testing.refinement;
 }
 
 @members{
