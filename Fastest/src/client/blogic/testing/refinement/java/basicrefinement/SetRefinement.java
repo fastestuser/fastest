@@ -26,26 +26,26 @@ public class SetRefinement extends Refinement{
 		String zElemType = FTCRLUtils.getChildType(zExpr.type, 0);
 
 		if (toType.equals("LIST")){
+			//Obtenemos el tipo de los nodos del conjunto
+			String javaElemType = ftcrl.getInnerType(javaExpr.type);
+			javaExpr.exp = "";
+			javaExpr.type = javaElemType;
 			int arrayPos = 0;
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
-				//Obtenemos el tipo de los nodos del conjunto
-				String javaElemType = ftcrl.getInnerType(javaExpr.type);
-				javaExpr.exp = "";
-				javaExpr.type = javaElemType;
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + ".add(" + refinedElem + ")");
 				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, zElemExpr.exp, ftcrl);
 				arrayPos++;
 			}
 		} else if (toType.equals("ARRAY")){
+			//Obtenemos el tipo de los nodos del conjunto
+			String javaElemType = ftcrl.getInnerType(javaExpr.type);
+			javaExpr.exp = "";
+			javaExpr.type = javaElemType;
 			int arrayPos = 0;
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
-				//Obtenemos el tipo de los nodos del conjunto
-				String javaElemType = ftcrl.getInnerType(javaExpr.type);
-				javaExpr.exp = "";
-				javaExpr.type = javaElemType;
 				String refinedElem = ftcrl.refineFromZToJava(zElemExpr, "BASIC", javaExpr);
 				ftcrl.printAssignment(javaVar + "[" + arrayPos + "] = " + refinedElem);
 				FTCRLUtils.saveReference(javaVar + "[" + arrayPos + "]", zElemExpr.exp, zElemExpr.exp, ftcrl);

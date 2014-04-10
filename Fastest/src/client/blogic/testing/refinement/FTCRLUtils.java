@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,6 +27,7 @@ import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+
 import common.util.ExprIterator;
 import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
@@ -480,7 +482,7 @@ public final class FTCRLUtils {
 
 		return childsTypes;
 	}
-	
+
 	//Necesito esta funcion para imprimir el árbol en getChildType(...), la cual agrega parentesis, ya que TreeNorm los elimina
 	private static String printTreeWithParenthesis(DefaultMutableTreeNode tree){
 		if (tree.isLeaf()) 
@@ -688,5 +690,28 @@ public final class FTCRLUtils {
 			return "\\num";
 		}
 		return null;
+	}
+
+	//Metodo para realizar la union de conjuntos Z
+	public static SExpr unionSet(SExpr a, SExpr b) {
+
+		String unionType = a.type;
+		HashSet<String> union = new HashSet<String>();
+		//Agregamos los elementos de a
+		ExprIterator it = new ExprIterator(a.exp);
+		while (it.hasNext())
+			union.add(it.next());
+		//Agregamos los elementos de a
+		it = new ExprIterator(b.exp);
+		while (it.hasNext())
+			union.add(it.next());
+		
+		//Imprimimos los elementos
+		String elems = "";
+		Iterator<String> itelem = union.iterator();
+		while (itelem.hasNext())
+			elems += "," + itelem.next();
+
+		return new SExpr("\\{" + elems.substring(1) + "\\}", unionType);
 	}
 }

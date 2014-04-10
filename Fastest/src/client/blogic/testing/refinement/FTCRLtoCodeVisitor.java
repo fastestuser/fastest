@@ -1,3 +1,4 @@
+//Clase base para visitar un árbol FTCRL y refinarlo
 package client.blogic.testing.refinement;
 
 import java.util.HashMap;
@@ -46,11 +47,11 @@ public class FTCRLtoCodeVisitor  extends FTCRLBaseVisitor<Value> {
 	}
 
 	public void printDeclaration(String line){
-		declarationList = declarationList.concat(line + ";\n");
+		declarationList = declarationList.concat(line + "\n");
 	}
 
 	public void printAssignment(String line){
-		assignmentList = assignmentList.concat(line + ";\n");
+		assignmentList = assignmentList.concat(line + "\n");
 	}
 	
 	public String newVarName(String name) {

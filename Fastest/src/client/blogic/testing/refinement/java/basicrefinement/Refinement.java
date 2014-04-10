@@ -18,7 +18,7 @@ public abstract class Refinement {
 		String parts[] = javaExpr.exp.split("\\.");
 		String table = "";
 		String column = "";
-		if (parts[0].equals(ftcrl.testingVar) && parts.length == 3){
+		if (parts.length == 3 && parts[0].equals(ftcrl.testingVar)){
 			table = parts[1];
 			column = parts[2];
 		} else if (parts.length == 2){

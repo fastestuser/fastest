@@ -47,6 +47,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		extractJavaTypes(FTCRLUtils.getPreamble());
 
 		//Obtenemos en nombre del modulo del UUT
+		String uuttttt = ctx.uut().getText();
 		UutContext uut = ctx.uut();
 		moduleName = FTCRLUtils.extractModuleName(uut.getText());
 		uutArgs = FTCRLUtils.extractUUTArgs(uut.getText());
@@ -163,7 +164,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			//Si no hay SExpr, debe obtener el valor de la variable Z
 			replaceExp = zVars.get(0);
 		}
-		
+
 		SExpr zExpr = determineSExpr(replaceExp, replaceValue, this);
 
 		//Luego el lado derecho
@@ -231,8 +232,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			printDeclaration("Field " + privateFieldVar + " = " + record + ".getClass().getDeclaredField(\"" + field + "\")");
 			printDeclaration(privateFieldVar + ".setAccessible(true)");
 			//Como es private debo crear una nueva variable a usar
-			record = newVarName(varType.toLowerCase());
-			printDeclaration(varType + " " + record);
+			//MODIFICADOrecord = newVarName(varType.toLowerCase());
+			varName = newVarName(varType.toLowerCase());
+
+			printDeclaration(varType + " " + varName);
 			//varName = varName + "." + atribute;
 			atribute = "";
 			//record = varName;
@@ -276,9 +279,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 		//Si la variable es privada debemos usar reflection
 		if (isPrivate){
-			printAssignment(privateFieldVar + ".set(" + varName + ", " + record + ")");
-			FTCRLUtils.saveReference(varName + "." + field, zExpr.exp, record, this);
-			return varName;
+			printAssignment(privateFieldVar + ".set(" + record + ", " + varName + ")");
+			FTCRLUtils.saveReference(record + "." + field, zExpr.exp, varName, this);
+			return record;
 		}
 
 		return varName;
@@ -526,6 +529,12 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 		} else if (ctx.setExtension() != null){ //Conjunto por extension
 			return new SExpr(ctx.getText(), "\\power\\num");
+
+		} else if (ctx.CUP() != null){ //Union de conjuntos
+			//A cup B
+			SExpr a = visitZExprSet(ctx.zExprSet(0), replacement);
+			SExpr b = visitZExprSet(ctx.zExprSet(1), replacement);
+			return FTCRLUtils.unionSet(a,b);
 		}
 		return null;
 	}
@@ -730,6 +739,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			String oper = ctx.getText();
 			String returnValue = "";
 
+			//Si el operador es el de cardinalidad devolvemos la cardinalidad del conjunto
+			if (oper.contains("#"))
+				return new SExpr(Integer.toString(itElements.cardinalidad()), "\\num");
+
 			while (itElements.hasNext()){
 				String setElem = itElements.next();
 				String elem = FTCRLUtils.getDotSetElemFromSet(setElem, oper);
@@ -869,19 +882,27 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 		return null;
 	}
-	
+
 	//Determina el SExpr correspondiente. Para eso utiliza el parser para crear el árbol
-		public static SExpr determineSExpr(String exp, Replacement replacement, FTCRLtoJavaVisitor ftcrl) {
-			if (replacement != null && replacement.exp != null && replacement.exp.equals(exp))
-				return new SExpr(replacement.value, replacement.type);
+	public static SExpr determineSExpr(String exp, Replacement replacement, FTCRLtoJavaVisitor ftcrl) {
+		if (replacement != null && replacement.exp != null && replacement.exp.equals(exp))
+			return new SExpr(replacement.value, replacement.type);
 
-			ANTLRInputStream in = new ANTLRInputStream(exp);
-			FTCRLLexer lexer = new FTCRLLexer(in);
-			CommonTokenStream tokens = new CommonTokenStream(lexer);
-			FTCRLParser parser = new FTCRLParser(tokens);
-			ParseTree tree = parser.sExprRefinement();
+		ANTLRInputStream in = new ANTLRInputStream(exp);
+		FTCRLLexer lexer = new FTCRLLexer(in);
+		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		FTCRLParser parser = new FTCRLParser(tokens);
+		ParseTree tree = parser.sExprRefinement();
 
-			return ftcrl.visitSExprRefinement((SExprRefinementContext) tree,replacement);
-		}
+		return ftcrl.visitSExprRefinement((SExprRefinementContext) tree,replacement);
+	}
+
+	public void printDeclaration(String line){
+		super.printDeclaration(line + ";");
+	}
+
+	public void printAssignment(String line){
+		super.printAssignment(line + ";");
+	}
 
 }

@@ -221,7 +221,7 @@ path
 digit :         ZERO | DIGIT; 
 
 string
-	:	DQUOTE (.*?) DQUOTE
+	:	STRING
 	;
 	
 setExtension
@@ -244,8 +244,8 @@ RSB : ']';
 LCB: '\{';
 RCB: '\}';         
 ARROBA : '@';           
-CARD : '#';           
-DQUOTE: '"';           
+CARD : '#'; 
+STRING: '"' .+? '"';       
 ZERO : '0';           
 PLUS : '+';
 MINUS : '-';           
