@@ -7,10 +7,6 @@ package client.blogic.testing.refinement;
 @members{
 }
 
-refinementRules
-	:       refinementRule+ EOF
-	;
-
 
 refinementRule
 	:	RRULE name NL
@@ -28,7 +24,7 @@ preamble
 
 laws
 	:	LAWS NL
-		(law  NL| reference NL | name DOT ALAWS NL)+
+		(law  NL| reference NL | name DOT LAWS NL)+
 	;
 
 law
@@ -284,7 +280,6 @@ MODULE : 'MODULE';
 UUT : '@UUT';
 PLCODE : '@PLCODE';
 LAWS : '@LAWS';
-ALAWS : '@LAWS';           
 PREAMBLE : '@PREAMBLE';
 APREAMBLE : '.@PREAMBLE';           
 RRULE : '@RRULE';		

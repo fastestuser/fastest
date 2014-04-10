@@ -51,8 +51,6 @@ public class FTCRLBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 
 	@Override public T visitLaw(FTCRLParser.LawContext ctx) { return visitChildren(ctx); }
 
-	@Override public T visitRefinementRules(FTCRLParser.RefinementRulesContext ctx) { return visitChildren(ctx); }
-
 	@Override public T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx) { return visitChildren(ctx); }
 
 	@Override public T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx) { return visitChildren(ctx); }

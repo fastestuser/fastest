@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.BranchList;
 import net.sourceforge.czt.z.ast.FreePara;
@@ -26,7 +24,6 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import common.util.ExprIterator;
@@ -81,19 +78,20 @@ public final class FTCRLUtils {
 
 	}
 
-	private static RefinementRuleContext preproc(String ruleString){
+	private static RefinementRuleContext makeRuleContext(String ruleString){
 		ANTLRInputStream input = new ANTLRInputStream(ruleString); 
 		FTCRLLexer lexer = new FTCRLLexer(input); 
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		FTCRLParser parser = new FTCRLParser(tokens);
 		parser.setErrorHandler(new ExceptionErrorStrategy());
 		RefinementRuleContext ruleContext = parser.refinementRule();
-		ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
-		input = new ANTLRInputStream(ruleString);
-		lexer = new FTCRLLexer(input);
-		tokens = new CommonTokenStream(lexer);
-		ruleContext = new FTCRLParser(tokens).refinementRule();
 		return ruleContext;
+//		ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
+//		input = new ANTLRInputStream(ruleString);
+//		lexer = new FTCRLLexer(input);
+//		tokens = new CommonTokenStream(lexer);
+//		ruleContext = new FTCRLParser(tokens).refinementRule();
+//		return ruleContext;
 	}
 
 	private static String resolverPreamble(String preamble){
@@ -163,13 +161,15 @@ public final class FTCRLUtils {
 			uut = refRuleAux[0];
 
 			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+uut;
-			ruleContext = preproc(ruleString);	
+			ruleContext = makeRuleContext(ruleString);	
 
 			rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
 			rules.addRule(ruleContext.name().getText(), rule);
 
 		}
+		RefinementRules.getInstance().resolveLawsReferences();
 		preprocPreambles();
+		//System.out.println("ddddddddd\n" + RefinementRules.getInstance().getRule("client3").getTree().getText());
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba

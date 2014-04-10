@@ -13,7 +13,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
 
-
+/*
+ * Esta clase resuelve los imports del preambulo con ayuda del uutPath, es decir toma
+ * el uutPath y la direccion del import para resolver la direccion donde esta
+ * el archivo con el codigo fuente a importar. ej uutPath /usr/ y import utils.clase1;
+ * entonces busca /usr/utils/clase1.java, tambien resuelve .*
+ * */
 public final class ImportsResolver {
 
 	private  static String path;
@@ -21,6 +26,9 @@ public final class ImportsResolver {
 	private  static StringBuilder imports;
 	private  static PrintWriter output;
 
+	/* esta toma un codigo fuente java y mantiene una estructura separada para
+	 * los imports y para el codigo, es decir el resto
+	 * */
 	private static class Programa{
 		public HashSet<String> imports;
 		public String codigo;

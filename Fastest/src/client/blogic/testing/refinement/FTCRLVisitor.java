@@ -50,8 +50,6 @@ public interface FTCRLVisitor<T> extends ParseTreeVisitor<T> {
 
 	T visitLaw(FTCRLParser.LawContext ctx);
 
-	T visitRefinementRules(FTCRLParser.RefinementRulesContext ctx);
-
 	T visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx);
 
 	T visitSynonymLaw(FTCRLParser.SynonymLawContext ctx);
