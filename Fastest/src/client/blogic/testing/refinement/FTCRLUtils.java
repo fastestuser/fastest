@@ -169,7 +169,6 @@ public final class FTCRLUtils {
 		}
 		RefinementRules.getInstance().resolveLawsReferences();
 		preprocPreambles();
-		//System.out.println("ddddddddd\n" + RefinementRules.getInstance().getRule("client3").getTree().getText());
 	} 
 
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba

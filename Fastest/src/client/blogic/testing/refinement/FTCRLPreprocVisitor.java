@@ -61,7 +61,7 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String> {
 	public String visitLaws(LawsContext ctx){
 		int tot = ctx.getChildCount();
 		if (tot==0) return visitGenerico(ctx);
-		StringBuilder s = new StringBuilder(); 
+		StringBuilder s = new StringBuilder("@LAWS\n"); 
 		ParseTree hijo;
 		for (int i=0;i<tot;i++){
 			hijo = ctx.getChild(i);
@@ -72,7 +72,7 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String> {
 			else if(hijo instanceof NameContext)//es un [name].@LAW
 				s.append(visitALaw((NameContext)hijo));
 		}
-		return s.toString();
+		return  s.toString();
 	}
 
 	public String visitReference(ReferenceContext ctx) {
@@ -94,7 +94,7 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String> {
 	
 	private String visitALaw(NameContext hijo) {
 		RefinementRule rule = RefinementRules.getInstance().getRule(hijo.getText());
-		return (rule.getTree().laws()).accept(this);
+		return (rule.getTree().laws()).accept(this).replace("@LAWS\n","");
 	}
 
 	private String visitGenerico(ParseTree ctx) {
