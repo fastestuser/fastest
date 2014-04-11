@@ -16,7 +16,6 @@ import client.blogic.testing.refinement.FTCRLLexer;
 import client.blogic.testing.refinement.FTCRLParser;
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.FTCRLtoCodeVisitor;
-import client.blogic.testing.refinement.RefinementRules;
 import client.blogic.testing.refinement.RefinementTable;
 import client.blogic.testing.refinement.Replacement;
 import client.blogic.testing.refinement.SExpr;
@@ -32,6 +31,7 @@ import client.blogic.testing.refinement.java.basicrefinement.SetRefinement;
 import client.blogic.testing.refinement.java.javaparser.Java7Lexer;
 import client.blogic.testing.refinement.java.javaparser.Java7Parser;
 import client.blogic.testing.refinement.java.javaparser.TypeExtractorVisitor;
+import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 
 public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
@@ -44,7 +44,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		referencedVars = RefinementRules.getInstance().getReferencedVars();
 
 		//Cargamos el codigo java para obtener los tipos de las variables
-		extractJavaTypes(FTCRLUtils.getPreamble());
+		extractJavaTypes(FTCRLUtils.getRule().getPreamble());
 
 		//Obtenemos en nombre del modulo del UUT
 		String uuttttt = ctx.uut().getText();

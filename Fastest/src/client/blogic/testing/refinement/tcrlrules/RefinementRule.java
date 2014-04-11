@@ -1,4 +1,4 @@
-package client.blogic.testing.refinement;
+package client.blogic.testing.refinement.tcrlrules;
 
 import client.blogic.testing.refinement.FTCRLParser.RefinementRuleContext;
 
@@ -36,7 +36,7 @@ public class RefinementRule {
 		this.epilogue = epilogue;
 	}
 
-	public String getPlcode() {
+	public String getPlCode() {
 		return plcode;
 	}
 

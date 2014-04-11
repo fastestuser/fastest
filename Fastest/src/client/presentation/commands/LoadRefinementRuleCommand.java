@@ -6,6 +6,7 @@ import org.antlr.v4.runtime.RecognitionException;
 
 import client.presentation.ClientTextUI;
 import client.blogic.testing.refinement.FTCRLUtils;
+import client.blogic.testing.refinement.tcrlrules.TCRLFileParser;
 
 
 public class LoadRefinementRuleCommand implements Command{
@@ -42,7 +43,7 @@ public class LoadRefinementRuleCommand implements Command{
 			else{
 				// We parse the refinement law
 				FTCRLUtils.setClientUI(clientTextUI);
-				FTCRLUtils.parse(refLawFile);
+				TCRLFileParser.parse(refLawFile);
 			}
 		}
 		catch(RecognitionException e){

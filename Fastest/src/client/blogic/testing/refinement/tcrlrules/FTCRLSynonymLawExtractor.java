@@ -1,7 +1,9 @@
-package client.blogic.testing.refinement;
+package client.blogic.testing.refinement.tcrlrules;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 
+import client.blogic.testing.refinement.FTCRLBaseVisitor;
+import client.blogic.testing.refinement.FTCRLParser;
 import client.blogic.testing.refinement.FTCRLParser.SynonymLawContext;
 import client.blogic.testing.refinement.FTCRLParser.WithRefinementContext;
 

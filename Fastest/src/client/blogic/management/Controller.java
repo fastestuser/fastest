@@ -13,7 +13,7 @@ import net.sourceforge.czt.z.ast.ZDeclList;
 import client.presentation.ClientUI;
 import client.presentation.ClientTextUI;    
 import client.blogic.testing.refinement.ConcreteTCase;
-import client.blogic.testing.refinement.RefinementRules;
+import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 import client.blogic.management.ii.events.*;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.testing.ttree.tactics.Tactic;

@@ -1,15 +1,9 @@
-package client.blogic.testing.refinement;
+package client.blogic.testing.refinement.tcrlrules;
 
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.LinkedList;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RuleContext;
-
-import client.blogic.testing.refinement.FTCRLParser.RefinementRuleContext;
+import client.blogic.testing.refinement.FTCRLRefExtractorVisitor;
 
 
 public final class RefinementRules {
@@ -27,32 +21,19 @@ public final class RefinementRules {
 		return refinementRules;
 	}
 	
-	public void resolveLawsReferences(){
-		Iterator<String> it = rules.keySet().iterator();
-		RefinementRuleContext ruleContext;
-		ANTLRInputStream input;
-		String ruleString,ruleName;
-		FTCRLLexer lexer;
-		CommonTokenStream tokens;
-		RefinementRule rule;
-		while (it.hasNext()){
-			ruleName = it.next();
-			rule = rules.get(ruleName);
-			ruleContext = rule.getTree();
-			ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
-			input = new ANTLRInputStream(ruleString);
-			lexer = new FTCRLLexer(input);
-			tokens = new CommonTokenStream(lexer);
-			ruleContext = new FTCRLParser(tokens).refinementRule();
-			rule.setTree(ruleContext);
-		}
-	}
-	
 	public void addRule(String ruleName,RefinementRule rule){
 		rules.put(ruleName, rule);
 	}
 	public RefinementRule getRule(String ruleName){
 		return rules.get(ruleName);
+	}
+	
+	public Iterator<RefinementRule> getRefRuleIterator(){
+		return rules.values().iterator();
+	}
+	
+	public Iterator<String> getRefRuleNames(){
+		return rules.keySet().iterator();
 	}
 	
 	public void clear(){
@@ -63,9 +44,6 @@ public final class RefinementRules {
 		return rules.size();
 	}
 	
-	public Set<String> getRefRuleNames(){
-        return rules.keySet();
-    }
 	public LinkedList<String> getReferencedVars(){
 		return referencedVars;
 	}

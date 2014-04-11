@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.Iterator;
 
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.RefinementRules;
+import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 
 /**
  *
@@ -36,8 +36,7 @@ public class ShowLoadedRefLawsCommand implements Command{
                 output.println("There is not any refinement law in the repository.");
             }
             else{
-                Set<String> refLawNames = refinementRules.getRefRuleNames();
-                Iterator<String> it = refLawNames.iterator();
+                Iterator<String> it = refinementRules.getRefRuleNames();
                 while(it.hasNext())
                     output.println("* "+ it.next());
             }

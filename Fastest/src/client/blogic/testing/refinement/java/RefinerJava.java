@@ -17,7 +17,7 @@ public final class RefinerJava implements Refiner{
 		casoString = casoString.replace("\\emptyset", "\\{\\}");
 		FTCRLtoJavaVisitor visitor = new FTCRLtoJavaVisitor();
 		visitor.assignTCase(casoString);
-		visitor.visit(FTCRLUtils.getRule());
+		visitor.visit(FTCRLUtils.getRule().getTree());
 
 		declarationList =  visitor.getDeclarationList();
 		assignementList =  visitor.getAssignementList();

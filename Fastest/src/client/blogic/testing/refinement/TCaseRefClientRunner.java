@@ -5,6 +5,7 @@ import common.z.SpecUtils;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRefined;
 import client.blogic.testing.refinement.java.RefinerJava;
+import client.blogic.testing.refinement.tcrlrules.RefinementRule;
 
 /**
  * @author Hache
@@ -42,9 +43,10 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setLanguaje(this.targetLanguaje);
 			concreteTCase.setConcreteTCaseName(concreteName);
 			concreteTCase.setAbstractTCase(abstractTCase);
-			concreteTCase.setPreamble(FTCRLUtils.getPreamble());
-			concreteTCase.setEpilogue(FTCRLUtils.getEpilogue());
-			concreteTCase.setPlCode(FTCRLUtils.getPlCode());
+			RefinementRule rule = FTCRLUtils.getRule();
+			concreteTCase.setPreamble(rule.getPreamble());
+			concreteTCase.setEpilogue(rule.getEpilogue());
+			concreteTCase.setPlCode(rule.getPlCode());
 			concreteTCase.setDeclaraciones(refiner.getDeclarations());
 			concreteTCase.setAsignaciones(refiner.getAssignements());
 			concreteTCase.setUutLine(refiner.getUutLine());

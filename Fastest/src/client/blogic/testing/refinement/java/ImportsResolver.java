@@ -12,6 +12,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 
 /*
  * Esta clase resuelve los imports del preambulo con ayuda del uutPath, es decir toma
@@ -118,6 +122,25 @@ public final class ImportsResolver {
 		}
 		salida.append(prog.codigo);
 		return salida.toString();
+	}
+	
+	//esto acomoda el preamble, ya uqe puede tener codigo arriba de los imports,
+	//por la opcion de incluir preambles con .@PREAMBLE en el preamble
+	private static String replaceImports(String codigo){
+		String REGEX = "^import(.*);";
+		Pattern p = Pattern.compile(REGEX,Pattern.MULTILINE);
+		Matcher m = p.matcher(codigo);
+		String unimport = new String();
+		StringBuilder imports = new StringBuilder();
+		StringBuilder codigoNoImports = new StringBuilder();
+		while(m.find()) {
+			unimport = m.group(0);
+			imports.append(unimport);
+		}
+		
+		codigo = codigo.replace("^import(.*);","");
+		return imports.toString() + codigo;
+		
 	}
 
 	public static String resolver(String preamble,String uutPath, PrintWriter out){

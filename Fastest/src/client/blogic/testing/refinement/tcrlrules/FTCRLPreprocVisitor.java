@@ -1,7 +1,8 @@
-package client.blogic.testing.refinement;
+package client.blogic.testing.refinement.tcrlrules;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import client.blogic.testing.refinement.FTCRLBaseVisitor;
 import client.blogic.testing.refinement.FTCRLParser.*;
 
 /* Esto lo que hace es reemplazar el numero de la regla por la regla correspondiente ej:
