@@ -19,12 +19,10 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-
 import common.util.ExprIterator;
 import common.z.SpecUtils;
 import compserver.tcasegen.strategies.setlog.SetLogUtils;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.FTCRLParser.RefinementRuleContext;
 import client.blogic.testing.refinement.tcrlrules.RefinementRule;
 import client.blogic.testing.refinement.FTCRLtoCodeVisitor;
 import client.presentation.ClientTextUI;

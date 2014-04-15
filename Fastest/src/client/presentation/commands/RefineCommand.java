@@ -16,7 +16,8 @@ import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RefineAbsTCasesRequested;
 import client.blogic.testing.refinement.FTCRLUtils;
-import client.blogic.testing.refinement.java.ImportsResolver;
+import client.blogic.testing.refinement.ImportResolver;
+import client.blogic.testing.refinement.java.ImportResolverJava;
 import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
@@ -113,7 +114,7 @@ public class RefineCommand implements Command {
 				
 				//se resuelven los import con el uutPath
 				String preamble = refRules.getRule(refRuleName).getPreamble();
-				preamble = ImportsResolver.resolver(preamble, pathUUT,output);
+				preamble = ImportResolver.getResolver(targetLanguaje).resolver(preamble, pathUUT,output);
 				refRules.getRule(refRuleName).setPreamble(preamble);
 				
 				FTCRLUtils.setRule(refRules.getRule(refRuleName));

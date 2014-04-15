@@ -47,7 +47,6 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		extractJavaTypes(FTCRLUtils.getRule().getPreamble());
 
 		//Obtenemos en nombre del modulo del UUT
-		String uuttttt = ctx.uut().getText();
 		UutContext uut = ctx.uut();
 		moduleName = FTCRLUtils.extractModuleName(uut.getText());
 		uutArgs = FTCRLUtils.extractUUTArgs(uut.getText());

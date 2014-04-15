@@ -5,7 +5,7 @@ import client.blogic.testing.refinement.Refiner;
 import common.z.SpecUtils;
 import net.sourceforge.czt.base.ast.Term;
 
-public final class RefinerJava implements Refiner{
+public final class RefinerJava extends Refiner{
 	private String declarationList;
 	private String assignementList;
 	private String uutLine;
@@ -35,8 +35,4 @@ public final class RefinerJava implements Refiner{
 	public String getUutLine(){
 		return uutLine;
 	}
-
-
-
-
 }

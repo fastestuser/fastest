@@ -4,7 +4,6 @@ import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRefined;
-import client.blogic.testing.refinement.java.RefinerJava;
 import client.blogic.testing.refinement.tcrlrules.RefinementRule;
 
 /**
@@ -30,11 +29,7 @@ public class TCaseRefClientRunner implements Runnable {
 	public void run() {
 		try {
 			// We analyze the targetLanguaje and create the corresponding refiner
-			Refiner refiner = null;
-			if(targetLanguaje.equals("Java"))
-				refiner = new RefinerJava();
-		//  if(targetLanguaje.equals("C"))
-		//		refiner = new RefinerC();
+			Refiner refiner = Refiner.getRefiner(targetLanguaje);
 			refiner.refineCase(abstractTCase.getMyAxPara());
 			String abstractName = SpecUtils.getAxParaName(abstractTCase);
 			String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";

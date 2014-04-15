@@ -1,7 +1,6 @@
 package client.blogic.testing.refinement;
 
 import java.util.*;
-
 import client.blogic.testing.refinementOld.TCaseAssignment;
 import common.z.AbstractTCase;
 
@@ -89,11 +88,8 @@ public class ConcreteTCase {
     public String getLanguaje(){
 	return targetLanguaje;
     }
-    @Override
-    public String toString(){
-	return CTCPrinter.printCTC(concreteTCaseName, this);
-    }
-	public String getDeclaraciones() {
+
+    public String getDeclaraciones() {
 		return declaraciones;
 	}
 	public void setDeclaraciones(String declaraciones) {

@@ -15,48 +15,43 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import client.blogic.testing.refinement.tcrlrules.RefinementRules;
-
+import client.blogic.testing.refinement.ImportResolver;
 /*
  * Esta clase resuelve los imports del preambulo con ayuda del uutPath, es decir toma
  * el uutPath y la direccion del import para resolver la direccion donde esta
  * el archivo con el codigo fuente a importar. ej uutPath /usr/ y import utils.clase1;
  * entonces busca /usr/utils/clase1.java, tambien resuelve .*
  * */
-public final class ImportsResolver {
+public final class ImportResolverJava extends ImportResolver{
 
-	private  static String path;
-	private  static HashSet<String> importsExpandidos;
-	private  static StringBuilder imports;
-	private  static PrintWriter output;
+	private  String path;
+	private  HashSet<String> importsExpandidos;
+	private  StringBuilder imports;
+	private  PrintWriter output;
 
 	/* esta toma un codigo fuente java y mantiene una estructura separada para
 	 * los imports y para el codigo, es decir el resto
 	 * */
-	private static class Programa{
+	private class Programa{
 		public HashSet<String> imports;
 		public String codigo;
 		public Programa(String programa){
 			imports = new HashSet<String>();
-			String aux[] = programa.split("import");
-			int length = aux.length;
-			int i = 1;
-			for (i = 1;i<=length-2;i++)
-				imports.add(aux[i].replace(" ", "").replace("\n",""));
-			String aux2[] = null;
-			if (aux.length > 1){
-				aux2 = (aux[i]).split(";");
-				imports.add(aux2[0].replace(" ", "").replace("\n", "")+";");
-				codigo = new String(aux[i].substring((aux2[0]+";").length()));
+			String REGEX = "^import\\s(.*);";
+			Pattern p = Pattern.compile(REGEX,Pattern.MULTILINE);
+			Matcher m = p.matcher(programa);
+			String unimport = new String();
+			while(m.find()) {
+				unimport = m.group(1);
+				imports.add(unimport);
 			}
-			else
-				codigo = new String(programa);
+			codigo = programa.replaceAll("import(.*);","");
 		}
 	}
 
 	//unfoldea un import devuelve el codigo correspondiente
-	private static String unfoldImportPath(String importPath,String name) {
-		String p = path + importPath.replace("*",name).replace(".", "/").replace(";","") + ".java";
+	private String unfoldImportPath(String importPath,String name) {
+		String p = path + importPath.replace("*",name).replace(".", "/") + ".java";
 		File file = new File(p.replace(" ", "").replace("\n", ""));
 		try {
 			FileInputStream fileStream = new FileInputStream(file.getAbsolutePath());
@@ -70,10 +65,10 @@ public final class ImportsResolver {
 	}
 
 	//devuelve el nombre del path, si termina en *; entonces devuelve todos los javas de la carpeta
-	private  static Iterator<String> getImportNames(String importPath){
+	private Iterator<String> getImportNames(String importPath){
 		List<String> l = new ArrayList<String>();
-		if (importPath.endsWith("*;")){
-			String camino = path + importPath.replace(".", "/").substring(0, importPath.length()-2);
+		if (importPath.endsWith("*")){
+			String camino = path + importPath.replace(".", "/").substring(0, importPath.length()-1);
 			Process p;
 			try {
 				String nombreArchivo;
@@ -81,7 +76,7 @@ public final class ImportsResolver {
 				BufferedReader reader=new BufferedReader(new InputStreamReader(p.getInputStream()));
 				while ((nombreArchivo = reader.readLine()) != null) 
 					if (nombreArchivo.endsWith(".java"))
-						l.add(nombreArchivo.replace(".java", "")+";");
+						l.add(nombreArchivo.replace(".java", ""));
 			} catch (IOException e){ 
 				e.printStackTrace();
 			}
@@ -96,7 +91,7 @@ public final class ImportsResolver {
 	}
 
 	//de un codigo, unfoldea los imports los va pegando y import infoldeables los deja en imports
-	private static String resolverCodigo(String filename, String codigo){
+	private String resolverCodigo(String filename, String codigo){
 		importsExpandidos.add(filename);
 		Programa prog = new Programa(codigo);
 		if (prog.imports==null) return codigo;
@@ -114,7 +109,7 @@ public final class ImportsResolver {
 				if (!importsExpandidos.contains(importedName)){
 					importUnFoldeado = unfoldImportPath(importPath,importedName);
 					if (importUnFoldeado == null)
-						imports.append("import " + importPath);
+						imports.append("import " + importPath + ";");
 					else
 						salida.append(resolverCodigo(importedName,importUnFoldeado));
 				}
@@ -124,26 +119,7 @@ public final class ImportsResolver {
 		return salida.toString();
 	}
 	
-	//esto acomoda el preamble, ya uqe puede tener codigo arriba de los imports,
-	//por la opcion de incluir preambles con .@PREAMBLE en el preamble
-	private static String replaceImports(String codigo){
-		String REGEX = "^import(.*);";
-		Pattern p = Pattern.compile(REGEX,Pattern.MULTILINE);
-		Matcher m = p.matcher(codigo);
-		String unimport = new String();
-		StringBuilder imports = new StringBuilder();
-		StringBuilder codigoNoImports = new StringBuilder();
-		while(m.find()) {
-			unimport = m.group(0);
-			imports.append(unimport);
-		}
-		
-		codigo = codigo.replace("^import(.*);","");
-		return imports.toString() + codigo;
-		
-	}
-
-	public static String resolver(String preamble,String uutPath, PrintWriter out){
+	public String resolver(String preamble,String uutPath, PrintWriter out){
 		importsExpandidos = new HashSet<String>();
 		imports = new StringBuilder();
 		path = uutPath.charAt(uutPath.length()-1)=='/'?uutPath:uutPath+"/";
