@@ -45,20 +45,16 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setDeclaraciones(refiner.getDeclarations());
 			concreteTCase.setAsignaciones(refiner.getAssignements());
 			concreteTCase.setUutLine(refiner.getUutLine());
-			
-			TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
-			try {
+		} catch (Exception e) {
+			System.out.println("Error when trying to refine " + opName + ".");
+		} finally {
+			try{
+				TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
 				EventAdmin eventAdmin = EventAdmin.getInstance();
 				eventAdmin.announceEvent(tCaseRefinedEvent);
 			} catch (Exception e) {
-				e.printStackTrace(System.out);
-				System.exit(0);
 			}
-		} catch (Exception e) {
-			e.printStackTrace(System.out);
-			System.exit(0);
 		}
-
 	}
 
 }

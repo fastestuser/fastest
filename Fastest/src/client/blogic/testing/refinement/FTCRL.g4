@@ -201,7 +201,7 @@ sName
 
 iName
 	:	iIdent
-	|	iIdent LSB RSB
+	|	iIdent LSB sExprRefinement RSB
 	|	iIdent DOT iIdent
 	|	iIdent DOTA
 	;

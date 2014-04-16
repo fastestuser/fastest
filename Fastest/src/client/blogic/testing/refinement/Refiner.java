@@ -4,7 +4,7 @@ import client.blogic.testing.refinement.java.RefinerJava;
 import net.sourceforge.czt.base.ast.Term;
 
 public abstract class Refiner {
-	public abstract void refineCase(Term atcPred);
+	public abstract void refineCase(Term atcPred) throws Exception;
 	public abstract String getAssignements();
 	public abstract String getDeclarations();
 	public abstract String getUutLine();

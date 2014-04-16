@@ -54,7 +54,6 @@ public final class FTCRLUtils {
 		FTCRLUtils.privateVars = privateVars;
 	}
 	 
-
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){
 
@@ -292,7 +291,7 @@ public final class FTCRLUtils {
 	//  Metodo para obtener los tipos de los hijos.
 	//  Se usa para unificar los tipos de funciones, conjuntos y secuencias
 	//  Acepta solo: A \pfun B
-	//               \power (A cross) B
+	//               \power (A cross B)
 	//               \seq A
 	//               A \cross B 
 	//
@@ -539,37 +538,68 @@ public final class FTCRLUtils {
 
 	//Metodo auxiliar para DotSetOper cuando se trabaja sobre conjuntos
 	public static String getDotSetElemFromSet(String setElem, String oper) {
-
+		String value = "";
+		
 		ExprIterator itElements = new common.util.ExprIterator(setElem);
 		if(oper.contains("DOM")){ //Operador DOM
-			String value = itElements.next();
+			value = itElements.next(1);
 			return value;
 		}
 		else if(oper.contains("RAN")){ //Operador RAN
-			itElements.next();
-			String value = itElements.next();
+			value = itElements.next(2);
 			return value;
 		}
-		else if(oper.contains("#")){ //Operador Cardinalidad
-			String value = String.valueOf(itElements.cardinalidad());
+		else if(oper.contains("ELEM")){ //Operador ELEM
+			while (itElements.hasNext()){
+				if (!value.equals(""))
+					value += ",";
+				value += itElements.next();
+			}
 			return value;
+		}
+		else if(isNumeric(oper)){ //Operador '.'
+			int n = Integer.parseInt(oper);
+			//En este caso, hay que devolver el n-esimo elemento
+			try{
+				value = itElements.next(n);
+				return value;
+			} catch (Exception e){
+				clientTextUI.getOutput().println("Error when using operator ." + oper + " in " + setElem);
+				return "";
+			}
 		}
 		return "";
 	}
 
+	private static boolean isNumeric(String cadena){
+		try {
+			Integer.parseInt(cadena);
+			return true;
+		} catch (NumberFormatException nfe){
+			return false;
+		}
+	}
+
 	//Metodo auxiliar para DotSetOper cuando se trabaja sobre conjuntos
-	public static String getDotSetTypeFromSet(String exp, String oper) {
+	public static String getDotSetTypeFromSet(String type, String oper) {
 
 		if(oper.contains("DOM")){ //Operador DOM
-			ArrayList<String> childTypes = childsTypes(exp);
+			ArrayList<String> childTypes = childsTypes(type);
 			return childTypes.get(0);
 		}
 		else if(oper.contains("RAN")){ //Operador RAN
-			ArrayList<String> childTypes = childsTypes(exp);
+			ArrayList<String> childTypes = childsTypes(type);
 			return childTypes.get(1);
+		}
+		else if(oper.contains("ELEM")){ //Operador ELEM
+			//Debe ser \\power \\power A
+			return getChildType(getChildType(type,0),0);
 		}
 		else if(oper.contains("#")){ //Operador Cardinalidad
 			return "\\num";
+		} else if(isNumeric(oper)){ //Operador '.'
+			int n = Integer.parseInt(oper);
+			return childsTypes(type).get(n-1);
 		}
 		return null;
 	}
@@ -587,7 +617,7 @@ public final class FTCRLUtils {
 		it = new ExprIterator(b.exp);
 		while (it.hasNext())
 			union.add(it.next());
-		
+
 		//Imprimimos los elementos
 		String elems = "";
 		Iterator<String> itelem = union.iterator();

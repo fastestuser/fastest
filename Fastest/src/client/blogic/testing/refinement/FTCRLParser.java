@@ -3045,6 +3045,9 @@ public class FTCRLParser extends Parser {
 			return getRuleContexts(IIdentContext.class);
 		}
 		public TerminalNode DOTA() { return getToken(FTCRLParser.DOTA, 0); }
+		public SExprRefinementContext sExprRefinement() {
+			return getRuleContext(SExprRefinementContext.class,0);
+		}
 		public IIdentContext iIdent(int i) {
 			return getRuleContext(IIdentContext.class,i);
 		}
@@ -3074,7 +3077,7 @@ public class FTCRLParser extends Parser {
 		INameContext _localctx = new INameContext(_ctx, getState());
 		enterRule(_localctx, 74, RULE_iName);
 		try {
-			setState(515);
+			setState(516);
 			switch ( getInterpreter().adaptivePredict(_input,60,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
@@ -3088,24 +3091,25 @@ public class FTCRLParser extends Parser {
 				{
 				setState(504); iIdent();
 				setState(505); match(LSB);
-				setState(506); match(RSB);
+				setState(506); sExprRefinement();
+				setState(507); match(RSB);
 				}
 				break;
 
 			case 3:
 				enterOuterAlt(_localctx, 3);
 				{
-				setState(508); iIdent();
-				setState(509); match(DOT);
-				setState(510); iIdent();
+				setState(509); iIdent();
+				setState(510); match(DOT);
+				setState(511); iIdent();
 				}
 				break;
 
 			case 4:
 				enterOuterAlt(_localctx, 4);
 				{
-				setState(512); iIdent();
-				setState(513); match(DOTA);
+				setState(513); iIdent();
+				setState(514); match(DOTA);
 				}
 				break;
 			}
@@ -3150,7 +3154,7 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(517); name();
+			setState(518); name();
 			}
 		}
 		catch (RecognitionException re) {
@@ -3201,25 +3205,25 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(519); name();
-			setState(526);
+			setState(520); name();
+			setState(527);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==DOT || _la==LETTER) {
 				{
 				{
-				setState(521);
+				setState(522);
 				_la = _input.LA(1);
 				if (_la==DOT) {
 					{
-					setState(520); match(DOT);
+					setState(521); match(DOT);
 					}
 				}
 
-				setState(523); name();
+				setState(524); name();
 				}
 				}
-				setState(528);
+				setState(529);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3274,34 +3278,34 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(530);
+			setState(531);
 			_la = _input.LA(1);
 			if (_la==DOT) {
 				{
-				setState(529); match(DOT);
+				setState(530); match(DOT);
 				}
 			}
 
-			setState(533);
+			setState(534);
 			_la = _input.LA(1);
 			if (_la==SLASH) {
 				{
-				setState(532); match(SLASH);
+				setState(533); match(SLASH);
 				}
 			}
 
-			setState(535); fName();
-			setState(540);
+			setState(536); fName();
+			setState(541);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==SLASH) {
 				{
 				{
-				setState(536); match(SLASH);
-				setState(537); fName();
+				setState(537); match(SLASH);
+				setState(538); fName();
 				}
 				}
-				setState(542);
+				setState(543);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -3347,7 +3351,7 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(543);
+			setState(544);
 			_la = _input.LA(1);
 			if ( !(_la==ZERO || _la==DIGIT) ) {
 			_errHandler.recoverInline(this);
@@ -3393,7 +3397,7 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(545); match(STRING);
+			setState(546); match(STRING);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3452,39 +3456,39 @@ public class FTCRLParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(547); match(LCB);
-			setState(550);
+			setState(548); match(LCB);
+			setState(551);
 			switch (_input.LA(1)) {
 			case DIGIT:
 				{
-				setState(548); number();
+				setState(549); number();
 				}
 				break;
 			case STRING:
 				{
-				setState(549); string();
+				setState(550); string();
 				}
 				break;
 			default:
 				throw new NoViableAltException(this);
 			}
-			setState(559);
+			setState(560);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==COMMA) {
 				{
 				{
-				setState(552); match(COMMA);
-				setState(555);
+				setState(553); match(COMMA);
+				setState(556);
 				switch (_input.LA(1)) {
 				case DIGIT:
 					{
-					setState(553); number();
+					setState(554); number();
 					}
 					break;
 				case STRING:
 					{
-					setState(554); string();
+					setState(555); string();
 					}
 					break;
 				default:
@@ -3492,11 +3496,11 @@ public class FTCRLParser extends Parser {
 				}
 				}
 				}
-				setState(561);
+				setState(562);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
-			setState(562); match(RCB);
+			setState(563); match(RCB);
 			}
 		}
 		catch (RecognitionException re) {
@@ -3548,7 +3552,7 @@ public class FTCRLParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\2\3>\u0237\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4"+
+		"\2\3>\u0238\4\2\t\2\4\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4"+
 		"\t\t\t\4\n\t\n\4\13\t\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20"+
 		"\4\21\t\21\4\22\t\22\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27"+
 		"\4\30\t\30\4\31\t\31\4\32\t\32\4\33\t\33\4\34\t\34\4\35\t\35\4\36\t\36"+
@@ -3586,12 +3590,12 @@ public class FTCRLParser extends Parser {
 		"\n!\7!\u01cb\n!\f!\16!\u01ce\13!\3!\3!\5!\u01d2\n!\3!\3!\3!\3!\3!\5!\u01d9"+
 		"\n!\5!\u01db\n!\3\"\3\"\3\"\3\"\3\"\3\"\3\"\3\"\3\"\3#\3#\3#\3#\3#\3$"+
 		"\3$\3$\3$\7$\u01ef\n$\f$\16$\u01f2\13$\3%\3%\3&\3&\5&\u01f8\n&\3\'\3\'"+
-		"\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u0206\n\'\3(\3(\3)\3)\5)"+
-		"\u020c\n)\3)\7)\u020f\n)\f)\16)\u0212\13)\3*\5*\u0215\n*\3*\5*\u0218\n"+
-		"*\3*\3*\3*\7*\u021d\n*\f*\16*\u0220\13*\3+\3+\3,\3,\3-\3-\3-\5-\u0229"+
-		"\n-\3-\3-\3-\5-\u022e\n-\7-\u0230\n-\f-\16-\u0233\13-\3-\3-\3-\2.\2\4"+
+		"\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\3\'\5\'\u0207\n\'\3(\3(\3)\3"+
+		")\5)\u020d\n)\3)\7)\u0210\n)\f)\16)\u0213\13)\3*\5*\u0216\n*\3*\5*\u0219"+
+		"\n*\3*\3*\3*\7*\u021e\n*\f*\16*\u0221\13*\3+\3+\3,\3,\3-\3-\3-\5-\u022a"+
+		"\n-\3-\3-\3-\5-\u022f\n-\7-\u0231\n-\f-\16-\u0234\13-\3-\3-\3-\2.\2\4"+
 		"\6\b\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNP"+
-		"RTVX\2\5\4\23\23(*\3#&\4\25\25::\u0265\2Z\3\2\2\2\4j\3\2\2\2\6u\3\2\2"+
+		"RTVX\2\5\4\23\23(*\3#&\4\25\25::\u0266\2Z\3\2\2\2\4j\3\2\2\2\6u\3\2\2"+
 		"\2\b\u0092\3\2\2\2\n\u0094\3\2\2\2\f\u0098\3\2\2\2\16\u009b\3\2\2\2\20"+
 		"\u00b0\3\2\2\2\22\u00ba\3\2\2\2\24\u00c0\3\2\2\2\26\u00c2\3\2\2\2\30\u00c4"+
 		"\3\2\2\2\32\u00e7\3\2\2\2\34\u00ec\3\2\2\2\36\u00f0\3\2\2\2 \u00f6\3\2"+
@@ -3599,8 +3603,8 @@ public class FTCRLParser extends Parser {
 		"\3\2\2\2,\u0139\3\2\2\2.\u014a\3\2\2\2\60\u017a\3\2\2\2\62\u0187\3\2\2"+
 		"\2\64\u018a\3\2\2\2\66\u019c\3\2\2\28\u019e\3\2\2\2:\u01ad\3\2\2\2<\u01af"+
 		"\3\2\2\2>\u01b4\3\2\2\2@\u01da\3\2\2\2B\u01dc\3\2\2\2D\u01e5\3\2\2\2F"+
-		"\u01ea\3\2\2\2H\u01f3\3\2\2\2J\u01f5\3\2\2\2L\u0205\3\2\2\2N\u0207\3\2"+
-		"\2\2P\u0209\3\2\2\2R\u0214\3\2\2\2T\u0221\3\2\2\2V\u0223\3\2\2\2X\u0225"+
+		"\u01ea\3\2\2\2H\u01f3\3\2\2\2J\u01f5\3\2\2\2L\u0206\3\2\2\2N\u0208\3\2"+
+		"\2\2P\u020a\3\2\2\2R\u0215\3\2\2\2T\u0222\3\2\2\2V\u0224\3\2\2\2X\u0226"+
 		"\3\2\2\2Z[\79\2\2[\\\5F$\2\\]\7=\2\2]^\5\4\3\2^b\5\6\4\2_`\5\f\7\2`a\7"+
 		"=\2\2ac\3\2\2\2b_\3\2\2\2bc\3\2\2\2cd\3\2\2\2dh\5\16\b\2ef\5\20\t\2fg"+
 		"\7=\2\2gi\3\2\2\2he\3\2\2\2hi\3\2\2\2i\3\3\2\2\2jk\7\67\2\2kr\7=\2\2l"+
@@ -3733,32 +3737,32 @@ public class FTCRLParser extends Parser {
 		"\2\2\u01ef\u01f2\3\2\2\2\u01f0\u01ee\3\2\2\2\u01f0\u01f1\3\2\2\2\u01f1"+
 		"G\3\2\2\2\u01f2\u01f0\3\2\2\2\u01f3\u01f4\5F$\2\u01f4I\3\2\2\2\u01f5\u01f7"+
 		"\5F$\2\u01f6\u01f8\7\4\2\2\u01f7\u01f6\3\2\2\2\u01f7\u01f8\3\2\2\2\u01f8"+
-		"K\3\2\2\2\u01f9\u0206\5N(\2\u01fa\u01fb\5N(\2\u01fb\u01fc\7\16\2\2\u01fc"+
-		"\u01fd\7\17\2\2\u01fd\u0206\3\2\2\2\u01fe\u01ff\5N(\2\u01ff\u0200\7\36"+
-		"\2\2\u0200\u0201\5N(\2\u0201\u0206\3\2\2\2\u0202\u0203\5N(\2\u0203\u0204"+
-		"\7\b\2\2\u0204\u0206\3\2\2\2\u0205\u01f9\3\2\2\2\u0205\u01fa\3\2\2\2\u0205"+
-		"\u01fe\3\2\2\2\u0205\u0202\3\2\2\2\u0206M\3\2\2\2\u0207\u0208\5F$\2\u0208"+
-		"O\3\2\2\2\u0209\u0210\5F$\2\u020a\u020c\7\36\2\2\u020b\u020a\3\2\2\2\u020b"+
-		"\u020c\3\2\2\2\u020c\u020d\3\2\2\2\u020d\u020f\5F$\2\u020e\u020b\3\2\2"+
-		"\2\u020f\u0212\3\2\2\2\u0210\u020e\3\2\2\2\u0210\u0211\3\2\2\2\u0211Q"+
-		"\3\2\2\2\u0212\u0210\3\2\2\2\u0213\u0215\7\36\2\2\u0214\u0213\3\2\2\2"+
-		"\u0214\u0215\3\2\2\2\u0215\u0217\3\2\2\2\u0216\u0218\7\r\2\2\u0217\u0216"+
-		"\3\2\2\2\u0217\u0218\3\2\2\2\u0218\u0219\3\2\2\2\u0219\u021e\5P)\2\u021a"+
-		"\u021b\7\r\2\2\u021b\u021d\5P)\2\u021c\u021a\3\2\2\2\u021d\u0220\3\2\2"+
-		"\2\u021e\u021c\3\2\2\2\u021e\u021f\3\2\2\2\u021fS\3\2\2\2\u0220\u021e"+
-		"\3\2\2\2\u0221\u0222\t\4\2\2\u0222U\3\2\2\2\u0223\u0224\7\24\2\2\u0224"+
-		"W\3\2\2\2\u0225\u0228\7\20\2\2\u0226\u0229\5> \2\u0227\u0229\5V,\2\u0228"+
-		"\u0226\3\2\2\2\u0228\u0227\3\2\2\2\u0229\u0231\3\2\2\2\u022a\u022d\7\33"+
-		"\2\2\u022b\u022e\5> \2\u022c\u022e\5V,\2\u022d\u022b\3\2\2\2\u022d\u022c"+
-		"\3\2\2\2\u022e\u0230\3\2\2\2\u022f\u022a\3\2\2\2\u0230\u0233\3\2\2\2\u0231"+
-		"\u022f\3\2\2\2\u0231\u0232\3\2\2\2\u0232\u0234\3\2\2\2\u0233\u0231\3\2"+
-		"\2\2\u0234\u0235\7\21\2\2\u0235Y\3\2\2\2Gbhr\u0082\u0084\u0089\u008f\u0092"+
-		"\u009f\u00a5\u00ab\u00ae\u00b8\u00be\u00c9\u00ce\u00d3\u00d8\u00e0\u00e7"+
-		"\u00ec\u00f4\u00fa\u00ff\u0104\u0109\u010e\u0113\u0122\u0127\u012d\u0135"+
-		"\u0139\u0140\u014a\u015b\u015d\u0169\u0170\u0172\u0178\u017a\u0180\u0184"+
-		"\u0191\u0194\u019c\u01a3\u01a7\u01ab\u01b8\u01c1\u01c8\u01cc\u01d1\u01d8"+
-		"\u01da\u01ee\u01f0\u01f7\u0205\u020b\u0210\u0214\u0217\u021e\u0228\u022d"+
-		"\u0231";
+		"K\3\2\2\2\u01f9\u0207\5N(\2\u01fa\u01fb\5N(\2\u01fb\u01fc\7\16\2\2\u01fc"+
+		"\u01fd\5(\25\2\u01fd\u01fe\7\17\2\2\u01fe\u0207\3\2\2\2\u01ff\u0200\5"+
+		"N(\2\u0200\u0201\7\36\2\2\u0201\u0202\5N(\2\u0202\u0207\3\2\2\2\u0203"+
+		"\u0204\5N(\2\u0204\u0205\7\b\2\2\u0205\u0207\3\2\2\2\u0206\u01f9\3\2\2"+
+		"\2\u0206\u01fa\3\2\2\2\u0206\u01ff\3\2\2\2\u0206\u0203\3\2\2\2\u0207M"+
+		"\3\2\2\2\u0208\u0209\5F$\2\u0209O\3\2\2\2\u020a\u0211\5F$\2\u020b\u020d"+
+		"\7\36\2\2\u020c\u020b\3\2\2\2\u020c\u020d\3\2\2\2\u020d\u020e\3\2\2\2"+
+		"\u020e\u0210\5F$\2\u020f\u020c\3\2\2\2\u0210\u0213\3\2\2\2\u0211\u020f"+
+		"\3\2\2\2\u0211\u0212\3\2\2\2\u0212Q\3\2\2\2\u0213\u0211\3\2\2\2\u0214"+
+		"\u0216\7\36\2\2\u0215\u0214\3\2\2\2\u0215\u0216\3\2\2\2\u0216\u0218\3"+
+		"\2\2\2\u0217\u0219\7\r\2\2\u0218\u0217\3\2\2\2\u0218\u0219\3\2\2\2\u0219"+
+		"\u021a\3\2\2\2\u021a\u021f\5P)\2\u021b\u021c\7\r\2\2\u021c\u021e\5P)\2"+
+		"\u021d\u021b\3\2\2\2\u021e\u0221\3\2\2\2\u021f\u021d\3\2\2\2\u021f\u0220"+
+		"\3\2\2\2\u0220S\3\2\2\2\u0221\u021f\3\2\2\2\u0222\u0223\t\4\2\2\u0223"+
+		"U\3\2\2\2\u0224\u0225\7\24\2\2\u0225W\3\2\2\2\u0226\u0229\7\20\2\2\u0227"+
+		"\u022a\5> \2\u0228\u022a\5V,\2\u0229\u0227\3\2\2\2\u0229\u0228\3\2\2\2"+
+		"\u022a\u0232\3\2\2\2\u022b\u022e\7\33\2\2\u022c\u022f\5> \2\u022d\u022f"+
+		"\5V,\2\u022e\u022c\3\2\2\2\u022e\u022d\3\2\2\2\u022f\u0231\3\2\2\2\u0230"+
+		"\u022b\3\2\2\2\u0231\u0234\3\2\2\2\u0232\u0230\3\2\2\2\u0232\u0233\3\2"+
+		"\2\2\u0233\u0235\3\2\2\2\u0234\u0232\3\2\2\2\u0235\u0236\7\21\2\2\u0236"+
+		"Y\3\2\2\2Gbhr\u0082\u0084\u0089\u008f\u0092\u009f\u00a5\u00ab\u00ae\u00b8"+
+		"\u00be\u00c9\u00ce\u00d3\u00d8\u00e0\u00e7\u00ec\u00f4\u00fa\u00ff\u0104"+
+		"\u0109\u010e\u0113\u0122\u0127\u012d\u0135\u0139\u0140\u014a\u015b\u015d"+
+		"\u0169\u0170\u0172\u0178\u017a\u0180\u0184\u0191\u0194\u019c\u01a3\u01a7"+
+		"\u01ab\u01b8\u01c1\u01c8\u01cc\u01d1\u01d8\u01da\u01ee\u01f0\u01f7\u0206"+
+		"\u020c\u0211\u0215\u0218\u021f\u0229\u022e\u0232";
 	public static final ATN _ATN =
 		ATNSimulator.deserialize(_serializedATN.toCharArray());
 	static {

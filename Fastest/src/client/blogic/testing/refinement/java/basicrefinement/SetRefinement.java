@@ -15,7 +15,7 @@ public class SetRefinement extends Refinement{
 	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl){
 		//Primero vemos donde hay que almacenar lo que refinaremos
 		String javaVar = "";
-		if ((javaExpr != null) && (javaExpr.exp != "")){
+		if ((javaExpr != null) && (!javaExpr.exp.equals(""))){
 			javaVar = javaExpr.exp;
 		} else {
 			javaVar = ftcrl.newVarName("set");

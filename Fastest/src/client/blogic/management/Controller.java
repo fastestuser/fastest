@@ -299,52 +299,58 @@ public final class Controller extends IIComponent {
             pendingPrunnings++;*/
 		} else if (event_ instanceof TCaseRefined) {
 			TCaseRefined tCaseRefined = (TCaseRefined) event_;
-			opRefTCaseMap.put(tCaseRefined.getConcreteTCase().getConcreteTCaseName(), tCaseRefined.getConcreteTCase());
-//			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
-//				opRefTCaseMap.get(tCaseRefined.getOpName()).add(tCaseRefined.getConcreteTCase());
-//			} else {
-//				List<ConcreteTCase> list = new ArrayList<ConcreteTCase>();
-//				list.add(tCaseRefined.getConcreteTCase());
-//				opRefTCaseMap.put(tCaseRefined.getOpName(), list);
-			//}
 			String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
-			absTCaseRefTCaseMap.put(tCaseName,tCaseRefined.getConcreteTCase());
-			System.out.println(tCaseName + " test case refination -> SUCCESS.");
+			
+			if(tCaseRefined.getConcreteTCase() != null){
+				opRefTCaseMap.put(tCaseRefined.getConcreteTCase().getConcreteTCaseName(), tCaseRefined.getConcreteTCase());
+				//			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
+				//				opRefTCaseMap.get(tCaseRefined.getOpName()).add(tCaseRefined.getConcreteTCase());
+				//			} else {
+				//				List<ConcreteTCase> list = new ArrayList<ConcreteTCase>();
+				//				list.add(tCaseRefined.getConcreteTCase());
+				//				opRefTCaseMap.put(tCaseRefined.getOpName(), list);
+				//}
+				
+				absTCaseRefTCaseMap.put(tCaseName,tCaseRefined.getConcreteTCase());
+				System.out.println(tCaseName + " test case refination -> SUCCESS.");
+			} else {
+				System.out.println(tCaseName + " test case refination -> FAIL.");
+			}
 			pendingToRef--;
 
 			if (pendingToRef == 0) 
 				processFinished();
 
-				//				if (!refining) {
-				//					processFinished();
-				//				}
-//				try {
-//					EventAdmin eventAdmin = EventAdmin.getInstance();
-//					eventAdmin.announceEvent(new AllTCasesRefined());
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}	
+			//				if (!refining) {
+			//					processFinished();
+			//				}
+			//				try {
+			//					EventAdmin eventAdmin = EventAdmin.getInstance();
+			//					eventAdmin.announceEvent(new AllTCasesRefined());
+			//				} catch (Exception e) {
+			//					e.printStackTrace();
+			//				}	
 
 			//		} else if (event_ instanceof AllTCasesRefined) {
-//			//refining = false;
-//			//if (pendingToRef == 0) {
-//				processFinished();
-//			//}
+			//			//refining = false;
+			//			//if (pendingToRef == 0) {
+			//				processFinished();
+			//			//}
 		} else if (event_ instanceof RefLawSelected) {
 			RefLawSelected refLawSelected = (RefLawSelected) event_;
 			this.selectedRefLaw = refLawSelected.getRefLawName();
 		} 
-//		else if (event_ instanceof AllTCasesRefineRequested) {
-//			//			refining = true;
-//			//			try {
-//			//				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
-//			//				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
-//			//				EventAdmin eventAdmin = EventAdmin.getInstance();
-//			//				eventAdmin.announceEvent(allTCasesRequested);
-//			//			} catch (Exception e) {
-//			//				e.printStackTrace();
-//			//			}
-//		} 
+		//		else if (event_ instanceof AllTCasesRefineRequested) {
+		//			//			refining = true;
+		//			//			try {
+		//			//				AllTCasesRefineRequested allTCasesRefineRequested = (AllTCasesRefineRequested) event_;
+		//			//				AllTCasesRequested allTCasesRequested =	new AllTCasesRequested(allTCasesRefineRequested.getOpName(),allTCasesRefineRequested.getTTree(), getMaxEval());
+		//			//				EventAdmin eventAdmin = EventAdmin.getInstance();
+		//			//				eventAdmin.announceEvent(allTCasesRequested);
+		//			//			} catch (Exception e) {
+		//			//				e.printStackTrace();
+		//			//			}
+		//		} 
 		else if (event_ instanceof RunFinished) {
 			try {
 				ClientUI clientUI = getMyClientUI();
@@ -358,71 +364,71 @@ public final class Controller extends IIComponent {
 				e.printStackTrace();
 			}
 		} 
-//		else if (event_ instanceof TCaseAbstracted) {
-//			TCaseAbstracted caseAbstracted = (TCaseAbstracted) event_;
-//			String brotherName = caseAbstracted.getBrotherName();
-//			AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
-//			String opNameSource = caseAbstracted.getOpName();
-//			TClassNode tClassNode = opTTreeMap.get(opNameSource);
-//			String dadName = tClassNode.acceptVisitor(new TCaseDadFinder(brotherName));
-//			Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
-//			System.out.println(dadName + " test case abstraction -> SUCCESS.");
-//			pendingCTCases--;
-//			if (pendingCTCases == 0) {
-//				try {
-//					ClientUI clientUI = getMyClientUI();
-//					if (clientUI instanceof ClientTextUI) {
-//						synchronized (clientUI) {
-//							clientUI.notify();
-//						}
-//					}
-//
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		} 
-//		else if (event_ instanceof ScriptModified) {
-//			// We must actualize all the maps with ConcreteTCase's information
-//			pendingCTCases--;
-//			ScriptModified scriptModified = (ScriptModified) event_;
-//			ConcreteTCase ctCase = scriptModified.getConcreteTCase();
-//			String ctcName = ctCase.getConcreteTCaseName();
-//
-//			Map<String, ConcreteTCase> auxMap = new HashMap<String, ConcreteTCase>();
-//			Set<Map.Entry<String, ConcreteTCase>> set = absTCaseRefTCaseMap.entrySet();
-//			Iterator<Map.Entry<String, ConcreteTCase>> iterator = set.iterator();
-//			boolean founded = false;
-//			while (iterator.hasNext() && !founded) {
-//				Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
-//				ConcreteTCase auxCTCase = mapEntry.getValue();
-//				String absTCaseName = mapEntry.getKey();
-//				String ctcAuxName = auxCTCase.getConcreteTCaseName();
-//				if (ctcAuxName.equals(ctcName)) {
-//					auxMap.put(absTCaseName, auxCTCase);
-//					founded = true;
-//				}
-//			}
-//			absTCaseRefTCaseMap.putAll(auxMap);
-//
-//			Set<Map.Entry<String, List<ConcreteTCase>>> set2 = opRefTCaseMap.entrySet();
-//			Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator2 = set2.iterator();
-//			while (iterator2.hasNext()) {
-//				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator2.next();
-//				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
-//				//String opNameSpec = mapEntry.getKey();
-//				for (int i = 0; i < auxCTCases.size(); i++) {
-//					ConcreteTCase auxCTCase = auxCTCases.get(i);
-//					String auxCTCName = auxCTCase.getConcreteTCaseName();
-//					if (auxCTCName.equals(ctcName)) {
-//						auxCTCases.set(i, ctCase);
-//					}
-//				}
-//			}
-//			if (pendingCTCases == 0) {
-//				processFinished();
-//			}
-//		} 
+		//		else if (event_ instanceof TCaseAbstracted) {
+		//			TCaseAbstracted caseAbstracted = (TCaseAbstracted) event_;
+		//			String brotherName = caseAbstracted.getBrotherName();
+		//			AbstractTCase cOutput = caseAbstracted.getAbstractTCase();
+		//			String opNameSource = caseAbstracted.getOpName();
+		//			TClassNode tClassNode = opTTreeMap.get(opNameSource);
+		//			String dadName = tClassNode.acceptVisitor(new TCaseDadFinder(brotherName));
+		//			Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(dadName, cOutput));
+		//			System.out.println(dadName + " test case abstraction -> SUCCESS.");
+		//			pendingCTCases--;
+		//			if (pendingCTCases == 0) {
+		//				try {
+		//					ClientUI clientUI = getMyClientUI();
+		//					if (clientUI instanceof ClientTextUI) {
+		//						synchronized (clientUI) {
+		//							clientUI.notify();
+		//						}
+		//					}
+		//
+		//				} catch (Exception e) {
+		//					e.printStackTrace();
+		//				}
+		//			}
+		//		} 
+		//		else if (event_ instanceof ScriptModified) {
+		//			// We must actualize all the maps with ConcreteTCase's information
+		//			pendingCTCases--;
+		//			ScriptModified scriptModified = (ScriptModified) event_;
+		//			ConcreteTCase ctCase = scriptModified.getConcreteTCase();
+		//			String ctcName = ctCase.getConcreteTCaseName();
+		//
+		//			Map<String, ConcreteTCase> auxMap = new HashMap<String, ConcreteTCase>();
+		//			Set<Map.Entry<String, ConcreteTCase>> set = absTCaseRefTCaseMap.entrySet();
+		//			Iterator<Map.Entry<String, ConcreteTCase>> iterator = set.iterator();
+		//			boolean founded = false;
+		//			while (iterator.hasNext() && !founded) {
+		//				Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
+		//				ConcreteTCase auxCTCase = mapEntry.getValue();
+		//				String absTCaseName = mapEntry.getKey();
+		//				String ctcAuxName = auxCTCase.getConcreteTCaseName();
+		//				if (ctcAuxName.equals(ctcName)) {
+		//					auxMap.put(absTCaseName, auxCTCase);
+		//					founded = true;
+		//				}
+		//			}
+		//			absTCaseRefTCaseMap.putAll(auxMap);
+		//
+		//			Set<Map.Entry<String, List<ConcreteTCase>>> set2 = opRefTCaseMap.entrySet();
+		//			Iterator<Map.Entry<String, List<ConcreteTCase>>> iterator2 = set2.iterator();
+		//			while (iterator2.hasNext()) {
+		//				Map.Entry<String, List<ConcreteTCase>> mapEntry = iterator2.next();
+		//				List<ConcreteTCase> auxCTCases = mapEntry.getValue();
+		//				//String opNameSpec = mapEntry.getKey();
+		//				for (int i = 0; i < auxCTCases.size(); i++) {
+		//					ConcreteTCase auxCTCase = auxCTCases.get(i);
+		//					String auxCTCName = auxCTCase.getConcreteTCaseName();
+		//					if (auxCTCName.equals(ctcName)) {
+		//						auxCTCases.set(i, ctCase);
+		//					}
+		//				}
+		//			}
+		//			if (pendingCTCases == 0) {
+		//				processFinished();
+		//			}
+		//		} 
 		else if (event_ instanceof PrunningResult) {
 			PrunningResult prunningResult = (PrunningResult) event_;
 			String tClassName = prunningResult.getTClassName();
@@ -511,15 +517,15 @@ public final class Controller extends IIComponent {
 		} else if (event_ instanceof AllTCasesRequested) {
 			pendingTTrees++;
 		} 
-//		else if (event_ instanceof TCaseAddCaptureCodeRequested) {
-//			Calendar cal = Calendar.getInstance();
-//			inicio = cal.getTimeInMillis();
-//			pendingCTCases++;
-//		} 
-//		 else if (event_ instanceof TCaseAbstractRequested) {
-//			pendingCTCases++;
-//		} 
-		 else if (event_ instanceof NotTClassLeavesFounded) {
+		//		else if (event_ instanceof TCaseAddCaptureCodeRequested) {
+		//			Calendar cal = Calendar.getInstance();
+		//			inicio = cal.getTimeInMillis();
+		//			pendingCTCases++;
+		//		} 
+		//		 else if (event_ instanceof TCaseAbstractRequested) {
+		//			pendingCTCases++;
+		//		} 
+		else if (event_ instanceof NotTClassLeavesFounded) {
 			pendingTTrees--;
 			if (pendingTTrees == 0) {
 				//				if (!refining) {
@@ -607,15 +613,15 @@ public final class Controller extends IIComponent {
 			//System.out.println("Quedan: "+pendingAbsTCases);
 			if (pendingAbsTCases == 0) {
 				pendingTTrees = 0;
-//				if (refining) {
-//					try {
-//						EventAdmin eventAdmin = EventAdmin.getInstance();
-//						eventAdmin.announceEvent(new AllTCasesRefined());
-//					} catch (Exception e) {
-//						e.printStackTrace();
-//					}
-//				} else {
-					processFinished();
+				//				if (refining) {
+				//					try {
+				//						EventAdmin eventAdmin = EventAdmin.getInstance();
+				//						eventAdmin.announceEvent(new AllTCasesRefined());
+				//					} catch (Exception e) {
+				//						e.printStackTrace();
+				//					}
+				//				} else {
+				processFinished();
 				//}
 			}
 		} else if (event_ instanceof RefineAbsTCasesRequested) {
@@ -767,9 +773,9 @@ public final class Controller extends IIComponent {
 	 * Sets the unfolded specification of the system under test.
 	 * @param spec
 	 */
-//	public void setUnfoldedSpec(Spec spec) {
-//		unfoldedSpec = spec;
-//	}
+	//	public void setUnfoldedSpec(Spec spec) {
+	//		unfoldedSpec = spec;
+	//	}
 
 	/**
 	 * Gets the unfolded specification of the system under test.
@@ -1285,12 +1291,12 @@ public final class Controller extends IIComponent {
 
 	public void setUserDefinedTypes(HashMap<String, String> userDefinedTypes) {
 		this.userDefinedTypes = userDefinedTypes;
-		
+
 	}
-	
+
 	public HashMap<String, String> getUserDefinedTypes() {
 		return this.userDefinedTypes;
-		
+
 	}
 
 }

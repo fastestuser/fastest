@@ -55,7 +55,7 @@ public class FTCRLtoCodeVisitor  extends FTCRLBaseVisitor<Value> {
 	}
 	
 	public String newVarName(String name) {
-
+		name = name.replaceAll("\\W", "");
 		name += varNumber;
 		varNumber++;
 		return name;

@@ -10,7 +10,7 @@ public final class RefinerJava extends Refiner{
 	private String assignementList;
 	private String uutLine;
 	
-	public void refineCase(Term atc) {
+	public void refineCase(Term atc) throws Exception {
 		
 		String casoString = SpecUtils.termToLatex(atc);
 		casoString = casoString.replace("~", "");
