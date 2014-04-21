@@ -221,7 +221,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 					//Creamos el nuevo reemplazo
 					replaceValue = new Replacement(replaceExp, elem, elemType);
 					SExpr javaExpr = new SExpr(r.varName+r.atribute, r.varType);
-					visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, zExpr, javaExpr, position);
+					visitAsRefinement(ctx.iExprRefinement().asRefinement(), replaceValue, record, zExpr, javaExpr, Integer.toString(position));
 
 					//Incrementamos la posición del nodo
 					//Esto se usa en los array, para saber en que posición va
@@ -247,7 +247,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 	}
 
 	//@Override
-	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, Replacement replaceValue, String record, SExpr zExpr, SExpr javaExpr, int position){
+	public Value visitAsRefinement(FTCRLParser.AsRefinementContext ctx, Replacement replaceValue, String record, SExpr zExpr, SExpr javaExpr, String position){
 		try{
 			DataStructContext dataStruct = ctx.dataStruct();
 			boolean hasWITH = !ctx.refinement().isEmpty();
@@ -257,8 +257,16 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				if (hasWITH) { //Si tiene WITH
 					//Si es una lista, no pasamos ningun record (por eso null), ya que no se utilizan "mas abajo" en el arbol
 					String withVariable = refineWITH(ctx.refinement(), replaceValue, null);
-					printAssignment(javaExpr.exp + ".add(" + withVariable + ")");
-					FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", zExpr.exp, withVariable, this);
+					
+					//Si se especifica la posición del array en el que va el elemento, hay que refinarlo primero
+					String pos = extractListOrArrayPosition(ctx.refinement(), javaExpr.exp, "", replaceValue);
+					if (!pos.equals("")){
+						printAssignment(javaExpr.exp + ".add(" + pos + ", " + withVariable + ")");
+						FTCRLUtils.saveReference(javaExpr.exp + "[" + pos + "]", zExpr.exp, withVariable, this);
+					} else {
+						printAssignment(javaExpr.exp + ".add(" + withVariable + ")");
+						FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", zExpr.exp, withVariable, this);
+					}
 				} else {
 					refineFromZToJava(zExpr, "LIST", javaExpr);
 				}
@@ -275,6 +283,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				if (hasWITH) { //Si tiene WITH
 					//Si es una array, no pasamos ningun record (por eso null), ya que no se utilizan "mas abajo" en el arbol
 					String withVariable = refineWITH(ctx.refinement(), replaceValue, null);
+					
+					//Si se especifica la posición del array en el que va el elemento, hay que refinarlo primero
+					position = extractListOrArrayPosition(ctx.refinement(), javaExpr.exp, position, replaceValue);
+					
 					printAssignment(javaExpr.exp + "[" + position + "] = " + withVariable);
 					FTCRLUtils.saveReference(javaExpr.exp + "[" + position + "]", zExpr.exp, withVariable, this);
 				} else {
@@ -407,6 +419,20 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		}
 	}
 
+	private String extractListOrArrayPosition(List<RefinementContext> refinement, String exp, String position, Replacement replaceValue) {
+		
+		for (int i = 0; i < refinement.size(); i++){
+			if (refinement.get(i).iExprRefinement().iName().sExprRefinement() != null)
+				//if (refinement.get(i).iExprRefinement().iName().getText().startsWith(exp)){
+					//Hay algo de la forma "exp[]"
+					position = visitSExprRefinement(refinement.get(i).iExprRefinement().iName().sExprRefinement(), replaceValue).exp;
+					return position;
+				//}
+		}
+		
+		return position;
+	}
+
 	//Este metodo permite visitar un SExprRefinement para obtener su valor y su tipo.
 	public SExpr visitSExprRefinement(FTCRLParser.SExprRefinementContext ctx,Replacement replacement){
 		try{
@@ -434,7 +460,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			if (ctx.asRefinement() != null) {
 
 				//visito el asRefinement, pasando el nombre de la variable y el valor en Z a refinar
-				visitAsRefinement(ctx.asRefinement(), replacement, record, zExpr, javaExpr, 0);
+				visitAsRefinement(ctx.asRefinement(), replacement, record, zExpr, javaExpr, Integer.toString(0));
 
 			} else {
 				refineFromZToJava(zExpr, "BASIC", javaExpr);
@@ -466,18 +492,27 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			visitor.visit(tree);
 
 			funAppType = visitor.getFunType();
-			HashMap<String, String> argsVars = visitor.getArgsTypes();
+			LinkedList<SExpr> argsVars = visitor.getArgsTypes();
 
+			//Tanto los uutArgs como el codeTypesMap, debe ser modificado por si el nombre de alguno
+			//de los argumentos de la función tiene el mismo nombre que alguna de las variables
+			HashMap<String, String> codeTypesMapAux = codeTypesMap;
+			LinkedList<String> uutAux = uutArgs;
+			codeTypesMap = new HashMap<String, String>();
+			uutArgs = new LinkedList<String>();
+			
 			//Ahora hay que procesar cada refinement, pero debo crear un record por cada argumento
 			Iterator<RefinementContext> itRef = ctx.refinement().iterator();
-			Iterator<String> itArgs = argsVars.keySet().iterator();
+			Iterator<SExpr> itArgs = argsVars.iterator();
 			String args = "";
 			while (itRef.hasNext()){
 				//Primero creamos el argumento
-				String argName = itArgs.next();
-				String argType = argsVars.get(argName);
+				SExpr arg = itArgs.next();
+				String argName = arg.exp;
+				String argType = arg.type;
 				String newRecord = newVarName("arg"+argName);
 				args += ", " + newRecord;
+				codeTypesMap.put(argName, argType);
 				printDeclaration(argType + " " + newRecord + declarationValue(argType));
 				visitRefinement(itRef.next(), new LinkedList<String>(), newRecord, replacement);
 			}
@@ -485,6 +520,11 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			String fun = newVarName("fun");
 			printDeclaration(funAppType + " " + fun + declarationValue(funAppType));
 			printAssignment(fun + " = " + funAppName + "(" + args.substring(1)+ ")");
+			
+			//Volvemos a los valores previos de uutArgs y Codetypesmap
+			codeTypesMap = codeTypesMapAux;
+			uutArgs = uutAux;
+			
 			return new FunAppSExpr(fun, funAppType);
 
 		}catch (Exception e) {
@@ -1002,11 +1042,22 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			r.varType = "String";
 			return r.varName;
 		}
+		
+		//Si se especifica la posición del array en el que va el elemento, hay que refinarlo primero
+		if (ctx.iName().sExprRefinement() != null) {
+			r.varName = newVarName(refS.toLowerCase()+"elem");
+			if (uutArgs.contains(refS))
+				r.varType = getInnerType(FTCRLUtils.getCodeExpressionType(refS + r.atribute, this));
+			else //Sino, es un atributo de la clase a testear
+				r.varType = getInnerType(FTCRLUtils.getCodeExpressionType(moduleName + "." + refS + r.atribute, this));
+			printDeclaration(r.varType + " " + r.varName + declarationValue(r.varType));
+			record = r.varName;
+		}
 		//Puede ser una variable o un tipo.
 		//Primero vemos si debo crear una variable nueva (record)
 		//Si refS es una variable, no debo crear un record 
 		//ya que es un argumento del metodo de la clase a testear.
-		if (isVariable(refS)){ 
+		else if (isVariable(refS)){ 
 			//Si es una variable que será parte del argumento de la función, debo crearla
 			if (uutArgs.contains(refS)){
 				r.varName = refS;
@@ -1036,7 +1087,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			r.varType = FTCRLUtils.getCodeExpressionType(refS + r.atribute, this);
 		}
-
+		
 		//Si es una variable que luego será referenciada, lo indico
 		//para que se almacenen los valores cuando se refina.
 		//Esta variable será consultada más tarde al refinar otras variables
