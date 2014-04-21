@@ -6,7 +6,6 @@ import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.jaxb.JaxbXmlWriter;
 import net.sourceforge.czt.base.util.XmlWriter;
 import java.io.*;
-import java.net.*;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import java.util.zip.ZipOutputStream;
 import java.util.zip.ZipEntry;
@@ -235,6 +234,7 @@ public class SocketWriter
 		//outWriter.write(1000);
 		//outWriter.flush();
 		tempFile3.delete();
+		fileInputStream.close();
 		}
 		catch(Exception e)
 		{
@@ -321,6 +321,7 @@ public class SocketWriter
 		//outWriter.write(1000);
 		//outWriter.flush();
 		tempFile3.delete();
+		fileInputStream.close();
 		}
 		catch(Exception e)
 		{

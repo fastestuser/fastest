@@ -49,7 +49,7 @@ public class CServersConfigLoader{
 				// We add the object to the CServersInfoControl
 				cServersControl.addElement(serverInfo);	
 			}
-
+			in.close();
 			
 		}
 		catch(FileNotFoundException e){

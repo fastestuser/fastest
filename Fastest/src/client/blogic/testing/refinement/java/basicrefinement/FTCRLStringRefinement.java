@@ -14,6 +14,5 @@ public class FTCRLStringRefinement extends Refinement{
 		} 		
 
 		return "";
-
 	}
 }

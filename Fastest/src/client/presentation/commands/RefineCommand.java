@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import net.sourceforge.czt.z.ast.AxPara;
 import common.fastest.FastestUtils;
 import common.z.AbstractTCase;
@@ -17,7 +16,6 @@ import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RefineAbsTCasesRequested;
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.ImportResolver;
-import client.blogic.testing.refinement.java.ImportResolverJava;
 import client.blogic.testing.refinement.tcrlrules.RefinementRules;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;

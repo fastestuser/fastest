@@ -45,6 +45,7 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setDeclaraciones(refiner.getDeclarations());
 			concreteTCase.setAsignaciones(refiner.getAssignements());
 			concreteTCase.setUutLine(refiner.getUutLine());
+			concreteTCase.setWarnings(refiner.getWarnings());
 		} catch (Exception e) {
 			System.out.println("Error when trying to refine " + opName + ".");
 		} finally {

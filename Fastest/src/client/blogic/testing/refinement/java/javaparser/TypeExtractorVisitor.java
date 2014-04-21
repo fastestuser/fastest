@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import client.blogic.testing.refinement.java.javaparser.Java7Parser.EnumBodyContext;
 import client.blogic.testing.refinement.java.javaparser.Java7Parser.EnumConstantContext;
 import client.blogic.testing.refinement.java.javaparser.Java7Parser.EnumDeclarationContext;
 import client.blogic.testing.refinement.java.javaparser.Java7Parser.FieldDeclarationContext;

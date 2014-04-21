@@ -1,6 +1,5 @@
 package client.blogic.management.ii.events;
 
-import common.z.SpecUtils;
 import common.z.TClass;
 import client.blogic.management.communic.ServerConfig;
 

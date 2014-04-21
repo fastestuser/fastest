@@ -312,7 +312,8 @@ public final class Controller extends IIComponent {
 				//}
 				
 				absTCaseRefTCaseMap.put(tCaseName,tCaseRefined.getConcreteTCase());
-				System.out.println(tCaseName + " test case refination -> SUCCESS.");
+				String warnings = tCaseRefined.getConcreteTCase().hasWarnings()?" WARNING":""; 
+				System.out.println(tCaseName + " test case refination -> SUCCESS."+ warnings);
 			} else {
 				System.out.println(tCaseName + " test case refination -> FAIL.");
 			}

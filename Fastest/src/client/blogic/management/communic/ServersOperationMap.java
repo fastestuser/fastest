@@ -1,8 +1,5 @@
 package client.blogic.management.communic;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
 import java.util.*;
 
 

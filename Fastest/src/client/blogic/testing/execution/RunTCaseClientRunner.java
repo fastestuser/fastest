@@ -1,18 +1,8 @@
 package client.blogic.testing.execution;
 
-import java.util.*;
 import java.io.*;
-import java.net.URL;
-
-import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import client.blogic.management.ii.events.RunFinished;
-import compserver.abstraction.AbstractionLaw;
-import compserver.abstraction.capture.XMLParser;
-import compserver.abstraction.capture.CapturedVar;
-import common.z.AbstractTCase;
-import net.sourceforge.czt.z.ast.AxPara;
-import compserver.abstraction.tcasegeneration.*;
 import client.blogic.management.ii.EventAdmin;
 
 /**

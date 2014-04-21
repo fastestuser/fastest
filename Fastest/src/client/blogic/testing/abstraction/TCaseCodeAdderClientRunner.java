@@ -5,11 +5,9 @@ import java.util.*;
 import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.AbstractionLaw;
 import compserver.abstraction.capture.xmlmanagers.ScriptTestWriter;
-import compserver.abstraction.capture.xmlmanagers.ScriptTestWriterC;
 import compserver.abstraction.AbstractionUtils;
 import compserver.abstraction.types.impltypes.ImplNode;
 import compserver.abstraction.capture.uutmanipulers.VisibilityChanger;
-import compserver.abstraction.capture.uutmanipulers.VisibilityChangerC;
 import client.blogic.management.ii.events.ScriptModified;
 import client.blogic.management.ii.EventAdmin;
 

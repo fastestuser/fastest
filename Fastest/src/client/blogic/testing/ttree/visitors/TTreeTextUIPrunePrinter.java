@@ -95,8 +95,10 @@ import common.repository.AbstractIterator;
 		String tCaseStr = tCaseNode.getValue().getSchName();
 		Map<String, ConcreteTCase> m = clientTextUI.getMyController().getAbsTCaseConcrTCaseMap();
 		String s = "";
-		 if (m.get(tCaseStr)!=null)
-			 s = " > " + m.get(tCaseStr).getConcreteTCaseName();
+		if (m.get(tCaseStr)!=null){
+			 String warning = m.get(tCaseStr).hasWarnings()?"(with warnings)":"";
+			 s = " > " + m.get(tCaseStr).getConcreteTCaseName() + warning;
+		}
 		String strTab = getStrTab(nroTab, true);
 		out.println(strTab + tCaseStr);
         out.flush();

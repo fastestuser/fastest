@@ -10,6 +10,7 @@ import client.blogic.management.communic.CServersConfigLoader;
 import compserver.prunning.TheoremsLoader;
 import compserver.prunning.rewriting.rwrules.RWRulesLoader;
 import jline.ArgumentCompletor;
+import jline.Completor;
 import jline.ConsoleReader;
 import jline.FileNameCompletor;
 import jline.SimpleCompletor;
@@ -40,7 +41,7 @@ public class ClientTextUI extends ClientUI {
 
 			reader = new ConsoleReader();
 			reader.setInput(new BufferedInputStream(System.in)); //MODIFICADO
-			List completors = new LinkedList();
+			List<Completor> completors = new LinkedList<Completor>();
 
 			String commands[] = obtainCommands();
 			completors.add(new SimpleCompletor(commands));

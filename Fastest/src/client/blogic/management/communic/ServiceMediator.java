@@ -6,7 +6,6 @@ import java.util.*;
 
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.base.util.XmlReader;
 import net.sourceforge.czt.z.jaxb.JaxbXmlReader;
@@ -118,7 +117,7 @@ public class ServiceMediator{
 		//System.out.println("Se pudo generar: "+resp);
 	
 		AbstractTCase abstractTCase = null;
-		Map<Expr, NormalTypeAndFM> typeFMs = null;
+		//Map<Expr, NormalTypeAndFM> typeFMs = null;
 		if(resp==null){
 			System.out.println("An unexpected error has been detected during the case test generation of "+ tClassName + " test class.");
 			}

@@ -3,7 +3,6 @@
 package client.blogic.testing.refinement.java.javaparser;
 
 import org.antlr.v4.runtime.tree.*;
-import org.antlr.v4.runtime.Token;
 
 public interface Java7ParserVisitor<T> extends ParseTreeVisitor<T> {
 	T visitInnerCreator(Java7Parser.InnerCreatorContext ctx);

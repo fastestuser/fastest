@@ -7,12 +7,10 @@ public class Test {
 	 */
 	public static void main(String[] args) {
 		
-		String s = "\\langle\\rangle";
+		String s = "\\langle 1 , 2 \\rangle";
 		ExprIterator it = new ExprIterator(s);
 		System.out.println("imprimir expr iterator   " + s);
-		while(it.hasNext()){
-			System.out.println(it.next());
-		}
+			System.out.println(it.next(1));
 
 	}
 

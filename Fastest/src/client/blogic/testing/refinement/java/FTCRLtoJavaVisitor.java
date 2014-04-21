@@ -44,8 +44,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 	@Override
 	public Value visitRefinementRule(FTCRLParser.RefinementRuleContext ctx){
 		try{
-
 			//Inicializamos los nombres que les daremos a las variables
+			warnings = new StringBuilder();
 			varNumber = 0;
 			//Inicializamos las ref vars
 			referencedVars = RefinementRules.getInstance().getReferencedVars();

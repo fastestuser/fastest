@@ -9,6 +9,7 @@ public final class RefinerJava extends Refiner{
 	private String declarationList;
 	private String assignementList;
 	private String uutLine;
+	private String warnings;
 	
 	public void refineCase(Term atc) throws Exception {
 		
@@ -19,11 +20,16 @@ public final class RefinerJava extends Refiner{
 		visitor.assignTCase(casoString);
 		visitor.visit(FTCRLUtils.getRule().getTree());
 
+		warnings = visitor.getWarnings();
 		declarationList =  visitor.getDeclarationList();
 		assignementList =  visitor.getAssignementList();
 		uutLine = visitor.uutLine;
 	}
 
+	public String getWarnings(){
+		return warnings;
+	}
+	
 	public String getAssignements() {
 		return assignementList;
 	}

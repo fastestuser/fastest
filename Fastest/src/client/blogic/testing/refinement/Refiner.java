@@ -8,6 +8,7 @@ public abstract class Refiner {
 	public abstract String getAssignements();
 	public abstract String getDeclarations();
 	public abstract String getUutLine();
+	public abstract String getWarnings();
 	public static Refiner getRefiner(String lenguaje){
 		if (lenguaje.equals(("Java")))
 			return new RefinerJava();

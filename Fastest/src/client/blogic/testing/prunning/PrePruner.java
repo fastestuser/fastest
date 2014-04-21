@@ -13,7 +13,6 @@ import net.sourceforge.czt.z.ast.ExprPred;
 import net.sourceforge.czt.z.ast.NegExpr;
 import net.sourceforge.czt.z.ast.RefExpr;
 import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
 import common.repository.AbstractIterator;
 import common.z.czt.visitors.AndPredClausesExtractor;
 

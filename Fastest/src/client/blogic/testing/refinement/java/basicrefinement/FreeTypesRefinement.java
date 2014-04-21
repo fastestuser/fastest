@@ -10,7 +10,6 @@ import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;
 import client.blogic.testing.refinement.FTCRLParser.EnumerationContext;
 import client.blogic.testing.refinement.FTCRLParser.SNameContext;
-import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public class FreeTypesRefinement extends Refinement{
 
@@ -20,7 +19,7 @@ public class FreeTypesRefinement extends Refinement{
 
 	public FreeTypesRefinement(EnumerationContext enumerationContext, String values) {
 		this.context = enumerationContext;
-		this.values = values.split(",");;
+		this.values = values.split(",");
 		
 	}
 
@@ -104,6 +103,5 @@ public class FreeTypesRefinement extends Refinement{
 		}
 
 		return "";
-
 	}
 }

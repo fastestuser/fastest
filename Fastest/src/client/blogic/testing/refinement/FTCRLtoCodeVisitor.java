@@ -7,6 +7,7 @@ import java.util.LinkedList;
 
 public class FTCRLtoCodeVisitor  extends FTCRLBaseVisitor<Value> {
 
+	protected StringBuilder warnings;
 	protected String declarationList = ""; //String donde se acumulan las sentencias de declaracion
 	protected String assignmentList = "";  //String donde se acumulan las sentencias de asignacion
 	//Map con los valores de las variables Z, obtenidos de la especificaciones
@@ -37,6 +38,14 @@ public class FTCRLtoCodeVisitor  extends FTCRLBaseVisitor<Value> {
 	public boolean isRef;
 	//Variable auxiliar para determinar el nombre de la variable de testing "test"
 	public String testingVar;
+	
+	public String getWarnings(){
+		return warnings.toString();
+	}
+	
+	public void addWarning(String warning){
+		warnings.append("// " + warning + "\n");
+	}
 	
 	public String getDeclarationList(){
 		return declarationList;

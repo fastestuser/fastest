@@ -1,7 +1,6 @@
 package client.blogic.testing.tcasegen;
 
 import client.blogic.management.ii.events.TCaseRequested;
-import client.blogic.management.ii.events.TTreeGenerated;
 import client.blogic.management.ii.events.AllTCasesRequested;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.EventAdmin;

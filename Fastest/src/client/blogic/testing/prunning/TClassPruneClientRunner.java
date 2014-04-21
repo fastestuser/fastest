@@ -10,15 +10,10 @@ import client.blogic.management.communic.*;
 import net.sourceforge.czt.session.SectionManager;
 import compserver.prunning.TreePruner;
 import compserver.prunning.ResultPrune;
-import client.presentation.ClientUI;
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.RefExpr;
-import common.z.czt.visitors.CZTReplacer;
 import common.z.SpecUtils;
 import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
 import net.sourceforge.czt.typecheck.z.ErrorAnn;
-import net.sourceforge.czt.z.ast.SectTypeEnvAnn;
 import net.sourceforge.czt.z.ast.Pred;
 import compserver.prunning.typechecking.TypecheckingUtils;
 import compserver.prunning.SpecInfo;
@@ -55,7 +50,7 @@ public class TClassPruneClientRunner implements Runnable
 	 * announces a TClassPruned event.
 	 */
 	public void run(){
-		String serverName = serverConfig.getServerName();
+		//String serverName = serverConfig.getServerName();
 		InetAddress inetAddress = serverConfig.getInetAddress();
 		int port = serverConfig.getPort();
 

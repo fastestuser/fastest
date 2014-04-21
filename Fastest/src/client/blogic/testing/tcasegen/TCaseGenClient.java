@@ -17,7 +17,6 @@ import common.z.SpecUtils;
 import common.z.TClass;
 import compserver.tcasegen.strategies.SetLogStrategy;
 import compserver.tcasegen.strategies.TCaseStrategy;
-import compserver.tcasegen.strategies.PreCalculatedFiniteModels;
 import client.presentation.ClientTextUI;
 /**
  * Intances of this class (although we assume there is only one in the system)

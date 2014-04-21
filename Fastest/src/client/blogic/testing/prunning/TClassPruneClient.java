@@ -4,7 +4,6 @@ import java.util.*;
 import client.blogic.management.ii.events.PruneTClassRequested;
 import client.blogic.management.ii.events.SpecLoaded;
 import client.blogic.management.ii.events.Event_;
-import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import common.z.TClass;
 import common.z.TClassImpl;

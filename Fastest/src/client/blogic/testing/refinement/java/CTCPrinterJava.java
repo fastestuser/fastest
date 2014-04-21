@@ -6,7 +6,7 @@ import java.io.StringReader;
 import client.blogic.testing.refinement.CTCPrinter;
 import client.blogic.testing.refinement.ConcreteTCase;
 
-public class CTCPrinterJava extends CTCPrinter{
+public final class CTCPrinterJava extends CTCPrinter{
 
 	ConcreteTCase ctc; 
 	
@@ -24,6 +24,12 @@ public class CTCPrinterJava extends CTCPrinter{
 		ctcString.append("//--------------------------------------------------------------------------------" + "\n");
 		ctcString.append("\n");
 
+		if (ctc.hasWarnings()){
+			ctcString.append("//*****WARNINGS******\n");
+			ctcString.append(ctc.getWarnings());
+			ctcString.append("//*******************\n\n");
+		}
+		
 		String preamble = ctc.getPreamble();
 		String preambleWithOutPackageAndImports = "";
 

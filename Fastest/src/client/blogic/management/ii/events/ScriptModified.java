@@ -1,7 +1,6 @@
 package client.blogic.management.ii.events;
 
 import client.blogic.testing.refinement.ConcreteTCase;
-import compserver.abstraction.AbstractionLaw;
 
 public class ScriptModified extends Event_{
 

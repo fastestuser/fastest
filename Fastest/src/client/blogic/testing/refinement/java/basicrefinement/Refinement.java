@@ -6,14 +6,19 @@ import client.blogic.testing.refinement.java.FTCRLtoJavaVisitor;
 
 public abstract class Refinement {
 
-	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl){
-
+	public String refine(SExpr zExpr, String toType, SExpr javaExpr, FTCRLtoJavaVisitor ftcrl) {
 		//Si es un file, modificamos el javaExpr para que sea un String
-		if (toType.equals("FILE"))
+		if (toType.equals("FILE")){
 			return  refineTo(zExpr, new SExpr("", "String"));
+			
+		}
 		
 		String value = refineTo(zExpr, javaExpr);
-
+		if (value.equals("")){
+			ftcrl.addWarning(GenericJavaValue.getWarning(zExpr, javaExpr));
+			value = GenericJavaValue.getValue(javaExpr.type);
+		}
+		
 		//Si es una tabla, debo guardar el valor en la tabla
 		String parts[] = javaExpr.exp.split("\\.");
 		String table = "";
@@ -40,6 +45,6 @@ public abstract class Refinement {
 		return value;
 	}
 	
-	public String refineTo(SExpr zExpr, SExpr javaExpr){return "";}
+	public String refineTo(SExpr zExpr, SExpr javaExpr) {return "";}
 	
 }

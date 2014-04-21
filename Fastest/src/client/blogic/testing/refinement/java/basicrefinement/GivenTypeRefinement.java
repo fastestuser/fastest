@@ -58,7 +58,6 @@ public class GivenTypeRefinement extends Refinement{
 		}
 
 		return "";
-
 	}
 
 	//Bijection para Tipo basico -> int

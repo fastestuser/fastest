@@ -49,8 +49,6 @@ public class NumRefinement extends Refinement{
 			int n = (int)Float.parseFloat(zExpr.exp);
 			return javaExpr.type + "." + FTCRLUtils.getEnumCodeTypeElem(javaExpr.type, n);
 		}
-
-
 		return "";
 
 	}

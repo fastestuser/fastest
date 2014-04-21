@@ -23,7 +23,7 @@ public class ConcreteTCase {
     private String initDecls;
     private String uutLine;
     private String plCode;
-
+    private String warnings;
     
     public void setPreamble(String preable){
         this.preamble = preable;
@@ -112,6 +112,15 @@ public class ConcreteTCase {
 	}
 	public void setPlCode(String plcode) {
 		this.plCode = plcode;
+	}
+	public String getWarnings() {
+		return warnings;
+	}
+	public void setWarnings(String warnings) {
+		this.warnings = warnings;
+	}
+	public boolean hasWarnings(){
+		return !warnings.isEmpty();
 	}
 
 }
