@@ -392,7 +392,6 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 				} else if(FTCRLUtils.isSet(zExpr.type)){
 					new SetRefinement().refine(zExpr, "FILE", javaExpr, this);
-
 				} else {
 
 					SExpr stringExpr = new SExpr("", "String");
@@ -989,8 +988,15 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			r.varType = currentTable.getColumnType(r.atribute.replaceFirst(".", ""));
 			r.varName = refS;
 			return r.varName;
+		
+		} 
+		//Puede ser que la variable haga referencia a un archivo.
+		//En ese caso, el tipo al que hay que refinar es String
+		if (ctx.asRefinement()!=null && ctx.asRefinement().dataStruct().file()!=null){
+			r.varName = refS;
+			r.varType = "String";
+			return r.varName;
 		}
-
 		//Puede ser una variable o un tipo.
 		//Primero vemos si debo crear una variable nueva (record)
 		//Si refS es una variable, no debo crear un record 
