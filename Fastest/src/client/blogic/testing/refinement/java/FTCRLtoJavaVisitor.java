@@ -368,15 +368,15 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				printAssignment(javaExpr.exp + ".put(" + key + ", " + value + ")");
 
 			} else if (dataStruct.file() != null) { //Si es un FILE
-				String tableName = javaExpr.exp;
-				if (tableName.startsWith(testingVar+"."))
-					tableName = tableName.substring(testingVar.length()+1);
+				String fileName = javaExpr.exp;
+				if (fileName.startsWith(testingVar+"."))
+					fileName = fileName.substring(testingVar.length()+1);
 
-				if (!openedFiles.keySet().contains(tableName)){
-					String writer = newVarName(FTCRLUtils.extractName(tableName));
+				if (!openedFiles.keySet().contains(fileName)){
+					String writer = newVarName(FTCRLUtils.extractName(fileName));
 					printDeclaration("PrintWriter "+writer+" = new PrinterWriter(\""+
-							dataStruct.file().path().getText()+"/"+tableName+"\", \"UTF-8\")");
-					openedFiles.put(tableName, writer);
+							dataStruct.file().path().getText()+"/"+fileName+"\", \"UTF-8\")");
+					openedFiles.put(fileName, writer);
 				}
 
 				if (hasWITH){
@@ -384,7 +384,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 					Iterator<RefinementContext> it = ctx.refinement().iterator();
 					while (it.hasNext()){
 						String var = this.visitRefinement(it.next(), null, null, replaceValue);
-						printAssignment(openedFiles.get(tableName)+".println(str("+var+"))");
+						printAssignment(openedFiles.get(fileName)+".println(str("+var+"))");
 					}
 
 				} else if(FTCRLUtils.isCrossProduct(zExpr.type)) {
@@ -395,8 +395,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				} else {
 
 					SExpr stringExpr = new SExpr("", "String");
-					String value = refineFromZToJava(zExpr, "FILE", stringExpr);
-					printAssignment(openedFiles.get(tableName)+".println("+value+")");
+					String value = refineFromZToJava(zExpr, "BASIC", stringExpr);
+					printAssignment(openedFiles.get(fileName)+".println("+value+")");
 
 				}
 			}
@@ -602,7 +602,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				SExpr sExprRight = visitZExprNum(ctx.zExprNum(1), replacement);
 				String minus = Float.toString(Float.parseFloat(sExprLeft.exp) - Float.parseFloat(sExprRight.exp));
 				return new SExpr(minus, "\\num");
-			}
+			} else if (ctx.AUTOFILL() != null)
+				return new SExpr("0", "\\num");
 
 			return null;
 		}catch (Exception e) {
@@ -716,6 +717,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 							elemType = elem.type;
 						set += elem.exp;
 					}
+					if (elemType.equals(""))
+						elemType = "FTCRLString";
 					return new SExpr("\\{" + set + "\\}", "\\power(" + elemType + ")");
 
 				} else {
@@ -725,6 +728,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 					else
 						return new SExpr(concat, "\\num");
 				}
+			} else if (ctx.AUTOFILL() != null){
+				return new SExpr("autofill", "FTCRLString");
 			}
 			return null;
 		}catch (Exception e) {

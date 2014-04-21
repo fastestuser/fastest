@@ -45,17 +45,15 @@ public class CrossProductRefinement extends Refinement{
 			ExprIterator itElements = new common.util.ExprIterator(zExpr.exp);
 			
 			//El archivo lo obtenemos de la expresión Java
-			String tableName = javaExpr.exp;
-			if (tableName.startsWith(ftcrl.testingVar+"."))
-				tableName = tableName.substring(ftcrl.testingVar.length()+1);
-			String writer = ftcrl.openedFiles.get(tableName);
+			String fileName = javaExpr.exp;
+			String writer = ftcrl.openedFiles.get(fileName);
 			
 			int pos = 0;
 			while (itElements.hasNext()){
 				//Debemos refinar cada elemento de la tupla a una columna de la tabla
 				String elem = itElements.next();
 				String elemType = FTCRLUtils.getChildType(zExpr.type, pos);
-				String value = ftcrl.refineFromZToJava(new SExpr(elem, elemType), "FILE", javaExpr);
+				String value = ftcrl.refineFromZToJava(new SExpr(elem, elemType), "BASIC", new SExpr("", "String"));
 				if (!value.equals(""))
 					ftcrl.printAssignment(writer+".println(str("+value+"))");
 				

@@ -52,14 +52,12 @@ public class SetRefinement extends Refinement{
 				arrayPos++;
 			}
 		} else if (toType.equals("FILE")){
+			String file = ftcrl.openedFiles.get(javaExpr.exp);
 			while (itElements.hasNext()){
 				SExpr zElemExpr = new SExpr(itElements.next(), zElemType);
-				if (zElemType.equals("FTCRLString"))
-					new FTCRLStringRefinement().refine(zElemExpr, "FILE", javaExpr ,ftcrl);
-				else if (FTCRLUtils.isCrossProduct(zElemType))
-					new CrossProductRefinement().refine(zElemExpr, "FILE", javaExpr ,ftcrl);
-				else
-					refineTo(zElemExpr, new SExpr("", "String"));
+				String value = "";
+				value = ftcrl.refineFromZToJava(zElemExpr, "BASIC", new SExpr("", "String"));
+				ftcrl.printAssignment(file + ".println(str("+value+"))");
 			}
 		}
 		return javaVar;
