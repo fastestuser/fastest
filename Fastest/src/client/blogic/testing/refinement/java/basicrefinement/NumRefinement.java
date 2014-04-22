@@ -32,7 +32,7 @@ public class NumRefinement extends Refinement{
 		} else if (javaExpr.type.equals("char")){
 
 			//Convertimos a char el valor del entero
-			return "'" + (char)(int)Float.parseFloat(zExpr.exp) + "'";
+			return "'" + (char) (32 + (Integer.parseInt(zExpr.exp) % 95)) + "'";
 
 		} else if  (javaExpr.type.equals("Character")){
 

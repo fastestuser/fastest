@@ -400,7 +400,7 @@ public final class FTCRLUtils {
 			//Creamos un iterador sobre los elementos
 			ExprIterator itElements = new common.util.ExprIterator(values);
 			n = n % itElements.cardinalidad();
-			return itElements.next(n);
+			return itElements.next(n+1);
 		} else
 			return "";
 	}
@@ -444,12 +444,17 @@ public final class FTCRLUtils {
 	//Metodo para determinar la referencia cuando se usa REF
 	public static String findReference(String value, String iName, FTCRLtoCodeVisitor ftcrl) {
 
+		String varName = FTCRLUtils.extractName(iName);
+		String atribute = FTCRLUtils.extractAtribute(iName);
+		
+		if (!ftcrl.uutArgs.contains(varName)) //Si es un atributo de la clase
+			varName = ftcrl.testingVar + "." + varName;
+		
 		//Primero busco por el nombre de la variable
-		if (ftcrl.references.get(iName) != null)
-			return ftcrl.references.get(iName).type;
+		if (ftcrl.references.get(varName+atribute) != null)
+			return ftcrl.references.get(varName+atribute).type;
+		
 		else { //Si no esta, busco por los elementos de la variable
-			String varName = FTCRLUtils.extractName(iName);
-			String atribute = FTCRLUtils.extractAtribute(iName);
 
 			//Miro si la variable, es en realidad un atributo de la clase a testear
 			//ya que en ese caso, debo agregar delante el nombre del elemento de la clase
@@ -457,8 +462,6 @@ public final class FTCRLUtils {
 			//Ej c[0], c[1]
 			int it = 0;
 			SExpr s = null;
-			if (!ftcrl.uutArgs.contains(varName)) //Si es un atributo de la clase
-				varName = ftcrl.testingVar + "." + varName;
 
 			while ((s = ftcrl.references.get(varName + "[" + it + "]")) != null){
 				SExpr t = ftcrl.references.get(s.type + atribute);

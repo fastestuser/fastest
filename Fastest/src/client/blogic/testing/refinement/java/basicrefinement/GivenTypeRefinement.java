@@ -12,7 +12,7 @@ import client.blogic.testing.refinement.SExpr;
 public class GivenTypeRefinement extends Refinement{
 
 	private static HashMap<String, String> bijection = new HashMap<String,String>();
-	private static int lastElem = 0;
+	private static int lastElem = 1;
 
 	public String refineTo(SExpr zExpr, SExpr javaExpr){
 
