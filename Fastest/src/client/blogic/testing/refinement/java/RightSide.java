@@ -7,7 +7,6 @@ public class RightSide {
 	public boolean isPrivate = false; //si la variable es privada
 	public String privateFieldVar = "";
 	public String field = "";                                                                                                                                                                                                                                                                                               
-	public String listPosition = ""; //Variable auxiliar para cuando se refinan expresions tipo "var[expression]
 	
 	RightSide(){
 		this.varName = "";
@@ -15,7 +14,6 @@ public class RightSide {
 		this.atribute = "";
 		this.privateFieldVar = "";
 		this.field = "";
-		this.listPosition = "";
 		this.isPrivate = false;
 	}
 

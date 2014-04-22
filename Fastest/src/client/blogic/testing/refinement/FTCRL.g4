@@ -92,10 +92,10 @@ exprRefinement
 	;
 
 dataStruct
-	:	ARRAY
+	:	ARRAY (INDEX LSB sExprRefinement RSB)?
 	|	RECORD
 	|	MAPPING
-	|	list
+	|	list (INDEX LSB sExprRefinement RSB)?
 	|	reference2
 	|	enumeration
 	|	table
@@ -201,7 +201,6 @@ sName
 
 iName
 	:	iIdent
-	|	iIdent LSB sExprRefinement RSB
 	|	iIdent DOT iIdent
 	|	iIdent DOTA
 	;
@@ -264,7 +263,8 @@ SLL : 'SLL';
 DLL : 'DLL';
 CLL : 'CLL';
 DCLL : 'DCLL';           
-LIST : 'LIST';           
+LIST : 'LIST';
+INDEX : 'INDEX';         
 DOM : 'DOM';
 RAN : 'RAN';
 ELEM : 'ELEM';

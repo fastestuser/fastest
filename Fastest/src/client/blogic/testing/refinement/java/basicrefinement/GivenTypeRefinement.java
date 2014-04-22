@@ -48,7 +48,7 @@ public class GivenTypeRefinement extends Refinement{
 
 		} else if (javaExpr.type.equals("String")){
 
-			return "new String(\"" + zExpr.exp + "\")";
+			return "\"" + zExpr.exp + "\"";
 
 		} else if (FTCRLUtils.isEnumCodeType(javaExpr.type)){
 
