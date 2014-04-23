@@ -15,7 +15,7 @@ public class RefinementTable {
 	public String values[]; //Almacena los datos que se insertarán al finalizar el refinamiento del WITH
 	                                 //Despues debe vaciarse y volver a empezar
 	
-	public RefinementTable(String t, String c, String p, String f, FTCRLtoCodeVisitor ftcrl) {
+	public RefinementTable(String t, String c, String p, String f, FTCRLtoCodeVisitor ftcrl) throws FileNotFoundException {
 		this.t = t;
 		this.c = c;
 		columnName = new LinkedList<String>();
@@ -36,7 +36,8 @@ public class RefinementTable {
 			Scanner in = new Scanner(new FileReader(path));
 			parseColums(in);
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			FTCRLUtils.clientTextUI.getOutput().println("Error: File "+f+" not found.");
+			throw e;
 		}
 	}
 	

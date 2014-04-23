@@ -1,6 +1,5 @@
 package client.blogic.testing.refinement.java.javaparser;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 

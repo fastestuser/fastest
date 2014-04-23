@@ -59,7 +59,7 @@ public final class ImportResolverJava extends ImportResolver{
 			return fileString;
 		} catch (FileNotFoundException e) {
 			output.println("Warning: Class " + importPath.substring(0, importPath.length()-1) + " not found in path " + 
-					file.getAbsolutePath() + "\nmaybe you should change uutpath: " + path);
+					file.getAbsolutePath() /*+ "\nmaybe you should change uutpath: "*/ + path);
 			return null;
 		}
 	}
