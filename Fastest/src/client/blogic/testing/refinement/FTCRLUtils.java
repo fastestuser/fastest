@@ -451,8 +451,9 @@ public final class FTCRLUtils {
 			varName = ftcrl.testingVar + "." + varName;
 		
 		//Primero busco por el nombre de la variable
-		if (ftcrl.references.get(varName+atribute) != null)
-			return ftcrl.references.get(varName+atribute).type;
+		SExpr ref = ftcrl.references.get(varName+atribute);
+		if ((ref != null) && (ref.exp.equals(value)))
+			return varName+atribute;
 		
 		else { //Si no esta, busco por los elementos de la variable
 

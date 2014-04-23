@@ -10,7 +10,6 @@ public abstract class Refinement {
 		//Si es un file, modificamos el javaExpr para que sea un String
 		if (toType.equals("FILE")){
 			return  refineTo(zExpr, new SExpr("", "String"));
-			
 		}
 		
 		String value = refineTo(zExpr, javaExpr);
