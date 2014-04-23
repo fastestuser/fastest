@@ -60,7 +60,11 @@ public class SetRefinement extends Refinement{
 				ftcrl.printAssignment(file + ".println(str("+value+"))");
 			}
 		}
-		return javaVar;
+		else{
+			ftcrl.addWarning(GenericJavaValue.getWarning(zExpr, javaExpr));
+			return GenericJavaValue.getValue(javaExpr.type);
+		} 
+		return null;	
 
 	}
 }

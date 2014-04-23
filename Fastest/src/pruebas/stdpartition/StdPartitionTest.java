@@ -6,7 +6,6 @@
 package pruebas.stdpartition;
 
 import java.util.*;
-import java.io.*;
 
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.*;
@@ -70,7 +69,7 @@ public class StdPartitionTest {
             String exprStr = " s < 1";
             
             ZLive zLive = new ZLive();
-            TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+            //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
             
             // Convertimos la expresion que contiene el operador de latex AST
             Term parsedTerm = ParseUtils.parsePred(new StringSource(exprStr),zLive.getCurrentSection(), zLive.getSectionManager() );
@@ -127,7 +126,6 @@ public class StdPartitionTest {
            
             // Reemplazamos parametros reales en parametros formales de
             // cada predicado y con cada uno generamos un nuevo esquema
-            List<AxPara> axParaList = new ArrayList<AxPara>();
             List<Pred> predList = stdPartition.getPredList();
             AxPara tClassAxPara = tClass.getMyAxPara();
             CZTCloner cloneVisitor = new CZTCloner();

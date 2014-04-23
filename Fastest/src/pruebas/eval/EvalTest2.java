@@ -4,9 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import net.sourceforge.czt.z.ast.Pred;
-import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.animation.eval.*;
-import net.sourceforge.czt.typecheck.z.*;
 
 // Evalua 60000 veces un mismo predicado
 public class EvalTest2{

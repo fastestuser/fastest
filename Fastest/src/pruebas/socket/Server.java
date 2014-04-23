@@ -83,7 +83,7 @@ public class Server{
             while ((c = reader.read()) != 1000) {
                 out.write(c);
             }
-
+            out.close();
 
 
 

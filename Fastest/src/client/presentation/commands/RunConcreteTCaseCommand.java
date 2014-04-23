@@ -55,15 +55,16 @@ public class RunConcreteTCaseCommand implements Command{
 	}
 
 	// We obtain the CompilationInfo 
-	CompilationInfo compilationInfo = controller.getCompilationInfo();
-	if(compilationInfo==null){
+	//CompilationInfo cInfo = controller.getCompilationInfo();
+	CompilationInfo cInfo = null; //pueso para zafar del error
+	if(cInfo==null){
 		System.out.println("The information of compilation has not been loaded.");
 		System.out.println("You must set this information before try to run "+ctcName);
 	}
 
 
 	boolean someEventAnnounced = false;
-	CTCaseRunRequested event = new CTCaseRunRequested(runCode, compilationInfo);
+	CTCaseRunRequested event = new CTCaseRunRequested(runCode, cInfo);
 	EventAdmin eventAdmin = EventAdmin.getInstance();
 	eventAdmin.announceEvent(event);
 	someEventAnnounced = true;

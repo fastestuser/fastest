@@ -42,7 +42,7 @@ public class TCaseCodeAdderClientRunner implements Runnable
 		ScriptTestWriter writer = factory.createScriptTestWriter();
 
 		// We change the visibility of the UUT
-		List<ImplNode> monitoredVars = AbstractionUtils.getMonitoredVariables(absLaw);
+		//List<ImplNode> monitoredVars = AbstractionUtils.getMonitoredVariables(absLaw);
 		//changer.changeVisibility(pathUUT,monitoredVars);
 
 		// We add the capture code to the script

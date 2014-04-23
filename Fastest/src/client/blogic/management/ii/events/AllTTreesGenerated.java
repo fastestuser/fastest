@@ -8,7 +8,7 @@ package client.blogic.management.ii.events;
  */
 public class AllTTreesGenerated extends Event_{
 
-	private String opName;
+	//private String opName;
 
 	public AllTTreesGenerated(){
 		super.setEventName("allTTreesGenerated");

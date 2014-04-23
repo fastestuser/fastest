@@ -1,29 +1,10 @@
 package compserver.tcasegen.strategies.setlog.setlogtoz;
 
 import java.io.IOException;
-import java.util.HashMap;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import net.sourceforge.czt.animation.eval.ExprComparator;
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.parser.oz.ParseUtils;
 import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.StringSource;
-import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.Pred;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-
 import common.util.ExprIterator;
-import common.z.SpecUtils;
-import common.z.czt.UniqueZLive;
-import common.z.czt.visitors.StringToNumReplacer;
-import compserver.tcasegen.strategies.setlog.SetLogUtils;
-import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
-import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 
 public class Test {
 	private static ExprIterator schemaTypeToExprIterator(String tipoCompleto,String nomTipo){

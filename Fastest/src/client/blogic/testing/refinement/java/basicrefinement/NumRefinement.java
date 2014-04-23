@@ -9,7 +9,7 @@ import client.blogic.testing.refinement.SExpr;
 
 public class NumRefinement extends Refinement{
 
-	public String refineTo(SExpr zExpr, SExpr javaExpr){
+	String refineTo(SExpr zExpr, SExpr javaExpr){
 
 		if (javaExpr.type.equals("int") || javaExpr.type.equals("short") ||
 				javaExpr.type.equals("long") || javaExpr.type.equals("byte")) {

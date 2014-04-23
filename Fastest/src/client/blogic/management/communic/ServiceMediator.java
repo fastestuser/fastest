@@ -6,7 +6,6 @@ import java.util.*;
 
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.base.util.XmlReader;
 import net.sourceforge.czt.z.jaxb.JaxbXmlReader;
 import net.sourceforge.czt.base.util.UnmarshalException;
@@ -15,10 +14,8 @@ import common.z.TClass;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
-import compserver.tcasegen.eval.NormalTypeAndFM;
 import compserver.prunning.ResultPrune;
 import compserver.prunning.SpecInfo;
-import net.sourceforge.czt.session.SectionManager;
 
 /**
  * Establish the direct connection (through socket interfaces) between the client
@@ -32,13 +29,13 @@ public class ServiceMediator{
 	private InetAddress inetAddress;
 	private int port;
 
-	private Spec spec;
+	//private Spec spec;
 	//private String opName;
-	private TClass tClass;
-	private SpecInfo specInfo;
-	private TCaseStrategy tCaseStrategy;	
-	private SectionManager manager;
-	private String sectionName;
+	//private TClass tClass;
+	//private SpecInfo specInfo;
+	//private TCaseStrategy tCaseStrategy;	
+	//private SectionManager manager;
+	//private String sectionName;
 
     
     
@@ -66,10 +63,10 @@ public class ServiceMediator{
      */
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass, TCaseStrategy tCaseStrategy){
 
-		this.spec = spec;
+		//this.spec = spec;
 		//this.opName = opName;
-		this.tClass = tClass;
-		this.tCaseStrategy = tCaseStrategy;
+		//this.tClass = tClass;
+		//this.tCaseStrategy = tCaseStrategy;
 
 		String tClassName = tClass.getSchName();
         try {
@@ -197,8 +194,8 @@ public class ServiceMediator{
 	}
 	public synchronized ResultPrune pruneTree(TClass tClass, SpecInfo specInfo)
 	{
-		this.tClass = tClass;
-		this.specInfo = specInfo;
+		//this.tClass = tClass;
+		//this.specInfo = specInfo;
 
         try {
 	       	Socket socket = new Socket(inetAddress, port);

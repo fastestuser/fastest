@@ -44,6 +44,6 @@ public abstract class Refinement {
 		return value;
 	}
 	
-	public String refineTo(SExpr zExpr, SExpr javaExpr) {return "";}
+	String refineTo(SExpr zExpr, SExpr javaExpr) {return "";}
 	
 }

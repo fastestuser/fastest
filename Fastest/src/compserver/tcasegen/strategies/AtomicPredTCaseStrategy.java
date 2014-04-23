@@ -234,7 +234,7 @@ public class AtomicPredTCaseStrategy implements TCaseStrategy {
             classListPreds.add(reArrangedPred.get(i));
         }
 
-        boolean found = false;
+        //boolean found = false;
         boolean result = true;
         //for(int sz=1;sz<=fMSize && !found;sz++){
         SchemeEvaluator schemeEvaluator = new SchemeEvaluator();
@@ -685,7 +685,7 @@ public class AtomicPredTCaseStrategy implements TCaseStrategy {
     private List<Map<RefExpr, Expr>> getMatchesCombinations(Map<RefExpr, List<Expr>> matchMap, List<RefExpr> vars) {
         List<List<Map<RefExpr, Expr>>> mapLists = new ArrayList<List<Map<RefExpr, Expr>>>();
         for (int i = 0; i < vars.size(); i++) {
-            Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
+            //Map<RefExpr, Expr> map = new HashMap<RefExpr, Expr>();
             RefExpr var = vars.get(i);
             //System.out.println("La variable es: "+SpecUtils.termToLatex(var));
             List<Expr> values = matchMap.get(var);

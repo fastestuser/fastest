@@ -42,7 +42,7 @@ public class SetCompilationCommand implements Command{
 		String compileOptions = "";
 		Controller controller = clientTextUI.getMyController();
 		CompilationInfo compilationInfo = new CompilationInfo(targetLanguaje, platform, compiler, compileOptions, workingDirectory);
-		controller.setCompilationInfo(compilationInfo);
+		//controller.setCompilationInfo(compilationInfo);
 	}
 	catch(Exception e){
 		e.printStackTrace(System.out);

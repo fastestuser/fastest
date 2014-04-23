@@ -13,24 +13,25 @@ import compserver.tcasegen.strategies.CompleteTCaseStrategy;
 
 // Para usar junto con Server
 public class Client{ 
-    public static void main(String[] args){
+	public static void main(String[] args){
 
-        try {
-        	Socket socket = new Socket(new String(), 7111);
+		try {
+			Socket socket = new Socket(new String(), 7111);
 			socket.setReuseAddress(true);
 
 			OutputStream out = socket.getOutputStream();
-        	OutputStreamWriter outWriter = new OutputStreamWriter(out);
-        	PrintWriter printWriter = new PrintWriter(out , true);
+			OutputStreamWriter outWriter = new OutputStreamWriter(out);
+			PrintWriter printWriter = new PrintWriter(out , true);
 
 
 			InputStreamReader reader = new InputStreamReader(socket.getInputStream());
-        	BufferedReader bufferedReader = new BufferedReader(reader);
+			BufferedReader bufferedReader = new BufferedReader(reader);
 
 
 			SectionManager manager = new SectionManager();
 			if(args.length!=1){
 				System.out.println("Ingresar nombre de archivo!!!!");
+				socket.close();
 				return;
 			}
 
@@ -38,21 +39,20 @@ public class Client{
 
 			// Le informamos al server el numero de operacion
 			printWriter.println(1);
-	
 
-	
+
+
 			// Escribimos la especif spec en el archivo tempFile en formato xml
 			FileSource source = new FileSource(args[0]);
 			manager.put(new Key(source.getName(), Source.class), source);
-			Spec spec = (Spec) 
-				manager.get(new Key(source.getName(), Spec.class));
+			Spec spec = (Spec)manager.get(new Key(source.getName(), Spec.class));
 			File tempFile = new File("tempFile.txt");
 			FileWriter fileWriter = new FileWriter(tempFile);
 			XmlWriter xmlWriter = new JaxbXmlWriter();	
 			xmlWriter.write(spec, fileWriter);
 			fileWriter.close();
-			
-	
+
+
 
 
 
@@ -80,14 +80,14 @@ public class Client{
 						fileWriter = new FileWriter(tempFile);
 						xmlWriter.write((Term) (zParaList.get(7)), fileWriter);	
 						fileWriter.close();
-		
+
 						fileReader = new BufferedReader(new FileReader(tempFile));
 						while((linea = fileReader.readLine())!= null){
 							printWriter.println(linea);
 						}
 						printWriter.println("Para sent.");
 					}
-    			}
+				}
 			}
 
 
@@ -104,11 +104,11 @@ public class Client{
 
 			// Le pasamos al server el objeto enviando el contenido del archivo tempFile
 			FileInputStream fileInputStream = new FileInputStream(tempFile);
-        	int c;
-        	while ((c = fileInputStream.read()) != -1) {
-                outWriter.write(c);
+			int c;
+			while ((c = fileInputStream.read()) != -1) {
+				outWriter.write(c);
 				outWriter.flush();
-        	}	
+			}	
 			outWriter.write(1000);
 			outWriter.flush();
 
@@ -122,10 +122,12 @@ public class Client{
 			tempFile.delete();
 			bufferedReader.close();
 			printWriter.close();
-        	socket.close();	
-        } 
+			socket.close();
+			fileInputStream.close();
+			fileReader.close();
+		} 
 		catch(Exception e){
 			e.printStackTrace();
 		}
-   }
+	}
 }

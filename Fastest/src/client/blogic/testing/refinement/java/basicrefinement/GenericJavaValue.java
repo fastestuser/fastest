@@ -13,6 +13,6 @@ public class GenericJavaValue {
 			return "new " + type + "()";
 	}
 	public static String getWarning(SExpr zExpr, SExpr javaExpr){
-		return "There is not valid translation for var " + javaExpr.exp + " of type " + javaExpr.exp + " from value " + zExpr.exp + " of type " + zExpr.type ;
+		return "There is not valid translation for var " + javaExpr.exp + " of type " + javaExpr.type + " from value " + zExpr.exp + " of type " + zExpr.type ;
 	}
 }

@@ -30,7 +30,7 @@ public class ShowLoadedRefLawsCommand implements Command{
         else{
             Controller controller = clientTextUI.getMyController();
 
-            RefinementRules refinementRules = controller.getRefRuleRepository();
+            RefinementRules refinementRules = RefinementRules.getInstance();
 
             if (refinementRules.size() == 0){
                 output.println("There is not any refinement law in the repository.");

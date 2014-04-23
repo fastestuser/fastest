@@ -77,8 +77,6 @@ public final class Controller extends IIComponent {
 	private Map<String, ConcreteTCase> opRefTCaseMap;
 	//Map from abstract test case name to refined test cases
 	private Map<String, ConcreteTCase> absTCaseRefTCaseMap;
-	//Refinament Laws Repository
-	private RefinementRules refinementRules;
 	//Indicates the selected refinement law
 	private String selectedRefLaw;
 	// Indicates how many abstract test cases are being calculated
@@ -137,7 +135,7 @@ public final class Controller extends IIComponent {
 	private int finiteModelSize;
 	// The place where fuzz binary is located
 	private String fuzzPath;
-	private CompilationInfo compilationInfo;
+	//private CompilationInfo compilationInfo;
 	// The maximum number of classes that the DNF tactic produce when used
 	private int maxDNFClasses;
 	//If the predicate of the VIS of an operation contains more than 
@@ -155,33 +153,40 @@ public final class Controller extends IIComponent {
 
 	/** Creates a new instance of Controller */
 	public Controller() {
+		sectionManager = null;
 		nomTexFileSpec = null;
-		loadedOpsRep = new ConcreteRepository<String>();
-		opsToTestRep = new ConcreteRepository<String>();
-		schemaPredicatesRep = new ConcreteRepository<String>();
+		originalSpec = null;
+		loadedOpsRep = null;
+		opsToTestRep = null;
 		classToTestRep = new ConcreteRepository<String>();
-		opTTreeStrategyMap = new HashMap<String, TTreeStrategy>();
+		schemaPredicatesRep = new ConcreteRepository<String>();
+		opTTreeStrategyMap = null;
+		tacticMap = null;
 		opTTreeMap = new HashMap<String, TClassNode>();
 		dnfPredListMap = new HashMap<String, List<Pred>>();
-		auxiliarDecls = new HashMap<String, ZDeclList>();
-		blockedAxDefs = new ArrayList<String>();
 		opRefTCaseMap = new HashMap<String, ConcreteTCase>();
 		absTCaseRefTCaseMap = new HashMap<String, ConcreteTCase>();
-		refinementRules = RefinementRules.getInstance();
+		selectedRefLaw = null;
+		pendingAbsTCases = 0;
+		pendingPrunnings = 0;
+		pendingTTrees = 0;
+		pendingToRef = 0;
+		freeParas = null;
 		basicTypeNames = null;
 		userDefinedTypes = null;
-		selectedRefLaw = null;
-		compilationInfo = null;
-		//refining = false;
-		pendingToRef = 0;
-		pendingAbsTCases = 0;
-		pendingTTrees = 0;
-		//pendingCTCases = 0;
-		pendingPrunnings = 0;
-		leaves = new ConcreteRepository<TClass>();
+		axDefsValues = null;
+		axDefsRequired = null;
+		axDefsRequiredPreds = null;
+		axDefsPredVars = null;
+		auxiliarDecls = new HashMap<String, ZDeclList>();
+		blockedAxDefs = new ArrayList<String>();
+		basicAxDefs = null;
+		myLock = new ReentrantLock(); //solo constructor
+		inicio = 0;
 		inicioPoda = 0;
-		myLock = new ReentrantLock();
-		File configFile = null;
+		leaves = new ConcreteRepository<TClass>();
+		File configFile = null; // solo constructor
+		FastestUtils.resetTacticsNumbersMap();
 		try {
 			//
 			//URL url = ClientTextUI.class.getResource("ClientTextUI.class");
@@ -661,43 +666,38 @@ public final class Controller extends IIComponent {
         new TCaseRefClientRunner(opName, absTCase, pathUUT, targetLanguaje, refLawName);
         }*/ // Es incorrecto. Se mandara 2 veces a refinar el mismo caso!!!
 		else if (event_ instanceof FastestResetted) {
-			setOriginalSpec(null);
-			//setUnfoldedSpec(null);
-			setLoadedOpsRep(new ConcreteRepository<String>());
-			setOpsToTestRep(new ConcreteRepository<String>());
-			setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
-			setTacticMap(new HashMap<String, List<Tactic>>());
-			setOpTTreeMap(new HashMap<String, TClassNode>());
-			auxiliarDecls = new HashMap<String, ZDeclList>();
-			blockedAxDefs = new ArrayList<String>();
-			opRefTCaseMap.clear();
-			absTCaseRefTCaseMap.clear();
-			refinementRules.clear();
-			selectedRefLaw = null;
-			userDefinedTypes = null; 
-			//refining = false;
-			FastestUtils.resetTacticsNumbersMap();
-
-			//agregado sin pensar mucho.
+			sectionManager = null;
+			nomTexFileSpec = null;
+			originalSpec = null;
+			loadedOpsRep = null;
+			opsToTestRep = null;
 			classToTestRep = new ConcreteRepository<String>();
 			schemaPredicatesRep = new ConcreteRepository<String>();
-			dnfPredListMap = new HashMap<String, List<Pred>>();
+			opTTreeStrategyMap = null;
+			tacticMap = null;
+			opTTreeMap.clear();
+			dnfPredListMap.clear(); //dejar asi
+			opRefTCaseMap.clear(); //dejar asi
+			absTCaseRefTCaseMap.clear(); //dejar asi
+			selectedRefLaw = null;
 			pendingAbsTCases = 0;
-			nomTexFileSpec = null;
-			//pendingCTCases = 0;
 			pendingPrunnings = 0;
 			pendingTTrees = 0;
 			pendingToRef = 0;
-			freeParas.clear();
-			basicTypeNames.clear();
-			axDefsValues.clear();
-			axDefsRequired.clear();
-			axDefsRequiredPreds.clear();
-			axDefsPredVars.clear();
-			basicAxDefs.clear();
+			freeParas = null;
+			basicTypeNames = null;
+			userDefinedTypes = null;
+			axDefsValues = null;
+			axDefsRequired = null;
+			axDefsRequiredPreds = null;
+			axDefsPredVars = null;
+			auxiliarDecls.clear(); //dejaar asi
+			blockedAxDefs.clear(); //dejar asi
+			basicAxDefs = null;
+			inicio = 0;
 			inicioPoda = 0;
 			leaves = new ConcreteRepository<TClass>();
-
+			FastestUtils.resetTacticsNumbersMap();
 		} else {
 			throw new IllegalArgumentException();
 		}
@@ -1138,30 +1138,17 @@ public final class Controller extends IIComponent {
 		return selectedRefLaw;
 	}
 
-	public RefinementRules getRefRuleRepository() {
-		return refinementRules;
-	}
-
-	public void setRefRuleRepository(RefinementRules refRuleRepository) {
-		this.refinementRules = refRuleRepository;
-	}
-
 	public Map<String, ConcreteTCase> getAbsTCaseConcrTCaseMap() {
 		return this.absTCaseRefTCaseMap;
 	}
 
-	// Este metodo es solo para testear. Debe ser borrado
-	public void setAbsTCaseConcrTCaseMap(Map<String, ConcreteTCase> map) {
-		this.absTCaseRefTCaseMap = map;
-	}
-
-	public void setCompilationInfo(CompilationInfo compilationInfo) {
-		this.compilationInfo = compilationInfo;
-	}
-
-	public CompilationInfo getCompilationInfo() {
-		return compilationInfo;
-	}
+//	public void setCompilationInfo(CompilationInfo compilationInfo) {
+//		this.compilationInfo = compilationInfo;
+//	}
+//
+//	public CompilationInfo getCompilationInfo() {
+//		return compilationInfo;
+//	}
 
 	private void processFinished() {
 		Calendar cal = Calendar.getInstance();

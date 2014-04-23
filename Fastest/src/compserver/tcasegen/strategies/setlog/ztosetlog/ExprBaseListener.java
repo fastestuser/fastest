@@ -1,24 +1,7 @@
 // Generated from Expr.g4 by ANTLR 4.0
 
-	package compserver.tcasegen.strategies.setlog.ztosetlog;
-	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
-	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
-	import java.util.HashMap;
-	import java.util.ArrayList;
-	import java.util.regex.Matcher;
-	import java.util.regex.Pattern;
-	import java.util.Collection;
-	import java.util.Iterator;
-	import java.util.Set;
-	import java.lang.String;
-	import javax.swing.tree.DefaultMutableTreeNode;
-	import javax.rmi.CORBA.Util;
-	import java.util.List;
-	
-
-
+package compserver.tcasegen.strategies.setlog.ztosetlog;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ErrorNode;
 

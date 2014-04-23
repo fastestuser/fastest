@@ -24,8 +24,7 @@ public class TypeFMsTest1{
 		FileSource source = new FileSource(args[0]);
 		manager.put(new Key(source.getName(), Source.class), source);
 		try{
-			Spec spec = (Spec) 
-			manager.get(new Key(source.getName(), Spec.class));
+			Spec spec = (Spec)manager.get(new Key(source.getName(), Spec.class));
 
 
 			TypeFMsGenVisitor typeFMsGenVisitor = new TypeFMsGenVisitor(null,3);
@@ -49,8 +48,8 @@ public class TypeFMsTest1{
 				System.out.println("Tamaño del modelo finito: " + setExpr.getZExprList().size());
 				System.out.println("Modelo finito: " + SpecUtils.termToLatex(setExpr));
 				System.out.println("<--------*********************-------->");
-				}
 			}
+		}
 		catch(Exception e){
 			System.out.println(e);
 		}

@@ -23,7 +23,7 @@ public class FreeTypesRefinement extends Refinement{
 		
 	}
 
-	public String refineTo(SExpr zExpr, SExpr javaExpr){
+	String refineTo(SExpr zExpr, SExpr javaExpr){
 		if (javaExpr.type.equals("String"))
 			return "\"" + zExpr.exp + "\"";
 

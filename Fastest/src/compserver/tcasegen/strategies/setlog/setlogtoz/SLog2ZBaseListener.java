@@ -1,24 +1,7 @@
 // Generated from SLog2Z.g4 by ANTLR 4.0
 
 package compserver.tcasegen.strategies.setlog.setlogtoz;
-	import java.util.LinkedList;
-	import java.util.List;
-	import java.util.HashMap;
-	import java.util.ArrayList;
-	import java.util.regex.Matcher;
-	import java.util.regex.Pattern;
-	import java.util.Iterator;
-	import javax.swing.tree.DefaultMutableTreeNode;
-	import javax.swing.tree.DefaultTreeModel;
-	import javax.swing.tree.TreeNode;
-	import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
-	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
-	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
-	import compserver.tcasegen.strategies.setlog.SetLogUtils;
-
-
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
+	import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.antlr.v4.runtime.tree.ErrorNode;
 

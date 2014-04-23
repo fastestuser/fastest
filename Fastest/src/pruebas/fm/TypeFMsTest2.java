@@ -27,19 +27,18 @@ public class TypeFMsTest2{
 		FileSource source = new FileSource(args[0]);
 		manager.put(new Key(source.getName(), Source.class), source);
 		try{
-			Spec spec = (Spec) 
-			manager.get(new Key(source.getName(), Spec.class));
+			Spec spec = (Spec)manager.get(new Key(source.getName(), Spec.class));
 
-            ZeroIntFiniteModel zeroIntFiniteModel = new ZeroIntFiniteModel();
-            zeroIntFiniteModel.initialize(3);
+			ZeroIntFiniteModel zeroIntFiniteModel = new ZeroIntFiniteModel();
+			zeroIntFiniteModel.initialize(3);
 
-            ZeroNatFiniteModel zeroNatFiniteModel = new ZeroNatFiniteModel();
-            zeroNatFiniteModel.initialize(3);            
-            
-            
+			ZeroNatFiniteModel zeroNatFiniteModel = new ZeroNatFiniteModel();
+			zeroNatFiniteModel.initialize(3);            
+
+
 			FiniteModelCreator finiteModelCreator = 
-                    new FiniteModelCreator(null, 3, 3, zeroIntFiniteModel, 
-                                zeroNatFiniteModel, new HashMap<String,List<String>>());
+					new FiniteModelCreator(null, 3, 3, zeroIntFiniteModel, 
+							zeroNatFiniteModel, new HashMap<String,List<String>>());
 			spec.accept(finiteModelCreator);
 			Map<Expr,FiniteModel> typeFMs = finiteModelCreator.getExprMap();
 

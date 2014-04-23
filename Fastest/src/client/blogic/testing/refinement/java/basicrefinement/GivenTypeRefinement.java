@@ -14,7 +14,7 @@ public class GivenTypeRefinement extends Refinement{
 	private static HashMap<String, String> bijection = new HashMap<String,String>();
 	private static int lastElem = 1;
 
-	public String refineTo(SExpr zExpr, SExpr javaExpr){
+	String refineTo(SExpr zExpr, SExpr javaExpr){
 
 		if (javaExpr.type.equals("int") || javaExpr.type.equals("short") ||
 				javaExpr.type.equals("long") || javaExpr.type.equals("byte")) {

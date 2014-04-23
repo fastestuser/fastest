@@ -36,7 +36,8 @@ public class CompileCommand implements Command{
 				output.println("Invalid parameters.  Try 'help'.");
 				return;
 			}
-			CompilationInfo cInfo = controller.getCompilationInfo();
+			//CompilationInfo cInfo = controller.getCompilationInfo();
+			CompilationInfo cInfo = null; //pueso para zafar del error
 			if(cInfo==null){
 				output.println("The information of compilation has not been loaded.");
 				return;

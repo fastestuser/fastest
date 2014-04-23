@@ -60,12 +60,12 @@ public class CrossProductRefinement extends Refinement {
 				pos++;
 			}
 		}
-
-		return "";
+		ftcrl.addWarning(GenericJavaValue.getWarning(zExpr, javaExpr));
+		return GenericJavaValue.getValue(javaExpr.type);
 	}
 
 	@Override
-	public String refineTo(SExpr zExpr, SExpr javaExpr) {
+	String refineTo(SExpr zExpr, SExpr javaExpr) {
 		return null;
 	}
 }

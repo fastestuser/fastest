@@ -17,7 +17,7 @@ import net.sourceforge.czt.base.visitor.VisitorUtils;
  * @author Pablo Rodriguez Monetti
  */
 public class RefExprPrinter {
-    
+
 	public static void main(String[] args) {	
 		SectionManager manager = new SectionManager();
 		if(args.length!=1){
@@ -27,44 +27,43 @@ public class RefExprPrinter {
 		FileSource source = new FileSource(args[0]);
 		manager.put(new Key(source.getName(), Source.class), source);
 		try{
-			Spec spec = (Spec) 
-			manager.get(new Key(source.getName(), Spec.class));
-            spec.accept(new RefExprPrinterVisitor());
+			Spec spec = (Spec) manager.get(new Key(source.getName(), Spec.class));
+			spec.accept(new RefExprPrinterVisitor());
 
 		}
 		catch(Exception e){
 			System.out.println(e);
 		}
 	}
-    
+
 }
 
 
 
 
 class RefExprPrinterVisitor	
-	implements NameVisitor<Term>,
-                TermVisitor<Term>
+implements NameVisitor<Term>,
+TermVisitor<Term>
 {
 
 
 	public Term visitTerm(Term term){
-    	Term result = VisitorUtils.visitTerm(this, term, false);
-    	return result;
+		Term result = VisitorUtils.visitTerm(this, term, false);
+		return result;
 	}
 
-    public Term visitName(Name name){
-        String str = name.toString();
-        
-            System.out.print(str);
-            System.out.print("\t\t\t\t");
-            
-            for(int i=0; i< str.length(); i++){
-                 System.out.print((int) str.charAt(i) + " ");
-            }
-            System.out.println();
-        return name;                
-    }
+	public Term visitName(Name name){
+		String str = name.toString();
+
+		System.out.print(str);
+		System.out.print("\t\t\t\t");
+
+		for(int i=0; i< str.length(); i++){
+			System.out.print((int) str.charAt(i) + " ");
+		}
+		System.out.println();
+		return name;                
+	}
 
 }
 

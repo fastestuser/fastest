@@ -9,7 +9,7 @@ import common.repository.AbstractRepository;
  */
 public class PruneTTreeRequested extends Event_{
 
-	private String opName;
+	//private String opName;
 	private AbstractRepository<TClass> leaves;
 
 

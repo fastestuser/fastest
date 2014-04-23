@@ -68,7 +68,7 @@ public class SchemeEvaluatorTest3{
 								System.out.println("El predicado con el reemplazo, y que se va a evaluar es,  es: ");
 								System.out.println(textUI.printTerm(newPred, Markup.LATEX));
  								
-								Pred newPred2 = (Pred)textUI.parseTerm(textUI.printTerm(newPred, Markup.LATEX), new PrintWriter(System.out, true));
+								//Pred newPred2 = (Pred)textUI.parseTerm(textUI.printTerm(newPred, Markup.LATEX), new PrintWriter(System.out, true));
  								
 								result = zLive.evalPred(newPred);
 
