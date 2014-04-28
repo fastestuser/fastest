@@ -971,7 +971,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				!varType.equals("float")    &&
 				!varType.equals("Float")    &&
 				!varType.equals("double")   &&
-				!varType.equals("Double"))
+				!varType.equals("Double")   &&
+				!varType.endsWith("[]"))
 			return " = new " + varType + "()";
 
 		return "";
