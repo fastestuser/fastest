@@ -61,7 +61,7 @@ public class GivenTypeRefinement extends Refinement{
 	}
 
 	//Bijection para Tipo basico -> int
-	private static String getValue(String s){
+	private String getValue(String s){
 		String v = "";
 		v = bijection.get(s);
 		if (v == null){
@@ -70,5 +70,10 @@ public class GivenTypeRefinement extends Refinement{
 			lastElem++;
 		}
 		return v;
+	}
+	
+	public static void reset(){
+		bijection.clear();
+		lastElem = 1;
 	}
 }

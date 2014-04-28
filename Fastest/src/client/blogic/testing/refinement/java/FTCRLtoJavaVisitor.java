@@ -69,6 +69,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			//Cerramos tablas y archivos
 			FTCRLUtils.closeTables(this);
 			FTCRLUtils.closeFiles(this);
+			//Reseteamos la biyeccion de los tipos basicos
+			GivenTypeRefinement.reset();
 
 			//Analizamos la uut
 			this.visit(uut);
@@ -252,7 +254,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			DataStructContext dataStruct = ctx.dataStruct();
 			boolean hasWITH = !ctx.refinement().isEmpty();
 
-				//Si es un LIST
+			//Si es un LIST
 			if (dataStruct.list()!=null) {
 				if (hasWITH) { //Si tiene WITH
 					//Si es una lista, no pasamos ningun record (por eso null), ya que no se utilizan "mas abajo" en el arbol
@@ -343,7 +345,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				currentTable.resetValues();
 				printDeclaration(table.stmt + ".executeUpdate(\"insert into " + currentTable.t + " values(" + values + ")\")");
 
-			//Si es un MAPPING
+				//Si es un MAPPING
 			} else if (dataStruct.MAPPING()!=null) {
 				//Debo visitar los refinements,
 				//pero separando la parte de la Key del Value
@@ -381,7 +383,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 				printAssignment(javaExpr.exp + ".put(" + key + ", " + value + ")");
 
-			//Si es un FILE
+				//Si es un FILE
 			} else if (dataStruct.file()!=null) {
 				String fileName = javaExpr.exp;
 				if (fileName.startsWith(testingVar+"."))
@@ -393,6 +395,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 							dataStruct.file().path().getText()+"/"+fileName+"\", \"UTF-8\")");
 					openedFiles.put(fileName, writer);
 				}
+				currentFile = fileName;
 
 				if (hasWITH){
 					Iterator<RefinementContext> it = ctx.refinement().iterator();
@@ -406,12 +409,13 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 				} else if(FTCRLUtils.isSet(zExpr.type)){
 					new SetRefinement().refine(zExpr, "FILE", javaExpr, this);
+				
 				} else {
-
 					SExpr stringExpr = new SExpr("", "String");
 					String value = refineFromZToJava(zExpr, "BASIC", stringExpr);
 					printAssignment(openedFiles.get(fileName)+".println("+value+")");
 				}
+				currentFile = "";
 			}
 
 			return null;
@@ -1030,13 +1034,22 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		//Puede ser que la variable haga referencia a una tabla.
 		//En ese caso, obtengo el tipo al que hay que refinar, a partir de los datos de sus columnas
 		if ((currentTable != null && currentTable.t.equals(refS)) ||
-			(ctx.asRefinement()!=null && ctx.asRefinement().dataStruct().table()!=null)){
+				(ctx.asRefinement()!=null && ctx.asRefinement().dataStruct().table()!=null)){
 			if (!r.atribute.equals(""))
 				r.varType = currentTable.getColumnType(r.atribute.replaceFirst(".", ""));
 			r.varName = refS;
 			return r.varName;
-
 		} 
+
+		//Puede ser que la variable haga referencia a un archivo.
+		//En ese caso, hay que refinar a String
+		if ((currentFile.equals(refS+r.atribute))){
+			r.varType = "String";
+			r.varName = newVarName("string");
+			r.atribute = "";
+			return r.varName;
+		} 
+
 		//Puede ser que la variable haga referencia a un archivo.
 		//En ese caso, el tipo al que hay que refinar es String
 		if (ctx.asRefinement()!=null && ctx.asRefinement().dataStruct().file()!=null){

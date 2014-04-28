@@ -171,7 +171,8 @@ reference2
 	;
 
 number
-	:	DIGIT (digit)*
+	:	ZERO
+	|	DIGIT (digit)*
 	;
 
 enumeration

@@ -52,9 +52,9 @@ public class TClassNodeTextUIPrinter implements TTreeVisitor<Void> {
         TClass tClass = null;
 
         if (unfoldOrder < 0) {
-            tClass = (TClass) tClassNode.getUnfoldedValue();
+            tClass = (TClass) tClassNode.getUnfoldedValue().clone();
         } else {
-            tClass = (TClass) tClassNode.getValue();
+            tClass = (TClass) tClassNode.getValue().clone();
         }
 
 

@@ -22,14 +22,16 @@ public class FTCRLtoCodeVisitor  extends FTCRLBaseVisitor<Value> {
 	public LinkedList<String> uutArgs= new LinkedList<String>();
 	//Linea de impresion del UUT
 	public String uutLine = "";
-	//Tabla acutla, para cuando refinamos a una tabla
+	//Tabla actutal, para cuando refinamos a una tabla
 	public RefinementTable currentTable;
+	//Archivo actual, para cuando refinamos a un archivo
+	public String currentFile = "";
 	//Tablas abiertas, para cuando refinamos una tabla
 	public HashSet<RefinementTable> openedTables = new HashSet<RefinementTable>();
 	//Archivos abiertos, para cuando refinamos un file
 	public HashMap<String, String> openedFiles = new HashMap<String, String>();
 	//Variable para dar nombre a las variables que se crean
-	protected static int varNumber = 0;
+	protected int varNumber = 0;
 	//Map con los valores almacenados por los REF
 	public HashMap<String, SExpr> references = new HashMap<String, SExpr>();
 	//Variables que deben ser almacenadas, porque van a ser referenciadas
