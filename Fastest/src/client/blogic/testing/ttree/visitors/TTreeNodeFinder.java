@@ -1,8 +1,5 @@
 package client.blogic.testing.ttree.visitors;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import client.blogic.testing.ttree.*;
 import common.z.AbstractTCase;
 import common.repository.AbstractRepository;

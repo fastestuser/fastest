@@ -96,11 +96,11 @@ import common.repository.AbstractIterator;
 		Map<String, ConcreteTCase> m = clientTextUI.getMyController().getAbsTCaseConcrTCaseMap();
 		String s = "";
 		if (m.get(tCaseStr)!=null){
-			 String warning = m.get(tCaseStr).hasWarnings()?"(with warnings)":"";
+			 String warning = m.get(tCaseStr).hasWarnings()?" (with warnings)":"";
 			 s = " > " + m.get(tCaseStr).getConcreteTCaseName() + warning;
 		}
 		String strTab = getStrTab(nroTab, true);
-		out.println(strTab + tCaseStr);
+		out.println(strTab + tCaseStr + s);
         out.flush();
         return null;
 	}

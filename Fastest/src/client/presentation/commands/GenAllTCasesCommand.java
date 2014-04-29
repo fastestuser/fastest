@@ -3,10 +3,6 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
-import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.Pred;
-import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.ZDeclList;
 
 import client.presentation.ClientTextUI;
@@ -17,7 +13,6 @@ import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
-import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
 import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;

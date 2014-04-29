@@ -1,6 +1,5 @@
 package client.blogic.testing.refinementOld;
 
-import java.util.*;
 
 /**
  * Stores the information related to the key of ConstantStore's elements

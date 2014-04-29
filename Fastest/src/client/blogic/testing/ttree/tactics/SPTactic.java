@@ -78,7 +78,6 @@ public class SPTactic extends AbstractTactic {
         List<TClass> tClassList = new ArrayList<TClass>();
         // We replace real parameters by formal parameters in each predicate
         // and generate a new schema for each one.
-        List<AxPara> axParaList = new ArrayList<AxPara>();
         List<Pred> predList = spTacticInfo.getStdPartition().getPredList();
 
         AxPara tClassAxPara = tClass.getMyAxPara();
@@ -161,7 +160,7 @@ public class SPTactic extends AbstractTactic {
             return false;
         }
         ZLive zLive = UniqueZLive.getInstance();
-        TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+        //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
         String operatorStr = parts[0];
         String termStr = parts[1];
         spTacticInfo = new SPTacticInfo();

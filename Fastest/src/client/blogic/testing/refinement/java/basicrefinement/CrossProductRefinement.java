@@ -5,12 +5,9 @@
 package client.blogic.testing.refinement.java.basicrefinement;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import common.util.ExprIterator;
 import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.refinement.SExpr;

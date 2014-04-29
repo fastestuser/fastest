@@ -11,6 +11,7 @@ import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.parser.util.CztError;
 import net.sourceforge.czt.parser.util.CztErrorList;
 import net.sourceforge.czt.z.ast.*;
+import client.blogic.testing.refinement.FTCRLUtils;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.management.Controller;
@@ -191,6 +192,7 @@ public class LoadSpecCommand implements Command {
             SpecLoaded specLoaded = new SpecLoaded(spec);
             eventAdmin.announceEvent(specLoaded);
             output.println("Specification loaded.");
+            
         } catch (CommandException e) {
             Throwable cause = e.getCause();
             if (cause instanceof CztErrorList) {

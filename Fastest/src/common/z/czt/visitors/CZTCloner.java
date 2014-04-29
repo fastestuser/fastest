@@ -17,7 +17,7 @@ public class CZTCloner
 {
 
 	private void visitAnns(Term term, Term result){
-    	List anns = result.getAnns();
+    	List<Object> anns = result.getAnns();
     	for (Object o : term.getAnns()) {
     		if (o instanceof Term) {
         		anns.add(((Term) o).accept(this));

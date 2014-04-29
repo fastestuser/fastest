@@ -9,12 +9,16 @@ import java.util.List;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.BranchList;
+import net.sourceforge.czt.z.ast.ConstDecl;
+import net.sourceforge.czt.z.ast.Decl;
+import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
+import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
@@ -196,7 +200,6 @@ public final class FTCRLUtils {
 		List<String> basicTypeNames = controller.getBasicTypeNames();
 		Spec spec = controller.getOriginalSpec();
 		Iterator<FreePara> freeParasIt = controller.getFreeParas().iterator();
-
 		//Hay que buscar en la especificación para ver si es un tipo enumerado
 		ZParaList zParaList = null;
 		for (Sect sect : spec.getSect()) {
@@ -207,7 +210,6 @@ public final class FTCRLUtils {
 				}
 			}
 		}
-
 		AxPara schema = SpecUtils.axParaSearch(type, zParaList);
 		String schemaString = SpecUtils.termToLatex(schema);
 		if (schemaString.equals("null")){ //No es un tipo esquema
@@ -234,6 +236,32 @@ public final class FTCRLUtils {
 		return "";
 	}
 
+	public static String getSchemaTypes(String schemaName){
+		Controller controller = clientTextUI.getMyController();
+		Spec spec = controller.getUnfoldedSpec();
+		AxPara axPara = null;
+		for (Sect sect : spec.getSect()) {
+			if (sect instanceof ZSect) {
+				ParaList paraList = ((ZSect) sect).getParaList();
+				if (paraList instanceof ZParaList) 
+					//ZParaList zParaListUnFold = (ZParaList) paraList;
+					axPara = SpecUtils.axParaSearch(schemaName, (ZParaList) paraList);
+			}
+		}
+		
+		HashMap<String, String> m = createZTypesMap(SpecUtils.termToLatex(axPara));
+		Iterator<String> it = m.keySet().iterator();
+		StringBuilder s = new StringBuilder("\\lblot ");
+		String nombre,tipo;
+		while(it.hasNext()){
+			nombre = it.next();
+			tipo = m.get(nombre);
+			s.append(nombre + ":" + tipo + ",");
+		}
+		
+		return s.subSequence(0, s.length()-1)+"\\rblot";
+	}
+	
 	//Determina la clase en en el codigo que representa 'refS'
 	//Por ejemplo, si la entrada es "A.name" donde A sería una clase
 	//y name un atributo de la misma, retorna "A"
@@ -261,7 +289,7 @@ public final class FTCRLUtils {
 	//
 	public static String getType(String type) {
 		//El calculo se realiza mediante la construccion del arbol de tipos con la gramatica TypeManager
-		DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);;
+		DefaultMutableTreeNode root = SetLogUtils.toTreeNorm(type);
 
 		//root es la raiz del arbol, como puede contener parentesis, los elimino
 		while (((String) root.getUserObject()).equals("()")) {

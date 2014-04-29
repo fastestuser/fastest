@@ -21,8 +21,6 @@ import net.sourceforge.czt.z.ast.ZNameList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-import net.sourceforge.czt.z.impl.ZParaListImpl;
-import common.z.UtilSymbols;
 
 /*
  * A visitor that obtains all the needed predicates to use in the NR strategy

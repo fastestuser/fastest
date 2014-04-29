@@ -24,7 +24,7 @@ public class UnPruneCommand implements Command{
     @Override
     public void run(ClientTextUI clientTextUI, String args){
 		PrintWriter output = clientTextUI.getOutput();
-		String tTreeStrategyName = "";
+		//String tTreeStrategyName = "";
 		try{
 			if (args == null || "".equals(args)){
 	    		output.println("Invalid parameters.  Try 'help'.");

@@ -1,15 +1,9 @@
 package client.blogic.testing.ttree.visitors;
 
 import client.blogic.testing.ttree.*;
-import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Pred;
-
 import common.z.TClass;
-import common.z.AbstractTCaseImpl;
 import common.z.AbstractTCase;
-import common.z.SpecUtils;
 import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
 import common.repository.AbstractIterator;
 
 

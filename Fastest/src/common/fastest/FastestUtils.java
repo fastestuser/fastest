@@ -2,7 +2,6 @@ package common.fastest;
 
 import java.util.*;
 import java.io.*;
-
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.RefExpr;

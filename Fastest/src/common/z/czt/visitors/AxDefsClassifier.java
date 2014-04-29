@@ -6,9 +6,6 @@ package common.z.czt.visitors;
 
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-import compserver.axdef.AxDefsLoader;
-import compserver.prunning.TheoremsLoader;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

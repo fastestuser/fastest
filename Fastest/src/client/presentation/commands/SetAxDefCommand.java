@@ -176,6 +176,7 @@ public class SetAxDefCommand implements Command {
 			printer.println(equalityStr);
 			printer.println("\\end{axdef}");
 			printer.flush();
+			printer.close();
 
 			Source source = new FileSource(fileName);
 			SectionManager manager = new SectionManager();
@@ -191,8 +192,8 @@ public class SetAxDefCommand implements Command {
 				if (sect instanceof ZSect) {
 					ZSect zSect = (ZSect) sect;
 					// We typecheck the specification here
-					String sectionName = zSect.getName();
-					SectTypeEnvAnn envAnn = (SectTypeEnvAnn) manager.get(new Key(sectionName,SectTypeEnvAnn.class));
+					//String sectionName = zSect.getName();
+					//SectTypeEnvAnn envAnn = (SectTypeEnvAnn) manager.get(new Key(sectionName,SectTypeEnvAnn.class));
 					if (isThereDecls) {
 						ParaList paraList = zSect.getParaList();
 						if (paraList instanceof ZParaList) {

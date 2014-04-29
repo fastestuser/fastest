@@ -224,7 +224,7 @@ public class SSETactic extends AbstractTactic {
         }
 
         ZLive zLive = UniqueZLive.getInstance();
-        TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+        //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
 
         try {
             Term parsedTerm = ParseUtils.parsePred(new StringSource(args),

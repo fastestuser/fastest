@@ -269,7 +269,7 @@ public class SEQTactic  extends AbstractTactic {
                 printer.println(equalityStr);
                 printer.println("\\end{axdef}");
                 printer.flush();
-
+                printer.close();
 
                 Source source = new FileSource(fileName);
                 manager.put(new Key(fileName, Source.class), source);

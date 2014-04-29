@@ -60,9 +60,9 @@ RefExprVisitor<Term>, QntPredVisitor<Term>, SetCompExprVisitor<Term> {
 		TypeAnn s = term.getAnn(TypeAnn.class);
 		if (s != null) {
 			Type type = s.getType();
-			boolean b;
+			//boolean b;
 			if (type instanceof PowerType)
-				b = term.getAnns().remove(s);
+				term.getAnns().remove(s);
 
 		}
 		// boolean b = term.getAnns().remove(s);
@@ -89,8 +89,8 @@ RefExprVisitor<Term>, QntPredVisitor<Term>, SetCompExprVisitor<Term> {
 	}
 
 	public Term visitRefExpr(RefExpr refExpr) {
-		RefExpr origRefExpr = (RefExpr) refExpr.accept(new CZTCloner());
-		ZExprList zList = refExpr.getZExprList();
+		refExpr.accept(new CZTCloner());
+		//ZExprList zList = refExpr.getZExprList();
 
 		String refExprStr = refExpr.getZName().toString();
 		// If refExpr corresponds to a reserved Z word, we return refExpr.
@@ -176,8 +176,7 @@ RefExprVisitor<Term>, QntPredVisitor<Term>, SetCompExprVisitor<Term> {
 			}
 		}
 
-		TextUI textUI = new TextUI(UniqueZLive.getInstance(), new PrintWriter(
-				System.out, true));
+		//TextUI textUI = new TextUI(UniqueZLive.getInstance(), new PrintWriter(System.out, true));
 
 		// We replace the alphanumeric constants of the SetCompExpr recursively,
 		// without

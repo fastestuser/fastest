@@ -1,9 +1,6 @@
 package client.presentation.commands;
 
 import java.io.*;
-import java.util.*;
-import java.net.URL;
-
 import client.presentation.ClientTextUI;
 import common.repository.AbstractIterator;
 import compserver.prunning.TheoremsControl;

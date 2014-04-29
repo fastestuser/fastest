@@ -4,7 +4,6 @@ import java.util.*;
 
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.util.OperatorName;
-import common.z.SpecUtils;
 
 /**
  * Represents the MODULE that GENERATES CONSTANT for the REFINEMENT process

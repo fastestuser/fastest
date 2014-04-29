@@ -19,7 +19,7 @@ public final class CTCPrinterJava extends CTCPrinter{
 
 		String testName = ctc.getConcreteTCaseName();
 		// CONCATENATES the TESTNAME
-		ctcString.append("//--------------------------------------------------------------------------------" + "\n");
+		ctcString.append("\n//--------------------------------------------------------------------------------" + "\n");
 		ctcString.append("// " + testName + "\n");
 		ctcString.append("//--------------------------------------------------------------------------------" + "\n");
 		ctcString.append("\n");
@@ -87,7 +87,9 @@ public final class CTCPrinterJava extends CTCPrinter{
 			ctcString.append("\t//                                   EPILOGUE\n");
 			ctcString.append("\t//--------------------------------------------------------------------------------\n");
 			epilogue.replaceAll("\\n", "\n\t\t");
+			epilogue = "\t\t" + epilogue.replaceAll("\\n", "\n\t\t");
 			ctcString.append(epilogue + "\n");
+			
 		}
 
 		// CLOSE the CATCH BLOCK.

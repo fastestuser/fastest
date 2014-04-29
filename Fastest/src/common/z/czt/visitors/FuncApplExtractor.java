@@ -16,11 +16,11 @@ import common.z.SpecUtils;
 public class FuncApplExtractor	
 	implements  TermVisitor<List<Term>>, ApplExprVisitor<List<Term>>{
 
-	private String operator;
+	//private String operator;
 	private String symbol;
 
 	public FuncApplExtractor(String operator){
-		this.operator = operator;
+		//this.operator = operator;
 		if(operator.equals("\\cup"))
 			symbol = UtilSymbols.unionSymbol();
 		else if(operator.equals("\\cap"))
@@ -29,7 +29,7 @@ public class FuncApplExtractor
 
 	public List<Term> visitTerm(Term term){
 	Object[] array = term.getChildren();
-	Boolean result = new Boolean(false);
+	//Boolean result = new Boolean(false);
 	Term auxTerm = null;
 	List<Term> termList = new ArrayList<Term>();
 	for (int i = 0; i < array.length; i++) {
@@ -47,7 +47,7 @@ public class FuncApplExtractor
 		//System.out.println("Visitando la ApplExpr");
 		List<Term> termList = new ArrayList<Term>();
 		Expr leftExpr = applExpr.getLeftExpr();
-		Expr rightExpr = null;
+		//Expr rightExpr = null;
 		if(leftExpr instanceof RefExpr){
 			RefExpr refExpr = (RefExpr) leftExpr;
 			//System.out.println("Es una RefExpr");

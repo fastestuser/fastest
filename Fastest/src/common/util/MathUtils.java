@@ -1,10 +1,6 @@
 package common.util;
 
 import java.util.*;
-import common.z.SpecUtils;
-import common.z.TClass;
-import net.sourceforge.czt.z.ast.DeclList;
-import net.sourceforge.czt.z.ast.Pred;
 
 /**
  * Provides general  utilities related to math operations
@@ -82,7 +78,7 @@ public class MathUtils {
 			aux2.add(list.get(i));
 			List<X> aux3 = new ArrayList<X>();
 			aux3.addAll(list);
-			X removed = aux3.remove(i); 
+			//X removed = aux3.remove(i); 
 			getPermutations(aux2, aux3, finalList);
 			}	
 		}

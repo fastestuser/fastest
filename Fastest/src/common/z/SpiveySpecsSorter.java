@@ -91,8 +91,7 @@ public class SpiveySpecsSorter {
 
             latexReader.close();
 
-            PrintWriter printer =
-                    new PrintWriter(new FileWriter(newLatexFile));
+            PrintWriter printer = new PrintWriter(new FileWriter(newLatexFile));
 
 
             List<Integer> lineTableList = new ArrayList<Integer>();
@@ -210,6 +209,7 @@ public class SpiveySpecsSorter {
                     integerList.add(integer);
                 }
             }
+            in.close();
             int integerListSize = integerList.size();
             lispLineNumbers = new int[integerListSize];
 

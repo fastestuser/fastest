@@ -9,13 +9,6 @@ import common.z.TClass;
 import common.repository.AbstractRepository;
 import client.blogic.management.ii.events.PruneTTreeRequested;
 import client.blogic.management.ii.EventAdmin;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.RefExpr;
 
 /**
  * An instance of this class allows the prune of the tree.

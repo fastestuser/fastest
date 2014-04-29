@@ -25,11 +25,11 @@ public class BasicTypeNamesExtractor implements GivenParaVisitor<List<String>>,
         List<String> basicTypeNames = new ArrayList<String>();
         ZNameList zNameList = givenPara.getZNameList();
 
-        Boolean result = new Boolean(false);
-
-        if(zNameList.size() != 0){
-            result = Boolean.TRUE;
-        }
+//        Boolean result = new Boolean(false);
+//
+//        if(zNameList.size() != 0){
+//            result = Boolean.TRUE;
+//        }
 
         for (int j = 0; j < zNameList.size(); j++) {
             Name name = zNameList.get(j);

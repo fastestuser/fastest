@@ -2,11 +2,8 @@ package common.z.czt.visitors;
 
 import net.sourceforge.czt.base.ast.*;
 import net.sourceforge.czt.base.visitor.*;
-import net.sourceforge.czt.z.ast.Ann;
-import net.sourceforge.czt.z.ast.ParenAnn;
 import java.util.*;
 import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.visitor.ExprVisitor;
 import net.sourceforge.czt.z.visitor.ApplExprVisitor;
 import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.NumExprVisitor;
@@ -21,7 +18,6 @@ import net.sourceforge.czt.z.ast.MemPred;
 import net.sourceforge.czt.z.ast.SetCompExpr;
 import net.sourceforge.czt.z.ast.ZExprList;
 import common.z.UtilSymbols;
-import net.sourceforge.czt.z.ast.Ann;
 import net.sourceforge.czt.z.ast.TypeAnn;
 import net.sourceforge.czt.z.ast.Type;
 import common.z.SpecUtils;
@@ -51,7 +47,7 @@ implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExpr
 		try{
 			if(term != null){
 				Object[] array = term.getChildren();
-				Boolean result = new Boolean(false);
+				//Boolean result = new Boolean(false);
 				Term auxTerm = null;
 				if(array!=null){
 					for (int i = 0; i < array.length; i++) {
@@ -137,7 +133,7 @@ implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExpr
 		Map<Expr,Type> mapList = new HashMap<Expr,Type>();
 		TypeAnn typeAnn = numExpr.getAnn(TypeAnn.class);
 		Type type = typeAnn.getType();
-		Type t = mapList.put(numExpr,type);
+		mapList.put(numExpr,type);
 		return mapList;
 	}
 
@@ -147,7 +143,7 @@ implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExpr
 		Type type = typeAnn.getType();
 		ZExprList zExprList = setExpr.getZExprList();
 		if(zExprList.size()>0){
-			Type t = mapList.put(setExpr,type);
+			mapList.put(setExpr,type);
 			for(int i=0;i<zExprList.size();i++){
 				Expr auxExpr = zExprList.get(i);
 				mapList.putAll(auxExpr.accept(this));
@@ -180,7 +176,7 @@ implements TermVisitor<Map<Expr,Type>>, ApplExprVisitor<Map<Expr,Type>>, RefExpr
 		Map<Expr,Type> mapList = new HashMap<Expr,Type>();
 		TypeAnn typeAnn = setCompExpr.getAnn(TypeAnn.class);
 		Type type = typeAnn.getType();
-		Type t = mapList.put(setCompExpr,type);
+		mapList.put(setCompExpr,type);
 
 		ZSchText zSchText = setCompExpr.getZSchText();
 		ZDeclList zList = zSchText.getZDeclList();

@@ -1,12 +1,7 @@
 package client.blogic.testing.ttree.visitors;
 
-import client.blogic.management.Controller;
-import client.blogic.management.ii.EventAdmin;
-import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.*;
-import client.presentation.ClientTextUI;
 import common.z.TClass;
-import common.z.czt.visitors.TClassNodeUnfolder;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 

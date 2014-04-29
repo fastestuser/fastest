@@ -21,8 +21,6 @@ public class Executer{
 				aux = br.readLine();
 			}
 
-
-
 			// We obtain the input stream
 			InputStream is2 = p.getInputStream();
 			BufferedReader br2 = new BufferedReader (new InputStreamReader (is2));

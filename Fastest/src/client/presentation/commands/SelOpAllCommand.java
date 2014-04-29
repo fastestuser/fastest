@@ -1,16 +1,9 @@
 package client.presentation.commands;
 
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.List;
-
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-
 import client.blogic.management.Controller;
-import client.blogic.testing.ttree.strategies.TTreeStrategy;
-import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
 
 

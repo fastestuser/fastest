@@ -641,7 +641,7 @@ public final class SpecUtils {
                         VarDecl newVarDecl = zFactory.createVarDecl(newList, type);
                         zList.add(newVarDecl);
                     }
-                    Decl elim = zList.remove(i);
+                    //Decl elim = zList.remove(i);
                     i--;
                 }
             }

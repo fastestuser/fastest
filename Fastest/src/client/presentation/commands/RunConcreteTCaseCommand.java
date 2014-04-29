@@ -1,26 +1,11 @@
 package client.presentation.commands;
 
-import java.io.*;
-import java.util.*;
-
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
-import compserver.abstraction.AbstractionUtils;
-import compserver.abstraction.AbstractionLaw;
 import client.blogic.management.ii.events.CTCaseRunRequested;
 import client.blogic.management.ii.EventAdmin;
-import client.blogic.testing.abstraction.AbstractionLawRepository;
-import common.repository.AbstractIterator;
-import common.z.SpecUtils;
-import common.fastest.FastestUtils;
-import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.ParaList;
-import net.sourceforge.czt.z.ast.ZParaList;
-import net.sourceforge.czt.z.ast.Sect;
-import net.sourceforge.czt.z.ast.ZSect;
 
 public class RunConcreteTCaseCommand implements Command{
     /**
@@ -31,9 +16,7 @@ public class RunConcreteTCaseCommand implements Command{
     @Override
     public void run(ClientTextUI clientTextUI, String args){
 	try{
-        PrintWriter stdout = clientTextUI.getOutput();
         Controller controller = clientTextUI.getMyController();
-	AbstractionLawRepository lawsRepository = AbstractionLawRepository.getInstance();
 	// Por ahora solo corre un caso por vez
 	String parts[] = args.split("[ ]+",2);
 	String ctcName = parts[0];

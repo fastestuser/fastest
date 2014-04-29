@@ -4,15 +4,12 @@ import java.util.*;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.SetExpr;
 import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.TupleExpr;
 import net.sourceforge.czt.z.ast.MemPred;
 import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.base.visitor.VisitorUtils;
 import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.z.visitor.MemPredVisitor;
 import net.sourceforge.czt.z.ast.ZExprList;
 import common.z.UtilSymbols;
-import common.z.SpecUtils;
 
 
 public class MemPredExtractor	
@@ -39,7 +36,7 @@ public class MemPredExtractor
 
 	public List<Term> visitTerm(Term term){
 	Object[] array = term.getChildren();
-	Boolean result = new Boolean(false);
+	//Boolean result = new Boolean(false);
 	Term auxTerm = null;
 	List<Term> termList = new ArrayList<Term>();
 	for (int i = 0; i < array.length; i++) {
@@ -56,7 +53,7 @@ public class MemPredExtractor
 	public List<Term> visitMemPred(MemPred memPred){
 		//System.out.println("Visitando la ApplExpr");
 		List<Term> termList = new ArrayList<Term>();
-		Expr leftExpr = memPred.getLeftExpr();
+		//Expr leftExpr = memPred.getLeftExpr();
 		Expr rightExpr = memPred.getRightExpr();
 		boolean isEquality = false;
 		if(rightExpr instanceof SetExpr){

@@ -31,7 +31,7 @@ public class PrePrunerVisitor implements TTreeVisitor<Boolean>{
      */
 	public Boolean visitTClassNode(TClassNode tClassNode){
                 TClass tClass = (TClass) tClassNode.getValue();
-                TClass tClass2 = (TClass) tClassNode.getUnfoldedValue();
+                //TClass tClass2 = (TClass) tClassNode.getUnfoldedValue();
 		if(PrePruner.isTClassEmpty(tClass)){
                     tClassNode.setPruned(true);
                     System.out.println("Test Objective "+ tClass.getSchName() +" pruned. Explicit contradiction found.");

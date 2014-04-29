@@ -26,7 +26,6 @@ import net.sourceforge.czt.z.ast.NegPred;
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.session.CommandException;
@@ -128,7 +127,7 @@ public class WEQTactic extends AbstractTactic {
         String valuesStr = parts[3].trim();
 
         ZLive zLive = UniqueZLive.getInstance();
-        TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+        //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
 
         String fileName = "WEQTactic.temp";
         File tempFile = null;
@@ -265,7 +264,7 @@ public class WEQTactic extends AbstractTactic {
                 printer.println(equalityStr);
                 printer.println("\\end{axdef}");
                 printer.flush();
-
+                printer.close();
                 Source source = new FileSource(fileName);
                 manager.put(new Key(fileName, Source.class), source);
 

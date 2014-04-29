@@ -1,7 +1,6 @@
 package client.presentation.commands;
 
 import java.io.*;
-import java.util.*;
 
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
@@ -40,8 +39,8 @@ public class SetCompilationCommand implements Command{
 		String workingDirectory = parts[3].substring(1,parts[3].length()-1);
 		//String compileOptions = parts[4].substring(1,parts[4].length()-1);
 		String compileOptions = "";
-		Controller controller = clientTextUI.getMyController();
-		CompilationInfo compilationInfo = new CompilationInfo(targetLanguaje, platform, compiler, compileOptions, workingDirectory);
+		//Controller controller = clientTextUI.getMyController();
+		//CompilationInfo compilationInfo = new CompilationInfo(targetLanguaje, platform, compiler, compileOptions, workingDirectory);
 		//controller.setCompilationInfo(compilationInfo);
 	}
 	catch(Exception e){

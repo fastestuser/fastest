@@ -8,7 +8,6 @@ import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.SchExprVisitor;
 import net.sourceforge.czt.z.visitor.Expr2Visitor;
 import client.blogic.management.Controller;
-import common.fastest.FastestUtils;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.ZSchText;
@@ -25,9 +24,7 @@ import net.sourceforge.czt.z.ast.DecorExpr;
 import net.sourceforge.czt.z.ast.InclDecl;
 import net.sourceforge.czt.z.ast.NameList;
 import net.sourceforge.czt.z.ast.VarDecl;
-import net.sourceforge.czt.z.ast.ZExprList;
 import net.sourceforge.czt.z.ast.ZFactory;
-import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.visitor.CompExprVisitor;
@@ -53,11 +50,11 @@ public class DeclsExtractorFull implements SchExprVisitor<ZDeclList>,
     // A reference to the current instance of Controller, which is used to
     // determine if a given schema reference correspond or not to a schema 
     // selected as operation or as predicate. 
-    private Controller controller;
+    //private Controller controller;
 
     public DeclsExtractorFull(ZParaList zParaList, Controller controller) {
         this.zParaList = zParaList;
-        this.controller = controller;
+        //this.controller = controller;
     }
     
     
@@ -110,8 +107,8 @@ public class DeclsExtractorFull implements SchExprVisitor<ZDeclList>,
                     InclDecl inclDecl = (InclDecl) decl;
                     Expr inclExpr = inclDecl.getExpr();
                     String inclName = "";
-                    boolean deltaOrXi = false;
-                    boolean primedInclusion = false;
+//                    boolean deltaOrXi = false;
+//                    boolean primedInclusion = false;
                     if (inclExpr instanceof RefExpr) {
                         inclName = ((RefExpr) inclExpr).getName().toString();
                         int firstCharCode = (int) inclName.charAt(0);
@@ -119,14 +116,14 @@ public class DeclsExtractorFull implements SchExprVisitor<ZDeclList>,
                         if (firstCharCode == 916 || firstCharCode == 926) {
                             // The schema is a Delta or a Xi
                             inclName = inclName.substring(1);
-                            deltaOrXi = true;
+                            //deltaOrXi = true;
                         }
                     } else if (inclExpr instanceof DecorExpr) {
                         inclName = ((RefExpr) ((DecorExpr) inclExpr).getExpr()).getName().toString();
-                        primedInclusion = true;
+                        //primedInclusion = true;
                     }
 
-                    boolean isOp = FastestUtils.isLoadedOperation(controller, inclName);
+                    //boolean isOp = FastestUtils.isLoadedOperation(controller, inclName);
 
 	                // The included AxPara A is a schema
 	                // which is not a selected operation
@@ -203,14 +200,14 @@ public class DeclsExtractorFull implements SchExprVisitor<ZDeclList>,
         String refExprName = refExpr.getZName().getWord().toString();
 
         int firstCharCode = (int) refExprName.charAt(0);
-        boolean deltaOrXi = false;
+        //boolean deltaOrXi = false;
         if (firstCharCode == 916 || firstCharCode == 926) {
             // The schema is a Delta or a Xi
             refExprName = refExprName.substring(1);
-            deltaOrXi = true;
+            //deltaOrXi = true;
         }
 
-        boolean isOp = FastestUtils.isLoadedOperation(controller, refExprName);
+        //boolean isOp = FastestUtils.isLoadedOperation(controller, refExprName);
 
         ZFactory zFactory = new ZFactoryImpl();
         ZDeclList zDeclList = zFactory.createZDeclList();

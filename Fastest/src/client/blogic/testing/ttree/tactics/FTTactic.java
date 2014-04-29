@@ -76,10 +76,6 @@ public class FTTactic extends AbstractTactic {
                 accept(new CZTCloner());
         List<TClass> tClassList = new ArrayList<TClass>();
 
-
-        List<AxPara> axParaList = new ArrayList<AxPara>();
-
-
         AxPara tClassAxPara = tClass.getMyAxPara();
         CZTCloner cloneVisitor = new CZTCloner();
 

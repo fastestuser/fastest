@@ -3,7 +3,6 @@ package client.presentation;
 import java.io.*;
 import java.util.*;
 import java.net.URL;
-
 import client.blogic.management.ii.EventAdmin;
 import client.presentation.commands.Command;
 import client.blogic.management.communic.CServersConfigLoader;

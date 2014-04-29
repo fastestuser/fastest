@@ -1,22 +1,15 @@
 package common.z.czt.visitors;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import net.sourceforge.czt.parser.circus.ParseUtils;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.InclDecl;
-import net.sourceforge.czt.z.ast.MemPred;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
-import net.sourceforge.czt.z.ast.ZExprList;
-import net.sourceforge.czt.z.ast.ZFactory;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;

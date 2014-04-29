@@ -6,7 +6,6 @@
 package client.blogic.testing.ttree.tactics;
 
 import net.sourceforge.czt.z.ast.SetExpr;
-import java.util.*;
 
 
 /**

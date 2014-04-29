@@ -161,7 +161,7 @@ public class PSSETactic extends AbstractTactic {
         AxPara opAxPara = (AxPara) originalOp.getMyAxPara();
 
         ZLive zLive = UniqueZLive.getInstance();
-        TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
+        //TextUI textUI = new TextUI(zLive, new PrintWriter(System.out, true));
 
         try {
             Term parsedTerm = ParseUtils.parsePred(new StringSource(args),

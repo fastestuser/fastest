@@ -8,8 +8,6 @@ import common.fastest.FastestUtils;
 import common.repository.AbstractRepository;
 import common.repository.AbstractIterator;
 import client.blogic.management.Controller;
-import client.blogic.management.ii.EventAdmin;
-import client.blogic.management.ii.events.TCaseGenerated;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.tactics.DNFTactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;

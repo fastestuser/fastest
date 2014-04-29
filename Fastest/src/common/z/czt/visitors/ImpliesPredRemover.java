@@ -1,6 +1,5 @@
 package common.z.czt.visitors;
 
-import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.ast.ImpliesPred;
 import net.sourceforge.czt.z.visitor.PredVisitor;

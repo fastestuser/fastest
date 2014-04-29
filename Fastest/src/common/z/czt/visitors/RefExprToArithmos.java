@@ -1,8 +1,5 @@
 package common.z.czt.visitors;
 
-import java.util.*;
-import java.io.*;
-
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.base.visitor.VisitorUtils;
 import net.sourceforge.czt.base.visitor.TermVisitor;
@@ -12,8 +9,6 @@ import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 
 import net.sourceforge.czt.z.ast.*;
-import net.sourceforge.czt.z.impl.*;
-
 import common.z.UtilSymbols;
 /**
  * An instance of this class allow the replacement of any RefExpr for a reference to 

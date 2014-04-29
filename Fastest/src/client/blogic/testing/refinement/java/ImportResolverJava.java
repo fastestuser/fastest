@@ -58,8 +58,7 @@ public final class ImportResolverJava extends ImportResolver{
 			String fileString = new Scanner(fileStream,"UTF-8").useDelimiter("\\A").next();
 			return fileString;
 		} catch (FileNotFoundException e) {
-			output.println("Warning: Class " + importPath.substring(0, importPath.length()-1) + " not found in path " + 
-					file.getAbsolutePath() /*+ "\nmaybe you should change uutpath: "*/ + path);
+			output.println("Warning: Class " + importPath + " not found in path " + file.getAbsolutePath());
 			return null;
 		}
 	}

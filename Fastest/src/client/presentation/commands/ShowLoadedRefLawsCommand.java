@@ -4,7 +4,6 @@ import java.io.*;
 
 import client.presentation.ClientTextUI;
 
-import java.util.Set;
 import java.util.Iterator;
 
 import client.blogic.management.Controller;
@@ -28,7 +27,7 @@ public class ShowLoadedRefLawsCommand implements Command{
             output.println("Invalid parameters.  Try 'help'.");
         }
         else{
-            Controller controller = clientTextUI.getMyController();
+            //Controller controller = clientTextUI.getMyController();
 
             RefinementRules refinementRules = RefinementRules.getInstance();
 
