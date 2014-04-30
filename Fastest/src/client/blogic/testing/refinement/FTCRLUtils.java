@@ -6,7 +6,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.swing.tree.DefaultMutableTreeNode;
+
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.BranchList;
 import net.sourceforge.czt.z.ast.ConstDecl;
@@ -57,7 +59,7 @@ public final class FTCRLUtils {
 	public static void setPrivateVars(LinkedList<String> privateVars) {
 		FTCRLUtils.privateVars = privateVars;
 	}
-	 
+
 	//Crea un map con los valores de las variables de Z, a partir del caso de prueba
 	public static HashMap<String, String> createZValuesMap(String tcase){
 
@@ -76,7 +78,7 @@ public final class FTCRLUtils {
 
 		//la ultima linea siempre es "\\end{schema}"
 		for (int i = 1; i < lineas.length -1; i++){
-			String[] reg = lineas[i].split("=");
+			String[] reg = lineas[i].split("=", 2);
 			map.put(reg[0], reg[1]);
 		}
 
@@ -194,7 +196,7 @@ public final class FTCRLUtils {
 		return false;
 	}
 
-	//Determina si es un tipo básico de Z
+	//Determina si es un tipo enumerado de Z
 	public static String isFreeType(String type) {
 		Controller controller = clientTextUI.getMyController();
 		List<String> basicTypeNames = controller.getBasicTypeNames();
@@ -236,7 +238,14 @@ public final class FTCRLUtils {
 		return "";
 	}
 
-	public static String getSchemaTypes(String schemaName){
+	//Determina si una expresion es la definicion de un schema Z
+	public static boolean isSchema(String exp) {
+		if (exp.startsWith("\\lblot") && exp.endsWith("\\rblot"))
+			return true;
+		return false;
+	}
+
+	public static HashMap<String, String> getSchemaTypes(String schemaName){
 		Controller controller = clientTextUI.getMyController();
 		Spec spec = controller.getUnfoldedSpec();
 		AxPara axPara = null;
@@ -249,17 +258,7 @@ public final class FTCRLUtils {
 			}
 		}
 		
-		HashMap<String, String> m = createZTypesMap(SpecUtils.termToLatex(axPara));
-		Iterator<String> it = m.keySet().iterator();
-		StringBuilder s = new StringBuilder("\\lblot ");
-		String nombre,tipo;
-		while(it.hasNext()){
-			nombre = it.next();
-			tipo = m.get(nombre);
-			s.append(nombre + ":" + tipo + ",");
-		}
-		
-		return s.subSequence(0, s.length()-1)+"\\rblot";
+		return createZTypesMap(SpecUtils.termToLatex(axPara));
 	}
 	
 	//Determina la clase en en el codigo que representa 'refS'
@@ -474,15 +473,15 @@ public final class FTCRLUtils {
 
 		String varName = FTCRLUtils.extractName(iName);
 		String atribute = FTCRLUtils.extractAtribute(iName);
-		
+
 		if (!ftcrl.uutArgs.contains(varName)) //Si es un atributo de la clase
 			varName = ftcrl.testingVar + "." + varName;
-		
+
 		//Primero busco por el nombre de la variable
 		SExpr ref = ftcrl.references.get(varName+atribute);
 		if ((ref != null) && (ref.exp.equals(value)))
 			return varName+atribute;
-		
+
 		else { //Si no esta, busco por los elementos de la variable
 
 			//Miro si la variable, es en realidad un atributo de la clase a testear
@@ -571,7 +570,7 @@ public final class FTCRLUtils {
 	//Metodo auxiliar para DotSetOper cuando se trabaja sobre conjuntos
 	public static String getDotSetElemFromSet(String setElem, String oper) {
 		String value = "";
-		
+
 		ExprIterator itElements = new common.util.ExprIterator(setElem);
 		if(oper.contains("DOM")){ //Operador DOM
 			value = itElements.next(1);
@@ -657,5 +656,27 @@ public final class FTCRLUtils {
 			elems += "," + itelem.next();
 
 		return new SExpr("\\{" + elems.substring(1) + "\\}", unionType);
+	}
+	public static SExpr convertSchemaToCross(SExpr zExpr) {
+		HashMap<String, String> schemaTypes = getSchemaTypes(zExpr.type);
+		String crossValue = "", crossType= "";
+		//Debo crear un cross product con el schema
+		String values[] = zExpr.exp.substring(6, zExpr.exp.indexOf("\\rblot")).split(",");
+		for (int i=0; i<values.length; i++){
+			String v[] = values[i].split("==",2);
+			crossValue += "," + v[1];
+			crossType += "\\cross" + schemaTypes.get(v[0]);
+		}
+		return new SExpr("("+crossValue.substring(1)+")", crossType.substring(6));
+	}
+
+	public static int getSchemaAtributePosition(String schemaType, String atribute) {
+		String atributes[] = schemaType.substring(6, schemaType.indexOf("\\rblot")).split(",");
+		for (int i=0; i<atributes.length; i++){
+			String t[] = atributes[i].split("==",2);
+			if (t[0].equals(atribute))
+				return i+1;
+		}
+		return 0;
 	}
 }

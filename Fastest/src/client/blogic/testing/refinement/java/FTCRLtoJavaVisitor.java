@@ -32,6 +32,7 @@ import client.blogic.testing.refinement.java.basicrefinement.FreeTypesRefinement
 import client.blogic.testing.refinement.java.basicrefinement.GivenTypeRefinement;
 import client.blogic.testing.refinement.java.basicrefinement.NumRefinement;
 import client.blogic.testing.refinement.java.basicrefinement.Refinement;
+import client.blogic.testing.refinement.java.basicrefinement.SchemaTypeRefinement;
 import client.blogic.testing.refinement.java.basicrefinement.SetRefinement;
 import client.blogic.testing.refinement.java.javaparser.FunAppExtractor;
 import client.blogic.testing.refinement.java.javaparser.Java7Lexer;
@@ -77,8 +78,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return null;
 
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting RefinementRule: " + ctx.getText());
 		}
 	}	
 
@@ -92,8 +95,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting Laws: " + ctx.getText());
 		}
 	}
 
@@ -105,8 +110,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting Law: " + ctx.getText());
 		}
 	}
 
@@ -128,8 +135,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			uutLine = line + ";";
 			return null;
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting Uut: " + ctx.getText());
 		}
 	}
 
@@ -152,8 +161,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting RefinementLaw: " + ctx.getText());
 		}
 	}
 
@@ -175,8 +186,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw e;
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting RefinementSentence: " + ctx.getText());
 		}
 	}
 
@@ -243,8 +256,11 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return r.varName;
+
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting Refinement: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting Refinement: " + ctx.getText());
 		}
 	}
 
@@ -409,7 +425,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 				} else if(FTCRLUtils.isSet(zExpr.type)){
 					new SetRefinement().refine(zExpr, "FILE", javaExpr, this);
-				
+
 				} else {
 					SExpr stringExpr = new SExpr("", "String");
 					String value = refineFromZToJava(zExpr, "BASIC", stringExpr);
@@ -419,8 +435,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting AsRefinement: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting AsRefinement: " + ctx.getText());
 		}
 	}
 
@@ -446,8 +464,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return visitFunAppExpr(ctx.funAppExpr(), replacement);
 			else
 				return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -464,8 +484,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -524,8 +546,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return new FunAppSExpr(fun, funAppType);
 
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting function aplication expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting function aplication expression: " + ctx.getText());
 		}
 	}
 
@@ -543,8 +567,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return visitZExprString(ctx.zExprString(),replacement);
 			else
 				return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -595,8 +621,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return FTCRLUtils.unionSet(a,b);
 			}
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting set expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting set expression: " + ctx.getText());
 		}
 	}
 
@@ -643,8 +671,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return new SExpr("0", "\\num");
 
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting numeric expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting numeric expression: " + ctx.getText());
 		}
 	}
 
@@ -661,8 +691,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			//No deberia devolver null
 			else
 				return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting name expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting name expression: " + ctx.getText());
 		}
 	}
 
@@ -769,16 +801,34 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return new SExpr("autofill", "FTCRLString");
 			}
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting string expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting string expression: " + ctx.getText());
 		}
 	}
 
 	//Este metodo permite visitar un DotSetOper para obtener su valor y su tipo.
 	//Se agrega el argumento SName, que se utilizará cuando haya más de un DotSetOper
 	//para llevar la cuenta de cuando hay que hacer el replace.
-	private SExpr visitDotSetOper(DotSetOperContext ctx, SExpr v) {
+	private SExpr visitDotSetOper(DotSetOperContext ctx, SExpr z) {
 		try{
+			String oper = ctx.getText();
+			int position = 0;
+			//"Clonamos"
+			SExpr v = new SExpr(z.exp, z.type);
+
+			//Si es un schema, lo transformamos en un cross
+			//y calculamos la posicion en la que se encuentra
+			//el elemento que se busca
+			if (FTCRLUtils.isSchema(v.exp)) {
+				if (ctx.sName()!=null){
+					String atribute = ctx.sName().getText();
+					position = FTCRLUtils.getSchemaAtributePosition(v.exp, atribute);
+				}
+				v = FTCRLUtils.convertSchemaToCross(v);
+			}
+
 			if (FTCRLUtils.isCrossProduct(v.type)) {
 				//si es una tupla con (,),
 				//le pongo corchetes para que sea conjunto y asi poder usar su ExprIterator
@@ -786,7 +836,6 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				v.exp = (v.exp.charAt(0)=='(')?"{"+v.exp.substring(1, v.exp.length()-1)+"}":v.exp;
 				ExprIterator itElements = new common.util.ExprIterator(v.exp);
 
-				String oper = ctx.getText();
 				if(oper.contains("DOM")){ //Operador DOM
 					String value = itElements.next();
 					String type = FTCRLUtils.getChildType(v.type, 0); //A \cross B --> A
@@ -804,7 +853,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 					String type = "\\num";
 					return new SExpr(value, type);
 				}
-				else if (ctx.digit() != null) { //Operador "."
+				else if (ctx.digit() != null) { //Operador "." con un numero
 					int atributeNumber = Integer.parseInt(ctx.digit().getText());
 					for (int i = 1; i < atributeNumber; i++)
 						itElements.next();
@@ -812,10 +861,16 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 					String type = FTCRLUtils.getChildType(v.type, atributeNumber-1);
 					return new SExpr(value, type);
 				}
+				else if (ctx.sName() != null) { //Operador "." con un nombre
+					for (int i = 1; i < position; i++)
+						itElements.next();
+					String value = itElements.next();
+					String type = FTCRLUtils.getChildType(v.type, position-1);
+					return new SExpr(value, type);
+				}
 			} else { //Es un conjunto
 
 				ExprIterator itElements = new common.util.ExprIterator(v.exp);
-				String oper = ctx.getText();
 				String returnValue = "";
 
 				//Si el operador es el de cardinalidad devolvemos la cardinalidad del conjunto
@@ -837,8 +892,10 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 			//si era un conjunto o una tupla devuelvo o un conjunto o un elemento
 			return null;
+		}catch (ParseCancellationException e) {
+			throw new ParseCancellationException("when visiting operation expression: " + ctx.getText() + "\n found " + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when visiting operation expression: " + ctx.getText());
 		}
 	}
 
@@ -894,6 +951,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			} else if (FTCRLUtils.isCrossProduct(zExpr.type)){
 				refinement = new CrossProductRefinement();
 
+			} else if (FTCRLUtils.isSchema(zExpr.exp)) {
+				refinement = new SchemaTypeRefinement();
+
 			} else if (zExpr instanceof FunAppSExpr){ //FTCRL function aplication
 				printAssignment(javaExpr.exp + " = " + zExpr.exp);
 				return "";
@@ -901,7 +961,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return refinement.refine(zExpr, toType, javaExpr, this);
 		}catch (Exception e) {
-			throw new ParseCancellationException(e);
+			throw new ParseCancellationException("when trying to refine " + zExpr.exp + " to " + javaExpr.exp);
 		}
 	}
 

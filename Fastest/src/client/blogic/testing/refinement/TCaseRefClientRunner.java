@@ -1,5 +1,7 @@
 package client.blogic.testing.refinement;
 
+import org.antlr.v4.runtime.misc.ParseCancellationException;
+
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import client.blogic.management.ii.EventAdmin;
@@ -46,7 +48,11 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setAsignaciones(refiner.getAssignements());
 			concreteTCase.setUutLine(refiner.getUutLine());
 			concreteTCase.setWarnings(refiner.getWarnings());
-		} catch (Exception e) {
+		}catch(IllegalArgumentException e){
+			System.out.println(e.getMessage());
+		}catch(ParseCancellationException e){
+			System.out.println("Error when trying to refine " + opName + ":\n found " + e.getMessage());
+		}catch (Exception e) {
 			System.out.println("Error when trying to refine " + opName + ".");
 		} finally {
 			try{
