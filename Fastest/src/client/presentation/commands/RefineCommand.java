@@ -123,6 +123,9 @@ public class RefineCommand implements Command {
 				}
 
 			}
+			catch(IllegalArgumentException e){
+				output.println(e.getMessage());
+			}
 			catch(Exception e){
 				e.printStackTrace();
 			}

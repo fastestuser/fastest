@@ -1,6 +1,7 @@
 package client.presentation.commands;
 
 import java.io.*;
+import java.text.ParseException;
 
 import org.antlr.v4.runtime.RecognitionException;
 
@@ -11,48 +12,38 @@ import client.blogic.testing.refinement.tcrlrules.TCRLFileParser;
 
 public class LoadRefinementRuleCommand implements Command{
 
-    /**
-     * Runs this command.
-     * @param clientTextUI
-     * @param args
-     */
-    @Override
+	/**
+	 * Runs this command.
+	 * @param clientTextUI
+	 * @param args
+	 */
+	@Override
 	public void run(ClientTextUI clientTextUI, String args){
 
 		PrintWriter output = clientTextUI.getOutput();
-
-		try{
-			if (args == null || "".equals(args)){
-			    output.println("Invalid parameters.  Try 'help'.");
-			    return;
-			}
-
-			final String parts[] = args.split(" ");
-
-			if (parts.length != 1){
-			    output.println("Invalid parameters.  Try 'help'.");
-			    return;
-			}
-
-			// We obtain the file from the path
-			
-			File refLawFile = new File(parts[0]);
-			if (!refLawFile.exists()){
-			    output.println("File " + parts[0] + " not found");
-			}
-			else{
-				// We parse the refinement law
-				FTCRLUtils.setClientUI(clientTextUI);
-				TCRLFileParser.parse(refLawFile);
-			}
+		if (args == null || "".equals(args)){
+			output.println("Invalid parameters.  Try 'help'.");
+			return;
 		}
-		catch(RecognitionException e){
-			output.println("The FTCRL file have syntax errors.");
-			output.println(e.getMessage());
+		final String parts[] = args.split(" ");
+		if (parts.length != 1){
+			output.println("Invalid parameters.  Try 'help'.");
+			return;
+		}
+		// We obtain the file from the path
+		File refLawFile = new File(parts[0]);
+		if (!refLawFile.exists())
+			output.println("File " + parts[0] + " not found");
+		try{
+			// We parse the refinement law
+			FTCRLUtils.setClientUI(clientTextUI);
+			TCRLFileParser.parse(refLawFile);
+
 		}
 		catch(Exception e){
-			output.println("The FTCRL file have syntax errors.");
-			e.printStackTrace(output);
+			output.println("The " + parts[0] + " file have syntax errors.");
+			output.println(e.getMessage());
+			//e.printStackTrace(output);
 		}
 	}
 }

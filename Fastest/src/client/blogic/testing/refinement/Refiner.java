@@ -9,9 +9,10 @@ public abstract class Refiner {
 	public abstract String getDeclarations();
 	public abstract String getUutLine();
 	public abstract String getWarnings();
-	public static Refiner getRefiner(String lenguaje){
-		if (lenguaje.equals(("Java")))
+	public static Refiner getRefiner(String lenguaje) throws IllegalArgumentException{
+		if (lenguaje.equalsIgnoreCase("java"))
 			return new RefinerJava();
-		return null;
+		else 
+			throw new IllegalArgumentException("Language " + lenguaje + " not supported.");
 	}
 }

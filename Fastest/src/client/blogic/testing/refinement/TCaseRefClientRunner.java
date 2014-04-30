@@ -50,9 +50,8 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setWarnings(refiner.getWarnings());
 		}catch(IllegalArgumentException e){
 			System.out.println(e.getMessage());
-		}catch(ParseCancellationException e){
-			System.out.println("Error when trying to refine " + opName + ":\n found " + e.getMessage());
-		}catch (Exception e) {
+		} catch (Exception e) {
+
 			System.out.println("Error when trying to refine " + opName + ".");
 		} finally {
 			try{

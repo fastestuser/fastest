@@ -2,6 +2,7 @@ package client.blogic.testing.refinement.tcrlrules;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Scanner;
@@ -72,54 +73,75 @@ public class TCRLFileParser {
 			rule.setTree(ruleContext);
 		}
 	}
-	
-	public static void parse(File refRuleFile) throws IOException{
-		FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
-		String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
-		refRuleFileStream.close();
-		RefinementRuleContext ruleContext;
-		RefinementRule rule;
-		RefinementRules rules = RefinementRules.getInstance();
-		String refRuleAux[],preamble, uut, epilogue,ruleString,rrule,plcode = "",laws;
-		String refRulesAux[] = refRulesString.split("@RRULE");
-		int cantHijos = refRulesAux.length;
-		for (int i = 1; i<cantHijos;i++){
 
-			refRuleAux = refRulesAux[i].split("@PREAMBLE",2);
-			rrule = refRuleAux[0];
+	public static void parse(File refRuleFile) throws Exception, IOException{
+		try{
+			FileInputStream refRuleFileStream = new FileInputStream(refRuleFile.getAbsolutePath());
+			String refRulesString = new Scanner(refRuleFileStream,"UTF-8").useDelimiter("\\A").next();
+			refRuleFileStream.close();
+			
+			RefinementRuleContext ruleContext;
+			RefinementRule rule;
+			RefinementRules rules = RefinementRules.getInstance();
+			String refRuleAux[],preamble, uut, epilogue,ruleString,rrule,plcode = "",laws;
+			String refRulesAux[] = refRulesString.split("@RRULE");
+			if (refRulesAux.length < 2) 
+				throw new Exception("Section @RRULE missing");
+			
+			int cantHijos = refRulesAux.length;
+			for (int i = 1; i<cantHijos;i++){
 
-			refRuleAux = refRuleAux[1].split("@LAWS",2);
-			preamble = refRuleAux[0];
+				refRuleAux = refRulesAux[i].split("@PREAMBLE",2);
+				if (refRuleAux.length < 2) 
+					throw new Exception("Section @PREAMBLE missing");
+				
+				rrule = refRuleAux[0];
 
-			refRuleAux = refRuleAux[1].split("@PLCODE",2);
-			if (refRuleAux.length == 2){ //tiene plcode
-				laws = refRuleAux[0];
-				refRuleAux = refRuleAux[1].split("@UUT");
-				plcode = refRuleAux[0].substring(1);
-			} else {
-				refRuleAux = refRuleAux[0].split("@UUT");
-				laws = refRuleAux[0];
-				plcode = "";
+				refRuleAux = refRuleAux[1].split("@LAWS",2);
+				if (refRuleAux.length < 2) 
+					throw new Exception("Section @LAWS missing");
+				
+				preamble = refRuleAux[0];
+
+				refRuleAux = refRuleAux[1].split("@PLCODE",2);
+				if (refRuleAux.length == 2){ //tiene plcode
+					laws = refRuleAux[0];
+					refRuleAux = refRuleAux[1].split("@UUT");
+					if (refRuleAux.length < 2) 
+						throw new Exception("Section @UUT missing");
+					plcode = refRuleAux[0].substring(1);
+				} else {
+					refRuleAux = refRuleAux[0].split("@UUT");
+					if (refRuleAux.length < 2) 
+						throw new Exception("Section @UUT missing");
+					laws = refRuleAux[0];
+					plcode = "";
+				}
+
+				refRuleAux = refRuleAux[1].split("@EPILOGUE",2);
+				if (refRuleAux.length == 2) //tiene epilogue
+					epilogue = refRuleAux[1];
+				else 
+					epilogue = "";
+
+				uut = refRuleAux[0];
+				ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+uut;
+				ruleContext = makeRuleContext(ruleString);	
+				rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
+				rules.addRule(ruleContext.name().getText(), rule);
 			}
-
-			refRuleAux = refRuleAux[1].split("@EPILOGUE",2);
-			if (refRuleAux.length == 2){ //tiene epilogue
-				epilogue = refRuleAux[1];
-			} else {
-				epilogue = "";
-			}
-
-			uut = refRuleAux[0];
-
-			ruleString = "@RRULE"+rrule+"@PREAMBLE\n@LAWS"+laws+"@UUT"+uut;
-			ruleContext = makeRuleContext(ruleString);	
-
-			rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
-			rules.addRule(ruleContext.name().getText(), rule);
-
-		}
+		
 		resolveLawsReferences();
 		resolvPreamble();
-	}
+		}
 		
+		catch (FileNotFoundException e){
+			throw new IOException("File " + refRuleFile.getAbsolutePath() + " not found");
+		}
+		catch (IOException e){
+			throw new IOException("Can't close " + refRuleFile.getAbsolutePath() + " file");
+		}
+
+	}
+
 }
