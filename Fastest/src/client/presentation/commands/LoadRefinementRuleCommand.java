@@ -37,6 +37,8 @@ public class LoadRefinementRuleCommand implements Command{
 			TCRLFileParser.parse(refLawFile);
 		}
 
+		catch(IOException e){
+		}
 		catch(Exception e){
 			output.println("The " + parts[0] + " file have syntax errors.");
 		}
