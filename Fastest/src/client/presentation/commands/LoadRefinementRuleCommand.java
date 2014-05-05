@@ -1,9 +1,6 @@
 package client.presentation.commands;
 
 import java.io.*;
-import java.text.ParseException;
-
-import org.antlr.v4.runtime.RecognitionException;
 
 import client.presentation.ClientTextUI;
 import client.blogic.testing.refinement.FTCRLUtils;
@@ -38,12 +35,10 @@ public class LoadRefinementRuleCommand implements Command{
 			// We parse the refinement law
 			FTCRLUtils.setClientUI(clientTextUI);
 			TCRLFileParser.parse(refLawFile);
-
 		}
+
 		catch(Exception e){
 			output.println("The " + parts[0] + " file have syntax errors.");
-			output.println(e.getMessage());
-			//e.printStackTrace(output);
 		}
 	}
 }

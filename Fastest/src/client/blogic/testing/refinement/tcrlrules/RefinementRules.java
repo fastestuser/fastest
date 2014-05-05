@@ -3,6 +3,7 @@ package client.blogic.testing.refinement.tcrlrules;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+
 import client.blogic.testing.refinement.FTCRLRefExtractorVisitor;
 
 
@@ -54,6 +55,10 @@ public final class RefinementRules {
 			visitor.visit(rule.getTree());
 			referencedVars = visitor.getReferencedVars();
 		}
+	}
+	public void deleteRule(String ruleName) {
+		rules.remove(ruleName);
+		
 	}
 	
 	

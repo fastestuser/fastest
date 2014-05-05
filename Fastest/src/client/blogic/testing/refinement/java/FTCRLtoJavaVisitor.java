@@ -258,9 +258,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			return r.varName;
 
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting Refinement: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting Refinement: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting Refinement: " + ctx.getText());
+			throw new ParseCancellationException("visiting Refinement: " + ctx.getText());
 		}
 	}
 
@@ -436,9 +436,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting AsRefinement: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting AsRefinement: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting AsRefinement: " + ctx.getText());
+			throw new ParseCancellationException("visiting AsRefinement: " + ctx.getText());
 		}
 	}
 
@@ -465,9 +465,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			else
 				return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -485,9 +485,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -547,9 +547,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			return new FunAppSExpr(fun, funAppType);
 
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting function aplication expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting function aplication expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting function aplication expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting function aplication expression: " + ctx.getText());
 		}
 	}
 
@@ -568,9 +568,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			else
 				return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting expression: " + ctx.getText());
 		}
 	}
 
@@ -622,9 +622,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting set expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting set expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting set expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting set expression: " + ctx.getText());
 		}
 	}
 
@@ -672,9 +672,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting numeric expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting numeric expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting numeric expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting numeric expression: " + ctx.getText());
 		}
 	}
 
@@ -690,11 +690,11 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				return new SExpr(zValuesMap.get(s), zTypesMap.get(s));
 			//No deberia devolver null
 			else
-				return null;
+				throw new ParseCancellationException("missing value: " + ctx.getText());
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting name expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting name expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting name expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting name expression: " + ctx.getText());
 		}
 	}
 
@@ -802,9 +802,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			}
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting string expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting string expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting string expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting string expression: " + ctx.getText());
 		}
 	}
 
@@ -893,9 +893,9 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			//si era un conjunto o una tupla devuelvo o un conjunto o un elemento
 			return null;
 		}catch (ParseCancellationException e) {
-			throw new ParseCancellationException("when visiting operation expression: " + ctx.getText() + "\n found " + e.getMessage());
+			throw new ParseCancellationException("visiting operation expression: " + ctx.getText() + "\n" + e.getMessage());
 		}catch (Exception e) {
-			throw new ParseCancellationException("when visiting operation expression: " + ctx.getText());
+			throw new ParseCancellationException("visiting operation expression: " + ctx.getText());
 		}
 	}
 

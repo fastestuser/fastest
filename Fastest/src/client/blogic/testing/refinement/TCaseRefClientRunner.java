@@ -1,7 +1,5 @@
 package client.blogic.testing.refinement;
 
-import org.antlr.v4.runtime.misc.ParseCancellationException;
-
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
 import client.blogic.management.ii.EventAdmin;
@@ -51,8 +49,7 @@ public class TCaseRefClientRunner implements Runnable {
 		}catch(IllegalArgumentException e){
 			System.out.println(e.getMessage());
 		} catch (Exception e) {
-
-			System.out.println("Error when trying to refine " + opName + ".");
+			System.out.println("Error when trying to refine " + opName + ":\n" + e.getMessage());
 		} finally {
 			try{
 				TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
