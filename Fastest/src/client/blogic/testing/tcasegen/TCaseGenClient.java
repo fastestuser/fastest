@@ -48,7 +48,6 @@ public class TCaseGenClient extends IIComponent {
 			TCaseRequested tCaseRequested = (TCaseRequested)event_;
 			String opName = tCaseRequested.getOpName();
 			TClass tClass = tCaseRequested.getTClass();
-
 			
 			String axDef = FastestUtils.allNonBasicAxDefReplaced(tClass.getMyAxPara(), myClientUI.getMyController());
 			if (axDef != null){

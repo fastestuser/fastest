@@ -35,7 +35,9 @@ public class EvalCommand implements Command {
     public void run(ClientTextUI clientTextUI, String args) {
         PrintWriter output = clientTextUI.getOutput();
         try {
-            
+
+        	//args = "\\begin{schema}{A}\\n a,a',x?:\\num \\n \\where \n? > 1 \\ \\n x? = 2 \\n \\end{schema}";
+        	
             if(args.equals("")){
                 output.println("Invalid parameters. Try 'help'.");
 		return;

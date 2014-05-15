@@ -7,6 +7,7 @@ import net.sourceforge.czt.z.ast.Spec;
 import client.blogic.management.ii.events.TCaseGenerated;
 import client.blogic.management.ii.EventAdmin;
 import common.z.AbstractTCase;
+import common.z.SpecUtils;
 import common.z.TClass;
 import compserver.tcasegen.strategies.TCaseStrategy;
 import compserver.tcasegen.strategies.AtomicPredTCaseStrategy;
@@ -76,7 +77,6 @@ public class TCaseGenClientRunner implements Runnable
 		int port = serverInfo.getPort();
 
 		AbstractTCase abstractTCase  = null;
-
 		if(inetAddress.isLoopbackAddress()){
 			// We call TCaseGen directly, and the the test case will be 
             		// generated, if possible, in the client

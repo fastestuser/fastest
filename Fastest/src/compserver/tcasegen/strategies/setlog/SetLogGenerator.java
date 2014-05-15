@@ -13,24 +13,24 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import client.blogic.management.Controller;
-import client.presentation.ClientUI;
-
+import common.repository.AbstractIterator;
 import compserver.tcasegen.strategies.setlog.setlogtoz.ZVarsFiller;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprLexer;
 import compserver.tcasegen.strategies.setlog.ztosetlog.ExprParser;
 
 public final class SetLogGenerator {
-	private static ExprParser parser;
-	private static HashMap<String,String> tipos;
-	private static HashMap<String, String> zNames;
-	private static HashMap<String, String> zVars;
-	private static ClientUI clientUI;
+	private  ExprParser parser;
+	private  HashMap<String,String> tipos;
+	private  HashMap<String, String> zNames;
+	private  HashMap<String, String> zVars;
 
-	public static HashMap<String, String> generate(String antlrInput, String setlogFile, int timeout, boolean printSetlog,ClientUI cUI){
+	public  HashMap<String, String> generate(String antlrInput, Controller controller){
 
-		clientUI = cUI;
+		int timeout = controller.getSetlogTimeout();
+		String setlogFile = controller.getSetlogFile();
+		boolean setlogPrint = controller.getSetlogPrint();
+		
 		String setLogInput;
-		Controller controller = clientUI.getMyController();
 		Map<String, List<String>> basicAxDef = controller.getBasicAxDefs();
 		try {
 			setLogInput = toSetLog(antlrInput,basicAxDef);
@@ -40,13 +40,22 @@ public final class SetLogGenerator {
 			return null;
 		}
 		
-		if (printSetlog) {
+		if (setlogPrint) {
 			System.out.println("---");
 			System.out.print("Translation to setlog:\n" + setLogInput.replace("&", "&\n"));
 			System.out.println("---\n");
 		}
 
+		//setLogInput = "STATUS = {normal,failure} & REVENT = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & dom(Tli,VAR0) & VAR0 = REVENT & dom(Tls,VAR1) & VAR1 = REVENT & dom(X,VAR2) & VAR2 = REVENT & NAT = int(0, 2147483647) & Now ein NAT & dom(Ot,VAR3) & dsubset(VAR3,REVENT) & SysState in STATUS & Fa ein NAT & E in REVENT & SysState = normal & E nin VAR3 & apply(Tli,E,VAR4) & VAR4 ein NAT & apply(Tls,E,VAR5) & VAR5 ein NAT & VAR6 = int(VAR4,VAR5) & Now ein VAR6 & apply(X,E,VAR7) & VAR7 ein NAT & VAR7 >= Fa & E = thrustDrop3E & Ot neq {} & {[E,Now]} neq {} & dinters(Ot,{[E,Now]},VAR8) & VAR8 = {} & Now = 4 & is_pfun(Tli) & is_pfun(Tls) & is_pfun(X) & is_pfun(Ot) & STATUS = {normal,failure} & REVENT = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & Tli = {[liftOff,_G1098],[thrustDrop1E,_G1147],[thrustDrop2E,_G1196],[thrustDrop3E,0]} & VAR0 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & Tls = {[liftOff,_G1371],[thrustDrop1E,_G1420],[thrustDrop2E,_G1469],[thrustDrop3E,4]} & VAR1 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & X = {[liftOff,_G1644],[thrustDrop1E,_G1693],[thrustDrop2E,_G1742],[thrustDrop3E,0]} & VAR2 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & NAT = int(0,2147483647) & Now = 4 & Ot = {[thrustDrop2E,_G2304]} & VAR3 = {thrustDrop2E} & SysState = normal & Fa = 0 & E = thrustDrop3E & VAR4 = 0 & VAR5 = 4 & VAR6 = int(0,4) & VAR7 = 0 & VAR8 = {} & STATUS = {normal,failure} & REVENT = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & Tli = {[liftOff,_G1098],[thrustDrop1E,_G1147],[thrustDrop2E,_G1196],[thrustDrop3E,0]} & "+
+//"VAR0 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & Tls = {[liftOff,_G1371],[thrustDrop1E,_G1420],[thrustDrop2E,_G1469],[thrustDrop3E,4]} & VAR1 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & X = {[liftOff,_G1644],[thrustDrop1E,_G1693],[thrustDrop2E,_G1742],[thrustDrop3E,0]} & VAR2 = {liftOff,thrustDrop1E,thrustDrop2E,thrustDrop3E} & NAT = int(0,2147483647) & Now = 4 & Ot = {[thrustDrop2E,_G2304]} & VAR3 = {thrustDrop2E} & SysState = normal & Fa = 0 & E = thrustDrop3E & VAR4 = 0 & VAR5 = 4 & VAR6 = int(0,4) & VAR7 = 0 & VAR8 = {} &";
+		
 		String setlogOutput = runSetLog(setLogInput, setlogFile, timeout);
+		
+		AbstractIterator<String> it = controller.getClassToTestRep().createIterator();
+		while(it.hasNext()){
+			System.out.println("****" + it.next());
+		}
+		
 
 		if (setlogOutput == null) //No se encontro caso
 			return null;
@@ -56,7 +65,6 @@ public final class SetLogGenerator {
 		zNames = SetLogUtils.invertHashMap(parser.getMemory());
 		tipos = parser.getTypes();
 		zVars = parser.getZVars();
-		//SetLogUtils.printHashMap(zVars);
 
 		ZVarsFiller zvf = new ZVarsFiller(zVars,tipos,zNames,setlogOutput);
 
@@ -71,8 +79,8 @@ public final class SetLogGenerator {
 
 		return zVars;
 	}
-
-	private static String toSetLog(String antlrInput,Map<String, List<String>> basicAxDef) throws Exception{
+	
+	private  String toSetLog(String antlrInput,Map<String, List<String>> basicAxDef) throws Exception{
 		ANTLRInputStream input = new ANTLRInputStream(antlrInput);
 		ExprLexer lexer = new ExprLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -82,7 +90,7 @@ public final class SetLogGenerator {
 		return parser.getSalida();
 	}
 
-	private static String runSetLog(String setLogInput, String setlogFile, int timeout){
+	private  String runSetLog(String setLogInput, String setlogFile, int timeout){
 		StringBuilder setlogOutput = new StringBuilder();
 		try{
 			String[] cmd = {"prolog" , "-q"};

@@ -1,10 +1,12 @@
 package common.z;
 
-import java.util.*;
+
+import java.util.List;
 
 import net.sourceforge.czt.util.Visitor;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Box;
+import net.sourceforge.czt.z.ast.PreExpr;
 import net.sourceforge.czt.z.ast.SchText;
 import net.sourceforge.czt.z.ast.ZSchText;
 import net.sourceforge.czt.z.ast.NameList;
@@ -21,6 +23,7 @@ public class TClassImpl implements TClass {
 
     private AxPara myAxPara;
     private String schName;
+    private List<PreExpr> inclPreds;
 
     public TClassImpl(AxPara axPara, String schName)
             throws IllegalArgumentException {
@@ -28,6 +31,18 @@ public class TClassImpl implements TClass {
         if (!isTClass(axPara)) {
             throw new IllegalArgumentException();
         } else {
+            setMyAxPara(axPara);
+            this.schName = schName;
+            SpecUtils.setAxParaName(axPara, schName);
+        }
+    }
+    public TClassImpl(AxPara axPara, String schName,List<PreExpr> inclPreds)
+            throws IllegalArgumentException {
+
+        if (!isTClass(axPara)) {
+            throw new IllegalArgumentException();
+        } else {
+        	this.inclPreds = inclPreds;
             setMyAxPara(axPara);
             this.schName = schName;
             SpecUtils.setAxParaName(axPara, schName);
@@ -118,4 +133,14 @@ public class TClassImpl implements TClass {
     public AxPara clone() {
         return new TClassImpl((AxPara) myAxPara.accept(new CZTCloner()), schName);
     }
+
+	@Override
+	public List<PreExpr> getInclPreds() {
+		// TODO Auto-generated method stub
+		return inclPreds;
+	}
+
+	public void setInclPreds(List<PreExpr> inclPreds) {
+		this.inclPreds = inclPreds;
+	}
 }

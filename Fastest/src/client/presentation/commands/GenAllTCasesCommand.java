@@ -3,6 +3,8 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import net.sourceforge.czt.z.ast.PreExpr;
+import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.ZDeclList;
 
 import client.presentation.ClientTextUI;
@@ -18,6 +20,7 @@ import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.SpecUtils;
 import common.z.TClass;
+import common.z.czt.visitors.PreExprExtractor;
 import common.z.czt.visitors.TClassNodeUnfolder;
 
 /**
@@ -66,18 +69,36 @@ public class GenAllTCasesCommand implements Command {
 				// except for those leaves that are descendants of pruned test classes.
 				AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
 				AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
+				
+				
+				
+				TClassNode tClassNode;
+				Pred pred;
+				PreExprExtractor preExtractor;
+				List<PreExpr> preds;
+				TClassNodeUnfolder tClassNodeUnfolder;
+				TCaseRequested tCaseRequested;
 				while (tClassNodeIt.hasNext()) {
-					TClassNode tClassNode = tClassNodeIt.next();
-					TClassNodeUnfolder tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
+					tClassNode = tClassNodeIt.next();
+					
+					//obtengo los \pre ? del esquema
+					pred = SpecUtils.getAxParaPred(tClassNode.getValue().getMyAxPara());
+					preExtractor = new PreExprExtractor();
+					pred.accept(preExtractor);
+					preds = preExtractor.getPreds();
+					
+			        
+					tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
 					tClassNode.acceptVisitor(tClassNodeUnfolder);
 					TClass tClass = tClassNodeUnfolder.getTClassUnfolded();
-
 					if (someEventAnnounced == false) {
 						Calendar cal = Calendar.getInstance();
 						controller.setInicio(cal.getTimeInMillis());
 					}
 					someEventAnnounced = true;
-					TCaseRequested tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
+					
+					tClass.setInclPreds(preds);
+					tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
 					eventAdmin.announceEvent(tCaseRequested);
 				}
 
