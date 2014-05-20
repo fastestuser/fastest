@@ -1,5 +1,9 @@
 package common.z.czt.visitors;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.Expr;
@@ -28,7 +32,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	private String schName;
 	private Controller controller;
 	private TClassNode root;
-	
+	private int MAXINCLDECL = 20;
 		
 	public TClassNodeUnfolder(TClassNode tClassNode, Controller controller){
 		 predUnfolded = null;
@@ -62,7 +66,10 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 			root = tClassNode;
 			AxPara axPara = tClassNode.getValue().getMyAxPara();
 			ZDeclList zDeclList = (ZDeclList) SpecUtils.getAxParaListOfDecl(axPara); 
+			ZDeclList zDeclListAux = (new ZFactoryImpl()).createZDeclList();
 	        int declListSize = zDeclList.size();
+	        List<Integer> js = new ArrayList<Integer>();
+	        int i = 0;
 	        for (int j = 0; j < declListSize; j++) {
 	            Decl decl = zDeclList.get(j);
 	            
@@ -84,10 +91,10 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	                                ParaList paraList = ((ZSect) sect).getParaList();
 	                                if (paraList instanceof ZParaList) {
 	                                    DeclsExtractorFull declsExtractor = new DeclsExtractorFull((ZParaList) paraList, controller);
-	                                    zDeclList.remove(j); //Borramos el Decl que expandido
-	                                    j--;
-	                                    declListSize = zDeclList.size();
-	                                    SpecUtils.insertZDeclList(zDeclList, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
+	                                    //zDeclList.remove(j); //Borramos el Decl que expandido
+	                                    js.add(j-i);i++;
+	                                    //declListSize = zDeclList.size();
+	                                    SpecUtils.insertZDeclList(zDeclListAux, includedRoot.getValue().getMyAxPara().accept(declsExtractor), 0);
 	                                }
 	                            }
 	                        }
@@ -95,7 +102,12 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
 	                }
 	            }
 	        }
-	     
+	        
+	        
+	        
+	        for(int j:js)
+	            zDeclList.remove(j);
+	        SpecUtils.insertZDeclList(zDeclList,zDeclListAux,0);
             return tClassNode;
 		}
 		

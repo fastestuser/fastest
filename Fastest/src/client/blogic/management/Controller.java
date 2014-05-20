@@ -560,11 +560,12 @@ public final class Controller extends IIComponent {
 			if (abstractTCase == null) {
 				System.out.println(tClassName + " test case generation -> FAILED.");
 
-			} else if (abstractTCase != null && abstractTCase.getMyAxPara() == null) { //El nodo debe ser pruneado
-				//	System.out.println(tClassName + " test case generation -> FAILED "
-				//			+ "(without performing all the possible evaluations)");
-
+			} else if (abstractTCase.getMyAxPara() == null || !abstractTCase.getInclsNotIntegrated().isEmpty()) { //El nodo debe ser pruneado
+				
 				System.out.println(tClassName + " test case generation -> PRUNED.");
+				if (!abstractTCase.getInclsNotIntegrated().isEmpty())
+					System.out.println(tClassName + " culdn't integrate with " + abstractTCase.getInclsNotIntegrated());
+				
 				TTreeNode tClassNode = FastestUtils.getTTreeNode(this, tClassName);
 				TClassNode dadNode = tClassNode.getDadNode();
 				if (dadNode != null) { //Si no es el VIS pruneamos el nodo
@@ -608,7 +609,6 @@ public final class Controller extends IIComponent {
 				}
 
 			} else {
-				//String schName = abstractTCase.getSchName();
 				System.out.println(tClassName + " test case generation -> SUCCESS.");
 				TClassNode tClassNode = opTTreeMap.get(opName);
 				Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));

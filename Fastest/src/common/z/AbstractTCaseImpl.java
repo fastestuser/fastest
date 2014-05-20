@@ -4,6 +4,7 @@ import java.util.*;
 
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.AxPara;
+import net.sourceforge.czt.z.ast.PreExpr;
 import net.sourceforge.czt.z.ast.SchText;
 import net.sourceforge.czt.z.ast.ZSchText;
 import net.sourceforge.czt.z.ast.NameList;
@@ -28,7 +29,8 @@ public class AbstractTCaseImpl implements AbstractTCase{
 	
 	private AxPara myAxPara;
 	private String schName;
-
+	private List<String> inclsNotIntegrated;
+	
 	public AbstractTCaseImpl(AxPara axPara, String schName){
             setMyAxPara(axPara);
             this.schName = schName;
@@ -152,6 +154,43 @@ public class AbstractTCaseImpl implements AbstractTCase{
 	public AxPara clone(){
 		return new AbstractTCaseImpl((AxPara)myAxPara.accept(new CZTCloner()), schName);
 	}
+
+
+	@Override
+	public List<PreExpr> getInclPreds() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void setInclPreds(List<PreExpr> preds) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void setInclsNotIntegrated(List<String> incls) {
+		inclsNotIntegrated = incls;
+		
+	}
+
+
+	@Override
+	public String getInclsNotIntegrated() {
+		if (inclsNotIntegrated == null || inclsNotIntegrated.isEmpty())
+			return "";
+		StringBuilder incls = new StringBuilder();
+		for(String incl : inclsNotIntegrated)
+			incls.append(incl+ "; ");
+		return incls.toString();
+	}
+
+
+
+
+
 
 }
 

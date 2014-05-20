@@ -1,45 +1,37 @@
 package compserver.tcasegen.strategies;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
+import client.blogic.testing.ttree.visitors.TClassNodeFinder;
 import client.presentation.ClientUI;
+import client.presentation.ClientTextUI;
 import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.StringSource;
-import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.Decl;
 import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
 import net.sourceforge.czt.z.ast.FreetypeList;
-import net.sourceforge.czt.z.ast.NameList;
 import net.sourceforge.czt.z.ast.ParaList;
 import net.sourceforge.czt.z.ast.PreExpr;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.SchExpr;
 import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.VarDecl;
-import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-import net.sourceforge.czt.z.impl.ZNameListImpl;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.AbstractTCase;
@@ -65,45 +57,34 @@ public final class SetLogStrategy implements TCaseStrategy{
 	}
 
 	public AbstractTCase generateAbstractTCase(Spec spec, TClass tClass)  {
-
-		Controller controller = clientUI.getMyController();
-		String tClassName = tClass.getSchName();
-		System.out.println("Trying to generate a test case for the class: " + tClassName);
-
-		//agregamos los esquemas y tipos necesarios a la clase para que pueda generar el caso
-		//System.out.println(SpecUtils.termToLatex(tClass.getMyAxPara()));
-		String antlrInput = buildCompleteInput(tClass,controller);
-		//System.out.println(antlrInput);
-		//Generamos el caso de prueba
-		//String  antlrInput2 = "\\begin{schemaType}{K}\\\\ \n k : \\num \n \\end{schemaType} "+ 
-		//" \n \\begin{schema}{F\\_ DNF\\_ 1}\\\\ \n g : \\num  \n \\where \n  g =~\\negate 2147483648 \\\\ \n g > 1 \n \\end{schema}";
-		HashMap<String, String> zVars = (new SetLogGenerator()).generate(antlrInput, controller);
-		
+		((ClientTextUI)clientUI).getOutput().println("Trying to generate a test case for the class: " + tClass.getSchName());
+		return generarCaso(tClass);
+	}
+	private AbstractTCase generarCaso(TClass tClass){
+		String antlrInput = buildCompleteInput(tClass);
+		HashMap<String, String> zVars = (new SetLogGenerator()).generate(antlrInput,clientUI.getMyController());
 		AbstractTCase abstractTCase;
 		if (zVars == null) //No encontro caso
 			return null;
-		else if (zVars.isEmpty()) { //No hay caso de prueba, dio False {log}
+		else if (zVars.isEmpty()) { //No existe caso de prueba, dio False {log}
 			abstractTCase = new AbstractTCaseImpl(null, tClass.getSchName());
 			return abstractTCase;
 		}
-		
-		
-		abstractTCase = buildTCase(zVars,tClass);
-//		if (!integrate(tClass,abstractTCase))
-//			return null;
-		
+		abstractTCase = buildTCase(zVars,tClass);//crea caso con las zvars generadas
+		integrate(tClass,abstractTCase);//integra el caso si tiene incls
 		return abstractTCase;
 	}
 	
+	
 	//supongamos A == B \land C entonces una clase de prueba de A es
 	// A==[decl|\pre B \land \pre C]
-	private boolean integrate(TClass tClass, AbstractTCase abstractTCase){
+	private void integrate(TClass tClass, AbstractTCase abstractTCase){
 		if (abstractTCase==null || abstractTCase.getMyAxPara() == null)
-			return false;
+			return;
 		List<PreExpr> inclPreds = tClass.getInclPreds();
 		if (inclPreds == null || inclPreds.isEmpty())
-			return true;
-		int integracion = inclPreds.size(); //para saber si se integra con almenos un caso de C y B
+			return;
+		List<String> inclsNotIntegrated = new LinkedList<String>();
 		Iterator<PreExpr> it = inclPreds.iterator();
 		PreExpr pre;
 		String opName; //nombre de la operacion incluida como \pre B
@@ -111,38 +92,36 @@ public final class SetLogStrategy implements TCaseStrategy{
 		TClassNode vis,tClassNode;
 		AbstractRepository<TClassNode> tClassNodeLeaves;
 		AbstractIterator<TClassNode> tClassNodeIt;
-		//declaracion de A
-		DeclList declList = SpecUtils.getAxParaListOfDecl(tClass.getMyAxPara()); 
+		DeclList declList = SpecUtils.getAxParaListOfDecl(tClass.getMyAxPara()); //declaracion de A
 		Pred classPred,casePred; //predicado B
 		AxPara axPara;
 		casePred = SpecUtils.getAxParaPred(abstractTCase.getMyAxPara()); //predicado del caso de A
 		AbstractTCase newAbstractTCase;
-		//iteramos sobre los esuqemas incluidos (B y C)
-		while (it.hasNext()){
+		while (it.hasNext()){ //iteramos sobre los esuqemas incluidos (B y C)
 			pre = it.next();
-			opName = SpecUtils.termToLatex(pre.getExpr()) ;
+			opName = SpecUtils.termToLatex(pre.getExpr());
+			inclsNotIntegrated.add(opName); //por defecto no integra
 			vis = opTTreeMap.get(opName);
-			tClassNodeLeaves = vis.acceptVisitor(new TClassNodeLeavesFinder());
+			tClassNodeLeaves = vis.acceptVisitor(new TClassNodeFinder());
 			tClassNodeIt = tClassNodeLeaves.createIterator();
-			while (tClassNodeIt.hasNext()) {
-				//obtenemos una clase de preuba de B
-				tClassNode = tClassNodeIt.next();
+			while (tClassNodeIt.hasNext()) { //iteramos sobre cada clase de B o C
+				tClassNode = tClassNodeIt.next(); //obtenemos una clase de preuba de B
 				//obtenemos las preciondiciones de B
 				classPred = SpecUtils.getAxParaPred(tClassNode.getValue().getMyAxPara());
 				//creamos la clase de prueba nueva a testear
 				axPara = SpecUtils.createAxPara(declList,SpecUtils.andPreds(casePred, classPred));
-				System.out.println("clase+caso:" + SpecUtils.termToLatex(axPara));
+				//System.out.println("clase+caso:" + SpecUtils.termToLatex(axPara));
 				//testeamos si el caso de A anda con el predicado de B
-				newAbstractTCase = generateAbstractTCase(this.spec,new TClassImpl(axPara,tClass.getSchName()));
-				if (newAbstractTCase!=null || newAbstractTCase.getMyAxPara() != null){
-					integracion--;
-					break;
+				newAbstractTCase = generarCaso(new TClassImpl(axPara,tClass.getSchName()));
+				if (newAbstractTCase!=null && newAbstractTCase.getMyAxPara() != null 
+						&& newAbstractTCase.getInclsNotIntegrated().isEmpty()){
+					inclsNotIntegrated.remove(opName); //sacamos de las ops con la que no puede integrar el caso
+					break; //para esta operacion(B o C) ya integró
 				}
 			}
 		}
-		if (integracion>0)
-			return false;
-		return true;
+		abstractTCase.setInclsNotIntegrated(inclsNotIntegrated);
+		return; 
 	}
 
 	private AbstractTCase buildTCase(HashMap<String, String> zVars, TClass tClass){
@@ -179,10 +158,10 @@ public final class SetLogStrategy implements TCaseStrategy{
 	
 	//se agregan las decl incluidas, y decl necesarias de toda la especificacion para que el 
 	//caso se genere.
-	private String buildCompleteInput(TClass tClass, Controller controller ){
-		List<FreePara> freeParas = controller.getFreeParas();
-		List<String> basicTypeNames = controller.getBasicTypeNames();
-		Spec spec = controller.getOriginalSpec();
+	private String buildCompleteInput(TClass tClass){
+		List<FreePara> freeParas = clientUI.getMyController().getFreeParas();
+		List<String> basicTypeNames = clientUI.getMyController().getBasicTypeNames();
+		Spec spec = clientUI.getMyController().getOriginalSpec();
 		//Buscamos los tipos que aparecen en tClass, para incluir
 		//su informacion en la entrada del parser
 		StringBuilder schemas = new StringBuilder();

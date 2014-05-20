@@ -1,17 +1,16 @@
 package client.blogic.testing.ttree.visitors;
 
-import client.blogic.testing.ttree.*;
+import client.blogic.testing.ttree.TCaseNode;
+import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.TTreeNode;
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
 import common.repository.AbstractIterator;
-
-
 /**
  * Instances of this class make possible the traversal over a test tree to 
- * obtain those TClassNode that are leaves of the test tree (si la clase tiene un caso, entonces 
- * no es hoja).
+ * obtain those TClassNode that are leaves of the test tree (si la clase tiene un caso, no importa) 
  */
-public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<TClassNode>>{
+public class TClassNodeFinder implements TTreeVisitor<AbstractRepository<TClassNode>>{
 
     /**
      * Visit the specified instance of TClassNode and returns the TClassNodes of
@@ -35,9 +34,6 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
 	        TTreeNode tTreeNode = childrenIt.next();
 	        if(tTreeNode instanceof TClassNode && !((TClassNode) tTreeNode).isPruned()){
 	                isALeaf = false;
-	        }
-	        else if(tTreeNode instanceof TCaseNode){
-	            isALeaf = false;
 	        }
 	        
 	        //if (!isALeaf){
