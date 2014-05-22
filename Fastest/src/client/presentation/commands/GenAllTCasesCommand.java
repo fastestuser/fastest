@@ -16,6 +16,7 @@ import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
+import client.blogic.testing.ttree.visitors.TTReePreExprFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.SpecUtils;
@@ -65,28 +66,18 @@ public class GenAllTCasesCommand implements Command {
 				TClassNode opTTreeRoot = mapEntry.getValue();
 
 
+				//llenamos los incl de los tClass, para la integracino
+				opTTreeRoot.acceptVisitor(new TTReePreExprFinder());
 				// Extracts all the TCLassNodes that are leaves of the tClassNode test tree
 				// except for those leaves that are descendants of pruned test classes.
 				AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
 				AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
 				
-				
-				
 				TClassNode tClassNode;
-				Pred pred;
-				PreExprExtractor preExtractor;
-				List<PreExpr> preds;
 				TClassNodeUnfolder tClassNodeUnfolder;
 				TCaseRequested tCaseRequested;
 				while (tClassNodeIt.hasNext()) {
 					tClassNode = tClassNodeIt.next();
-					
-					//obtengo los \pre ? del esquema
-					pred = SpecUtils.getAxParaPred(tClassNode.getValue().getMyAxPara());
-					preExtractor = new PreExprExtractor();
-					pred.accept(preExtractor);
-					preds = preExtractor.getPreds();
-					
 			        
 					tClassNodeUnfolder = new TClassNodeUnfolder(tClassNode, controller);
 					tClassNode.acceptVisitor(tClassNodeUnfolder);
@@ -97,7 +88,6 @@ public class GenAllTCasesCommand implements Command {
 					}
 					someEventAnnounced = true;
 					
-					tClass.setInclPreds(preds);
 					tCaseRequested = new TCaseRequested(opName, tClass, maxEval);
 					eventAdmin.announceEvent(tCaseRequested);
 				}
