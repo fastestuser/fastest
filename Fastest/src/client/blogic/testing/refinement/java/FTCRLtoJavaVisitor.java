@@ -1018,6 +1018,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 	//en base a su tipo
 	private String declarationValue(String varType) {
 
+		if (varType.startsWith("List"))
+			return " = new " + varType.replaceFirst("List", "LinkedList") + "()";
 		if (!varType.equals("int")          &&
 				!varType.equals("short")    &&
 				!varType.equals("long")     &&
