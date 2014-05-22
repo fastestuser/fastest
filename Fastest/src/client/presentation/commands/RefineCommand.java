@@ -69,6 +69,10 @@ public class RefineCommand implements Command {
 					TClassNode opTTreeRoot = opTTreeMap.get(opName);
 					tcaMap = opTTreeRoot.acceptVisitor(new TCaseNodeFinder());
 				}
+				if (tcaMap.isEmpty()){
+					output.println("'" + opName + "' doesn't have Test Cases asociated."); 
+					return;
+				}
 				//If not, we check if name is the name of an abstract test case or a name of a ttree node
 				if(!isOp){
 					Iterator<TClassNode> it = opTTreeMap.values().iterator();
@@ -112,8 +116,8 @@ public class RefineCommand implements Command {
 				
 				//se resuelven los import con el uutPath
 				String preamble = refRules.getRule(refRuleName).getPreamble();
-				preamble = ImportResolver.getResolver(targetLanguaje).resolver(preamble, pathUUT,output);
-				refRules.getRule(refRuleName).setPreamble(preamble);
+				String unfoldedPreamble = ImportResolver.getResolver(targetLanguaje).resolver(preamble, pathUUT,output);
+				refRules.getRule(refRuleName).setUnfoldedPreamble(unfoldedPreamble);
 				
 				FTCRLUtils.setRule(refRules.getRule(refRuleName));
 				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl,targetLanguaje));

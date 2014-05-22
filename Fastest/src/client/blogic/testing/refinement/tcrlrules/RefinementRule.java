@@ -5,6 +5,7 @@ import client.blogic.testing.refinement.FTCRLParser.RefinementRuleContext;
 public class RefinementRule {
 	private RefinementRuleContext tree;
 	private String preamble;
+	private String unfoldedPreamble;
 	private String epilogue;
 	private String plcode;
 	
@@ -42,6 +43,14 @@ public class RefinementRule {
 
 	public void setPlcode(String plcode) {
 		this.plcode = plcode;
+	}
+
+	public String getUnfoldedPreamble() {
+		return unfoldedPreamble;
+	}
+
+	public void setUnfoldedPreamble(String unfoldedPreamble) {
+		this.unfoldedPreamble = unfoldedPreamble;
 	}
 	
 	
