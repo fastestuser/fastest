@@ -123,7 +123,9 @@ public final class ImportResolverJava extends ImportResolver{
 		imports = new StringBuilder();
 		path = uutPath.charAt(uutPath.length()-1)=='/'?uutPath:uutPath+"/";
 		output = out;
-		String s = resolverCodigo("preamble",preamble);
+				
+		//se le agrega *; al preamble para que importe por default las clases del paquete actual
+		String s = resolverCodigo("preamble","import *;" + preamble);
 		return new String(imports.toString() +"\n" + s);
 	}
 }

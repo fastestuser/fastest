@@ -69,7 +69,7 @@ public class RefineCommand implements Command {
 					TClassNode opTTreeRoot = opTTreeMap.get(opName);
 					tcaMap = opTTreeRoot.acceptVisitor(new TCaseNodeFinder());
 				}
-				if (tcaMap.isEmpty()){
+				if ((tcaMap!=null) && (tcaMap.isEmpty())){
 					output.println("'" + opName + "' doesn't have Test Cases asociated."); 
 					return;
 				}

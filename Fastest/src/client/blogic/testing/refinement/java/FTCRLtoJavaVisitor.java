@@ -52,7 +52,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			referencedVars = RefinementRules.getInstance().getReferencedVars();
 
 			//Cargamos el codigo java para obtener los tipos de las variables
-			extractJavaTypes(FTCRLUtils.getRule().getPreamble());
+			extractJavaTypes(FTCRLUtils.getRule().getUnfoldedPreamble());
 
 			//Obtenemos en nombre del modulo del UUT
 			UutContext uut = ctx.uut();
