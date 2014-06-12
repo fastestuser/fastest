@@ -40,6 +40,7 @@ import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
 import common.z.czt.UniqueZLive;
+import common.z.czt.visitors.PreExprExtractor;
 import common.z.czt.visitors.TypesExtractor;
 import compserver.tcasegen.strategies.setlog.*;
 
@@ -93,7 +94,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 		AbstractRepository<TClassNode> tClassNodeLeaves;
 		AbstractIterator<TClassNode> tClassNodeIt;
 		DeclList declList = SpecUtils.getAxParaListOfDecl(tClass.getMyAxPara()); //declaracion de A
-		Pred classPred,casePred; //predicado B
+		Pred classPred,casePred,newPred; //predicado B
 		AxPara axPara;
 		casePred = SpecUtils.getAxParaPred(abstractTCase.getMyAxPara()); //predicado del caso de A
 		AbstractTCase newAbstractTCase;
@@ -110,12 +111,19 @@ public final class SetLogStrategy implements TCaseStrategy{
 				classPred = SpecUtils.getAxParaPred(tClassNode.getValue().getMyAxPara());
 				//creamos la clase de prueba nueva a testear
 				axPara = SpecUtils.createAxPara(declList,SpecUtils.andPreds(casePred, classPred));
+				
+				PreExprExtractor preExtractor = new PreExprExtractor();
+				newPred = SpecUtils.getAxParaPred(axPara);
+				newPred.accept(preExtractor);
 				//System.out.println("clase+caso:" + SpecUtils.termToLatex(axPara));
 				//testeamos si el caso de A anda con el predicado de B
-				newAbstractTCase = generarCaso(new TClassImpl(axPara,tClass.getSchName()));
+				TClass tclasn = new TClassImpl(axPara,tClass.getSchName());
+				tclasn.setInclPreds(preExtractor.getPreds());
+				newAbstractTCase = generarCaso(tclasn);
 				if (newAbstractTCase!=null && newAbstractTCase.getMyAxPara() != null 
 						&& newAbstractTCase.getInclsNotIntegrated().isEmpty()){
 					inclsNotIntegrated.remove(opName); //sacamos de las ops con la que no puede integrar el caso
+					System.out.println("clase+caso: " + tClassNode.getValue().getSchName() +"   "+ tClass.getSchName());
 					break; //para esta operacion(B o C) ya integró
 				}
 			}
