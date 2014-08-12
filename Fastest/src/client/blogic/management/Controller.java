@@ -1,43 +1,71 @@
 package client.blogic.management;
 
-import java.util.concurrent.locks.*;
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
-import net.sourceforge.czt.z.ast.FreePara;
-import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.session.SectionManager;
+import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
-import client.presentation.ClientUI;
-import client.presentation.ClientTextUI;    
-import client.blogic.testing.refinement.ConcreteTCase;
-import client.blogic.management.ii.events.*;
+import nlg.designation.DesignationRepo;
+import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
-import client.blogic.testing.ttree.tactics.Tactic;
-import client.blogic.testing.ttree.strategies.TTreeStrategy;
+import client.blogic.management.ii.events.AllTCasesGenerated;
+import client.blogic.management.ii.events.AllTCasesRequested;
+import client.blogic.management.ii.events.AllTTreesGenerated;
+import client.blogic.management.ii.events.Event_;
+import client.blogic.management.ii.events.FastestResetted;
+import client.blogic.management.ii.events.NotTClassLeavesFounded;
+import client.blogic.management.ii.events.PruneTClassRequested;
+import client.blogic.management.ii.events.PruneTTreeRequested;
+import client.blogic.management.ii.events.PrunningResult;
+import client.blogic.management.ii.events.RefLawSelected;
+import client.blogic.management.ii.events.RefineAbsTCasesRequested;
+import client.blogic.management.ii.events.RunFinished;
+import client.blogic.management.ii.events.TCaseGenerated;
+import client.blogic.management.ii.events.TCaseRefineRequested;
+import client.blogic.management.ii.events.TCaseRefined;
+import client.blogic.management.ii.events.TCaseRequested;
+import client.blogic.management.ii.events.TTreeGenerated;
+import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
+import client.blogic.testing.ttree.strategies.TTreeStrategy;
+import client.blogic.testing.ttree.tactics.Tactic;
+import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
+import client.presentation.ClientTextUI;
+import client.presentation.ClientUI;
+
+import common.fastest.FastestUtils;
 //import client.blogic.testing.ttree.visitors.TCaseDadFinder;
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
-import common.z.TClass;
 import common.z.AbstractTCase;
-import client.blogic.management.ii.EventAdmin;
-import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import common.z.Scheme;
 import common.z.SpecUtils;
+import common.z.TClass;
 import common.z.czt.visitors.ContainsTermVerifier;
-import common.z.czt.visitors.TClassNodeUnfolder;
-import compserver.prunning.TreePruner;
-import net.sourceforge.czt.session.SectionManager;
-import net.sourceforge.czt.z.ast.AxPara;
-import common.fastest.FastestUtils;
-import compserver.prunning.PruneUtils;
 import common.z.czt.visitors.SchemeUnfolder;
+import common.z.czt.visitors.TClassNodeUnfolder;
+import compserver.prunning.PruneUtils;
+import compserver.prunning.TreePruner;
 
 
 /**
@@ -147,6 +175,8 @@ public final class Controller extends IIComponent {
 	private String setlogFile = "setlog4617.pl"; //Default value
 	//Option to determine if the translation from Z to setlog is printed on screen
 	private boolean setlogPrint = false;
+	// Repositorio de designaciones
+	private DesignationRepo desigRepo;
 
 
 	/** Creates a new instance of Controller */
@@ -1283,6 +1313,14 @@ public final class Controller extends IIComponent {
 	public HashMap<String, String> getUserDefinedTypes() {
 		return this.userDefinedTypes;
 
+	}
+	
+	public DesignationRepo getDesigRepo() {
+		return desigRepo;
+	}
+
+	public void setDesigRepo(DesignationRepo desigRepo) {
+		this.desigRepo = desigRepo;
 	}
 
 }

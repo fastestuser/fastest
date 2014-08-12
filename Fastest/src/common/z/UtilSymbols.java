@@ -356,4 +356,35 @@ public class UtilSymbols {
         return new String(symbols[57]);
     } 
 
+    /**
+     * Returns the non-membership symbol.
+     * @return the non-membership symbol.
+     */
+    public static String notInSymbol(){
+        return new String(symbols[20]);
+    } 
+    
+    /**
+     * Returns the maplet symbol.
+     * @return the maplet symbol.
+     */
+    public static String mapletSymbol() {
+    	return new String(symbols[30]);
+    }
+
+    /**
+     * Returns the subset symbol.
+     * @return the subset symbol.
+     */
+    public static String subsetSymbol() {
+    	return new String(symbols[24]);
+    }
+    
+    /**
+     * Returns the subseteq symbol.
+     * @return the subseteq symbol.
+     */
+    public static String subseteqSymbol() {
+    	return new String(symbols[25]);
+    }
 }

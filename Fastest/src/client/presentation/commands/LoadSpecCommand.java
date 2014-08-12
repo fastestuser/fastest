@@ -1,23 +1,43 @@
 package client.presentation.commands;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import net.sourceforge.czt.session.CommandException;
-import net.sourceforge.czt.session.Key;
-import net.sourceforge.czt.session.Source;
-import net.sourceforge.czt.session.FileSource;
-import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.parser.util.CztError;
 import net.sourceforge.czt.parser.util.CztErrorList;
-import net.sourceforge.czt.z.ast.*;
-import client.blogic.testing.refinement.FTCRLUtils;
-import client.blogic.testing.ttree.tactics.Tactic;
-import client.blogic.testing.ttree.strategies.TTreeStrategy;
+import net.sourceforge.czt.session.CommandException;
+import net.sourceforge.czt.session.FileSource;
+import net.sourceforge.czt.session.Key;
+import net.sourceforge.czt.session.SectionManager;
+import net.sourceforge.czt.session.Source;
+import net.sourceforge.czt.typecheck.z.ErrorAnn;
+import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.FreePara;
+import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.Spec;
+import nlg.czt.visitors.DesignationVisitor;
+import nlg.designation.DesignationRepo;
+import nlg.designation.DesignationRepoImpl;
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.SpecLoaded;
+import client.blogic.testing.ttree.strategies.TTreeStrategy;
+import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
+
 import common.repository.AbstractRepository;
 import common.repository.ConcreteRepository;
 import common.z.SpecUtils;
@@ -32,10 +52,6 @@ import common.z.czt.visitors.FreeTypeNamesExtractor;
 import common.z.czt.visitors.OpNamesExtractor;
 import common.z.czt.visitors.ParenthesisRemover;
 import common.z.czt.visitors.UserDefinedTypesExtractor;
-import net.sourceforge.czt.typecheck.z.ErrorAnn;
-import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
-
-import java.util.List;
 
 
 /**
@@ -159,6 +175,10 @@ public class LoadSpecCommand implements Command {
             Map<String, Expr> axDefsRequired = new HashMap<String, Expr>();
             Map<String, List<String>> basicAxDefs = new HashMap<String, List<String>>();
             List<RefExpr> noBasicAxDefVars = new ArrayList<RefExpr>();
+            
+            // Parseo designaciones
+            DesignationRepo desigRepo = new DesignationRepoImpl();
+            spec.accept(new DesignationVisitor(desigRepo));
 
             spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames, basicAxDefs, axDefsValues, axDefsRequired, noBasicAxDefVars));
             
@@ -187,6 +207,7 @@ public class LoadSpecCommand implements Command {
             controller.setAxDefsPredVars(axDefsPredVars);
             controller.setAxDefsValues(axDefsValues);
             controller.setBasicAxDefs(basicAxDefs);
+            controller.setDesigRepo(desigRepo);
 
             EventAdmin eventAdmin = EventAdmin.getInstance();
             SpecLoaded specLoaded = new SpecLoaded(spec);

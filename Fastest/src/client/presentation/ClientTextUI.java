@@ -128,7 +128,7 @@ public class ClientTextUI extends ClientUI {
 	 * @param cmd
 	 * @param args
 	 */
-	private void processCmd(String cmd, String args) //throws IOException
+	public void processCmd(String cmd, String args) //throws IOException
 	{
 		String orderClassName = "unknown";
 		Properties props = new Properties();
