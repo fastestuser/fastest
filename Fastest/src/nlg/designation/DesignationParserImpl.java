@@ -11,8 +11,8 @@ import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.Pred;
-import nlg.czt.visitors.ASTToExprZVisitor;
-import nlg.expr.base.ExprZ;
+import nlg.czt.visitors.ASTToExprDescPlanVisitor;
+import nlg.expr.base.ExprDescPlan;
 import nlg.expr.visitors.NameExtractor;
 import nlg.expr.visitors.NameToParamVisitor;
 
@@ -75,7 +75,7 @@ public class DesignationParserImpl implements DesignationParser {
 		return ret;
 	}
 	
-	private ExprZ parseDesigLine(String line) throws IOException, CommandException {
+	private ExprDescPlan parseDesigLine(String line) throws IOException, CommandException {
 		line = line.trim();
 		Integer index = line.indexOf("}");
 
@@ -85,9 +85,9 @@ public class DesignationParserImpl implements DesignationParser {
 		// Remuevo signos indeseados de designaciones
 		designation = designation.replaceAll("\\$", "");
 		
-		// Intento parsear el termino y convertiro a ExprZ
+		// Intento parsear el termino y convertiro a ExprDescPlan
 		Pred term = ParseUtils.parsePred(new StringSource(termString), null, new SectionManager());
-		ExprZ exprTerm = term.accept(new ASTToExprZVisitor());
+		ExprDescPlan exprTerm = term.accept(new ASTToExprDescPlanVisitor());
 		
 		// Extraigo parametros de la designacion
 		List<String> parametros = getParameters(designation, exprTerm);
@@ -104,7 +104,7 @@ public class DesignationParserImpl implements DesignationParser {
 	}
 	
 	// Extrae los nombres de los parametros de una designacion
-	private List<String> getParameters (String designation, ExprZ expr) {
+	private List<String> getParameters (String designation, ExprDescPlan expr) {
 		List<String> ret = new ArrayList<String>();
 		
 		// Extraigo nombres de variables, funciones, etc de expr

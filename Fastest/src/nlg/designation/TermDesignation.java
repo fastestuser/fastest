@@ -1,24 +1,24 @@
 package nlg.designation;
 
-import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDescPlan;
 
 /**
  * Designacion de un termino Z.
  */
 public class TermDesignation {
-	private ExprZ expr;
+	private ExprDescPlan expr;
 	private String schName;
 	
-	public TermDesignation(ExprZ expr, String schName) {
+	public TermDesignation(ExprDescPlan expr, String schName) {
 		this.expr = expr;
 		this.schName = schName;
 	}
 
-	public ExprZ getExpr() {
+	public ExprDescPlan getExpr() {
 		return expr;
 	}
 
-	public void setExpr(ExprZ expr) {
+	public void setExpr(ExprDescPlan expr) {
 		this.expr = expr;
 	}
 

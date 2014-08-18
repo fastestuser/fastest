@@ -2,7 +2,7 @@ package nlg.designation;
 
 import java.util.List;
 
-import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDescPlan;
 
 /**
  * Repositorio de designaciones.
@@ -27,5 +27,5 @@ public interface DesignationRepo {
 	 * Recupera una designacion de esquema.
 	 * De no encontrarse en el repositorio devuelve null.
 	 */
-	public TermDesignation getDesignation(ExprZ exp, String schName);
+	public TermDesignation getDesignation(ExprDescPlan exp, String schName);
 }

@@ -3,7 +3,7 @@ package nlg.designation;
 import java.util.ArrayList;
 import java.util.List;
 
-import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDescPlan;
 
 
 public class DesignationRepoImpl implements DesignationRepo {
@@ -22,7 +22,7 @@ public class DesignationRepoImpl implements DesignationRepo {
 	}
 
 	@Override
-	public TermDesignation getDesignation(ExprZ exp, String schName) {
+	public TermDesignation getDesignation(ExprDescPlan exp, String schName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
