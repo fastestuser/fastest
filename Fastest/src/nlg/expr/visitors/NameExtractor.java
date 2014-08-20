@@ -4,23 +4,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import nlg.expr.base.DesigParamPlan;
 import nlg.expr.base.ExprApplyPlan;
+import nlg.expr.base.ExprDescPlan;
 import nlg.expr.base.ExprDomPlan;
 import nlg.expr.base.ExprEqPlan;
 import nlg.expr.base.ExprInPlan;
 import nlg.expr.base.ExprIntersectionPlan;
 import nlg.expr.base.ExprMapsToPlan;
 import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotPlan;
 import nlg.expr.base.ExprNotEqPlan;
 import nlg.expr.base.ExprNotInPlan;
+import nlg.expr.base.ExprNotPlan;
 import nlg.expr.base.ExprRanPlan;
 import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprSubSetEqPlan;
+import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprUnionPlan;
-import nlg.expr.base.ExprDescPlan;
 
 /**
  * Devuelve una lista con todos los "nombres" (ExprNamePlan) 
@@ -141,11 +140,6 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getExpr().accept(this));
 		return ret;
-	}
-
-	@Override
-	public List<String> visitDesigParameter(DesigParamPlan param) {
-		return Arrays.asList(param.getVarName());
 	}
 
 }

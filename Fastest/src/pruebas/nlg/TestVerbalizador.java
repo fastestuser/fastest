@@ -12,6 +12,7 @@ import nlg.base.NLGDocumentPlan;
 import nlg.base.NLGUtils;
 import nlg.expr.base.ExprApplyPlan;
 import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprDomPlan;
 import nlg.expr.base.ExprInPlan;
 import nlg.expr.base.ExprNamePlan;
 import nlg.expr.visitors.Verbalizador;
@@ -36,9 +37,8 @@ public static void main(String args[]) throws IOException {
 		// Intento describir una expresion
 		ExprDescPlan edp = new ExprInPlan(
 				new ExprNamePlan("p?"), 
-				new ExprApplyPlan(
-						new ExprNamePlan("dom"),
-						new ExprNamePlan("p?")));
+				new ExprDomPlan(
+						new ExprNamePlan("procs")));
 		
 		System.out.println(edp.accept(new Verbalizador(ui.getMyController().getDesigRepo())));
 	}

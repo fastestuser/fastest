@@ -21,19 +21,22 @@ import net.sourceforge.czt.z.visitor.NegPredVisitor;
 import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.SetExprVisitor;
 import nlg.expr.base.ExprApplyPlan;
+import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprDomPlan;
 import nlg.expr.base.ExprEqPlan;
 import nlg.expr.base.ExprInPlan;
 import nlg.expr.base.ExprIntersectionPlan;
 import nlg.expr.base.ExprMapsToPlan;
 import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotPlan;
 import nlg.expr.base.ExprNotEqPlan;
 import nlg.expr.base.ExprNotInPlan;
+import nlg.expr.base.ExprNotPlan;
+import nlg.expr.base.ExprRanPlan;
 import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprSubSetEqPlan;
+import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprUnionPlan;
-import nlg.expr.base.ExprDescPlan;
+
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
 
@@ -177,12 +180,33 @@ TermVisitor<ExprDescPlan> {
 				System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0));
 			}
 		} else {		
-			// Describo recursivamente los hijos
-			ExprDescPlan lexp = leftExpr.accept(this);
-			ExprDescPlan rexp = rightExpr.accept(this);
-
-			if (null != lexp || null != rexp) {
-				ret = new ExprApplyPlan(lexp, rexp);
+			
+			if (leftExpr instanceof RefExpr) {
+				String name = ((RefExpr) arg0.getLeftExpr()).getName().toString();
+				
+				if (name.equals("dom")) {
+					ret = new ExprDomPlan(rightExpr.accept(this));
+				} else if (name.equals("ran")) {
+					ret = new ExprRanPlan(rightExpr.accept(this));
+				} else {
+					// Describo recursivamente los hijos
+					ExprDescPlan lexp = leftExpr.accept(this);
+					ExprDescPlan rexp = rightExpr.accept(this);
+		
+					if (null != lexp || null != rexp) {
+						ret = new ExprApplyPlan(lexp, rexp);
+					}
+				}
+				
+			} else {
+			
+				// Describo recursivamente los hijos
+				ExprDescPlan lexp = leftExpr.accept(this);
+				ExprDescPlan rexp = rightExpr.accept(this);
+	
+				if (null != lexp || null != rexp) {
+					ret = new ExprApplyPlan(lexp, rexp);
+				}
 			}
 		}
 

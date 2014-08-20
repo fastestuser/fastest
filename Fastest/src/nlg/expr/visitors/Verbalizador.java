@@ -2,7 +2,6 @@ package nlg.expr.visitors;
 
 import nlg.designation.DesignationRepo;
 import nlg.designation.DesignationUtils;
-import nlg.expr.base.DesigParamPlan;
 import nlg.expr.base.ExprApplyPlan;
 import nlg.expr.base.ExprDomPlan;
 import nlg.expr.base.ExprEqPlan;
@@ -36,7 +35,7 @@ public class Verbalizador implements ExprDescPlanVisitor<String> {
 
 	@Override
 	public String visitExprDom(ExprDomPlan expr) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
@@ -48,11 +47,7 @@ public class Verbalizador implements ExprDescPlanVisitor<String> {
 
 	@Override
 	public String visitExprIn(ExprInPlan expr) {
-		if (DesignationUtils.estaDesignado(expr, desigRepo)) {
-			
-		} else {
-			
-		}
+
 		return null;
 	}
 
@@ -118,12 +113,6 @@ public class Verbalizador implements ExprDescPlanVisitor<String> {
 
 	@Override
 	public String visitNot(ExprNotPlan expr) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public String visitDesigParameter(DesigParamPlan param) {
 		// TODO Auto-generated method stub
 		return null;
 	}

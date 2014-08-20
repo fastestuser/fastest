@@ -1,22 +1,21 @@
 package nlg.expr.visitors;
 
-import nlg.expr.base.DesigParamPlan;
 import nlg.expr.base.ExprApplyPlan;
+import nlg.expr.base.ExprDescPlan;
 import nlg.expr.base.ExprDomPlan;
 import nlg.expr.base.ExprEqPlan;
 import nlg.expr.base.ExprInPlan;
 import nlg.expr.base.ExprIntersectionPlan;
 import nlg.expr.base.ExprMapsToPlan;
 import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotPlan;
 import nlg.expr.base.ExprNotEqPlan;
 import nlg.expr.base.ExprNotInPlan;
+import nlg.expr.base.ExprNotPlan;
 import nlg.expr.base.ExprRanPlan;
 import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprSubSetEqPlan;
+import nlg.expr.base.ExprSubSetPlan;
 import nlg.expr.base.ExprUnionPlan;
-import nlg.expr.base.ExprDescPlan;
 
 /**
  * Visitor para imprimir una ExprDescPlan
@@ -130,11 +129,6 @@ public class ExprDescPlanToString implements ExprDescPlanVisitor<String> {
 	public String visitNot(ExprNotPlan expr) {
 		return "ExprNot \n"
 				+ "  |_ " + insetTabs(expr.getExpr().accept(this));
-	}
-	
-	@Override
-	public String visitDesigParameter(DesigParamPlan param) {
-		return "DesigParameter " + param.getVarName();
 	}
 	
 	private String insetTabs(String string) {

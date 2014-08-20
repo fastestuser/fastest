@@ -14,7 +14,6 @@ import net.sourceforge.czt.z.ast.Pred;
 import nlg.czt.visitors.ASTToExprDescPlanVisitor;
 import nlg.expr.base.ExprDescPlan;
 import nlg.expr.visitors.NameExtractor;
-import nlg.expr.visitors.NameToParamVisitor;
 
 public class DesignationParserImpl implements DesignationParser {
 
@@ -31,41 +30,26 @@ public class DesignationParserImpl implements DesignationParser {
 			// Comienza bloque de designaciones
 			if (line.contains("begin{designations}")) {
 
-				if (line.trim().length() <= 22) { 	// Asumo que se trata de un 
-													// bloque de designaciones globales
+				String schName = null;
+				// Verifico si se trata de una designacion global o de esquema
+				if (line.trim().length() > 22) {
+					// Obtengo el nombre de esquema
+					schName = line.trim().substring(21, line.length() - 1);
+				}
+				
+				// Parseo bloque de designaciones
+				while (it.hasNext()) {
+					line = it.next();
 
-					while (it.hasNext()) {
-						line = it.next();
+					if (line.contains("end{designations}")) // Fin bloque designaciones
+						break;
 
-						if (line.contains("end{designations}")) // Fin bloque designaciones
-							break;
-
-						if (line.contains("desig{")) {
-							
-							// Parseo y agrego designacion al resultado
-							ret.add(new TermDesignation(parseDesigLine(line), null));
-							
-						}
-					}
-
-				} else {						// Asumo que se tratan de 
-												// designaciones de esquema
-
-					// Parseo el nombre de esquema
-					String schName = line.trim().substring(21, line.length() - 1);
-
-					// A continuacion leo las designaciones
-					while (it.hasNext()) {
-						line = it.next();
-
-						if (line.contains("end{designations}")) // Fin bloque designaciones
-							break;
-
-						if (line.contains("desig{")) {
-							
-							// Parseo y agrego designacion al resultado
-							ret.add(new TermDesignation(parseDesigLine(line), schName));
-							
+					if (line.contains("desig{")) {
+						
+						TermDesignation td = parseDesigLine(line, schName);
+						
+						if (null != td) {
+							ret.add(td);
 						}
 					}
 				}
@@ -75,7 +59,11 @@ public class DesignationParserImpl implements DesignationParser {
 		return ret;
 	}
 	
-	private ExprDescPlan parseDesigLine(String line) throws IOException, CommandException {
+	
+	
+
+	private TermDesignation parseDesigLine(String line, String schName) throws IOException, CommandException {
+		TermDesignation ret;
 		line = line.trim();
 		Integer index = line.indexOf("}");
 
@@ -94,13 +82,44 @@ public class DesignationParserImpl implements DesignationParser {
 		
 		// Verifico si se trata de una designacion parametrizada
 		if (!parametros.isEmpty()) {
-			// Transformo la expresion marcando modificando 
-			// las variables que correspondan a parametros
-			exprTerm = exprTerm.accept(nameToParamVisitor);
+			if (parametros.size() == 1) {
+				ret = new ParamDesignation(exprTerm, schName, parametros.get(0), createDesignationFuncion(designation, parametros.get(0)));
+			} else {
+				ret = null;
+				System.out.println("Error: No se encuentran soportadas las designaciones con mas de un parametro.");
+			}
+		} else {
+			ret = new SimpleDesignation(exprTerm, schName, designation);
 		}
 		
-		return exprTerm;
-
+		return ret;
+	}
+	
+	// Construye una DesignationFunction a partir de una designacion parseada
+	private DesignationFunction createDesignationFuncion(final String text, final String varName) {
+		
+		DesignationFunction ret =
+			new DesignationFunction() {
+				@Override
+				public String apply(String exprDesc) {
+					// Reemplazo apariciones del parametro en el medio del texto
+					String tmp = text.replaceAll(" " + varName + " ", " " + exprDesc + " ");
+					
+					// Reemplazo apariciones del parametro al comienzo del texto
+					if (tmp.startsWith(varName + " ")) {
+						tmp = exprDesc + " " + tmp.substring(varName.length() + 1, tmp.length());
+					}
+					
+					// Reemplazo apariciones del parametro al final del texto
+					if (tmp.endsWith(" " + varName)) {
+						tmp = tmp.substring(0, tmp.length() - varName.length() - 1) + " " + exprDesc;
+					}
+					
+					return tmp;
+				}
+			};
+		
+			return ret;
 	}
 	
 	// Extrae los nombres de los parametros de una designacion
@@ -124,6 +143,4 @@ public class DesignationParserImpl implements DesignationParser {
 		
 		return ret;
 	}
-	
-	private NameToParamVisitor nameToParamVisitor = new NameToParamVisitor();
 }

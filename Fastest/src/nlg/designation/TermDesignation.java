@@ -6,13 +6,8 @@ import nlg.expr.base.ExprDescPlan;
  * Designacion de un termino Z.
  */
 public class TermDesignation {
-	private ExprDescPlan expr;
-	private String schName;
-	
-	public TermDesignation(ExprDescPlan expr, String schName) {
-		this.expr = expr;
-		this.schName = schName;
-	}
+	protected ExprDescPlan expr;
+	protected String schName;
 
 	public ExprDescPlan getExpr() {
 		return expr;

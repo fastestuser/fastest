@@ -32,9 +32,9 @@ public class FooTest {
 		}
 		
 		//printExprZSchema(ui, "LookUp_SP_1");
-		printExprZSchema(ui, "Update_SP_6");
-		DesignationRepo repo = ui.getMyController().getDesigRepo();
-		System.out.println("debug");
+		//printExprZSchema(ui, "Update_SP_6");
+		//DesignationRepo repo = ui.getMyController().getDesigRepo();
+		//System.out.println("debug");
 		
 		/*
 		Controller controller = ui.getMyController();
