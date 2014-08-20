@@ -2,6 +2,7 @@ package nlg.pipeline;
 
 import nlg.base.NLGDocument;
 import nlg.base.NLGDocumentPlan;
+import nlg.expr.base.ExprDescPlan;
 import client.blogic.management.Controller;
 
 /**
@@ -15,6 +16,13 @@ public class LingRealizerES implements LingRealizer {
 	public NLGDocument realize(NLGDocumentPlan documentPlan,
 			Controller controller) {
 		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	private String verbalize(ExprDescPlan edp) {
+		
+		
+		
 		return null;
 	}
 

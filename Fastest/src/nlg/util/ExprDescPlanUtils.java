@@ -29,7 +29,11 @@ public class ExprDescPlanUtils {
 								new AndPredClausesExtractor2());
 		
 		for (Pred p : ps) {
-			ret.add(p.accept(visitor));
+			ExprDescPlan edp = p.accept(visitor);
+			// TODO ignoro expresiones no soportadas (esto no deberia permitirse)
+			if (null != edp) {
+				ret.add(edp);
+			}
 		}
 		
 		return ret;

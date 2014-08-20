@@ -2,7 +2,7 @@ package nlg.expr.base;
 
 import java.util.List;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * Conjunto de expresiones
@@ -51,7 +51,7 @@ public class ExprSetPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(VisitorExprDescPlan<X> visitor) {
+	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
 		return visitor.visitExprSet(this);
 	}
 	

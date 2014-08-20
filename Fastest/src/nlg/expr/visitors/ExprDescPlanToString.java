@@ -22,7 +22,7 @@ import nlg.expr.base.ExprDescPlan;
  * Visitor para imprimir una ExprDescPlan
  * formateada en forma de arbol.
  */
-public class ExprDescPlanToString implements VisitorExprDescPlan<String> {
+public class ExprDescPlanToString implements ExprDescPlanVisitor<String> {
 
 	@Override
 	public String visitExprApply(ExprApplyPlan expr) {

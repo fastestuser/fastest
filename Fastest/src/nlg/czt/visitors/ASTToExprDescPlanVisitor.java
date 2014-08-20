@@ -53,7 +53,7 @@ TermVisitor<ExprDescPlan> {
 	// Default: expresion no soportada!
 	@Override
 	public ExprDescPlan visitTerm(Term arg0) {
-		System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0));
+		System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0) + "\n");
 		return null;
 	}
 

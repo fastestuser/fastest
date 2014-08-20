@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * Inclusion estricta
@@ -65,7 +65,7 @@ public class ExprSubSetPlan implements ExprDescPlan {
 	}
 
 	@Override
-	public <X> X accept(VisitorExprDescPlan<X> visitor) {
+	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
 		return visitor.visitExprSubSet(this);
 	}
 }

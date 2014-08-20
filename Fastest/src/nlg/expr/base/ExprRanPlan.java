@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * Rango de una funcion
@@ -52,7 +52,7 @@ public class ExprRanPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(VisitorExprDescPlan<X> visitor) {
+	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
 		return visitor.visitExprRan(this);
 	}
 }

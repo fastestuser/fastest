@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * Expresion Z.
@@ -11,5 +11,5 @@ import nlg.expr.visitors.VisitorExprDescPlan;
  * con las que trabajamos estaran correctamente formadas.
  */
 public interface ExprDescPlan {
-	public <X> X accept(VisitorExprDescPlan<X> visitor);
+	public <X> X accept(ExprDescPlanVisitor<X> visitor);
 }

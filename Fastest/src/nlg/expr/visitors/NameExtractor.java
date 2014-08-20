@@ -26,7 +26,7 @@ import nlg.expr.base.ExprDescPlan;
  * Devuelve una lista con todos los "nombres" (ExprNamePlan) 
  * que aparecen dentro de de una expresion ExprDescPlan.
  */
-public class NameExtractor implements VisitorExprDescPlan<List<String>> {
+public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 
 	@Override
 	public List<String> visitExprApply(ExprApplyPlan expr) {

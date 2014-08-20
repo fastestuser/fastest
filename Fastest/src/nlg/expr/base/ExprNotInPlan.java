@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * No-pertenencia
@@ -64,7 +64,7 @@ public class ExprNotInPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(VisitorExprDescPlan<X> visitor) {
+	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
 		return visitor.visitExprNotIn(this);
 	}
 	

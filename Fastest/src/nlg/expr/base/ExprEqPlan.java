@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.VisitorExprDescPlan;
+import nlg.expr.visitors.ExprDescPlanVisitor;
 
 /**
  * Igualdad
@@ -67,7 +67,7 @@ public class ExprEqPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(VisitorExprDescPlan<X> visitor) {
+	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
 		return visitor.visitExprEq(this);
 	}
 }

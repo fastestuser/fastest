@@ -20,7 +20,7 @@ import nlg.expr.base.ExprUnionPlan;
 /**
  * Visitor para operar sobre la estructura de las expresiones ExprDescPlan
  */
-public interface VisitorExprDescPlan<X> {
+public interface ExprDescPlanVisitor<X> {
 	public X visitExprApply(ExprApplyPlan expr);
 	public X visitExprDom(ExprDomPlan expr);
 	public X visitExprEq(ExprEqPlan expr);
