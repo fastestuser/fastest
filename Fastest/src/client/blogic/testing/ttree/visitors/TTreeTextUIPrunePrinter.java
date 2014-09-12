@@ -93,14 +93,18 @@ import common.repository.AbstractIterator;
      */
 	public Void visitTCaseNode(TCaseNode tCaseNode){
 		String tCaseStr = tCaseNode.getValue().getSchName();
+		
 		Map<String, ConcreteTCase> m = clientTextUI.getMyController().getAbsTCaseConcrTCaseMap();
-		String s = "";
+		String s1 = "",s2 = "";
 		if (m.get(tCaseStr)!=null){
 			 String warning = m.get(tCaseStr).hasWarnings()?" (with warnings)":"";
-			 s = " > " + m.get(tCaseStr).getConcreteTCaseName() + warning;
+			 s1 = " > " + m.get(tCaseStr).getConcreteTCaseName() + warning;
+		}
+		if (!tCaseNode.getValue().getInclsNotIntegrated().isEmpty()){
+			s2 = " not integrated with " + tCaseNode.getValue().getInclsNotIntegrated();
 		}
 		String strTab = getStrTab(nroTab, true);
-		out.println(strTab + tCaseStr + s);
+		out.println(strTab + tCaseStr + s1 + s2);
         out.flush();
         return null;
 	}

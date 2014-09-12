@@ -29,13 +29,13 @@ public class ShowLoadedRefLawsCommand implements Command{
         else{
             //Controller controller = clientTextUI.getMyController();
 
-            RefinementRules refinementRules = RefinementRules.getInstance();
+            RefinementRules.instance();
 
-            if (refinementRules.size() == 0){
+            if (RefinementRules.size() == 0){
                 output.println("There is not any refinement law in the repository.");
             }
             else{
-                Iterator<String> it = refinementRules.getRefRuleNames();
+                Iterator<String> it = RefinementRules.getRefRuleNames();
                 while(it.hasNext())
                     output.println("* "+ it.next());
             }

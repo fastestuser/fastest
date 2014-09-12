@@ -79,7 +79,8 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String> {
 	public String visitReference(ReferenceContext ctx) {
 		String lawname = ctx.lawName().getText();
 		String ruleName = ctx.name().getText();
-		RefinementRule rule = RefinementRules.getInstance().getRule(ruleName);
+		RefinementRules.instance();
+		RefinementRule rule = RefinementRules.getRule(ruleName);
 		RefinementRuleContext r = rule.getTree();
 		LawsContext laws = r.laws();
 		int tot = laws.getChildCount();
@@ -94,7 +95,8 @@ public final class FTCRLPreprocVisitor extends FTCRLBaseVisitor<String> {
 	}
 	
 	private String visitALaw(NameContext hijo) {
-		RefinementRule rule = RefinementRules.getInstance().getRule(hijo.getText());
+		RefinementRules.instance();
+		RefinementRule rule = RefinementRules.getRule(hijo.getText());
 		return (rule.getTree().laws()).accept(this).replace("@LAWS\n","");
 	}
 

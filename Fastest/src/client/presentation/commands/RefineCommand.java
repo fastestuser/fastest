@@ -105,21 +105,21 @@ public class RefineCommand implements Command {
 				
 				// We check if the name of the abstraction law is contained in the 
 				// repository of loaded laws
-				RefinementRules refRules = RefinementRules.getInstance();
-				if (refRules.getRule(refRuleName)== null){
+				RefinementRules.instance();
+				if (RefinementRules.getRule(refRuleName)== null){
 					output.println("'"+refRuleName+"' is not the name of a loaded refinement law");
 					return;
 				}
 
 				//Extraemos las variables que serán referenciadas (REF)
-				refRules.generateReferencedVars(refRuleName);
+				RefinementRules.generateReferencedVars(refRuleName);
 				
 				//se resuelven los import con el uutPath
-				String preamble = refRules.getRule(refRuleName).getPreamble();
+				String preamble = RefinementRules.getRule(refRuleName).getPreamble();
 				String unfoldedPreamble = ImportResolver.getResolver(targetLanguaje).resolver(preamble, pathUUT,output);
-				refRules.getRule(refRuleName).setUnfoldedPreamble(unfoldedPreamble);
+				RefinementRules.getRule(refRuleName).setUnfoldedPreamble(unfoldedPreamble);
 				
-				FTCRLUtils.setRule(refRules.getRule(refRuleName));
+				FTCRLUtils.setRule(RefinementRules.getRule(refRuleName));
 				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl,targetLanguaje));
 
 				synchronized(clientTextUI){
