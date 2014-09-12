@@ -40,6 +40,10 @@ public final class RefinementRules {
 		return rules.size();
 	}
 	
+	public static boolean isEmpty(){
+		return rules.isEmpty();
+	}
+	
 	public static LinkedList<String> getReferencedVars(){
 		return referencedVars;
 	}

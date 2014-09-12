@@ -554,7 +554,7 @@ public final class FTCRLUtils {
 		Iterator<RefinementTable> it = ftcrl.openedTables.iterator();
 		while (it.hasNext()){
 			RefinementTable t = it.next();
-			ftcrl.printDeclaration(t.stmt + ".close()");
+			ftcrl.printAssignment(t.stmt + ".close()");
 		}
 
 	}

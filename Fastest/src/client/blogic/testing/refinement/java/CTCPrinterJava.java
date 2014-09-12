@@ -59,6 +59,13 @@ public final class CTCPrinterJava extends CTCPrinter{
 		// PRINT the RUNTEST CLASS HEADER
 		ctcString.append("\npublic static void main(String[] args)\n{\n\ttry{\n");
 
+		// PRINT the INIT METHOD
+		ctcString.append("\t\tInit init = new Init();\n"+
+                         "\t\tif (!init.init()){\n"+
+                         "\t\t\tSystem.out.print(\"Initialization error\");\n"+
+                         "\t\t\tSystem.exit(0);\n"+
+                         "\t\t}\n");
+		
 		// CONCATENATES the REFINEMENT TEXT of ALL ASSIGNMENTS
 		String decl = ctc.getDeclaraciones();
 		if (decl != null)

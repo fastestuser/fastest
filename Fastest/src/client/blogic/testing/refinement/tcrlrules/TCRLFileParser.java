@@ -51,7 +51,7 @@ public class TCRLFileParser {
 		return preamble;
 	}
 	//resuelve los preambles incluidos recursivamente 
-	private static void resolvPreamble(){
+	private static void resolvePreamble(){
 		RefinementRules.instance();
 		Iterator<String> it = RefinementRules.getRefRuleNames();
 		String preamble = "";
@@ -67,7 +67,8 @@ public class TCRLFileParser {
 			} catch (Exception e) {
 				System.out.println("Error when trying to resolve "+ruleName+" preamble.");
 				System.out.println("Refinement rule "+ruleName+" not loaded.");
-				RefinementRules.deleteRule(ruleName);
+				//Revisar porque borramos esto
+				//RefinementRules.deleteRule(ruleName);
 				continue;
 			}
 		}
@@ -75,10 +76,10 @@ public class TCRLFileParser {
 
 	private static void resolveLawsReferences(){
 		RefinementRules.instance();
-		if (RefinementRules.size()==0){
-			System.out.println("Error when trying to resolve the rules.");
-			System.out.println("Refinements rules not loaded.");
-		}
+		//if (RefinementRules.isEmpty()){
+		//	System.out.println("Error when trying to resolve the rules.");
+		//	System.out.println("Refinements rules not loaded.");
+		//}
 		Iterator<String> it = RefinementRules.getRefRuleNames();
 		RefinementRuleContext ruleContext;
 		ANTLRInputStream input;
@@ -101,7 +102,8 @@ public class TCRLFileParser {
 			} catch (Exception e) {
 				System.out.println("Error when trying to resolve "+ruleName+" laws.");
 				System.out.println("Refinement rule "+ruleName+" not loaded.");
-				RefinementRules.deleteRule(ruleName);
+				//Revisar porque borramos esto
+				//RefinementRules.deleteRule(ruleName);
 				continue;
 			}
 		}
@@ -168,7 +170,7 @@ public class TCRLFileParser {
 				
 				ruleString = "@RRULE"+name+"@PREAMBLE\n@LAWS"+laws+"@UUT"+uut;
 				ruleContext = makeRuleContext(ruleString); //falla	indudablemente aca. 
-				//abria qeu pasar todo esto a despues de refinement, pero antes camgiar la gramatica
+				//habria qeu pasar todo esto a despues de refinement, pero antes camgiar la gramatica
 				if(ruleContext != null){
 					rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
 					RefinementRules.addRule(ruleContext.name().getText(), rule);
@@ -179,7 +181,7 @@ public class TCRLFileParser {
 			}
 
 			resolveLawsReferences();
-			resolvPreamble();
+			resolvePreamble();
 		}
 
 		catch (FileNotFoundException e){

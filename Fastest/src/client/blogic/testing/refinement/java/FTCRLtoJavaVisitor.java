@@ -360,7 +360,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				//Imprimimos
 				String values = currentTable.printValues();
 				currentTable.resetValues();
-				printDeclaration(table.stmt + ".executeUpdate(\"insert into " + currentTable.t + " values(" + values + ")\")");
+				printAssignment(table.stmt + ".executeUpdate(\"insert into " + currentTable.t + " values(" + values + ")\")");
 
 				//Si es un MAPPING
 			} else if (dataStruct.MAPPING()!=null) {
@@ -1131,7 +1131,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			if (uutArgs.contains(refS)){
 				r.varName = refS;
 				r.varType = FTCRLUtils.getCodeExpressionType(r.varName + r.atribute, this);
-				printDeclaration(r.varType + " " + r.varName + declarationValue(r.varType)); //La declaro
+				if (r.atribute.equals("")) //Declaro la variable si no estoy trabajando sobre sus atributos
+					printDeclaration(r.varType + " " + r.varName + declarationValue(r.varType));
 			} else { //Sino, es un atributo de la clase a testear
 				//Si es una variable privada la marco como privada
 				r.varName = testingVar;

@@ -348,7 +348,7 @@ public final class Controller extends IIComponent {
 				String warnings = tCaseRefined.getConcreteTCase().hasWarnings()?" WARNING":""; 
 				System.out.println(tCaseName + " test case refination -> SUCCESS."+ warnings);
 			} else {
-				System.out.println(tCaseName + " test case refination -> FAIL.");
+				System.out.println(tCaseName + " test case refination -> FAILED.");
 			}
 			pendingToRef--;
 
