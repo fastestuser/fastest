@@ -1153,7 +1153,6 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				r.varType = refS;
 				printDeclaration(r.varType + " " + r.varName + declarationValue(r.varType));
 				record = r.varName;
-				codeTypesMap.put(r.varName, refS);
 			} else				//Uso un record ya creado
 				r.varName = record;
 
@@ -1167,7 +1166,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			isRef = true;
 		
 		//obtengo la clase de la variable para ver si es un atributo privado
-		String className  = codeTypesMap.get(r.varName);
+		String className  = codeTypesMap.get(r.varName)!=null ? codeTypesMap.get(r.varName) : refS;
 		if (className != null && !className.isEmpty()){
 			if (FTCRLUtils.isPrivate(className + r.atribute))
 				r.isPrivate = true;
