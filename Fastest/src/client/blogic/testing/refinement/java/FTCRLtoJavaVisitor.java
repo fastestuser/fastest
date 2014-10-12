@@ -996,7 +996,8 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		TypeExtractorVisitor visitor = new TypeExtractorVisitor();
 
 		visitor.visit(tree);
-
+		//LinkedList<String> p = visitor.getPrivateVars();
+		//FTCRLUtils.privateVars = p;
 		FTCRLUtils.setEnumTypes(visitor.getEnumTypes()); //Almacenamos los tipos "enum" en FTCRLUtils
 		FTCRLUtils.setPrivateVars(visitor.getPrivateVars()); //Almacenamos las variables privadas en FTCRLUtils
 		return visitor.getMap(); //retornamos el map con los tipos de las variables
@@ -1152,6 +1153,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 				r.varType = refS;
 				printDeclaration(r.varType + " " + r.varName + declarationValue(r.varType));
 				record = r.varName;
+				codeTypesMap.put(r.varName, refS);
 			} else				//Uso un record ya creado
 				r.varName = record;
 
@@ -1163,11 +1165,14 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 		//Esta variable será consultada más tarde al refinar otras variables
 		if (referencedVars.contains(refS))
 			isRef = true;
-
-		//Veo si es privada. En ese caso hay que definirla usando reflection
-		if (FTCRLUtils.isPrivate(moduleName + r.atribute))
-			r.isPrivate = true;
-
+		
+		//obtengo la clase de la variable para ver si es un atributo privado
+		String className  = codeTypesMap.get(r.varName);
+		if (className != null && !className.isEmpty()){
+			if (FTCRLUtils.isPrivate(className + r.atribute))
+				r.isPrivate = true;
+		}
+		
 		//Si es "private" en java, debo usar reflection
 		if (r.isPrivate){
 			//Usamos una variable para el atributo de la clase

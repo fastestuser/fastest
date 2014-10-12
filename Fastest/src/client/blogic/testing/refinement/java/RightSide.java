@@ -6,7 +6,8 @@ public class RightSide {
 	public String atribute = "";
 	public boolean isPrivate = false; //si la variable es privada
 	public String privateFieldVar = "";
-	public String field = "";                                                                                                                                                                                                                                                                                               
+	public String field = ""; 
+	//public String clase = "";
 	
 	RightSide(){
 		this.varName = "";
@@ -15,6 +16,7 @@ public class RightSide {
 		this.privateFieldVar = "";
 		this.field = "";
 		this.isPrivate = false;
+		//this.clase="";
 	}
 
 }

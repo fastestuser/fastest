@@ -40,7 +40,7 @@ public final class FTCRLUtils {
 	//Indica los tipos "enum" encontrados en preamble
 	static HashMap<String, String> enumTypes = new HashMap<String,String>();
 	//Indica las variables no publicas encontradas
-	static LinkedList<String> privateVars = new LinkedList<String>();
+	public static LinkedList<String> privateVars = new LinkedList<String>();
 	//es la regla actual, es decir la que elije el usuario en el comando refine
 	static RefinementRule reglaActual;
 
