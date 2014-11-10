@@ -1,12 +1,12 @@
 package nlg.designation;
 
-import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprZ;
 
 public class ParamDesignation extends TermDesignation {
 	private String param;
 	private DesignationFunction desigFun;
 	
-	public ParamDesignation(ExprDescPlan expr, String schName, String param, DesignationFunction desigFun) {
+	public ParamDesignation(ExprZ expr, String schName, String param, DesignationFunction desigFun) {
 		this.param = param;
 		this.desigFun = desigFun;
 		this.expr = expr;

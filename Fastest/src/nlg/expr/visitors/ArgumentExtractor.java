@@ -4,45 +4,45 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprEqPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprIntersectionPlan;
-import nlg.expr.base.ExprMapsToPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotEqPlan;
-import nlg.expr.base.ExprNotInPlan;
-import nlg.expr.base.ExprNotPlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetEqPlan;
-import nlg.expr.base.ExprSubSetPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprApply;
+import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprEq;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprIntersection;
+import nlg.expr.base.ExprMapsTo;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprNotIn;
+import nlg.expr.base.ExprNot;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprSet;
+import nlg.expr.base.ExprSubSetEq;
+import nlg.expr.base.ExprSubSet;
+import nlg.expr.base.ExprUnion;
 
-public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>> {
+public class ArgumentExtractor implements ExprZVisitor<List<ExprZ>> {
 
-	private ExprDescPlan exprInst; // Expresion ya instanciada
+	private ExprZ exprInst; // Expresion ya instanciada
 	private String paramName;
 	
-	public ArgumentExtractor(ExprDescPlan exprInst, String paramName) {
+	public ArgumentExtractor(ExprZ exprInst, String paramName) {
 		this.exprInst = exprInst;
 		this.paramName = paramName;
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprApply(ExprApplyPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprApply(ExprApply expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprApplyPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getArgument().accept(new ArgumentExtractor(((ExprApplyPlan) exprInst).getArgument(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getFunction().accept(new ArgumentExtractor(((ExprApplyPlan) exprInst).getFunction(), paramName));
+		if (exprInst instanceof ExprApply) {
+			List<ExprZ> ret1 =
+				expr.getArgument().accept(new ArgumentExtractor(((ExprApply) exprInst).getArgument(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getFunction().accept(new ArgumentExtractor(((ExprApply) exprInst).getFunction(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -53,15 +53,15 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprDom(ExprDomPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprDom(ExprDom expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprDomPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getFunction().accept(new ArgumentExtractor(((ExprDomPlan) exprInst).getFunction(), paramName));
+		if (exprInst instanceof ExprDom) {
+			List<ExprZ> ret1 =
+				expr.getFunction().accept(new ArgumentExtractor(((ExprDom) exprInst).getFunction(), paramName));
 			
 			if (null != ret1) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 			}
 
@@ -71,17 +71,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprEq(ExprEqPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprEq(ExprEq expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprEqPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftExpr().accept(new ArgumentExtractor(((ExprEqPlan) exprInst).getLeftExpr(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightExpr().accept(new ArgumentExtractor(((ExprEqPlan) exprInst).getRightExpr(), paramName));
+		if (exprInst instanceof ExprEq) {
+			List<ExprZ> ret1 =
+				expr.getLeftExpr().accept(new ArgumentExtractor(((ExprEq) exprInst).getLeftExpr(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightExpr().accept(new ArgumentExtractor(((ExprEq) exprInst).getRightExpr(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -92,17 +92,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprIn(ExprInPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprIn(ExprIn expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprInPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getElement().accept(new ArgumentExtractor(((ExprInPlan) exprInst).getElement(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getSet().accept(new ArgumentExtractor(((ExprInPlan) exprInst).getSet(), paramName));
+		if (exprInst instanceof ExprIn) {
+			List<ExprZ> ret1 =
+				expr.getElement().accept(new ArgumentExtractor(((ExprIn) exprInst).getElement(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getSet().accept(new ArgumentExtractor(((ExprIn) exprInst).getSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -113,17 +113,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprIntersection(ExprIntersectionPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprIntersection(ExprIntersection expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprIntersectionPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftSet().accept(new ArgumentExtractor(((ExprIntersectionPlan) exprInst).getLeftSet(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightSet().accept(new ArgumentExtractor(((ExprIntersectionPlan) exprInst).getRightSet(), paramName));
+		if (exprInst instanceof ExprIntersection) {
+			List<ExprZ> ret1 =
+				expr.getLeftSet().accept(new ArgumentExtractor(((ExprIntersection) exprInst).getLeftSet(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightSet().accept(new ArgumentExtractor(((ExprIntersection) exprInst).getRightSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -134,17 +134,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprMapsTo(ExprMapsToPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprMapsTo(ExprMapsTo expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprMapsToPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeft().accept(new ArgumentExtractor(((ExprMapsToPlan) exprInst).getLeft(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRight().accept(new ArgumentExtractor(((ExprMapsToPlan) exprInst).getRight(), paramName));
+		if (exprInst instanceof ExprMapsTo) {
+			List<ExprZ> ret1 =
+				expr.getLeft().accept(new ArgumentExtractor(((ExprMapsTo) exprInst).getLeft(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRight().accept(new ArgumentExtractor(((ExprMapsTo) exprInst).getRight(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -155,30 +155,30 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprName(ExprNamePlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprName(ExprName expr) {
+		List<ExprZ> ret = null;
 		
 		if (expr.getName().equals(paramName)) {
 			ret = Arrays.asList(exprInst);
 		} else if (expr.equals(exprInst)) {
-			ret = new ArrayList<ExprDescPlan>();
+			ret = new ArrayList<ExprZ>();
 		}
 		
 		return ret;
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprNotEq(ExprNotEqPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprNotEq(ExprNotEq expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprNotEqPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftExpr().accept(new ArgumentExtractor(((ExprNotEqPlan) exprInst).getLeftExpr(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightExpr().accept(new ArgumentExtractor(((ExprNotEqPlan) exprInst).getRightExpr(), paramName));
+		if (exprInst instanceof ExprNotEq) {
+			List<ExprZ> ret1 =
+				expr.getLeftExpr().accept(new ArgumentExtractor(((ExprNotEq) exprInst).getLeftExpr(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightExpr().accept(new ArgumentExtractor(((ExprNotEq) exprInst).getRightExpr(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -189,17 +189,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprNotIn(ExprNotInPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprNotIn(ExprNotIn expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprNotInPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getElement().accept(new ArgumentExtractor(((ExprNotInPlan) exprInst).getElement(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getSet().accept(new ArgumentExtractor(((ExprNotInPlan) exprInst).getSet(), paramName));
+		if (exprInst instanceof ExprNotIn) {
+			List<ExprZ> ret1 =
+				expr.getElement().accept(new ArgumentExtractor(((ExprNotIn) exprInst).getElement(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getSet().accept(new ArgumentExtractor(((ExprNotIn) exprInst).getSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -210,15 +210,15 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprRan(ExprRanPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprRan(ExprRan expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprRanPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getFunction().accept(new ArgumentExtractor(((ExprRanPlan) exprInst).getFunction(), paramName));
+		if (exprInst instanceof ExprRan) {
+			List<ExprZ> ret1 =
+				expr.getFunction().accept(new ArgumentExtractor(((ExprRan) exprInst).getFunction(), paramName));
 			
 			if (null != ret1) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 			}
 
@@ -228,15 +228,15 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprSet(ExprSetPlan expr) {
-		List<ExprDescPlan> ret = new ArrayList<ExprDescPlan>();
+	public List<ExprZ> visitExprSet(ExprSet expr) {
+		List<ExprZ> ret = new ArrayList<ExprZ>();
 		
-		if (exprInst instanceof ExprSetPlan && 
-				expr.getElements().size() == ((ExprSetPlan) exprInst).getElements().size()) {
+		if (exprInst instanceof ExprSet && 
+				expr.getElements().size() == ((ExprSet) exprInst).getElements().size()) {
 			for (int i = 0; i < expr.getElements().size(); i++) {
-				ExprDescPlan e1 = expr.getElements().get(i);
-				ExprDescPlan e2 = ((ExprSetPlan) exprInst).getElements().get(i);
-				List<ExprDescPlan> tmp = e1.accept(new ArgumentExtractor(e2, paramName));
+				ExprZ e1 = expr.getElements().get(i);
+				ExprZ e2 = ((ExprSet) exprInst).getElements().get(i);
+				List<ExprZ> tmp = e1.accept(new ArgumentExtractor(e2, paramName));
 				
 				if (null == tmp) {
 					ret = null;
@@ -254,17 +254,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprSubSetEq(ExprSubSetEqPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprSubSetEq(ExprSubSetEq expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprSubSetEqPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftSet().accept(new ArgumentExtractor(((ExprSubSetEqPlan) exprInst).getLeftSet(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightSet().accept(new ArgumentExtractor(((ExprSubSetEqPlan) exprInst).getRightSet(), paramName));
+		if (exprInst instanceof ExprSubSetEq) {
+			List<ExprZ> ret1 =
+				expr.getLeftSet().accept(new ArgumentExtractor(((ExprSubSetEq) exprInst).getLeftSet(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightSet().accept(new ArgumentExtractor(((ExprSubSetEq) exprInst).getRightSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -275,17 +275,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprSubSet(ExprSubSetPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprSubSet(ExprSubSet expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprSubSetPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftSet().accept(new ArgumentExtractor(((ExprSubSetPlan) exprInst).getLeftSet(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightSet().accept(new ArgumentExtractor(((ExprSubSetPlan) exprInst).getRightSet(), paramName));
+		if (exprInst instanceof ExprSubSet) {
+			List<ExprZ> ret1 =
+				expr.getLeftSet().accept(new ArgumentExtractor(((ExprSubSet) exprInst).getLeftSet(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightSet().accept(new ArgumentExtractor(((ExprSubSet) exprInst).getRightSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -296,17 +296,17 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitExprUnion(ExprUnionPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitExprUnion(ExprUnion expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprUnionPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getLeftSet().accept(new ArgumentExtractor(((ExprUnionPlan) exprInst).getLeftSet(), paramName));
-			List<ExprDescPlan> ret2 =	
-				expr.getRightSet().accept(new ArgumentExtractor(((ExprUnionPlan) exprInst).getRightSet(), paramName));
+		if (exprInst instanceof ExprUnion) {
+			List<ExprZ> ret1 =
+				expr.getLeftSet().accept(new ArgumentExtractor(((ExprUnion) exprInst).getLeftSet(), paramName));
+			List<ExprZ> ret2 =	
+				expr.getRightSet().accept(new ArgumentExtractor(((ExprUnion) exprInst).getRightSet(), paramName));
 			
 			if (null != ret1 && null != ret2) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 				ret.addAll(ret2);
 			}
@@ -317,15 +317,15 @@ public class ArgumentExtractor implements ExprDescPlanVisitor<List<ExprDescPlan>
 	}
 	
 	@Override
-	public List<ExprDescPlan> visitNot(ExprNotPlan expr) {
-		List<ExprDescPlan> ret = null;
+	public List<ExprZ> visitNot(ExprNot expr) {
+		List<ExprZ> ret = null;
 		
-		if (exprInst instanceof ExprNotPlan) {
-			List<ExprDescPlan> ret1 =
-				expr.getExpr().accept(new ArgumentExtractor(((ExprNotPlan) exprInst).getExpr(), paramName));
+		if (exprInst instanceof ExprNot) {
+			List<ExprZ> ret1 =
+				expr.getExpr().accept(new ArgumentExtractor(((ExprNot) exprInst).getExpr(), paramName));
 			
 			if (null != ret1) {
-				ret = new ArrayList<ExprDescPlan>();
+				ret = new ArrayList<ExprZ>();
 				ret.addAll(ret1);
 			}
 

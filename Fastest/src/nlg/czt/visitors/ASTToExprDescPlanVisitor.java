@@ -20,22 +20,22 @@ import net.sourceforge.czt.z.visitor.MemPredVisitor;
 import net.sourceforge.czt.z.visitor.NegPredVisitor;
 import net.sourceforge.czt.z.visitor.RefExprVisitor;
 import net.sourceforge.czt.z.visitor.SetExprVisitor;
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprEqPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprIntersectionPlan;
-import nlg.expr.base.ExprMapsToPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotEqPlan;
-import nlg.expr.base.ExprNotInPlan;
-import nlg.expr.base.ExprNotPlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetEqPlan;
-import nlg.expr.base.ExprSubSetPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprApply;
+import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprEq;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprIntersection;
+import nlg.expr.base.ExprMapsTo;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprNotIn;
+import nlg.expr.base.ExprNot;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprSet;
+import nlg.expr.base.ExprSubSetEq;
+import nlg.expr.base.ExprSubSet;
+import nlg.expr.base.ExprUnion;
 
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
@@ -44,25 +44,25 @@ import common.z.UtilSymbols;
  * Construye expresion ExprDescPlan a partir de arbol AST (czt)
  */
 public class ASTToExprDescPlanVisitor implements  
-MemPredVisitor<ExprDescPlan>,
-RefExprVisitor<ExprDescPlan>, 
-ApplExprVisitor<ExprDescPlan>,
-SetExprVisitor<ExprDescPlan>,
-NegPredVisitor<ExprDescPlan>,
-ExprPredVisitor<ExprDescPlan>,
-TermVisitor<ExprDescPlan> {
+MemPredVisitor<ExprZ>,
+RefExprVisitor<ExprZ>, 
+ApplExprVisitor<ExprZ>,
+SetExprVisitor<ExprZ>,
+NegPredVisitor<ExprZ>,
+ExprPredVisitor<ExprZ>,
+TermVisitor<ExprZ> {
 
 
 	// Default: expresion no soportada!
 	@Override
-	public ExprDescPlan visitTerm(Term arg0) {
+	public ExprZ visitTerm(Term arg0) {
 		System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0) + "\n");
 		return null;
 	}
 
 	@Override
-	public ExprDescPlan visitMemPred(MemPred arg0) {
-		ExprDescPlan ret = null;
+	public ExprZ visitMemPred(MemPred arg0) {
+		ExprZ ret = null;
 
 		Expr leftExpr = arg0.getLeftExpr();
 		Expr rightExpr = arg0.getRightExpr();
@@ -70,11 +70,11 @@ TermVisitor<ExprDescPlan> {
 
 		if (!mixfix) {	// se trata de un pertenece
 
-			ExprDescPlan lexp = leftExpr.accept(this);
-			ExprDescPlan rexp = rightExpr.accept(this);
+			ExprZ lexp = leftExpr.accept(this);
+			ExprZ rexp = rightExpr.accept(this);
 
 			if (null != lexp || null != rexp) {
-				ret = new ExprInPlan(lexp, rexp);
+				ret = new ExprIn(lexp, rexp);
 			}
 
 		} else { 		
@@ -85,12 +85,12 @@ TermVisitor<ExprDescPlan> {
 				ZExprList zList = auxSet.getZExprList();
 				if(zList.size()==1) {
 
-					ExprDescPlan lexp = leftExpr.accept(this);
-					ExprDescPlan rexp = zList.get(0).accept(this);
+					ExprZ lexp = leftExpr.accept(this);
+					ExprZ rexp = zList.get(0).accept(this);
 
 
 					if (null != lexp || null != rexp) {
-						ret = new ExprEqPlan(lexp, rexp);
+						ret = new ExprEq(lexp, rexp);
 					}
 
 				}
@@ -104,16 +104,16 @@ TermVisitor<ExprDescPlan> {
 				Object[] opArguments = tuple.getZExprList().getChildren();
 
 				// Describo recursivamente los hijos
-				ExprDescPlan lexp = ((Expr) opArguments[0]).accept(this);
-				ExprDescPlan rexp = ((Expr) opArguments[1]).accept(this);
+				ExprZ lexp = ((Expr) opArguments[0]).accept(this);
+				ExprZ rexp = ((Expr) opArguments[1]).accept(this);
 
 				if (opName.equals(UtilSymbols.notInSymbol())) {					// ∉ - Non-membership symbol
 					if (null != lexp || null != rexp) {
-						ret = new ExprNotInPlan(lexp, rexp);
+						ret = new ExprNotIn(lexp, rexp);
 					}
 				} else if (opName.equals(UtilSymbols.neqSymbol())) {			// ≠ - Unequality  symbol
 					if (null != lexp || null != rexp) {
-						ret = new ExprNotEqPlan(lexp, rexp);
+						ret = new ExprNotEq(lexp, rexp);
 					}
 				} else if (opName.equals(UtilSymbols.lessThanSymbol())) {		// < - Less symbol
 					System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0));
@@ -125,11 +125,11 @@ TermVisitor<ExprDescPlan> {
 					System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0));
 				} else if (opName.equals(UtilSymbols.subsetSymbol())) {			// ⊂ - Subset symbol
 					if (null != lexp || null != rexp) {
-						ret = new ExprSubSetPlan(lexp, rexp);
+						ret = new ExprSubSet(lexp, rexp);
 					}
 				} else if (opName.equals(UtilSymbols.subseteqSymbol())) {		// ⊆ - Subseteq symbol
 					if (null != lexp || null != rexp) {
-						ret = new ExprSubSetEqPlan(lexp, rexp);
+						ret = new ExprSubSetEq(lexp, rexp);
 					}
 				} else {
 					System.out.println("unhandled RefExpr");
@@ -141,12 +141,12 @@ TermVisitor<ExprDescPlan> {
 	}
 
 	@Override
-	public ExprDescPlan visitApplExpr(ApplExpr arg0) {
+	public ExprZ visitApplExpr(ApplExpr arg0) {
 		boolean mixfix = arg0.getMixfix();
 		Expr leftExpr = arg0.getLeftExpr();
 		Expr rightExpr = arg0.getRightExpr();
 
-		ExprDescPlan ret = null;
+		ExprZ ret = null;
 
 		if (mixfix) {
 
@@ -161,16 +161,16 @@ TermVisitor<ExprDescPlan> {
 					Expr right = ((TupleExpr) rExpr).getZExprList().get(1);
 
 					// proceso recursivamente los hijos
-					ExprDescPlan lexp = left.accept(this);
-					ExprDescPlan rexp = right.accept(this);
+					ExprZ lexp = left.accept(this);
+					ExprZ rexp = right.accept(this);
 
 					if (null != lexp || null != rexp) {
 						if (name.equals(UtilSymbols.mapletSymbol())) {				// ↦ - MapsTo symbol
-							ret = new ExprMapsToPlan(lexp, rexp);
+							ret = new ExprMapsTo(lexp, rexp);
 						} else if (name.equals(UtilSymbols.intersectionSymbol())) {	// ⋂ - Intersection symbol
-							ret = new ExprIntersectionPlan(lexp, rexp);
+							ret = new ExprIntersection(lexp, rexp);
 						} else if (name.equals(UtilSymbols.unionSymbol())) {		// ⋃ - Union symbol
-							ret = new ExprUnionPlan(lexp, rexp);
+							ret = new ExprUnion(lexp, rexp);
 						}
 					}
 				} else {
@@ -185,27 +185,27 @@ TermVisitor<ExprDescPlan> {
 				String name = ((RefExpr) arg0.getLeftExpr()).getName().toString();
 				
 				if (name.equals("dom")) {
-					ret = new ExprDomPlan(rightExpr.accept(this));
+					ret = new ExprDom(rightExpr.accept(this));
 				} else if (name.equals("ran")) {
-					ret = new ExprRanPlan(rightExpr.accept(this));
+					ret = new ExprRan(rightExpr.accept(this));
 				} else {
 					// Describo recursivamente los hijos
-					ExprDescPlan lexp = leftExpr.accept(this);
-					ExprDescPlan rexp = rightExpr.accept(this);
+					ExprZ lexp = leftExpr.accept(this);
+					ExprZ rexp = rightExpr.accept(this);
 		
 					if (null != lexp || null != rexp) {
-						ret = new ExprApplyPlan(lexp, rexp);
+						ret = new ExprApply(lexp, rexp);
 					}
 				}
 				
 			} else {
 			
 				// Describo recursivamente los hijos
-				ExprDescPlan lexp = leftExpr.accept(this);
-				ExprDescPlan rexp = rightExpr.accept(this);
+				ExprZ lexp = leftExpr.accept(this);
+				ExprZ rexp = rightExpr.accept(this);
 	
 				if (null != lexp || null != rexp) {
-					ret = new ExprApplyPlan(lexp, rexp);
+					ret = new ExprApply(lexp, rexp);
 				}
 			}
 		}
@@ -215,27 +215,27 @@ TermVisitor<ExprDescPlan> {
 	}
 
 	@Override
-	public ExprDescPlan visitRefExpr(RefExpr arg0) {
-		return new ExprNamePlan(arg0.getZName().toString());
+	public ExprZ visitRefExpr(RefExpr arg0) {
+		return new ExprName(arg0.getZName().toString());
 	}
 
 	@Override
-	public ExprDescPlan visitSetExpr(SetExpr arg0) {
-		List<ExprDescPlan> list = new ArrayList<ExprDescPlan>();
+	public ExprZ visitSetExpr(SetExpr arg0) {
+		List<ExprZ> list = new ArrayList<ExprZ>();
 		for (Expr exp : arg0.getZExprList()) {
 			list.add(exp.accept(this));
 		}
 
-		return new ExprSetPlan(list);
+		return new ExprSet(list);
 	}
 
 	@Override
-	public ExprDescPlan visitNegPred(NegPred arg0) {
-		return new ExprNotPlan(arg0.getPred().accept(this));
+	public ExprZ visitNegPred(NegPred arg0) {
+		return new ExprNot(arg0.getPred().accept(this));
 	}
 
 	@Override
-	public ExprDescPlan visitExprPred(ExprPred arg0) {
+	public ExprZ visitExprPred(ExprPred arg0) {
 		return arg0.getExpr().accept(this);
 	}
 

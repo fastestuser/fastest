@@ -1,7 +1,7 @@
 package nlg.pipeline;
 
 import nlg.base.NLGDocument;
-import nlg.base.NLGDocumentPlan;
+import nlg.base.documentPlan.DocumentPlan;
 import client.blogic.management.Controller;
 
 /**
@@ -12,7 +12,7 @@ import client.blogic.management.Controller;
 public class LingRealizerEN implements LingRealizer {
 
 	@Override
-	public NLGDocument realize(NLGDocumentPlan documentPlan,
+	public NLGDocument realize(DocumentPlan documentPlan,
 			Controller controller) {
 		// TODO Auto-generated method stub
 		return null;

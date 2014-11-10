@@ -3,7 +3,8 @@ package nlg.pipeline;
 import java.util.List;
 
 import nlg.base.NLGDocument;
-import nlg.base.NLGDocumentPlan;
+import nlg.base.documentPlan.DocumentPlan;
+import nlg.pipeline.documentPlanning.DocumentPlanner;
 import client.blogic.management.Controller;
 import common.z.TClass;
 
@@ -28,7 +29,7 @@ public class NLGen {
 	public String genNLDescription(List<TClass> tClasses, Controller controller) {
 		
 		// Etapa 1: Document planning
-		NLGDocumentPlan dp = documentPlaner.plan(tClasses, controller);
+		DocumentPlan dp = documentPlaner.plan(tClasses, controller);
 		
 		// Etapa 2: Microplanning
 		// ----------------------

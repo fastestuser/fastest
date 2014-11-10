@@ -1,6 +1,6 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Expresion Z.
@@ -10,6 +10,6 @@ import nlg.expr.visitors.ExprDescPlanVisitor;
  * los mismos ya fueron chequeados anteriormente y las expresiones
  * con las que trabajamos estaran correctamente formadas.
  */
-public interface ExprDescPlan {
-	public <X> X accept(ExprDescPlanVisitor<X> visitor);
+public interface ExprZ {
+	public <X> X accept(ExprZVisitor<X> visitor);
 }

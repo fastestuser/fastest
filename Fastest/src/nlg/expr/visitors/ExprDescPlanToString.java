@@ -1,102 +1,102 @@
 package nlg.expr.visitors;
 
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprEqPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprIntersectionPlan;
-import nlg.expr.base.ExprMapsToPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotEqPlan;
-import nlg.expr.base.ExprNotInPlan;
-import nlg.expr.base.ExprNotPlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetEqPlan;
-import nlg.expr.base.ExprSubSetPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprApply;
+import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprEq;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprIntersection;
+import nlg.expr.base.ExprMapsTo;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprNotIn;
+import nlg.expr.base.ExprNot;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprSet;
+import nlg.expr.base.ExprSubSetEq;
+import nlg.expr.base.ExprSubSet;
+import nlg.expr.base.ExprUnion;
 
 /**
  * Visitor para imprimir una ExprDescPlan
  * formateada en forma de arbol.
  */
-public class ExprDescPlanToString implements ExprDescPlanVisitor<String> {
+public class ExprDescPlanToString implements ExprZVisitor<String> {
 
 	@Override
-	public String visitExprApply(ExprApplyPlan expr) {
+	public String visitExprApply(ExprApply expr) {
 		return "ExprApply \n"
 				+ "  |_ " + insetTabs(expr.getFunction().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getArgument().accept(this));
 	}
 
 	@Override
-	public String visitExprDom(ExprDomPlan expr) {
+	public String visitExprDom(ExprDom expr) {
 		return "ExprDom \n"
 				+ "  |_ " + insetTabs(expr.getFunction().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getFunction().accept(this));
 	}
 
 	@Override
-	public String visitExprEq(ExprEqPlan expr) {
+	public String visitExprEq(ExprEq expr) {
 		return "ExprEq \n"
 				+ "  |_ " + insetTabs(expr.getLeftExpr().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightExpr().accept(this));
 	}
 
 	@Override
-	public String visitExprIn(ExprInPlan expr) {
+	public String visitExprIn(ExprIn expr) {
 		return "ExprIn \n"
 				+ "  |_ " + insetTabs(expr.getElement().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getSet().accept(this));
 	}
 
 	@Override
-	public String visitExprIntersection(ExprIntersectionPlan expr) {
+	public String visitExprIntersection(ExprIntersection expr) {
 		return "ExprIntersection \n"
 				+ "  |_ " + insetTabs(expr.getLeftSet().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightSet().accept(this));
 	}
 
 	@Override
-	public String visitExprMapsTo(ExprMapsToPlan expr) {
+	public String visitExprMapsTo(ExprMapsTo expr) {
 		return "ExprMapsTo \n"
 				+ "  |_ " + insetTabs(expr.getLeft().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRight().accept(this));
 	}
 
 	@Override
-	public String visitExprName(ExprNamePlan expr) {
+	public String visitExprName(ExprName expr) {
 		return "ExprName " + expr.getName();
 	}
 
 	@Override
-	public String visitExprNotEq(ExprNotEqPlan expr) {
+	public String visitExprNotEq(ExprNotEq expr) {
 		return "ExprNotEq \n"
 				+ "  |_ " + insetTabs(expr.getLeftExpr().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightExpr().accept(this));
 	}
 
 	@Override
-	public String visitExprNotIn(ExprNotInPlan expr) {
+	public String visitExprNotIn(ExprNotIn expr) {
 		return "ExprNotIn \n"
 				+ "  |_ " + insetTabs(expr.getElement().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getSet().accept(this));
 	}
 
 	@Override
-	public String visitExprRan(ExprRanPlan expr) {
+	public String visitExprRan(ExprRan expr) {
 		return "ExprRan \n"
 				+ "  |_ " + insetTabs(expr.getFunction().accept(this));
 	}
 
 	@Override
-	public String visitExprSet(ExprSetPlan expr) {
+	public String visitExprSet(ExprSet expr) {
 		String ret = "ExprSet ";
 		if (expr.getElements().isEmpty()) {
 			ret += "{ }";
 		} else {
-			for (ExprDescPlan exp : expr.getElements()) {
+			for (ExprZ exp : expr.getElements()) {
 				ret += "\n  |_ " + insetTabs(exp.accept(this));
 			}
 		}
@@ -105,28 +105,28 @@ public class ExprDescPlanToString implements ExprDescPlanVisitor<String> {
 	}
 
 	@Override
-	public String visitExprSubSetEq(ExprSubSetEqPlan expr) {
+	public String visitExprSubSetEq(ExprSubSetEq expr) {
 		return "ExprSubSetEq \n"
 				+ "  |_ " + insetTabs(expr.getLeftSet().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightSet().accept(this));
 	}
 
 	@Override
-	public String visitExprSubSet(ExprSubSetPlan expr) {
+	public String visitExprSubSet(ExprSubSet expr) {
 		return "ExprSubSet \n"
 				+ "  |_ " + insetTabs(expr.getLeftSet().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightSet().accept(this));
 	}
 
 	@Override
-	public String visitExprUnion(ExprUnionPlan expr) {
+	public String visitExprUnion(ExprUnion expr) {
 		return "ExprUnion \n"
 				+ "  |_ " + insetTabs(expr.getLeftSet().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getRightSet().accept(this));
 	}
 
 	@Override
-	public String visitNot(ExprNotPlan expr) {
+	public String visitNot(ExprNot expr) {
 		return "ExprNot \n"
 				+ "  |_ " + insetTabs(expr.getExpr().accept(this));
 	}

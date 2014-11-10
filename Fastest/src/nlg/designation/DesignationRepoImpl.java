@@ -4,19 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprZ;
 
 
 public class DesignationRepoImpl implements DesignationRepo {
 
 	// Map:: nombre_esquema -> expr -> designacion
-	public Map<String, Map<ExprDescPlan, TermDesignation>> designations = 
-			new HashMap<String, Map<ExprDescPlan, TermDesignation>>();
+	public Map<String, Map<ExprZ, TermDesignation>> designations = 
+			new HashMap<String, Map<ExprZ, TermDesignation>>();
 	
 	@Override
 	public void addDesignation(TermDesignation desig) {
 		if (!designations.containsKey(desig.getSchName())) {
-			Map<ExprDescPlan, TermDesignation> temp = new HashMap<ExprDescPlan, TermDesignation>();
+			Map<ExprZ, TermDesignation> temp = new HashMap<ExprZ, TermDesignation>();
 			temp.put(desig.getExpr(), desig);
 			designations.put(desig.getSchName(), temp);
 		} else if (!designations.get(desig.getSchName()).containsKey(desig.getExpr())) {
@@ -32,7 +32,7 @@ public class DesignationRepoImpl implements DesignationRepo {
 	}
 
 	@Override
-	public TermDesignation getDesignation(ExprDescPlan exp, String schName) {
+	public TermDesignation getDesignation(ExprZ exp, String schName) {
 		if (designations.containsKey(schName) &&
 				designations.get(schName).containsKey(exp)) {
 			return designations.get(schName).get(exp);

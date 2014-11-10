@@ -1,7 +1,7 @@
 package nlg.pipeline;
 
 import nlg.base.NLGDocument;
-import nlg.base.NLGDocumentPlan;
+import nlg.base.documentPlan.DocumentPlan;
 import client.blogic.management.Controller;
 
 /**
@@ -11,5 +11,5 @@ import client.blogic.management.Controller;
  *
  */
 public interface LingRealizer {
-	public NLGDocument realize(NLGDocumentPlan documentPlan, Controller controller);
+	public NLGDocument realize(DocumentPlan documentPlan, Controller controller);
 }

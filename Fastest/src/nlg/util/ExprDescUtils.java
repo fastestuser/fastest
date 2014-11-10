@@ -5,21 +5,21 @@ import java.util.List;
 
 import net.sourceforge.czt.z.ast.Pred;
 import nlg.czt.visitors.ASTToExprDescPlanVisitor;
-import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprZ;
 
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.czt.visitors.AndPredClausesExtractor2;
 
-public class ExprDescPlanUtils {
+public class ExprDescUtils {
 
 	/**
 	 * Divide el predicado del esquema dado 
 	 * segun sus predicados "and"y  luego convierte 
 	 * cada uno de estos predicados en ExprDescPlan.
 	 */
-	public static List<ExprDescPlan> extractSchemaExpr(TClass tClass) {
-		List<ExprDescPlan> ret = new ArrayList<ExprDescPlan>();
+	public static List<ExprZ> extractSchemaExpr(TClass tClass) {
+		List<ExprZ> ret = new ArrayList<ExprZ>();
 				
 		ASTToExprDescPlanVisitor visitor = new ASTToExprDescPlanVisitor();
 		
@@ -29,7 +29,7 @@ public class ExprDescPlanUtils {
 								new AndPredClausesExtractor2());
 		
 		for (Pred p : ps) {
-			ExprDescPlan edp = p.accept(visitor);
+			ExprZ edp = p.accept(visitor);
 			// TODO ignoro expresiones no soportadas (esto no deberia permitirse)
 			if (null != edp) {
 				ret.add(edp);

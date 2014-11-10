@@ -1,15 +1,15 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Nombre.
  * Representa nombres de variables, funciones, etc.
  */
-public class ExprNamePlan implements ExprDescPlan {
+public class ExprName implements ExprZ {
 	private String name;
 
-	public ExprNamePlan(String name) {
+	public ExprName(String name) {
 		this.name = name;
 	}
 
@@ -37,7 +37,7 @@ public class ExprNamePlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprNamePlan other = (ExprNamePlan) obj;
+		ExprName other = (ExprName) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -47,7 +47,7 @@ public class ExprNamePlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprName(this);
 	}
 }

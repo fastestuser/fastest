@@ -1,34 +1,34 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Mapping
  * ExprMapsToPlan x y -> x ↦ y
  */
-public class ExprMapsToPlan implements ExprDescPlan {
-	private ExprDescPlan left;
-	private ExprDescPlan right;
+public class ExprMapsTo implements ExprZ {
+	private ExprZ left;
+	private ExprZ right;
 	
-	public ExprMapsToPlan(){
+	public ExprMapsTo(){
 		
 	}
 	
-	public ExprMapsToPlan(ExprDescPlan left, ExprDescPlan right) {
+	public ExprMapsTo(ExprZ left, ExprZ right) {
 		this.left = left;
 		this.right = right;
 	}
 	
-	public ExprDescPlan getLeft() {
+	public ExprZ getLeft() {
 		return left;
 	}
-	public void setLeft(ExprDescPlan left) {
+	public void setLeft(ExprZ left) {
 		this.left = left;
 	}
-	public ExprDescPlan getRight() {
+	public ExprZ getRight() {
 		return right;
 	}
-	public void setRight(ExprDescPlan right) {
+	public void setRight(ExprZ right) {
 		this.right = right;
 	}
 
@@ -49,7 +49,7 @@ public class ExprMapsToPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprMapsToPlan other = (ExprMapsToPlan) obj;
+		ExprMapsTo other = (ExprMapsTo) obj;
 		if (left == null) {
 			if (other.left != null)
 				return false;
@@ -64,7 +64,7 @@ public class ExprMapsToPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprMapsTo(this);
 	}
 }

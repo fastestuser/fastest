@@ -1,34 +1,34 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Aplicacion de funcion.
  * ExprApplyPlan f x -> f~x
  */
-public class ExprApplyPlan implements ExprDescPlan {
-	private ExprDescPlan function;
-	private ExprDescPlan argument;
+public class ExprApply implements ExprZ {
+	private ExprZ function;
+	private ExprZ argument;
 	
-	public ExprApplyPlan() {
+	public ExprApply() {
 		
 	}
 	
-	public ExprApplyPlan(ExprDescPlan function, ExprDescPlan argument) {
+	public ExprApply(ExprZ function, ExprZ argument) {
 		this.function = function;
 		this.argument = argument;
 	}
 	
-	public ExprDescPlan getFunction() {
+	public ExprZ getFunction() {
 		return function;
 	}
-	public void setFunction(ExprDescPlan function) {
+	public void setFunction(ExprZ function) {
 		this.function = function;
 	}
-	public ExprDescPlan getArgument() {
+	public ExprZ getArgument() {
 		return argument;
 	}
-	public void setArgument(ExprDescPlan argument) {
+	public void setArgument(ExprZ argument) {
 		this.argument = argument;
 	}
 
@@ -51,7 +51,7 @@ public class ExprApplyPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprApplyPlan other = (ExprApplyPlan) obj;
+		ExprApply other = (ExprApply) obj;
 		if (argument == null) {
 			if (other.argument != null)
 				return false;
@@ -66,7 +66,7 @@ public class ExprApplyPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprApply(this);
 	}
 }

@@ -5,19 +5,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import nlg.base.NLGDocumentPlan;
-import nlg.base.NLGUtils;
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprNamePlan;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.Verbalizador;
-import nlg.pipeline.DocumentPlanner;
-import nlg.pipeline.DocumentPlannerImpl;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 
@@ -35,24 +29,24 @@ public static void main(String args[]) throws IOException {
 		}
 		
 		// Intento describir una expresion
-		ExprDescPlan edp = new ExprInPlan(
-				new ExprNamePlan("p?"), 
-				new ExprDomPlan(
-						new ExprNamePlan("procs")));
+		ExprZ edp = new ExprIn(
+				new ExprName("p?"), 
+				new ExprDom(
+						new ExprName("procs")));
 		
 		System.out.println(edp.accept(new Verbalizador(ui.getMyController().getDesigRepo())));
 	}
 	
 	private static void printDocumentPlan(Controller controller) {
 		// NLGen sys = new NLGen(new DocumentPlannerImpl(), new LingRealizerES(), new ASCIIRealizer());
-		DocumentPlanner dp = new DocumentPlannerImpl();
-		NLGDocumentPlan nlgDP = 
+		/*DocumentPlanner dp = new DocumentPlannerImpl();
+		DocumentPlan nlgDP = 
 				dp.plan(
 						Arrays.asList(
 								NLGUtils.getTClass("Del_SP_17", controller)), 
 						controller);
 		
-		System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));
+		System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));*/
 		
 	}
 	

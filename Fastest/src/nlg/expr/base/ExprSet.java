@@ -2,25 +2,25 @@ package nlg.expr.base;
 
 import java.util.List;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Conjunto de expresiones
  * ExprSetPlan e1 e2 e3 -> {e1, e2, e3}
  */
-public class ExprSetPlan implements ExprDescPlan {
-	private List<ExprDescPlan> elements;
+public class ExprSet implements ExprZ {
+	private List<ExprZ> elements;
 
-	public ExprSetPlan(List<ExprDescPlan> elements) {
+	public ExprSet(List<ExprZ> elements) {
 		super();
 		this.elements = elements;
 	}
 
-	public List<ExprDescPlan> getElements() {
+	public List<ExprZ> getElements() {
 		return elements;
 	}
 
-	public void setElements(List<ExprDescPlan> elements) {
+	public void setElements(List<ExprZ> elements) {
 		this.elements = elements;
 	}
 
@@ -41,7 +41,7 @@ public class ExprSetPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprSetPlan other = (ExprSetPlan) obj;
+		ExprSet other = (ExprSet) obj;
 		if (elements == null) {
 			if (other.elements != null)
 				return false;
@@ -51,7 +51,7 @@ public class ExprSetPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprSet(this);
 	}
 	

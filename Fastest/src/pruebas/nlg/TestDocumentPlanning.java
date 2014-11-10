@@ -6,20 +6,9 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
-import nlg.base.NLGDocumentPlan;
-import nlg.base.NLGUtils;
-import nlg.pipeline.DocumentPlanner;
-import nlg.pipeline.DocumentPlannerImpl;
 import client.blogic.management.Controller;
-import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
 import client.presentation.ClientTextUI;
-
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
-import common.z.TClass;
 
 public class TestDocumentPlanning {
 	
@@ -39,9 +28,9 @@ public class TestDocumentPlanning {
 	
 	private static void printDocumentPlan(Controller controller) {
 		// NLGen sys = new NLGen(new DocumentPlannerImpl(), new LingRealizerES(), new ASCIIRealizer());
-		DocumentPlanner dp = new DocumentPlannerImpl();
-		NLGDocumentPlan nlgDP = dp.plan(NLGUtils.getAllTClassLeaves(controller), controller);
-		System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));
+		//DocumentPlanner dp = new DocumentPlannerImpl();
+		//DocumentPlan nlgDP = dp.plan(NLGUtils.getAllTClassLeaves(controller), controller);
+		//System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));
 		
 	}
 	

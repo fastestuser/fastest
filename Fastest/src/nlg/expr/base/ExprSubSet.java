@@ -1,34 +1,34 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
- * Interseccion de conjuntos
- * ExprIntersectionPlan A B -> A ⋂ B
+ * Inclusion estricta
+ * ExprSubSetPlan A B -> A ⊂ B
  */
-public class ExprIntersectionPlan implements ExprDescPlan {
-	private ExprDescPlan leftSet;
-	private ExprDescPlan rightSet;
+public class ExprSubSet implements ExprZ {
+	private ExprZ leftSet;
+	private ExprZ rightSet;
 	
-	public ExprIntersectionPlan() {
+	public ExprSubSet() {
 		
 	}
 	
-	public ExprIntersectionPlan(ExprDescPlan leftSet, ExprDescPlan rightSet) {
+	public ExprSubSet(ExprZ leftSet, ExprZ rightSet) {
 		this.leftSet = leftSet;
 		this.rightSet = rightSet;
 	}
 	
-	public ExprDescPlan getLeftSet() {
+	public ExprZ getLeftSet() {
 		return leftSet;
 	}
-	public void setLeftSet(ExprDescPlan leftSet) {
+	public void setLeftSet(ExprZ leftSet) {
 		this.leftSet = leftSet;
 	}
-	public ExprDescPlan getRightSet() {
+	public ExprZ getRightSet() {
 		return rightSet;
 	}
-	public void setRightSet(ExprDescPlan rightSet) {
+	public void setRightSet(ExprZ rightSet) {
 		this.rightSet = rightSet;
 	}
 
@@ -50,7 +50,7 @@ public class ExprIntersectionPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprIntersectionPlan other = (ExprIntersectionPlan) obj;
+		ExprSubSet other = (ExprSubSet) obj;
 		if (leftSet == null) {
 			if (other.leftSet != null)
 				return false;
@@ -63,9 +63,9 @@ public class ExprIntersectionPlan implements ExprDescPlan {
 			return false;
 		return true;
 	}
-	
+
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
-		return visitor.visitExprIntersection(this);
+	public <X> X accept(ExprZVisitor<X> visitor) {
+		return visitor.visitExprSubSet(this);
 	}
 }

@@ -1,33 +1,33 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
- * ExprSubSetEqPlan A B -> A ⊆ B
+ * Union de conjuntos
+ * ExprUnionPlan A B -> A ⋃ B
  */
-public class ExprSubSetEqPlan implements ExprDescPlan {
-	private ExprDescPlan leftSet;
-	private ExprDescPlan rightSet;
+public class ExprUnion implements ExprZ {
+	private ExprZ leftSet;
+	private ExprZ rightSet;
 	
-	public ExprSubSetEqPlan() {
-		
+	public ExprUnion() {
 	}
 	
-	public ExprSubSetEqPlan(ExprDescPlan leftSet, ExprDescPlan rightSet) {
+	public ExprUnion(ExprZ leftSet, ExprZ rightSet) {
 		this.leftSet = leftSet;
 		this.rightSet = rightSet;
 	}
 	
-	public ExprDescPlan getLeftSet() {
+	public ExprZ getLeftSet() {
 		return leftSet;
 	}
-	public void setLeftSet(ExprDescPlan leftSet) {
+	public void setLeftSet(ExprZ leftSet) {
 		this.leftSet = leftSet;
 	}
-	public ExprDescPlan getRightSet() {
+	public ExprZ getRightSet() {
 		return rightSet;
 	}
-	public void setRightSet(ExprDescPlan rightSet) {
+	public void setRightSet(ExprZ rightSet) {
 		this.rightSet = rightSet;
 	}
 
@@ -49,7 +49,7 @@ public class ExprSubSetEqPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprSubSetEqPlan other = (ExprSubSetEqPlan) obj;
+		ExprUnion other = (ExprUnion) obj;
 		if (leftSet == null) {
 			if (other.leftSet != null)
 				return false;
@@ -64,7 +64,7 @@ public class ExprSubSetEqPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
-		return visitor.visitExprSubSetEq(this);
+	public <X> X accept(ExprZVisitor<X> visitor) {
+		return visitor.visitExprUnion(this);
 	}
 }

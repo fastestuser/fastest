@@ -12,7 +12,7 @@ import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.Pred;
 import nlg.czt.visitors.ASTToExprDescPlanVisitor;
-import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.NameExtractor;
 
 public class DesignationParserImpl implements DesignationParser {
@@ -75,7 +75,7 @@ public class DesignationParserImpl implements DesignationParser {
 		
 		// Intento parsear el termino y convertiro a ExprDescPlan
 		Pred term = ParseUtils.parsePred(new StringSource(termString), null, new SectionManager());
-		ExprDescPlan exprTerm = term.accept(new ASTToExprDescPlanVisitor());
+		ExprZ exprTerm = term.accept(new ASTToExprDescPlanVisitor());
 		
 		// Extraigo parametros de la designacion
 		List<String> parametros = getParameters(designation, exprTerm);
@@ -123,7 +123,7 @@ public class DesignationParserImpl implements DesignationParser {
 	}
 	
 	// Extrae los nombres de los parametros de una designacion
-	private List<String> getParameters (String designation, ExprDescPlan expr) {
+	private List<String> getParameters (String designation, ExprZ expr) {
 		List<String> ret = new ArrayList<String>();
 		
 		// Extraigo nombres de variables, funciones, etc de expr

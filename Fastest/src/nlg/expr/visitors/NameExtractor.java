@@ -4,31 +4,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprEqPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprIntersectionPlan;
-import nlg.expr.base.ExprMapsToPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotEqPlan;
-import nlg.expr.base.ExprNotInPlan;
-import nlg.expr.base.ExprNotPlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetEqPlan;
-import nlg.expr.base.ExprSubSetPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprApply;
+import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprEq;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprIntersection;
+import nlg.expr.base.ExprMapsTo;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprNotIn;
+import nlg.expr.base.ExprNot;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprSet;
+import nlg.expr.base.ExprSubSetEq;
+import nlg.expr.base.ExprSubSet;
+import nlg.expr.base.ExprUnion;
 
 /**
  * Devuelve una lista con todos los "nombres" (ExprNamePlan) 
  * que aparecen dentro de de una expresion ExprDescPlan.
  */
-public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
+public class NameExtractor implements ExprZVisitor<List<String>> {
 
 	@Override
-	public List<String> visitExprApply(ExprApplyPlan expr) {
+	public List<String> visitExprApply(ExprApply expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getFunction().accept(this));
 		ret.addAll(expr.getArgument().accept(this));
@@ -36,14 +36,14 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprDom(ExprDomPlan expr) {
+	public List<String> visitExprDom(ExprDom expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getFunction().accept(this));
 		return ret;
 	}
 
 	@Override
-	public List<String> visitExprEq(ExprEqPlan expr) {
+	public List<String> visitExprEq(ExprEq expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftExpr().accept(this));
 		ret.addAll(expr.getRightExpr().accept(this));
@@ -51,7 +51,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprIn(ExprInPlan expr) {
+	public List<String> visitExprIn(ExprIn expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getElement().accept(this));
 		ret.addAll(expr.getSet().accept(this));
@@ -59,7 +59,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprIntersection(ExprIntersectionPlan expr) {
+	public List<String> visitExprIntersection(ExprIntersection expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftSet().accept(this));
 		ret.addAll(expr.getRightSet().accept(this));
@@ -67,7 +67,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprMapsTo(ExprMapsToPlan expr) {
+	public List<String> visitExprMapsTo(ExprMapsTo expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeft().accept(this));
 		ret.addAll(expr.getRight().accept(this));
@@ -75,12 +75,12 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprName(ExprNamePlan expr) {
+	public List<String> visitExprName(ExprName expr) {
 		return Arrays.asList(expr.getName());
 	}
 
 	@Override
-	public List<String> visitExprNotEq(ExprNotEqPlan expr) {
+	public List<String> visitExprNotEq(ExprNotEq expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftExpr().accept(this));
 		ret.addAll(expr.getRightExpr().accept(this));
@@ -88,7 +88,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprNotIn(ExprNotInPlan expr) {
+	public List<String> visitExprNotIn(ExprNotIn expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getElement().accept(this));
 		ret.addAll(expr.getSet().accept(this));
@@ -96,23 +96,23 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprRan(ExprRanPlan expr) {
+	public List<String> visitExprRan(ExprRan expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getFunction().accept(this));
 		return ret;
 	}
 
 	@Override
-	public List<String> visitExprSet(ExprSetPlan expr) {
+	public List<String> visitExprSet(ExprSet expr) {
 		List<String> ret = new ArrayList<String>();
-		for (ExprDescPlan e : expr.getElements()) {
+		for (ExprZ e : expr.getElements()) {
 			ret.addAll(e.accept(this));
 		}
 		return ret;
 	}
 
 	@Override
-	public List<String> visitExprSubSetEq(ExprSubSetEqPlan expr) {
+	public List<String> visitExprSubSetEq(ExprSubSetEq expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftSet().accept(this));
 		ret.addAll(expr.getRightSet().accept(this));
@@ -120,7 +120,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprSubSet(ExprSubSetPlan expr) {
+	public List<String> visitExprSubSet(ExprSubSet expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftSet().accept(this));
 		ret.addAll(expr.getRightSet().accept(this));
@@ -128,7 +128,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitExprUnion(ExprUnionPlan expr) {
+	public List<String> visitExprUnion(ExprUnion expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getLeftSet().accept(this));
 		ret.addAll(expr.getRightSet().accept(this));
@@ -136,7 +136,7 @@ public class NameExtractor implements ExprDescPlanVisitor<List<String>> {
 	}
 
 	@Override
-	public List<String> visitNot(ExprNotPlan expr) {
+	public List<String> visitNot(ExprNot expr) {
 		List<String> ret = new ArrayList<String>();
 		ret.addAll(expr.getExpr().accept(this));
 		return ret;

@@ -1,27 +1,27 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Rango de una funcion
  * ExprRanPlan f -> ran(f)
  */
-public class ExprRanPlan implements ExprDescPlan {
-	private ExprDescPlan function;
+public class ExprRan implements ExprZ {
+	private ExprZ function;
 
-	public ExprRanPlan() {
+	public ExprRan() {
 		
 	}
 	
-	public ExprRanPlan(ExprDescPlan function) {
+	public ExprRan(ExprZ function) {
 		this.function = function;
 	}
 
-	public ExprDescPlan getFunction() {
+	public ExprZ getFunction() {
 		return function;
 	}
 
-	public void setFunction(ExprDescPlan function) {
+	public void setFunction(ExprZ function) {
 		this.function = function;
 	}
 
@@ -42,7 +42,7 @@ public class ExprRanPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprRanPlan other = (ExprRanPlan) obj;
+		ExprRan other = (ExprRan) obj;
 		if (function == null) {
 			if (other.function != null)
 				return false;
@@ -52,7 +52,7 @@ public class ExprRanPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprRan(this);
 	}
 }

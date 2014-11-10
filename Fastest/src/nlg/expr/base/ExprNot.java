@@ -1,28 +1,28 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Negacion
  * ExprNotPlan x -> ¬ x
  */
-public class ExprNotPlan implements ExprDescPlan {
-	private ExprDescPlan expr;
+public class ExprNot implements ExprZ {
+	private ExprZ expr;
 
-	public ExprNotPlan(ExprDescPlan expr) {
+	public ExprNot(ExprZ expr) {
 		this.expr = expr;
 	}
 
-	public ExprDescPlan getExpr() {
+	public ExprZ getExpr() {
 		return expr;
 	}
 
-	public void setExpr(ExprDescPlan expr) {
+	public void setExpr(ExprZ expr) {
 		this.expr = expr;
 	}
 
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitNot(this);
 	}
 
@@ -42,7 +42,7 @@ public class ExprNotPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprNotPlan other = (ExprNotPlan) obj;
+		ExprNot other = (ExprNot) obj;
 		if (expr == null) {
 			if (other.expr != null)
 				return false;

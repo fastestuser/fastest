@@ -1,34 +1,34 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * No-pertenencia
  * ExprNotInPlan x A -> x ∉ A
  */
-public class ExprNotInPlan implements ExprDescPlan {
-	private ExprDescPlan element;
-	private ExprDescPlan set;
+public class ExprNotIn implements ExprZ {
+	private ExprZ element;
+	private ExprZ set;
 	
-	public ExprNotInPlan() {
+	public ExprNotIn() {
 		
 	}
 	
-	public ExprNotInPlan(ExprDescPlan element, ExprDescPlan set) {
+	public ExprNotIn(ExprZ element, ExprZ set) {
 		this.element = element;
 		this.set = set;
 	}
 	
-	public ExprDescPlan getElement() {
+	public ExprZ getElement() {
 		return element;
 	}
-	public void setElement(ExprDescPlan element) {
+	public void setElement(ExprZ element) {
 		this.element = element;
 	}
-	public ExprDescPlan getSet() {
+	public ExprZ getSet() {
 		return set;
 	}
-	public void setSet(ExprDescPlan set) {
+	public void setSet(ExprZ set) {
 		this.set = set;
 	}
 
@@ -49,7 +49,7 @@ public class ExprNotInPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprNotInPlan other = (ExprNotInPlan) obj;
+		ExprNotIn other = (ExprNotIn) obj;
 		if (element == null) {
 			if (other.element != null)
 				return false;
@@ -64,7 +64,7 @@ public class ExprNotInPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprNotIn(this);
 	}
 	

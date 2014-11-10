@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import nlg.designation.DesignationUtils;
 import nlg.designation.ParamDesignation;
-import nlg.expr.base.ExprDescPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprUnion;
 import nlg.expr.visitors.ExprDescPlanToString;
 
 public class BarTest {
@@ -16,15 +16,15 @@ public class BarTest {
 	public static void main(String args[])throws IOException {
 		
 		
-		ExprDescPlan exprInst = new ExprUnionPlan(
-				new ExprDomPlan(new ExprNamePlan("procs")), 
-				new ExprRanPlan(new ExprNamePlan("asd")));
-		ExprDescPlan exprDesg = new ExprUnionPlan(
-				new ExprDomPlan(new ExprNamePlan("procs")), 
-				new ExprNamePlan("x"));
+		ExprZ exprInst = new ExprUnion(
+				new ExprDom(new ExprName("procs")), 
+				new ExprRan(new ExprName("asd")));
+		ExprZ exprDesg = new ExprUnion(
+				new ExprDom(new ExprName("procs")), 
+				new ExprName("x"));
 		ParamDesignation paramDesig = new ParamDesignation(exprDesg, null, "x", null);
 		
-		ExprDescPlan ret = DesignationUtils.extractArgument(exprInst, paramDesig);
+		ExprZ ret = DesignationUtils.extractArgument(exprInst, paramDesig);
 		
 		System.out.println(ret.accept(new ExprDescPlanToString()));
 	}

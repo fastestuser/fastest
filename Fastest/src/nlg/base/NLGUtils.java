@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nlg.expr.base.ExprDescPlan;
+import nlg.base.documentPlan.DocumentPlan;
+import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.ExprDescPlanToString;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
-
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.TClass;
@@ -20,23 +20,26 @@ public class NLGUtils {
 	/**
 	 * Formatea un DocumentPlan (usado para debug)
 	 */
-	public static String nlgDocumentPlanToString(NLGDocumentPlan nlgDP) {
+	public static String nlgDocumentPlanToString(DocumentPlan nlgDP) {
 		String ret = "";
+		
+		/* TODO
 		ExprDescPlanToString visitor = new ExprDescPlanToString();
 		List<TClassDescPlan> descs = nlgDP.gettClassDescPlanList();
 		
 		for (TClassDescPlan descPlan : descs) {
 			TClass tClass = descPlan.gettClass();
-			List<ExprDescPlan> exprList = descPlan.getExprDescList();
+			List<ExprZ> exprList = descPlan.getExprDescList();
 			
 			ret += tClass.getSchName() + "\n";
 			
-			for (ExprDescPlan edp : exprList) {
+			for (ExprZ edp : exprList) {
 				ret += "* " + insetTabs(edp.accept(visitor)) + "\n";
 			}
 			
 			ret += "\n";
 		}
+		*/
 		
 		return ret;
 	}

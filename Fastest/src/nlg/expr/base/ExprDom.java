@@ -1,27 +1,27 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Dominio de una funcion
  * ExprDomPlan f -> dom(f)
  */
-public class ExprDomPlan implements ExprDescPlan {
-	private ExprDescPlan function;
+public class ExprDom implements ExprZ {
+	private ExprZ function;
 
-	public ExprDomPlan() {
+	public ExprDom() {
 		
 	}
 	
-	public ExprDomPlan(ExprDescPlan function) {
+	public ExprDom(ExprZ function) {
 		this.function = function;
 	}
 
-	public ExprDescPlan getFunction() {
+	public ExprZ getFunction() {
 		return function;
 	}
 
-	public void setFunction(ExprDescPlan function) {
+	public void setFunction(ExprZ function) {
 		this.function = function;
 	}
 
@@ -42,7 +42,7 @@ public class ExprDomPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprDomPlan other = (ExprDomPlan) obj;
+		ExprDom other = (ExprDom) obj;
 		if (function == null) {
 			if (other.function != null)
 				return false;
@@ -52,7 +52,7 @@ public class ExprDomPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
+	public <X> X accept(ExprZVisitor<X> visitor) {
 		return visitor.visitExprDom(this);
 	}
 }

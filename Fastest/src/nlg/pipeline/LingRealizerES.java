@@ -1,8 +1,8 @@
 package nlg.pipeline;
 
 import nlg.base.NLGDocument;
-import nlg.base.NLGDocumentPlan;
-import nlg.expr.base.ExprDescPlan;
+import nlg.base.documentPlan.DocumentPlan;
+import nlg.expr.base.ExprZ;
 import client.blogic.management.Controller;
 
 /**
@@ -13,13 +13,13 @@ import client.blogic.management.Controller;
 public class LingRealizerES implements LingRealizer {
 
 	@Override
-	public NLGDocument realize(NLGDocumentPlan documentPlan,
+	public NLGDocument realize(DocumentPlan documentPlan,
 			Controller controller) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	private String verbalize(ExprDescPlan edp) {
+	private String verbalize(ExprZ edp) {
 		
 		
 		

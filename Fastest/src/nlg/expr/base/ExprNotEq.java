@@ -1,35 +1,35 @@
 package nlg.expr.base;
 
-import nlg.expr.visitors.ExprDescPlanVisitor;
+import nlg.expr.visitors.ExprZVisitor;
 
 /**
- * Igualdad
- * ExprEqPlan x y -> x = y
+ * Desigualdad
+ * ExprNotEqPlan x y -> x ≠ y
  *
  */
-public class ExprEqPlan implements ExprDescPlan {
-	private ExprDescPlan leftExpr;
-	private ExprDescPlan rightExpr;
+public class ExprNotEq implements ExprZ {
+	private ExprZ leftExpr;
+	private ExprZ rightExpr;
 	
-	public ExprEqPlan(){
+	public ExprNotEq() {
 		
 	}
 	
-	public ExprEqPlan(ExprDescPlan leftExpr, ExprDescPlan rightExpr) {
+	public ExprNotEq(ExprZ leftExpr, ExprZ rightExpr) {
 		this.leftExpr = leftExpr;
 		this.rightExpr = rightExpr;
 	}
 	
-	public ExprDescPlan getLeftExpr() {
+	public ExprZ getLeftExpr() {
 		return leftExpr;
 	}
-	public void setLeftExpr(ExprDescPlan leftExpr) {
+	public void setLeftExpr(ExprZ leftExpr) {
 		this.leftExpr = leftExpr;
 	}
-	public ExprDescPlan getRightExpr() {
+	public ExprZ getRightExpr() {
 		return rightExpr;
 	}
-	public void setRightExpr(ExprDescPlan rightExpr) {
+	public void setRightExpr(ExprZ rightExpr) {
 		this.rightExpr = rightExpr;
 	}
 
@@ -52,7 +52,7 @@ public class ExprEqPlan implements ExprDescPlan {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprEqPlan other = (ExprEqPlan) obj;
+		ExprNotEq other = (ExprNotEq) obj;
 		if (leftExpr == null) {
 			if (other.leftExpr != null)
 				return false;
@@ -67,7 +67,7 @@ public class ExprEqPlan implements ExprDescPlan {
 	}
 	
 	@Override
-	public <X> X accept(ExprDescPlanVisitor<X> visitor) {
-		return visitor.visitExprEq(this);
+	public <X> X accept(ExprZVisitor<X> visitor) {
+		return visitor.visitExprNotEq(this);
 	}
 }

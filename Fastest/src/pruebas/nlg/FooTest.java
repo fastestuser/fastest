@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Map;
 
 import nlg.designation.DesignationRepo;
-import nlg.expr.base.ExprDescPlan;
+import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.ExprDescPlanToString;
-import nlg.util.ExprDescPlanUtils;
+import nlg.util.ExprDescUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
@@ -64,9 +64,9 @@ public class FooTest {
             tClass = (TClass) opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(schName, -1));
             
             if (null != tClass) {
-            	List<ExprDescPlan> asd = ExprDescPlanUtils.extractSchemaExpr(tClass);
+            	List<ExprZ> asd = ExprDescUtils.extractSchemaExpr(tClass);
             	
-            	for (ExprDescPlan exp : asd) {
+            	for (ExprZ exp : asd) {
             		System.out.println(exp.accept(visitor));
             		System.out.println("\n");
             	}

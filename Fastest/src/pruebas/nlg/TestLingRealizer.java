@@ -5,13 +5,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import nlg.base.NLGDocumentPlan;
-import nlg.base.NLGUtils;
-import nlg.pipeline.DocumentPlanner;
-import nlg.pipeline.DocumentPlannerImpl;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 
@@ -33,14 +28,14 @@ public class TestLingRealizer {
 	
 	private static void printDocumentPlan(Controller controller) {
 		// NLGen sys = new NLGen(new DocumentPlannerImpl(), new LingRealizerES(), new ASCIIRealizer());
-		DocumentPlanner dp = new DocumentPlannerImpl();
-		NLGDocumentPlan nlgDP = 
+		/*DocumentPlanner dp = new DocumentPlannerImpl();
+		DocumentPlan nlgDP = 
 				dp.plan(
 						Arrays.asList(
 								NLGUtils.getTClass("Del_SP_17", controller)), 
 						controller);
 		
-		System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));
+		System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));*/
 		
 	}
 	

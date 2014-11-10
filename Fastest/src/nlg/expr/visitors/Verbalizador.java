@@ -2,24 +2,24 @@ package nlg.expr.visitors;
 
 import nlg.designation.DesignationRepo;
 import nlg.designation.DesignationUtils;
-import nlg.expr.base.ExprApplyPlan;
-import nlg.expr.base.ExprDomPlan;
-import nlg.expr.base.ExprEqPlan;
-import nlg.expr.base.ExprInPlan;
-import nlg.expr.base.ExprIntersectionPlan;
-import nlg.expr.base.ExprMapsToPlan;
-import nlg.expr.base.ExprNamePlan;
-import nlg.expr.base.ExprNotEqPlan;
-import nlg.expr.base.ExprNotInPlan;
-import nlg.expr.base.ExprNotPlan;
-import nlg.expr.base.ExprRanPlan;
-import nlg.expr.base.ExprSetPlan;
-import nlg.expr.base.ExprSubSetEqPlan;
-import nlg.expr.base.ExprSubSetPlan;
-import nlg.expr.base.ExprUnionPlan;
+import nlg.expr.base.ExprApply;
+import nlg.expr.base.ExprDom;
+import nlg.expr.base.ExprEq;
+import nlg.expr.base.ExprIn;
+import nlg.expr.base.ExprIntersection;
+import nlg.expr.base.ExprMapsTo;
+import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprNotIn;
+import nlg.expr.base.ExprNot;
+import nlg.expr.base.ExprRan;
+import nlg.expr.base.ExprSet;
+import nlg.expr.base.ExprSubSetEq;
+import nlg.expr.base.ExprSubSet;
+import nlg.expr.base.ExprUnion;
 
 
-public class Verbalizador implements ExprDescPlanVisitor<String> {
+public class Verbalizador implements ExprZVisitor<String> {
 
 	private DesignationRepo desigRepo;
 	
@@ -28,91 +28,91 @@ public class Verbalizador implements ExprDescPlanVisitor<String> {
 	}
 	
 	@Override
-	public String visitExprApply(ExprApplyPlan expr) {
+	public String visitExprApply(ExprApply expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprDom(ExprDomPlan expr) {
+	public String visitExprDom(ExprDom expr) {
 		
 		return null;
 	}
 
 	@Override
-	public String visitExprEq(ExprEqPlan expr) {
+	public String visitExprEq(ExprEq expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprIn(ExprInPlan expr) {
+	public String visitExprIn(ExprIn expr) {
 
 		return null;
 	}
 
 	@Override
-	public String visitExprIntersection(ExprIntersectionPlan expr) {
+	public String visitExprIntersection(ExprIntersection expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprMapsTo(ExprMapsToPlan expr) {
+	public String visitExprMapsTo(ExprMapsTo expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprName(ExprNamePlan expr) {
+	public String visitExprName(ExprName expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprNotEq(ExprNotEqPlan expr) {
+	public String visitExprNotEq(ExprNotEq expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprNotIn(ExprNotInPlan expr) {
+	public String visitExprNotIn(ExprNotIn expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprRan(ExprRanPlan expr) {
+	public String visitExprRan(ExprRan expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprSet(ExprSetPlan expr) {
+	public String visitExprSet(ExprSet expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprSubSetEq(ExprSubSetEqPlan expr) {
+	public String visitExprSubSetEq(ExprSubSetEq expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprSubSet(ExprSubSetPlan expr) {
+	public String visitExprSubSet(ExprSubSet expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitExprUnion(ExprUnionPlan expr) {
+	public String visitExprUnion(ExprUnion expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public String visitNot(ExprNotPlan expr) {
+	public String visitNot(ExprNot expr) {
 		// TODO Auto-generated method stub
 		return null;
 	}
