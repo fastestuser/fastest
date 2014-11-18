@@ -6,7 +6,7 @@ import nlg.expr.base.ExprEq;
 import nlg.expr.base.ExprIn;
 import nlg.expr.base.ExprIntersection;
 import nlg.expr.base.ExprMapsTo;
-import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprNotEq;
 import nlg.expr.base.ExprNotIn;
 import nlg.expr.base.ExprNot;
@@ -26,7 +26,7 @@ public interface ExprZVisitor<X> {
 	public X visitExprIn(ExprIn expr);
 	public X visitExprIntersection(ExprIntersection expr);
 	public X visitExprMapsTo(ExprMapsTo expr);
-	public X visitExprName(ExprName expr);
+	public X visitExprRefExpr(ExprRef expr);
 	public X visitExprNotEq(ExprNotEq expr);
 	public X visitExprNotIn(ExprNotIn expr);
 	public X visitExprRan(ExprRan expr);

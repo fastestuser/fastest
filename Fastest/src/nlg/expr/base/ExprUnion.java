@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Union de conjuntos
- * ExprUnionPlan A B -> A ⋃ B
+ * ExprUnion A B -> A ⋃ B
  */
 public class ExprUnion implements ExprZ {
 	private ExprZ leftSet;

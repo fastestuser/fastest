@@ -1,12 +1,10 @@
 package nlg.czt.visitors;
 
-import java.io.IOException;
 import java.util.List;
 
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.base.visitor.VisitorUtils;
-import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.z.ast.NarrPara;
 import net.sourceforge.czt.z.ast.NarrSect;
 import net.sourceforge.czt.z.visitor.NarrParaVisitor;
@@ -14,6 +12,8 @@ import net.sourceforge.czt.z.visitor.NarrSectVisitor;
 import nlg.designation.DesignationParser;
 import nlg.designation.DesignationParserImpl;
 import nlg.designation.DesignationRepo;
+import nlg.designation.ParamDesignation;
+import nlg.designation.TermDesignation;
 
 /**
  * Parsea NarrPara en busca de designaciones y 
@@ -45,12 +45,18 @@ public class DesignationVisitor implements NarrParaVisitor<Void>,
 
 			if (o instanceof String) {
 				try {
-					repo.addAllDesignations(parser.parse((String) o));
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (CommandException e) {
-					// TODO Auto-generated catch block
+					parser.parse((String) o);
+					List<TermDesignation> listTd = parser.getAllTermDesignations();
+					List<ParamDesignation> listPd = parser.getAllParamDesignations();
+					
+					for (TermDesignation td : listTd) {
+						repo.addDesignation(td);
+					}
+					
+					for (ParamDesignation pd : listPd) {
+						repo.addDesignation(pd);
+					}
+				} catch (Exception e) {
 					e.printStackTrace();
 				} 
 			}
@@ -64,5 +70,4 @@ public class DesignationVisitor implements NarrParaVisitor<Void>,
 
 	private DesignationParser parser = new DesignationParserImpl();
 	private DesignationRepo repo;
-
 }

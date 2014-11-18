@@ -27,7 +27,7 @@ import nlg.expr.base.ExprEq;
 import nlg.expr.base.ExprIn;
 import nlg.expr.base.ExprIntersection;
 import nlg.expr.base.ExprMapsTo;
-import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprNotEq;
 import nlg.expr.base.ExprNotIn;
 import nlg.expr.base.ExprNot;
@@ -41,9 +41,9 @@ import common.z.SpecUtils;
 import common.z.UtilSymbols;
 
 /**
- * Construye expresion ExprDescPlan a partir de arbol AST (czt)
+ * Construye expresion ExprZ a partir de arbol AST (czt)
  */
-public class ASTToExprDescPlanVisitor implements  
+public class ASTToExprZVisitor implements  
 MemPredVisitor<ExprZ>,
 RefExprVisitor<ExprZ>, 
 ApplExprVisitor<ExprZ>,
@@ -56,7 +56,7 @@ TermVisitor<ExprZ> {
 	// Default: expresion no soportada!
 	@Override
 	public ExprZ visitTerm(Term arg0) {
-		System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0) + "\n");
+		//System.out.println("expresion no soportada: " + SpecUtils.termToLatex(arg0) + "\n");
 		return null;
 	}
 
@@ -216,7 +216,7 @@ TermVisitor<ExprZ> {
 
 	@Override
 	public ExprZ visitRefExpr(RefExpr arg0) {
-		return new ExprName(arg0.getZName().toString());
+		return new ExprRef(arg0.getZName().toString());
 	}
 
 	@Override

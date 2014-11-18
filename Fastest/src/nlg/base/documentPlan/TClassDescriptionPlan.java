@@ -13,10 +13,10 @@ public class TClassDescriptionPlan {
 
 	private String name;
 	private String introduction;
-	private List<VerbExpMsg> expressions;
+	private List<ExpVerbalization> expressions;
 	
 	public TClassDescriptionPlan(String name, String introduction,
-			List<VerbExpMsg> expressions) {
+			List<ExpVerbalization> expressions) {
 		super();
 		this.name = name;
 		this.introduction = introduction;
@@ -39,11 +39,11 @@ public class TClassDescriptionPlan {
 		this.introduction = introduction;
 	}
 	
-	public List<VerbExpMsg> getExpressions() {
+	public List<ExpVerbalization> getExpressions() {
 		return expressions;
 	}
 	
-	public void setExpressions(List<VerbExpMsg> expressions) {
+	public void setExpressions(List<ExpVerbalization> expressions) {
 		this.expressions = expressions;
 	}
 

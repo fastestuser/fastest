@@ -3,7 +3,7 @@ package nlg.expr.base;
 import nlg.expr.visitors.ExprZVisitor;
 
 /**
- * ExprSubSetEqPlan A B -> A ⊆ B
+ * ExprSubSetEq A B -> A ⊆ B
  */
 public class ExprSubSetEq implements ExprZ {
 	private ExprZ leftSet;

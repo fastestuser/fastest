@@ -6,7 +6,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Conjunto de expresiones
- * ExprSetPlan e1 e2 e3 -> {e1, e2, e3}
+ * ExprSet e1 e2 e3 -> {e1, e2, e3}
  */
 public class ExprSet implements ExprZ {
 	private List<ExprZ> elements;

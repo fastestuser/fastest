@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-import client.blogic.management.Controller;
+import nlg.base.documentPlan.DocumentPlan;
+import nlg.pipeline.documentPlanning.DocumentPlanner;
+import nlg.util.NLGUtils;
 import client.presentation.ClientTextUI;
 
 public class TestDocumentPlanning {
@@ -23,14 +26,21 @@ public class TestDocumentPlanning {
 			ui.processCmd(parts[0], parts.length > 1 ? parts[1] : "");
 		}
 		
-		printDocumentPlan(ui.getMyController());
+		DocumentPlan doc = null;
+		DocumentPlanner dp = new DocumentPlanner(ui.getMyController());
+		try {
+			doc = dp.createDP(Arrays.asList("Update_SP_5"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		printDocumentPlan(doc);
 	}
 	
-	private static void printDocumentPlan(Controller controller) {
-		// NLGen sys = new NLGen(new DocumentPlannerImpl(), new LingRealizerES(), new ASCIIRealizer());
-		//DocumentPlanner dp = new DocumentPlannerImpl();
-		//DocumentPlan nlgDP = dp.plan(NLGUtils.getAllTClassLeaves(controller), controller);
-		//System.out.println(NLGUtils.nlgDocumentPlanToString(nlgDP));
+	private static void printDocumentPlan(DocumentPlan doc) {
+		if (null != doc) {
+			System.out.println(NLGUtils.documentPlanToString(doc));
+		}
 		
 	}
 	

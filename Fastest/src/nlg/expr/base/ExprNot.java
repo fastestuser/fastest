@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Negacion
- * ExprNotPlan x -> ¬ x
+ * ExprNot x -> ¬ x
  */
 public class ExprNot implements ExprZ {
 	private ExprZ expr;

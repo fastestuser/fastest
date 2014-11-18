@@ -10,13 +10,12 @@ import java.util.Map;
 
 import nlg.designation.DesignationRepo;
 import nlg.expr.base.ExprZ;
-import nlg.expr.visitors.ExprDescPlanToString;
-import nlg.util.ExprDescUtils;
+import nlg.expr.visitors.ExprZToString;
+import nlg.util.ExprZUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.presentation.ClientTextUI;
-
 import common.z.TClass;
 
 public class FooTest {
@@ -49,9 +48,9 @@ public class FooTest {
 		}*/
 	}
 	
-	private static void printExprZSchema(ClientTextUI clientTextUI, String schName) {
+	private static void printExprZSchema(ClientTextUI clientTextUI, String schName) throws Exception {
 		TClass tClass;
-		ExprDescPlanToString visitor = new ExprDescPlanToString();
+		ExprZToString visitor = new ExprZToString();
 		
 		// Recupero map operation names -> associated test trees
         Controller controller = clientTextUI.getMyController();
@@ -64,7 +63,7 @@ public class FooTest {
             tClass = (TClass) opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(schName, -1));
             
             if (null != tClass) {
-            	List<ExprZ> asd = ExprDescUtils.extractSchemaExpr(tClass);
+            	List<ExprZ> asd = ExprZUtils.extractSchemaExpr(tClass);
             	
             	for (ExprZ exp : asd) {
             		System.out.println(exp.accept(visitor));

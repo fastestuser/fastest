@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Pertenencia
- * ExprInPlan x A -> x ∈ A
+ * ExprIn x A -> x ∈ A
  */
 public class ExprIn implements ExprZ {
 	private ExprZ element;

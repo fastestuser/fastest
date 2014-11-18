@@ -7,7 +7,7 @@ import nlg.expr.base.ExprEq;
 import nlg.expr.base.ExprIn;
 import nlg.expr.base.ExprIntersection;
 import nlg.expr.base.ExprMapsTo;
-import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprNotEq;
 import nlg.expr.base.ExprNotIn;
 import nlg.expr.base.ExprNot;
@@ -18,10 +18,10 @@ import nlg.expr.base.ExprSubSet;
 import nlg.expr.base.ExprUnion;
 
 /**
- * Visitor para imprimir una ExprDescPlan
+ * Visitor para imprimir una ExprZ
  * formateada en forma de arbol.
  */
-public class ExprDescPlanToString implements ExprZVisitor<String> {
+public class ExprZToString implements ExprZVisitor<String> {
 
 	@Override
 	public String visitExprApply(ExprApply expr) {
@@ -66,7 +66,7 @@ public class ExprDescPlanToString implements ExprZVisitor<String> {
 	}
 
 	@Override
-	public String visitExprName(ExprName expr) {
+	public String visitExprRefExpr(ExprRef expr) {
 		return "ExprName " + expr.getName();
 	}
 

@@ -1,8 +1,6 @@
 package nlg.designation;
 
-import java.util.List;
-
-import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprRef;
 
 /**
  * Repositorio de designaciones.
@@ -14,18 +12,18 @@ import nlg.expr.base.ExprZ;
 public interface DesignationRepo {
 
 	/**
-	 * Agrega designacion al repositorio.
+	 * Agrega designacion no parametrizada al repositorio.
 	 */
 	public void addDesignation(TermDesignation desig);
 	
 	/**
-	 * Agrega una lista de designaciones al repositorio
+	 * Agrega designacion parametrizada al repositorio.
 	 */
-	public void addAllDesignations(List<TermDesignation> desigs);
+	public void addDesignation(ParamDesignation desig);
 	
 	/**
-	 * Recupera una designacion de esquema.
+	 * Recupera una designacion no parametrizada.
 	 * De no encontrarse en el repositorio devuelve null.
 	 */
-	public TermDesignation getDesignation(ExprZ exp, String schName);
+	public TermDesignation getTermDesignation(ExprRef name, String schName);
 }

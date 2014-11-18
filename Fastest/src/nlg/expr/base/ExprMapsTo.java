@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Mapping
- * ExprMapsToPlan x y -> x ↦ y
+ * ExprMapsTo x y -> x ↦ y
  */
 public class ExprMapsTo implements ExprZ {
 	private ExprZ left;

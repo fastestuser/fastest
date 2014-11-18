@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Igualdad
- * ExprEqPlan x y -> x = y
+ * ExprEq x y -> x = y
  *
  */
 public class ExprEq implements ExprZ {

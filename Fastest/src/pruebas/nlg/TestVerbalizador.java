@@ -9,9 +9,8 @@ import java.util.List;
 
 import nlg.expr.base.ExprDom;
 import nlg.expr.base.ExprIn;
-import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprZ;
-import nlg.expr.visitors.Verbalizador;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 
@@ -30,11 +29,11 @@ public static void main(String args[]) throws IOException {
 		
 		// Intento describir una expresion
 		ExprZ edp = new ExprIn(
-				new ExprName("p?"), 
+				new ExprRef("p?"), 
 				new ExprDom(
-						new ExprName("procs")));
+						new ExprRef("procs")));
 		
-		System.out.println(edp.accept(new Verbalizador(ui.getMyController().getDesigRepo())));
+		//System.out.println(edp.accept(new Verbalizador(ui.getMyController().getDesigRepo())));
 	}
 	
 	private static void printDocumentPlan(Controller controller) {

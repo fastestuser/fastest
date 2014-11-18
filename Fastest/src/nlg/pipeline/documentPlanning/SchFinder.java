@@ -1,53 +1,33 @@
-package nlg.base;
+package nlg.pipeline.documentPlanning;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nlg.base.documentPlan.DocumentPlan;
-import nlg.expr.base.ExprZ;
-import nlg.expr.visitors.ExprDescPlanToString;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
+
 import common.repository.AbstractIterator;
 import common.repository.AbstractRepository;
 import common.z.TClass;
 
-public class NLGUtils {
-	
-	/**
-	 * Formatea un DocumentPlan (usado para debug)
-	 */
-	public static String nlgDocumentPlanToString(DocumentPlan nlgDP) {
-		String ret = "";
-		
-		/* TODO
-		ExprDescPlanToString visitor = new ExprDescPlanToString();
-		List<TClassDescPlan> descs = nlgDP.gettClassDescPlanList();
-		
-		for (TClassDescPlan descPlan : descs) {
-			TClass tClass = descPlan.gettClass();
-			List<ExprZ> exprList = descPlan.getExprDescList();
-			
-			ret += tClass.getSchName() + "\n";
-			
-			for (ExprZ edp : exprList) {
-				ret += "* " + insetTabs(edp.accept(visitor)) + "\n";
-			}
-			
-			ret += "\n";
-		}
-		*/
-		
-		return ret;
+/** 
+ * Realiza tareas de "seleccion" parte de 
+ * la etapa de "determinacion de contenido"
+ */
+public class SchFinder {
+
+	public SchFinder(Controller controller) {
+		this.controller = controller;
 	}
+	
 	
 	/**
 	 * Recupera todas las clases de pruebas generadas
 	 */
-	public static List<TClass> getAllTClassLeaves(Controller controller) {
+	public List<TClass> getAllTClasses() {
 		List<TClass> ret = new ArrayList<TClass>();
 		// Recupero map operation names -> associated test trees
         Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
@@ -69,11 +49,26 @@ public class NLGUtils {
 	}
 	
 	/**
-	 * Busca una clase de prueba, por nombre, en el arbol de pruebas.
-	 * (devuelve null en caso de no encontrarla)
-	 * @param schName Nombre de la clase de prueba a buscar
+	 * Recupera por nombre una lista de clases de prueba generadas.
+	 * @throws Exception Tira una exception si no encuentra
+	 *  alguna de las clases indicadas
 	 */
-	public static TClass getTClass(String schName, Controller controller) {
+	public List<TClass> getTClasses(List<String> names) throws Exception {
+		List<TClass> ret = new ArrayList<TClass>();
+		
+		for (String n : names) {
+			ret.add(getTClass(n));
+		}
+		
+		return ret;
+	}
+	
+	/**
+	 * Busca una clase de prueba, por nombre, en el arbol de prueba.
+	 * (devuelve null en caso de no encontrarla)
+	 * @throws Exception Tira una exception si no la encuentra
+	 */
+	private TClass getTClass(String schName) throws Exception {
 		TClass tClass;
 		
 		// Recupero map operation names -> associated test trees
@@ -91,10 +86,33 @@ public class NLGUtils {
         }
         
         // No se encontro la clase de prueba buscada
+        throw new Exception("TClass: " + schName + " not found.");
+	}
+	
+	/**
+	 * Recupera el nombre de la operacion a testear 
+	 * con la clase de prueba indicada
+	 * Revuelve null en el caso de no encontrarla
+	 */
+	public String getTestedOperation(String schName) {
+		TClass tClass;
+		
+		// Recupero map operation names -> associated test trees
+        Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
+        
+		// Busco la operacion recursivamente en el arbol de prueba
+        for (String key : opTTreeMap.keySet()) {
+            TClassNode opTTreeRoot = opTTreeMap.get(key);
+            
+            tClass = (TClass) opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(schName, -1));
+            
+            if (null != tClass) {
+            	return key;
+            }
+        }
+        
         return null;
 	}
 	
-	private static String insetTabs(String string) {
-		return string.replaceAll("\\|", "  |");
-	}
+	private Controller controller;
 }

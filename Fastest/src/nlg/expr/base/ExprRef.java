@@ -3,13 +3,13 @@ package nlg.expr.base;
 import nlg.expr.visitors.ExprZVisitor;
 
 /**
- * Nombre.
+ * RefExpr.
  * Representa nombres de variables, funciones, etc.
  */
-public class ExprName implements ExprZ {
+public class ExprRef implements ExprZ {
 	private String name;
 
-	public ExprName(String name) {
+	public ExprRef(String name) {
 		this.name = name;
 	}
 
@@ -37,7 +37,7 @@ public class ExprName implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprName other = (ExprName) obj;
+		ExprRef other = (ExprRef) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -48,6 +48,6 @@ public class ExprName implements ExprZ {
 	
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprName(this);
+		return visitor.visitExprRefExpr(this);
 	}
 }

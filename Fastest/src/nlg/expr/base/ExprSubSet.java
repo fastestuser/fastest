@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Inclusion estricta
- * ExprSubSetPlan A B -> A ⊂ B
+ * ExprSubSet A B -> A ⊂ B
  */
 public class ExprSubSet implements ExprZ {
 	private ExprZ leftSet;

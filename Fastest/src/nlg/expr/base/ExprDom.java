@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Dominio de una funcion
- * ExprDomPlan f -> dom(f)
+ * ExprDom f -> dom(f)
  */
 public class ExprDom implements ExprZ {
 	private ExprZ function;

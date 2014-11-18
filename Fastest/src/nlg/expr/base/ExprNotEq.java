@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Desigualdad
- * ExprNotEqPlan x y -> x ≠ y
+ * ExprNotEq x y -> x ≠ y
  *
  */
 public class ExprNotEq implements ExprZ {

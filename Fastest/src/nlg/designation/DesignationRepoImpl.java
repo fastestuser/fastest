@@ -1,14 +1,42 @@
 package nlg.designation;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import nlg.expr.base.ExprZ;
+import nlg.expr.base.ExprRef;
 
 
 public class DesignationRepoImpl implements DesignationRepo {
 
+	// Map: nombre esquema -> termino -> TermDesignation
+	private Map<String, Map<ExprRef, TermDesignation>> mapTermDesignations = 
+			new HashMap<String, Map<ExprRef,TermDesignation>>();
+	
+	@Override
+	public void addDesignation(TermDesignation desig) {
+		if (!mapTermDesignations.containsKey(desig.getSchName())) {
+			mapTermDesignations.put(desig.getSchName(), new HashMap<ExprRef, TermDesignation>());
+		}
+		
+		mapTermDesignations.get(desig.getSchName()).put(desig.getExpr(), desig);
+	}
+
+	@Override
+	public void addDesignation(ParamDesignation desig) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public TermDesignation getTermDesignation(ExprRef name, String schName) {
+		if (mapTermDesignations.containsKey(schName)) {
+			return mapTermDesignations.get(schName).get(name);
+		} else {
+			return null;
+		}
+	}
+
+	/*
 	// Map:: nombre_esquema -> expr -> designacion
 	public Map<String, Map<ExprZ, TermDesignation>> designations = 
 			new HashMap<String, Map<ExprZ, TermDesignation>>();
@@ -41,4 +69,20 @@ public class DesignationRepoImpl implements DesignationRepo {
 		}
 	}
 
+	@Override
+	public SimpleDesignation getSimpleDesignation(ExprZ exp, String schName) {
+		if (designations.containsKey(schName) &&
+				designations.get(schName).containsKey(exp)) {
+			TermDesignation td = designations.get(schName).get(exp);
+			
+			if (td instanceof SimpleDesignation) {
+				return (SimpleDesignation) td;
+			} else {
+				return null;
+			}
+		} else {
+			return null;
+		}
+	}
+ */
 }

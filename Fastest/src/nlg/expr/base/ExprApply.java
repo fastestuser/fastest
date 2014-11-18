@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Aplicacion de funcion.
- * ExprApplyPlan f x -> f~x
+ * ExprApply f x -> f~x
  */
 public class ExprApply implements ExprZ {
 	private ExprZ function;

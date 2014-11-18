@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Interseccion de conjuntos
- * ExprIntersectionPlan A B -> A ⋂ B
+ * ExprIntersection A B -> A ⋂ B
  */
 public class ExprIntersection implements ExprZ {
 	private ExprZ leftSet;

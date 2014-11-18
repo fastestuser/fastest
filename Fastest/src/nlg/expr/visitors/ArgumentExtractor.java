@@ -11,7 +11,7 @@ import nlg.expr.base.ExprEq;
 import nlg.expr.base.ExprIn;
 import nlg.expr.base.ExprIntersection;
 import nlg.expr.base.ExprMapsTo;
-import nlg.expr.base.ExprName;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprNotEq;
 import nlg.expr.base.ExprNotIn;
 import nlg.expr.base.ExprNot;
@@ -24,9 +24,9 @@ import nlg.expr.base.ExprUnion;
 public class ArgumentExtractor implements ExprZVisitor<List<ExprZ>> {
 
 	private ExprZ exprInst; // Expresion ya instanciada
-	private String paramName;
+	private ExprRef paramName;
 	
-	public ArgumentExtractor(ExprZ exprInst, String paramName) {
+	public ArgumentExtractor(ExprZ exprInst, ExprRef paramName) {
 		this.exprInst = exprInst;
 		this.paramName = paramName;
 	}
@@ -155,10 +155,10 @@ public class ArgumentExtractor implements ExprZVisitor<List<ExprZ>> {
 	}
 	
 	@Override
-	public List<ExprZ> visitExprName(ExprName expr) {
+	public List<ExprZ> visitExprRefExpr(ExprRef expr) {
 		List<ExprZ> ret = null;
 		
-		if (expr.getName().equals(paramName)) {
+		if (expr.equals(paramName)) {
 			ret = Arrays.asList(exprInst);
 		} else if (expr.equals(exprInst)) {
 			ret = new ArrayList<ExprZ>();

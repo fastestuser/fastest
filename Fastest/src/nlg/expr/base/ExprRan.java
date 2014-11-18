@@ -4,7 +4,7 @@ import nlg.expr.visitors.ExprZVisitor;
 
 /**
  * Rango de una funcion
- * ExprRanPlan f -> ran(f)
+ * ExprRan f -> ran(f)
  */
 public class ExprRan implements ExprZ {
 	private ExprZ function;

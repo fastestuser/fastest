@@ -1,24 +1,23 @@
 package nlg.designation;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.session.CommandException;
 import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.Pred;
-import nlg.czt.visitors.ASTToExprDescPlanVisitor;
+import nlg.czt.visitors.ASTToExprZVisitor;
+import nlg.expr.base.ExprRef;
 import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.NameExtractor;
 
 public class DesignationParserImpl implements DesignationParser {
 
 	@Override
-	public List<TermDesignation> parse(String texContent) throws IOException, CommandException {
+	public void parse(String texContent) throws Exception {
 		String[] lineas = texContent.split("\\\n");
 		Iterator<String> it = Arrays.asList(lineas).iterator();
 
@@ -46,23 +45,19 @@ public class DesignationParserImpl implements DesignationParser {
 
 					if (line.contains("desig{")) {
 						
-						TermDesignation td = parseDesigLine(line, schName);
+						parseDesigLine(line, schName);
 						
-						if (null != td) {
-							ret.add(td);
-						}
 					}
 				}
 			}
 		}
 
-		return ret;
 	}
 	
 	
 	
 
-	private TermDesignation parseDesigLine(String line, String schName) throws IOException, CommandException {
+	private void parseDesigLine(String line, String schName) throws Exception {
 		TermDesignation ret;
 		line = line.trim();
 		Integer index = line.indexOf("}");
@@ -75,7 +70,7 @@ public class DesignationParserImpl implements DesignationParser {
 		
 		// Intento parsear el termino y convertiro a ExprDescPlan
 		Pred term = ParseUtils.parsePred(new StringSource(termString), null, new SectionManager());
-		ExprZ exprTerm = term.accept(new ASTToExprDescPlanVisitor());
+		ExprZ exprTerm = term.accept(new ASTToExprZVisitor());
 		
 		// Extraigo parametros de la designacion
 		List<String> parametros = getParameters(designation, exprTerm);
@@ -83,16 +78,14 @@ public class DesignationParserImpl implements DesignationParser {
 		// Verifico si se trata de una designacion parametrizada
 		if (!parametros.isEmpty()) {
 			if (parametros.size() == 1) {
-				ret = new ParamDesignation(exprTerm, schName, parametros.get(0), createDesignationFuncion(designation, parametros.get(0)));
+				paramDesignations.add(new ParamDesignation(exprTerm, schName, new ExprRef(parametros.get(0)), createDesignationFuncion(designation, parametros.get(0))));
 			} else {
-				ret = null;
-				System.out.println("Error: No se encuentran soportadas las designaciones con mas de un parametro.");
+				throw new Exception("Error: No se encuentran soportadas las designaciones con mas de un parametro.");
 			}
 		} else {
-			ret = new SimpleDesignation(exprTerm, schName, designation);
+			termDesignations.add(new TermDesignation((ExprRef) exprTerm, schName, designation));
 		}
 		
-		return ret;
 	}
 	
 	// Construye una DesignationFunction a partir de una designacion parseada
@@ -143,4 +136,17 @@ public class DesignationParserImpl implements DesignationParser {
 		
 		return ret;
 	}
+
+	@Override
+	public List<TermDesignation> getAllTermDesignations() {
+		return termDesignations;
+	}
+
+	@Override
+	public List<ParamDesignation> getAllParamDesignations() {
+		return paramDesignations;
+	}
+	
+	private List<TermDesignation> termDesignations = new ArrayList<TermDesignation>();
+	private List<ParamDesignation> paramDesignations = new ArrayList<ParamDesignation>();
 }
