@@ -33,7 +33,6 @@ public class ExprZToString implements ExprZVisitor<String> {
 	@Override
 	public String visitExprDom(ExprDom expr) {
 		return "ExprDom \n"
-				+ "  |_ " + insetTabs(expr.getFunction().accept(this)) + "\n"
 				+ "  |_ " + insetTabs(expr.getFunction().accept(this));
 	}
 

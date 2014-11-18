@@ -1,21 +1,11 @@
 package nlg.util;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.documentPlan.ExpVerbalization;
 import nlg.base.documentPlan.TClassDescriptionPlan;
-import nlg.expr.base.ExprZ;
 import nlg.expr.visitors.ExprZToString;
-import client.blogic.management.Controller;
-import client.blogic.testing.ttree.TClassNode;
-import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
-import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
-import common.z.TClass;
 
 public class NLGUtils {
 	

@@ -1,6 +1,9 @@
 package nlg.pipeline.documentPlanning;
 
+import nlg.expr.base.ExprNotEq;
+import nlg.expr.base.ExprSet;
 import nlg.expr.base.ExprZ;
+import nlg.expr.visitors.DomMapsToVisitor;
 
 /** 
  * Realiza tareas de "razonamiento con los datos"
@@ -15,7 +18,39 @@ public class ExprRefiner {
 	 * 2) Realiza algunas reducciones triviales
 	 */
 	public ExprZ refine(ExprZ expr) {
-		return expr;
+		// Evaluo algunas tautologias
+		if (exprSetNotEmpty(expr)) {
+			return null;
+		}
+		
+		ExprZ ret = reduceDomMapsTo(expr);
+		
+		return ret;
+	}
+	
+	
+	public ExprZ reduceDomMapsTo(ExprZ expr) {
+		DomMapsToVisitor visitor = new DomMapsToVisitor();
+		return expr.accept(visitor);
+	}
+	
+	// Devuelve true en el caso de que la expresion
+	// sea del tipo { ... } != {}
+	public boolean exprSetNotEmpty(ExprZ expr) {
+		if (expr instanceof ExprNotEq) {
+			ExprNotEq eq = (ExprNotEq) expr;
+			
+			if (eq.getLeftExpr() instanceof ExprSet &&
+					eq.getRightExpr() instanceof ExprSet) {
+				ExprSet leftSet = (ExprSet) eq.getLeftExpr();
+				ExprSet rightSet = (ExprSet) eq.getRightExpr();
+				
+				if (leftSet.getElements().isEmpty() ^ rightSet.getElements().isEmpty()) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 	
 	
