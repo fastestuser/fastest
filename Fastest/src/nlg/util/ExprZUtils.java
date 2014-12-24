@@ -4,8 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.sourceforge.czt.z.ast.Pred;
-import nlg.czt.visitors.ASTToExprZVisitor;
-import nlg.expr.base.ExprZ;
+import nlg.base.expr.ExprZ;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.czt.visitors.AndPredClausesExtractor2;

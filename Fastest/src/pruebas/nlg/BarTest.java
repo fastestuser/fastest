@@ -2,14 +2,14 @@ package pruebas.nlg;
 
 import java.io.IOException;
 
-import nlg.designation.DesignationUtils;
-import nlg.designation.ParamDesignation;
-import nlg.expr.base.ExprZ;
-import nlg.expr.base.ExprDom;
-import nlg.expr.base.ExprRef;
-import nlg.expr.base.ExprRan;
-import nlg.expr.base.ExprUnion;
-import nlg.expr.visitors.ExprZToString;
+import nlg.base.designation.DesignationUtils;
+import nlg.base.designation.ParamDesignation;
+import nlg.base.expr.ExprDom;
+import nlg.base.expr.ExprRan;
+import nlg.base.expr.ExprRef;
+import nlg.base.expr.ExprUnion;
+import nlg.base.expr.ExprZ;
+import nlg.util.ExprZToString;
 
 public class BarTest {
 	

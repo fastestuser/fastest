@@ -5,7 +5,6 @@ import java.util.List;
 import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.documentPlan.ExpVerbalization;
 import nlg.base.documentPlan.TClassDescriptionPlan;
-import nlg.expr.visitors.ExprZToString;
 
 public class NLGUtils {
 	

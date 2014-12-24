@@ -3,15 +3,14 @@ package nlg.pipeline.documentPlanning;
 import java.util.ArrayList;
 import java.util.List;
 
+import nlg.base.designation.TermDesignation;
 import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.documentPlan.ExpVerbalization;
 import nlg.base.documentPlan.TClassDescriptionPlan;
-import nlg.designation.TermDesignation;
-import nlg.expr.base.ExprRef;
-import nlg.expr.base.ExprZ;
+import nlg.base.expr.ExprRef;
+import nlg.base.expr.ExprZ;
 import nlg.util.ExprZUtils;
 import client.blogic.management.Controller;
-
 import common.z.TClass;
 
 

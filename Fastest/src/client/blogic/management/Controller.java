@@ -22,7 +22,7 @@ import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZDeclList;
-import nlg.designation.DesignationRepo;
+import nlg.base.designation.DesignationRepo;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.management.ii.events.AllTCasesGenerated;
@@ -51,7 +51,6 @@ import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
 import client.presentation.ClientTextUI;
 import client.presentation.ClientUI;
-
 import common.fastest.FastestUtils;
 //import client.blogic.testing.ttree.visitors.TCaseDadFinder;
 import common.repository.AbstractIterator;

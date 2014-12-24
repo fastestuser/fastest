@@ -1,9 +1,9 @@
 package nlg.pipeline.documentPlanning;
 
-import nlg.expr.base.ExprNotEq;
-import nlg.expr.base.ExprSet;
-import nlg.expr.base.ExprZ;
-import nlg.expr.visitors.DomMapsToVisitor;
+import nlg.base.expr.ExprNotEq;
+import nlg.base.expr.ExprSet;
+import nlg.base.expr.ExprZ;
+import nlg.util.DomMapsToVisitor;
 
 /** 
  * Realiza tareas de "razonamiento con los datos"

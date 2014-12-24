@@ -8,9 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import nlg.designation.DesignationRepo;
-import nlg.expr.base.ExprZ;
-import nlg.expr.visitors.ExprZToString;
+import nlg.base.designation.DesignationRepo;
+import nlg.base.expr.ExprZ;
+import nlg.util.ExprZToString;
 import nlg.util.ExprZUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;

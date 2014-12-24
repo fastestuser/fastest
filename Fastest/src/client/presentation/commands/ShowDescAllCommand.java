@@ -2,7 +2,7 @@ package client.presentation.commands;
 
 import java.util.Map;
 
-import nlg.designation.DesignationRepo;
+import nlg.base.designation.DesignationRepo;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.presentation.ClientTextUI;
