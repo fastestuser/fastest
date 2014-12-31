@@ -9,8 +9,8 @@ import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.SectionManager;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.z.ast.Pred;
-import nlg.base.expr.ExprRef;
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprZ;
 import nlg.util.ASTToExprZVisitor;
 import nlg.util.NameExtractor;
 
@@ -83,7 +83,7 @@ public class DesignationParserImpl implements DesignationParser {
 				throw new Exception("Error: No se encuentran soportadas las designaciones con mas de un parametro.");
 			}
 		} else {
-			termDesignations.add(new TermDesignation((ExprRef) exprTerm, schName, designation));
+			termDesignations.add(new TermDesignation(exprTerm, schName, designation));
 		}
 		
 	}

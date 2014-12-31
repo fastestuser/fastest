@@ -1,20 +1,20 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 
 /**
- * Igualdad
- * ExprEq x y -> x = y
+ * Desigualdad
+ * ExprNotEq x y -> x ≠ y
  *
  */
-public class ExprEq implements ExprZ {
+public class ExprNotEq implements ExprZ {
 	private ExprZ leftExpr;
 	private ExprZ rightExpr;
 	
-	public ExprEq(){
+	public ExprNotEq() {
 		
 	}
 	
-	public ExprEq(ExprZ leftExpr, ExprZ rightExpr) {
+	public ExprNotEq(ExprZ leftExpr, ExprZ rightExpr) {
 		this.leftExpr = leftExpr;
 		this.rightExpr = rightExpr;
 	}
@@ -51,7 +51,7 @@ public class ExprEq implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprEq other = (ExprEq) obj;
+		ExprNotEq other = (ExprNotEq) obj;
 		if (leftExpr == null) {
 			if (other.leftExpr != null)
 				return false;
@@ -67,6 +67,6 @@ public class ExprEq implements ExprZ {
 	
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprEq(this);
+		return visitor.visitExprNotEq(this);
 	}
 }

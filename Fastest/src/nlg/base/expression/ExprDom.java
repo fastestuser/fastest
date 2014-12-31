@@ -1,42 +1,33 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 
 /**
- * Aplicacion de funcion.
- * ExprApply f x -> f~x
+ * Dominio de una funcion
+ * ExprDom f -> dom(f)
  */
-public class ExprApply implements ExprZ {
+public class ExprDom implements ExprZ {
 	private ExprZ function;
-	private ExprZ argument;
-	
-	public ExprApply() {
+
+	public ExprDom() {
 		
 	}
 	
-	public ExprApply(ExprZ function, ExprZ argument) {
+	public ExprDom(ExprZ function) {
 		this.function = function;
-		this.argument = argument;
 	}
-	
+
 	public ExprZ getFunction() {
 		return function;
 	}
+
 	public void setFunction(ExprZ function) {
 		this.function = function;
-	}
-	public ExprZ getArgument() {
-		return argument;
-	}
-	public void setArgument(ExprZ argument) {
-		this.argument = argument;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result
-				+ ((argument == null) ? 0 : argument.hashCode());
 		result = prime * result
 				+ ((function == null) ? 0 : function.hashCode());
 		return result;
@@ -50,12 +41,7 @@ public class ExprApply implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprApply other = (ExprApply) obj;
-		if (argument == null) {
-			if (other.argument != null)
-				return false;
-		} else if (!argument.equals(other.argument))
-			return false;
+		ExprDom other = (ExprDom) obj;
 		if (function == null) {
 			if (other.function != null)
 				return false;
@@ -66,6 +52,6 @@ public class ExprApply implements ExprZ {
 	
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprApply(this);
+		return visitor.visitExprDom(this);
 	}
 }

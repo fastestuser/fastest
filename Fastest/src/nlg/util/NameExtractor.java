@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import nlg.base.expr.ExprApply;
-import nlg.base.expr.ExprDom;
-import nlg.base.expr.ExprEq;
-import nlg.base.expr.ExprIn;
-import nlg.base.expr.ExprIntersection;
-import nlg.base.expr.ExprMapsTo;
-import nlg.base.expr.ExprNot;
-import nlg.base.expr.ExprNotEq;
-import nlg.base.expr.ExprNotIn;
-import nlg.base.expr.ExprRan;
-import nlg.base.expr.ExprRef;
-import nlg.base.expr.ExprSet;
-import nlg.base.expr.ExprSubSet;
-import nlg.base.expr.ExprSubSetEq;
-import nlg.base.expr.ExprUnion;
-import nlg.base.expr.ExprZ;
-import nlg.base.expr.ExprZVisitor;
+import nlg.base.expression.ExprApply;
+import nlg.base.expression.ExprDom;
+import nlg.base.expression.ExprEq;
+import nlg.base.expression.ExprIn;
+import nlg.base.expression.ExprIntersection;
+import nlg.base.expression.ExprMapsTo;
+import nlg.base.expression.ExprNot;
+import nlg.base.expression.ExprNotEq;
+import nlg.base.expression.ExprNotIn;
+import nlg.base.expression.ExprRan;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprSet;
+import nlg.base.expression.ExprSubSet;
+import nlg.base.expression.ExprSubSetEq;
+import nlg.base.expression.ExprUnion;
+import nlg.base.expression.ExprZ;
+import nlg.base.expression.ExprZVisitor;
 
 /**
  * Devuelve una lista con todos los "nombres" (ExprNamePlan) 

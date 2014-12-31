@@ -14,7 +14,7 @@ public class NLGUtils {
 	public static String documentPlanToString(DocumentPlan nlgDP) {
 		String ret = "DocumentPlan";
 		
-		ExprZToString visitor = new ExprZToString();
+		ExprZTreeToString visitor = new ExprZTreeToString();
 		List<TClassDescriptionPlan> desc = nlgDP.gettClassDescPlanList();
 		
 		ret += "\n  + titulo: " + nlgDP.getTitle() + "\n";

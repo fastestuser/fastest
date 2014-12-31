@@ -9,7 +9,11 @@ import java.util.Arrays;
 import java.util.List;
 
 import nlg.base.documentPlan.DocumentPlan;
-import nlg.pipeline.documentPlanning.DocumentPlanner;
+import nlg.base.expression.ExprDom;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprZ;
+import nlg.pipeline.documentPlanner.DocumentPlanner;
+import nlg.pipeline.microplanner.Verbalizator;
 import nlg.util.NLGUtils;
 import client.presentation.ClientTextUI;
 
@@ -34,7 +38,11 @@ public class TestDocumentPlanning {
 			e.printStackTrace();
 		}
 		
-		printDocumentPlan(doc);
+		ExprZ exp = new ExprDom(new ExprRef("st"));
+		Verbalizator ver = new Verbalizator(ui.getMyController().getDesigRepo());
+		ver.applyDesignation(exp, "Update");
+		
+		//printDocumentPlan(doc);
 	}
 	
 	private static void printDocumentPlan(DocumentPlan doc) {

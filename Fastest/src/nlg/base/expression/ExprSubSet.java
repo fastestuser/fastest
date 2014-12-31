@@ -1,18 +1,19 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 
 /**
- * Union de conjuntos
- * ExprUnion A B -> A ⋃ B
+ * Inclusion estricta
+ * ExprSubSet A B -> A ⊂ B
  */
-public class ExprUnion implements ExprZ {
+public class ExprSubSet implements ExprZ {
 	private ExprZ leftSet;
 	private ExprZ rightSet;
 	
-	public ExprUnion() {
+	public ExprSubSet() {
+		
 	}
 	
-	public ExprUnion(ExprZ leftSet, ExprZ rightSet) {
+	public ExprSubSet(ExprZ leftSet, ExprZ rightSet) {
 		this.leftSet = leftSet;
 		this.rightSet = rightSet;
 	}
@@ -48,7 +49,7 @@ public class ExprUnion implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprUnion other = (ExprUnion) obj;
+		ExprSubSet other = (ExprSubSet) obj;
 		if (leftSet == null) {
 			if (other.leftSet != null)
 				return false;
@@ -61,9 +62,9 @@ public class ExprUnion implements ExprZ {
 			return false;
 		return true;
 	}
-	
+
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprUnion(this);
+		return visitor.visitExprSubSet(this);
 	}
 }

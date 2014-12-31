@@ -1,6 +1,6 @@
 package nlg.base.documentPlan;
 
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprZ;
 
 /**
  * Representan la informaciona a comunicar, en nuestro caso

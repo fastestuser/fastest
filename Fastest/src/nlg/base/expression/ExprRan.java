@@ -1,18 +1,18 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 
 /**
- * Dominio de una funcion
- * ExprDom f -> dom(f)
+ * Rango de una funcion
+ * ExprRan f -> ran(f)
  */
-public class ExprDom implements ExprZ {
+public class ExprRan implements ExprZ {
 	private ExprZ function;
 
-	public ExprDom() {
+	public ExprRan() {
 		
 	}
 	
-	public ExprDom(ExprZ function) {
+	public ExprRan(ExprZ function) {
 		this.function = function;
 	}
 
@@ -41,7 +41,7 @@ public class ExprDom implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprDom other = (ExprDom) obj;
+		ExprRan other = (ExprRan) obj;
 		if (function == null) {
 			if (other.function != null)
 				return false;
@@ -52,6 +52,6 @@ public class ExprDom implements ExprZ {
 	
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprDom(this);
+		return visitor.visitExprRan(this);
 	}
 }

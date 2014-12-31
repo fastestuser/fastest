@@ -1,33 +1,42 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 
 /**
- * Rango de una funcion
- * ExprRan f -> ran(f)
+ * Aplicacion de funcion.
+ * ExprApply f x -> f~x
  */
-public class ExprRan implements ExprZ {
+public class ExprApply implements ExprZ {
 	private ExprZ function;
-
-	public ExprRan() {
+	private ExprZ argument;
+	
+	public ExprApply() {
 		
 	}
 	
-	public ExprRan(ExprZ function) {
+	public ExprApply(ExprZ function, ExprZ argument) {
 		this.function = function;
+		this.argument = argument;
 	}
-
+	
 	public ExprZ getFunction() {
 		return function;
 	}
-
 	public void setFunction(ExprZ function) {
 		this.function = function;
+	}
+	public ExprZ getArgument() {
+		return argument;
+	}
+	public void setArgument(ExprZ argument) {
+		this.argument = argument;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result
+				+ ((argument == null) ? 0 : argument.hashCode());
 		result = prime * result
 				+ ((function == null) ? 0 : function.hashCode());
 		return result;
@@ -41,7 +50,12 @@ public class ExprRan implements ExprZ {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		ExprRan other = (ExprRan) obj;
+		ExprApply other = (ExprApply) obj;
+		if (argument == null) {
+			if (other.argument != null)
+				return false;
+		} else if (!argument.equals(other.argument))
+			return false;
 		if (function == null) {
 			if (other.function != null)
 				return false;
@@ -52,6 +66,6 @@ public class ExprRan implements ExprZ {
 	
 	@Override
 	public <X> X accept(ExprZVisitor<X> visitor) {
-		return visitor.visitExprRan(this);
+		return visitor.visitExprApply(this);
 	}
 }

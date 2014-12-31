@@ -19,10 +19,10 @@ import nlg.base.designation.TermDesignation;
  * Parsea NarrPara en busca de designaciones y 
  * las agrega al repositorio de designaciones seteado.
  */
-public class DesignationVisitor implements NarrParaVisitor<Void>,
+public class DesignationParserVisitor implements NarrParaVisitor<Void>,
 		NarrSectVisitor<Void>, TermVisitor<Void> {
 
-	public DesignationVisitor(DesignationRepo repo) {
+	public DesignationParserVisitor(DesignationRepo repo) {
 		this.repo = repo;
 	}
 

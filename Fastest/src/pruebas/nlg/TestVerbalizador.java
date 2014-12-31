@@ -7,10 +7,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import nlg.base.expr.ExprDom;
-import nlg.base.expr.ExprIn;
-import nlg.base.expr.ExprRef;
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprDom;
+import nlg.base.expression.ExprIn;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprZ;
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 

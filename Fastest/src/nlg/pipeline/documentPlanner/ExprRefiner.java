@@ -1,8 +1,8 @@
-package nlg.pipeline.documentPlanning;
+package nlg.pipeline.documentPlanner;
 
-import nlg.base.expr.ExprNotEq;
-import nlg.base.expr.ExprSet;
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprNotEq;
+import nlg.base.expression.ExprSet;
+import nlg.base.expression.ExprZ;
 import nlg.util.DomMapsToVisitor;
 
 /** 

@@ -1,13 +1,57 @@
 package nlg.base.designation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import nlg.base.expr.ExprRef;
+import nlg.base.expression.ExprZ;
 
 
 public class DesignationRepoImpl implements DesignationRepo {
 
+	// map: nombre esquema -> termino -> TermDesignation
+	private Map<String, Map<ExprZ, TermDesignation>> termDesigMap = new HashMap<String, Map<ExprZ,TermDesignation>>();
+	// map: nombre esquema -> ParamDesignation
+	private Map<String, List<ParamDesignation>> paramDesigMap = new HashMap<String, List<ParamDesignation>>();
+		
+	@Override
+	public void addDesignation(TermDesignation desig) {
+		if (!termDesigMap.containsKey(desig.getSchName())) {
+			termDesigMap.put(desig.getSchName(), new HashMap<ExprZ, TermDesignation>());
+		}
+		
+		termDesigMap.get(desig.getSchName()).put(desig.getExpr(), desig);
+	}
+
+	@Override
+	public void addDesignation(ParamDesignation desig) {
+		if (!paramDesigMap.containsKey(desig.getSchName())) {
+			paramDesigMap.put(desig.getSchName(), new ArrayList<ParamDesignation>());
+		}
+		
+		paramDesigMap.get(desig.getSchName()).add(desig);
+	}
+	
+	@Override
+	public TermDesignation getTermDesignation(ExprZ expr, String schName) {
+		if (termDesigMap.containsKey(schName)) {
+			return termDesigMap.get(schName).get(expr);
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<ParamDesignation> getAllParamDesignation(String schName) {
+		if (paramDesigMap.containsKey(schName)) {
+			return paramDesigMap.get(schName);
+		} else {
+			return new ArrayList<ParamDesignation>();
+		}
+	}
+	
+	/*
 	// Map: nombre esquema -> termino -> TermDesignation
 	private Map<String, Map<ExprRef, TermDesignation>> mapTermDesignations = 
 			new HashMap<String, Map<ExprRef,TermDesignation>>();
@@ -34,7 +78,7 @@ public class DesignationRepoImpl implements DesignationRepo {
 		} else {
 			return null;
 		}
-	}
+	}*/
 
 	/*
 	// Map:: nombre_esquema -> expr -> designacion

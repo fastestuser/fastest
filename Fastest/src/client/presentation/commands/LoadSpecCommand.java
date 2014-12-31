@@ -30,7 +30,7 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.ast.Spec;
 import nlg.base.designation.DesignationRepo;
 import nlg.base.designation.DesignationRepoImpl;
-import nlg.util.DesignationVisitor;
+import nlg.util.DesignationParserVisitor;
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.SpecLoaded;
@@ -177,7 +177,7 @@ public class LoadSpecCommand implements Command {
             
             // Parseo designaciones
             DesignationRepo desigRepo = new DesignationRepoImpl();
-            spec.accept(new DesignationVisitor(desigRepo));
+            spec.accept(new DesignationParserVisitor(desigRepo));
 
             spec.accept(new AxDefsClassifier(basicTypeNames, freeTypeNames, basicAxDefs, axDefsValues, axDefsRequired, noBasicAxDefVars));
             

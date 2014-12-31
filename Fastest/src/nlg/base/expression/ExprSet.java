@@ -1,4 +1,4 @@
-package nlg.base.expr;
+package nlg.base.expression;
 
 import java.util.List;
 

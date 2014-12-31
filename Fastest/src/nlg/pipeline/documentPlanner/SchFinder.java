@@ -1,4 +1,4 @@
-package nlg.pipeline.documentPlanning;
+package nlg.pipeline.documentPlanner;
 
 import java.util.ArrayList;
 import java.util.List;

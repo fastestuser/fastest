@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import nlg.base.designation.DesignationRepo;
-import nlg.base.expr.ExprZ;
-import nlg.util.ExprZToString;
+import nlg.base.expression.ExprZ;
+import nlg.util.ExprZTreeToString;
 import nlg.util.ExprZUtils;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
@@ -50,7 +50,7 @@ public class FooTest {
 	
 	private static void printExprZSchema(ClientTextUI clientTextUI, String schName) throws Exception {
 		TClass tClass;
-		ExprZToString visitor = new ExprZToString();
+		ExprZTreeToString visitor = new ExprZTreeToString();
 		
 		// Recupero map operation names -> associated test trees
         Controller controller = clientTextUI.getMyController();

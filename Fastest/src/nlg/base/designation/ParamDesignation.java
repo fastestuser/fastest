@@ -1,7 +1,7 @@
 package nlg.base.designation;
 
-import nlg.base.expr.ExprRef;
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprZ;
 
 /**
  * Designacion parametrizada
@@ -29,7 +29,6 @@ public class ParamDesignation {
 		return expr;
 	}
 
-	// devuelve nombre del parametro
 	public ExprRef getRefExpr() {
 		return refExpr;
 	}

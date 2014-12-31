@@ -1,16 +1,17 @@
-package nlg.pipeline.documentPlanning;
+package nlg.pipeline.documentPlanner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import nlg.base.designation.TermDesignation;
+import nlg.base.designation.DesignationUtils;
 import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.documentPlan.ExpVerbalization;
 import nlg.base.documentPlan.TClassDescriptionPlan;
-import nlg.base.expr.ExprRef;
-import nlg.base.expr.ExprZ;
+import nlg.base.expression.ExprRef;
+import nlg.base.expression.ExprZ;
 import nlg.util.ExprZUtils;
 import client.blogic.management.Controller;
+
 import common.z.TClass;
 
 
@@ -49,16 +50,12 @@ public class DocumentPlanner {
 				}
 			}
 			
-			String name = tClass.getSchName();
 			// Recupero nombre de la operacion a testear
+			String name = tClass.getSchName();
 			String testedSch = schFinder.getTestedOperation(name);
+			
 			// Intento recuperar designacion de la operacion
-			TermDesignation td = 
-					controller.getDesigRepo().getTermDesignation(new ExprRef(testedSch), null);
-			String intro = null;
-			if (null != td) {
-				intro = td.getText();
-			}
+			String intro = DesignationUtils.applyDesignation(new ExprRef(testedSch), null, controller.getDesigRepo());
 			
 			// 
 			dpList.add(new TClassDescriptionPlan(name, intro, expVerbList));
