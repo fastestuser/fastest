@@ -3,11 +3,11 @@ package nlg.base.textSpecification;
 /**
  * Modela sintagma verbal
  */
-public class PSFraseVerbal implements PhraseSpecification {
+public class PSFraseVerbal implements PhraseSpec {
 
 	private String verbo;
-	private String atributo;
-	private PhraseSpecification complemento;
+	private String atributo; // para cuando se tiene un verbo copulativo (ser, estar, etc.)
+	private PhraseSpec complemento;
 	private boolean negado;
 	
 	public String getVerbo() {
@@ -26,11 +26,11 @@ public class PSFraseVerbal implements PhraseSpecification {
 		this.atributo = atributo;
 	}
 
-	public PhraseSpecification getComplemento() {
+	public PhraseSpec getComplemento() {
 		return complemento;
 	}
 
-	public void setComplemento(PhraseSpecification complemento) {
+	public void setComplemento(PhraseSpec complemento) {
 		this.complemento = complemento;
 	}
 
@@ -43,7 +43,7 @@ public class PSFraseVerbal implements PhraseSpecification {
 	}
 
 	@Override
-	public <X> X accept(PhraseSpecificationVisitor<X> visitor) {
+	public <X> X accept(PhraseSpecVisitor<X> visitor) {
 		return visitor.visitPSFraseVerbal(this);
 	}
 

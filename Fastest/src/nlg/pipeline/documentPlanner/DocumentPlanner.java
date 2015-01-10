@@ -52,13 +52,13 @@ public class DocumentPlanner {
 			
 			// Recupero nombre de la operacion a testear
 			String name = tClass.getSchName();
-			String testedSch = schFinder.getTestedOperation(name);
+			String opName = schFinder.getTestedOperation(name);
 			
 			// Intento recuperar designacion de la operacion
-			String intro = DesignationUtils.applyDesignation(new ExprRef(testedSch), null, controller.getDesigRepo());
+			String intro = DesignationUtils.applyDesignation(new ExprRef(opName), null, controller.getDesigRepo());
 			
 			// 
-			dpList.add(new TClassDescriptionPlan(name, intro, expVerbList));
+			dpList.add(new TClassDescriptionPlan(name, opName, intro, expVerbList));
 			
 		}
 		

@@ -3,11 +3,13 @@ package nlg.base.textSpecification;
 /**
  * Modela sintagma nominal
  */
-public class PSFraseNominal implements PhraseSpecification {
+public class PSFraseNominal implements PhraseSpec {
 
 	private String especificador;
+	private String tagEspecificador;
 	private String nucleo;
-	private PhraseSpecification complemento;
+	private String tagNucleo;
+	private PhraseSpec complemento;
 	
 	public String getEspecificador() {
 		return especificador;
@@ -25,16 +27,32 @@ public class PSFraseNominal implements PhraseSpecification {
 		this.nucleo = nucleo;
 	}
 
-	public PhraseSpecification getComplemento() {
+	public PhraseSpec getComplemento() {
 		return complemento;
 	}
 
-	public void setComplemento(PhraseSpecification complemento) {
+	public void setComplemento(PhraseSpec complemento) {
 		this.complemento = complemento;
+	}
+	
+	public String getTagEspecificador() {
+		return tagEspecificador;
+	}
+
+	public void setTagEspecificador(String tagEspecificador) {
+		this.tagEspecificador = tagEspecificador;
+	}
+
+	public String getTagNucleo() {
+		return tagNucleo;
+	}
+
+	public void setTagNucleo(String tagNucleo) {
+		this.tagNucleo = tagNucleo;
 	}
 
 	@Override
-	public <X> X accept(PhraseSpecificationVisitor<X> visitor) {
+	public <X> X accept(PhraseSpecVisitor<X> visitor) {
 		return visitor.visitPSFraseNominal(this);
 	}
 

@@ -4,9 +4,13 @@ package nlg.base.textSpecification;
  * Modela frases "enlatadas" que no requieren procesamiento
  * alguno por parte del realizador de superficie.
  */
-public class PSTextoEnlatado implements PhraseSpecification {
+public class PSTextoEnlatado implements PhraseSpec {
 
 	private String text;
+	
+	public PSTextoEnlatado(String text) {
+		this.text = text;
+	}
 	
 	public String getText() {
 		return text;
@@ -17,7 +21,7 @@ public class PSTextoEnlatado implements PhraseSpecification {
 	}
 
 	@Override
-	public <X> X accept(PhraseSpecificationVisitor<X> visitor) {
+	public <X> X accept(PhraseSpecVisitor<X> visitor) {
 		return visitor.visitPSTextoEnlatado(this);
 	}
 

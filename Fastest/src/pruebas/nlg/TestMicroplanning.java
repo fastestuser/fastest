@@ -12,11 +12,12 @@ import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.expression.ExprDom;
 import nlg.base.expression.ExprRef;
 import nlg.base.expression.ExprZ;
+import nlg.base.textSpecification.TextSpec;
 import nlg.pipeline.documentPlanner.DocumentPlanner;
-import nlg.util.NLGUtils;
+import nlg.pipeline.microplanner.MicroPlanner;
 import client.presentation.ClientTextUI;
 
-public class TestDocumentPlanning {
+public class TestMicroplanning {
 	
 	public static void main(String args[]) throws IOException {
 		
@@ -37,18 +38,10 @@ public class TestDocumentPlanning {
 			e.printStackTrace();
 		}
 		
-		ExprZ exp = new ExprDom(new ExprRef("st"));
-		//Verbalizator ver = new Verbalizator(ui.getMyController().getDesigRepo());
-		//ver.applyDesignation(exp, "Update");
+		MicroPlanner microPlanner = new MicroPlanner(ui.getMyController());
+		TextSpec ts = microPlanner.createTSDocument(doc);
 		
-		//printDocumentPlan(doc);
-	}
-	
-	private static void printDocumentPlan(DocumentPlan doc) {
-		if (null != doc) {
-			System.out.println(NLGUtils.documentPlanToString(doc));
-		}
-		
+		System.out.println("debug!");
 	}
 	
 	private static List<String> getScript() {

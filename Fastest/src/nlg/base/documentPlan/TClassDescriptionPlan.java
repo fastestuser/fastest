@@ -12,13 +12,15 @@ import java.util.List;
 public class TClassDescriptionPlan {
 
 	private String name;
+	private String opName;
 	private String introduction;
 	private List<ExpVerbalization> expressions;
 	
-	public TClassDescriptionPlan(String name, String introduction,
-			List<ExpVerbalization> expressions) {
+	public TClassDescriptionPlan(String name, String opName, 
+			String introduction, List<ExpVerbalization> expressions) {
 		super();
 		this.name = name;
+		this.opName = opName;
 		this.introduction = introduction;
 		this.expressions = expressions;
 	}
@@ -29,6 +31,14 @@ public class TClassDescriptionPlan {
 	
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getOpName() {
+		return opName;
+	}
+	
+	public void setOpName(String opName) {
+		this.opName = opName;
 	}
 	
 	public String getIntroduction() {
