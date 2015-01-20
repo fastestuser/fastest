@@ -20,7 +20,7 @@ public class MicroPlanner {
 		psBuilder = new PhraseSpecBuilder(controller.getDesigRepo());
 	}
 	
-	public TextSpec createTSDocument(DocumentPlan dp) {
+	public TSDocument createTSDocument(DocumentPlan dp) {
 		
 		TSDocument document = new TSDocument();
 		document.setTitle(dp.getTitle());

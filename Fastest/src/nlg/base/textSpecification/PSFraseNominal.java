@@ -1,14 +1,15 @@
 package nlg.base.textSpecification;
 
+import nlg.base.linguistic.InfoMorfologica;
+
 /**
  * Modela sintagma nominal
  */
-public class PSFraseNominal implements PhraseSpec {
+public class PSFraseNominal extends PhraseSpec {
 
 	private String especificador;
-	private String tagEspecificador;
 	private String nucleo;
-	private String tagNucleo;
+	private InfoMorfologica infoNucleo;
 	private PhraseSpec complemento;
 	
 	public String getEspecificador() {
@@ -34,26 +35,17 @@ public class PSFraseNominal implements PhraseSpec {
 	public void setComplemento(PhraseSpec complemento) {
 		this.complemento = complemento;
 	}
+
+	public InfoMorfologica getInfoNucleo() {
+		return infoNucleo;
+	}
+
+	public void setInfoNucleo(InfoMorfologica infoNucleo) {
+		this.infoNucleo = infoNucleo;
+	}
 	
-	public String getTagEspecificador() {
-		return tagEspecificador;
-	}
-
-	public void setTagEspecificador(String tagEspecificador) {
-		this.tagEspecificador = tagEspecificador;
-	}
-
-	public String getTagNucleo() {
-		return tagNucleo;
-	}
-
-	public void setTagNucleo(String tagNucleo) {
-		this.tagNucleo = tagNucleo;
-	}
-
 	@Override
 	public <X> X accept(PhraseSpecVisitor<X> visitor) {
 		return visitor.visitPSFraseNominal(this);
 	}
-
 }

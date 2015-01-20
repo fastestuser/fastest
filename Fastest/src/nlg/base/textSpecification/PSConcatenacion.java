@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Modela yuxtaposicion de frases
  */
-public class PSConcatenacion implements PhraseSpec {
+public class PSConcatenacion extends PhraseSpec {
 
 	private List<PhraseSpec> elementos;
 	

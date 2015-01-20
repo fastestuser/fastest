@@ -1,9 +1,10 @@
 package nlg.base.textSpecification;
 
+
 /**
  * Modela oraciones bimembres.
  */
-public class PSOracion implements PhraseSpec {
+public class PSOracion extends PhraseSpec {
 
 	private PhraseSpec sujeto;
 	private PSFraseVerbal predicado;
@@ -17,8 +18,8 @@ public class PSOracion implements PhraseSpec {
 		return sujeto;
 	}
 
-	public void setSujeto(PhraseSpec fraseNominal) {
-		this.sujeto = fraseNominal;
+	public void setSujeto(PhraseSpec sujeto) {
+		this.sujeto = sujeto;
 	}
 
 	public PSFraseVerbal getPredicado() {
@@ -33,5 +34,4 @@ public class PSOracion implements PhraseSpec {
 	public <X> X accept(PhraseSpecVisitor<X> visitor) {
 		return visitor.visitPSOracion(this);
 	}
-
 }

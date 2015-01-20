@@ -23,10 +23,13 @@ import nlg.base.expression.ExprUnion;
 import nlg.base.expression.ExprZ;
 import nlg.base.expression.ExprZVisitor;
 import nlg.base.expression.matching.MatchUtils;
+import nlg.base.linguistic.CategoriaGramatical;
+import nlg.base.linguistic.InfoMorfologica;
 import nlg.base.textSpecification.PSFraseNominal;
 import nlg.base.textSpecification.PSTextoEnlatado;
 import nlg.base.textSpecification.PhraseSpec;
 import nlg.util.FreeLingAnalyzer;
+import nlg.util.FreeLingUtils;
 import edu.upc.freeling.ListWordIterator;
 import edu.upc.freeling.Sentence;
 import edu.upc.freeling.Word;
@@ -84,23 +87,21 @@ public class PhraseSpecBuilder {
 			
 			if (wIt.hasNext()) {
 				Word w1 = wIt.next();
-				String tag1 = w1.getTag();
+				InfoMorfologica info = FreeLingUtils.getInfoMorfologica(w1.getTag());
 	
-				if (tag1.startsWith("DA")) {
+				if (null != info.getCatGramatical() && info.getCatGramatical().equals(CategoriaGramatical.ARTICULO)) {
 					// primer palabra: articulo
 					// verifico si la seguna palabra es un nombre
 					if (wIt.hasNext()) {
 						Word w2 = wIt.next();
-						String tag2 = w2.getTag();
+						InfoMorfologica info2 = FreeLingUtils.getInfoMorfologica(w2.getTag());
 						
-						if (tag2.startsWith("N")) {
+						if (null != info2.getCatGramatical() && info2.getCatGramatical().equals(CategoriaGramatical.NOMBRE)) {
 							// nombre propio o sustantivo
 							// construyo frase sustantival
 							PSFraseNominal fn = new PSFraseNominal();
-							fn.setEspecificador(w1.getForm());
-							fn.setTagEspecificador(w1.getTag());
 							fn.setNucleo(w2.getForm());
-							fn.setTagNucleo(w2.getTag());
+							fn.setInfoNucleo(info2);
 							
 							String comp = "";
 							while (wIt.hasNext()) {
@@ -126,12 +127,16 @@ public class PhraseSpecBuilder {
 					}
 					
 					
-				} else if (tag1.startsWith("N")) {
+				} else if (null != info.getCatGramatical() && info.getCatGramatical().equals(CategoriaGramatical.NOMBRE)) {
 					// primer palabra: nombre
 					// construyo frase sustantival
 					PSFraseNominal fn = new PSFraseNominal();
 					fn.setNucleo(w1.getForm());
-					fn.setTagNucleo(w1.getTag());
+					
+					// analizo informacion morfolofica nucleo
+					InfoMorfologica im = FreeLingUtils.getInfoMorfologica(w1.getTag());
+					fn.setInfoNucleo(im);
+					
 					String comp = "";
 					while (wIt.hasNext()) {
 						String tmp = wIt.next().getForm();

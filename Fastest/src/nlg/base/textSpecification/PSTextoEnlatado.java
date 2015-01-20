@@ -1,10 +1,11 @@
 package nlg.base.textSpecification;
 
+
 /**
  * Modela frases "enlatadas" que no requieren procesamiento
  * alguno por parte del realizador de superficie.
  */
-public class PSTextoEnlatado implements PhraseSpec {
+public class PSTextoEnlatado extends PhraseSpec {
 
 	private String text;
 	

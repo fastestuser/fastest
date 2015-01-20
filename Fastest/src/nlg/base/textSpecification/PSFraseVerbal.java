@@ -3,7 +3,7 @@ package nlg.base.textSpecification;
 /**
  * Modela sintagma verbal
  */
-public class PSFraseVerbal implements PhraseSpec {
+public class PSFraseVerbal extends PhraseSpec {
 
 	private String verbo;
 	private String atributo; // para cuando se tiene un verbo copulativo (ser, estar, etc.)

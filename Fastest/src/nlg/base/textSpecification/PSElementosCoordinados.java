@@ -6,7 +6,7 @@ import java.util.List;
  * Modela conjunto de elementos que luego deberan
  * ser realizados como una conjuncion o disyuncion.
  */
-public class PSElementosCoordinados implements PhraseSpec {
+public class PSElementosCoordinados extends PhraseSpec {
 
 	private List<PhraseSpec> elementos;
 	
