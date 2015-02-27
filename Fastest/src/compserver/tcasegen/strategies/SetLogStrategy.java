@@ -79,6 +79,13 @@ public final class SetLogStrategy implements TCaseStrategy{
 	
 	//supongamos A == B \land C entonces una clase de prueba de A es
 	// A==[decl|\pre B \land \pre C]
+	/*Hay que arreglar esta función para que sea coherente con la integración
+	 * definida en el paper del TTF de integración
+	 * Si por ejemplo se hace: selop B, selop A, genalltt, genalltca
+	 * Antes de la linea
+	 * axPara = SpecUtils.createAxPara(declList,SpecUtils.andPreds(casePred, classPred));
+	 * hay q sacar de casePred las variables que sólo aparecen en B
+	 * es decir, sólo dejar las asignaciones en vars(B) \cap vars(C) */
 	private void integrate(TClass tClass, AbstractTCase abstractTCase){
 		if (abstractTCase==null || abstractTCase.getMyAxPara() == null)
 			return;
