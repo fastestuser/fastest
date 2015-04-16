@@ -58,11 +58,13 @@ epilogue: '@EPILOGUE'
 law: ( ID ':' )? ( lawRefinement );
 lawRefinement: zExpr '==>' refinement ( ',' refinement )* ;
 
-refinement: ( ID | '[' NUMBER? ']' ) ( 'AS' asRefinement )?
-          | lawRefinement ;
+refinement: ( ID | '[' NUMBER? ']' ) ( 'AS' asRefinement )?     # AssignZExpr
+          | lawRefinement                                       # RefineZExpr
+          ;
 
-asRefinement: ( type | ID ) ( 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']' )?
-            | ( type | ID ) ( '[' typeCase (',' typeCase)* ']')? ;
+asRefinement: ( type | ID ) ( 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']' )?     #AsWith
+            | ( type | ID ) ( '[' typeCase (',' typeCase)* ']')?                        #AsEnum
+            ;
 
 // Z expressions
 zExpr : ID                                   # Ident

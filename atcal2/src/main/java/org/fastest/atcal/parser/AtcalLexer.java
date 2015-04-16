@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
 package org.fastest.atcal.parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;

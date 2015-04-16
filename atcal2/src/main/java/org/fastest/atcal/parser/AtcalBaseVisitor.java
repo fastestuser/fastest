@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
 package org.fastest.atcal.parser;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
@@ -165,14 +165,28 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRefinement(@NotNull AtcalParser.RefinementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitAssignZExpr(@NotNull AtcalParser.AssignZExprContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsRefinement(@NotNull AtcalParser.AsRefinementContext ctx) { return visitChildren(ctx); }
+	@Override public T visitRefineZExpr(@NotNull AtcalParser.RefineZExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitAsWith(@NotNull AtcalParser.AsWithContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitAsEnum(@NotNull AtcalParser.AsEnumContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

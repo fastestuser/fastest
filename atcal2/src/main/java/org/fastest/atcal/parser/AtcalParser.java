@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
 package org.fastest.atcal.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -1365,21 +1365,37 @@ public class AtcalParser extends Parser {
 	}
 
 	public static class RefinementContext extends ParserRuleContext {
+		public RefinementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_refinement; }
+	 
+		public RefinementContext() { }
+		public void copyFrom(RefinementContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class RefineZExprContext extends RefinementContext {
+		public LawRefinementContext lawRefinement() {
+			return getRuleContext(LawRefinementContext.class,0);
+		}
+		public RefineZExprContext(RefinementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitRefineZExpr(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AssignZExprContext extends RefinementContext {
 		public TerminalNode ID() { return getToken(AtcalParser.ID, 0); }
 		public AsRefinementContext asRefinement() {
 			return getRuleContext(AsRefinementContext.class,0);
 		}
 		public TerminalNode NUMBER() { return getToken(AtcalParser.NUMBER, 0); }
-		public LawRefinementContext lawRefinement() {
-			return getRuleContext(LawRefinementContext.class,0);
-		}
-		public RefinementContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_refinement; }
+		public AssignZExprContext(RefinementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitRefinement(this);
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitAssignZExpr(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1392,6 +1408,7 @@ public class AtcalParser extends Parser {
 			setState(247);
 			switch ( getInterpreter().adaptivePredict(_input,26,_ctx) ) {
 			case 1:
+				_localctx = new AssignZExprContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(240);
@@ -1436,6 +1453,7 @@ public class AtcalParser extends Parser {
 				}
 				break;
 			case 2:
+				_localctx = new RefineZExprContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(246); 
@@ -1456,6 +1474,17 @@ public class AtcalParser extends Parser {
 	}
 
 	public static class AsRefinementContext extends ParserRuleContext {
+		public AsRefinementContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_asRefinement; }
+	 
+		public AsRefinementContext() { }
+		public void copyFrom(AsRefinementContext ctx) {
+			super.copyFrom(ctx);
+		}
+	}
+	public static class AsWithContext extends AsRefinementContext {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
@@ -1466,19 +1495,28 @@ public class AtcalParser extends Parser {
 		public LawRefinementContext lawRefinement(int i) {
 			return getRuleContext(LawRefinementContext.class,i);
 		}
+		public AsWithContext(AsRefinementContext ctx) { copyFrom(ctx); }
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitAsWith(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+	public static class AsEnumContext extends AsRefinementContext {
+		public TypeContext type() {
+			return getRuleContext(TypeContext.class,0);
+		}
+		public TerminalNode ID() { return getToken(AtcalParser.ID, 0); }
 		public List<TypeCaseContext> typeCase() {
 			return getRuleContexts(TypeCaseContext.class);
 		}
 		public TypeCaseContext typeCase(int i) {
 			return getRuleContext(TypeCaseContext.class,i);
 		}
-		public AsRefinementContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_asRefinement; }
+		public AsEnumContext(AsRefinementContext ctx) { copyFrom(ctx); }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitAsRefinement(this);
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitAsEnum(this);
 			else return visitor.visitChildren(this);
 		}
 	}
@@ -1491,6 +1529,7 @@ public class AtcalParser extends Parser {
 			setState(284);
 			switch ( getInterpreter().adaptivePredict(_input,33,_ctx) ) {
 			case 1:
+				_localctx = new AsWithContext(_localctx);
 				enterOuterAlt(_localctx, 1);
 				{
 				setState(251);
@@ -1551,6 +1590,7 @@ public class AtcalParser extends Parser {
 				}
 				break;
 			case 2:
+				_localctx = new AsEnumContext(_localctx);
 				enterOuterAlt(_localctx, 2);
 				{
 				setState(269);

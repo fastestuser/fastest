@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
 package org.fastest.atcal.parser;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
@@ -138,17 +138,33 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#refinement}.
+	 * Visit a parse tree produced by the {@code AssignZExpr}
+	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRefinement(@NotNull AtcalParser.RefinementContext ctx);
+	T visitAssignZExpr(@NotNull AtcalParser.AssignZExprContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#asRefinement}.
+	 * Visit a parse tree produced by the {@code RefineZExpr}
+	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAsRefinement(@NotNull AtcalParser.AsRefinementContext ctx);
+	T visitRefineZExpr(@NotNull AtcalParser.RefineZExprContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AsWith}
+	 * labeled alternative in {@link AtcalParser#asRefinement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsWith(@NotNull AtcalParser.AsWithContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code AsEnum}
+	 * labeled alternative in {@link AtcalParser#asRefinement}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAsEnum(@NotNull AtcalParser.AsEnumContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetDom}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
