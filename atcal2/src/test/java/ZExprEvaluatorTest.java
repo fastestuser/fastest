@@ -18,10 +18,10 @@ public class ZExprEvaluatorTest {
     private ZExprNum num4 = new ZExprNum(4);
     private ZExprNum num5 = new ZExprNum(5);
     private ZExprNum num6 = new ZExprNum(6);
-    private ZExprCrossProd prod1 = ZExprCrossProd.of(num1, num2);
-    private ZExprCrossProd prod2 = ZExprCrossProd.of(num3, num4);
-    private ZExprCrossProd prod3 = ZExprCrossProd.of(num1, num2, num3);
-    private ZExprCrossProd prod4 = ZExprCrossProd.of(num4, num5, num6);
+    private ZExprProd prod1 = ZExprProd.of(num1, num2);
+    private ZExprProd prod2 = ZExprProd.of(num3, num4);
+    private ZExprProd prod3 = ZExprProd.of(num1, num2, num3);
+    private ZExprProd prod4 = ZExprProd.of(num4, num5, num6);
     private ZVar var1 = new ZVar("var1", new ZExprString("Hello "));
     private ZVar var2 = new ZVar("var2", new ZExprString("world"));
     private ZVar var3 = new ZVar("var3", new ZExprNum(2));
@@ -138,7 +138,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "<5,6,7>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprCrossProd.of(new ZExprNum(5), new ZExprNum(6), new ZExprNum(7))));
+        assert (result.equals(ZExprProd.of(new ZExprNum(5), new ZExprNum(6), new ZExprNum(7))));
     }
 
     @Test
@@ -146,7 +146,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "<a>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprCrossProd.of(new ZExprConst("a"))));
+        assert (result.equals(ZExprProd.of(new ZExprConst("a"))));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "<var4,b>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprCrossProd.of(ZExprSet.of(num1, num2), new ZExprConst("b"))));
+        assert (result.equals(ZExprProd.of(ZExprSet.of(num1, num2), new ZExprConst("b"))));
     }
 
     @Test

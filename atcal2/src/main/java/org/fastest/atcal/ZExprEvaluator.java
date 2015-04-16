@@ -53,7 +53,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
     @Override
     public ZExpr visitProdProj(@NotNull AtcalParser.ProdProjContext ctx) {
         // TODO: Check that the return type is actually a cross product
-        ZExprCrossProd prod = (ZExprCrossProd) visit(ctx.zExpr());
+        ZExprProd prod = (ZExprProd) visit(ctx.zExpr());
         return prod.getValue(Integer.valueOf(ctx.TUPPROJ().getText().substring(1)) - 1);
     }
 
@@ -63,7 +63,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         for (AtcalParser.ZExprContext context : ctx.zExpr()) {
             exprs.add(visit(context));
         }
-        return new ZExprCrossProd(exprs.toArray(new ZExpr[]{}));
+        return new ZExprProd(exprs.toArray(new ZExpr[]{}));
     }
 
     // Set operations
@@ -73,7 +73,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         ZExprSet set = (ZExprSet) visit(ctx.zExpr());
         ArrayList<ZExpr> setDom = new ArrayList<ZExpr>();
         for (ZExpr elem : set) {
-            setDom.add(((ZExprCrossProd) elem).getValue(0));
+            setDom.add(((ZExprProd) elem).getValue(0));
         }
         return new ZExprSet(setDom.toArray(new ZExpr[]{}));
     }
@@ -107,7 +107,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         ZExprSet set = (ZExprSet) visit(ctx.zExpr());
         ArrayList<ZExpr> setRan = new ArrayList<ZExpr>();
         for (ZExpr elem : set) {
-            setRan.add(((ZExprCrossProd) elem).getValue(1));
+            setRan.add(((ZExprProd) elem).getValue(1));
         }
         return new ZExprSet(setRan.toArray(new ZExpr[]{}));
     }
@@ -118,7 +118,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         ZExprSet set = (ZExprSet) visit(ctx.zExpr());
         ArrayList<ZExpr> setProj = new ArrayList<ZExpr>();
         for (ZExpr elem : set) {
-            setProj.add(((ZExprCrossProd) elem).getValue(Integer.valueOf(ctx.PROJ().getText().substring(1)) - 1));
+            setProj.add(((ZExprProd) elem).getValue(Integer.valueOf(ctx.PROJ().getText().substring(1)) - 1));
         }
         return new ZExprSet(setProj.toArray(new ZExpr[]{}));
     }

@@ -1,8 +1,5 @@
-import com.google.common.collect.Multimap;
 import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
-
-import java.util.HashMap;
 
 /**
  * Created by Cristian on 4/1/15.
@@ -15,8 +12,8 @@ public class ZExprTest {
     private ZExprConst const2 = new ZExprConst("val4");
     private ZExprConst const3 = new ZExprConst("val5");
     private ZExprConst const4 = new ZExprConst("val5");
-    private ZExprCrossProd crossProd1 = ZExprCrossProd.of(const1, const3);
-    private ZExprCrossProd crossProd2 = ZExprCrossProd.of(const1, const4);
+    private ZExprProd crossProd1 = ZExprProd.of(const1, const3);
+    private ZExprProd crossProd2 = ZExprProd.of(const1, const4);
     private ZExprSet set1 = ZExprSet.of(const1, const2);
     private ZExprSet set2 = ZExprSet.of(const3);
     private ZExprSet set3 = ZExprSet.of(const1, const3);
