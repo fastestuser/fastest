@@ -1,0 +1,22 @@
+package org.fastest.atcal.apl;
+
+import java.util.List;
+
+/**
+ * Created by Cristian on 4/20/15.
+ */
+public class CallExpr implements APLExpr {
+
+    private final String funName;
+    private final List<String> args;
+
+    public CallExpr(String funName, List<String> args) {
+        this.funName = funName;
+        this.args = args;
+    }
+
+    @Override
+    public String toString() {
+        return "CALL " + funName + " " + args;
+    }
+}
