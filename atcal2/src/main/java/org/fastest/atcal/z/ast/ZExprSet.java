@@ -91,9 +91,7 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
 
     @Override
     public String toString() {
-        return "ZExprSet{" +
-                "set=" + set +
-                '}';
+        return "{" + set + '}';
     }
 
     @Override

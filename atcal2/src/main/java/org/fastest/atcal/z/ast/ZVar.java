@@ -40,9 +40,6 @@ public class ZVar implements ZExpr {
 
     @Override
     public String toString() {
-        return "ZVar{" +
-                "name='" + name + '\'' +
-                ", value=" + value +
-                '}';
+        return  name + "=" + value;
     }
 }

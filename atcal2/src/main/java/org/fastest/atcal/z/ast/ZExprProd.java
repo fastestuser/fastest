@@ -60,8 +60,6 @@ public class ZExprProd implements ZExpr {
 
     @Override
     public String toString() {
-        return "ZExprCrossProd{" +
-                "prod=" + prod +
-                '}';
+        return "<" + prod + '>';
     }
 }

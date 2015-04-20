@@ -73,6 +73,6 @@ public class ZExprSchema implements ZExpr {
 
     @Override
     public String toString() {
-        return "ZExprSchema{" + schema + '}';
+        return "[" + schema + ']';
     }
 }

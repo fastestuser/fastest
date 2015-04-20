@@ -34,8 +34,6 @@ public class ZExprConst implements ZExpr {
 
     @Override
     public String toString() {
-        return "ZExprConst{" +
-                "value='" + value + '\'' +
-                '}';
+        return value;
     }
 }

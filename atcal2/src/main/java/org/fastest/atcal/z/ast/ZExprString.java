@@ -33,8 +33,6 @@ public class ZExprString implements ZExpr {
 
     @Override
     public String toString() {
-        return "ZExprString{" +
-                "str='" + str + '\'' +
-                '}';
+        return "\'" + str + '\'';
     }
 }
