@@ -39,19 +39,19 @@ public class RefinementLawEvaluatorTest {
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
         RefinementLawEvaluator eval = new RefinementLawEvaluator(scope);
-        return eval.visit(tree);
+        return eval.visit(tree).toString();
     }
 
     @Test
     public void lawEvalTest1() {
-        String inputExpr = "var3 ==> a";
+        String inputExpr = "5 ==> a";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
     public void lawEvalTest2() {
-        String inputExpr = "var3 ==> []";
+        String inputExpr = "pepe ==> []";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
@@ -69,5 +69,4 @@ public class RefinementLawEvaluatorTest {
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
-
 }
