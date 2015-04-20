@@ -138,33 +138,33 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code AssignZExpr}
+	 * Visit a parse tree produced by the {@code BasicRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAssignZExpr(@NotNull AtcalParser.AssignZExprContext ctx);
+	T visitBasicRef(@NotNull AtcalParser.BasicRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code RefineZExpr}
+	 * Visit a parse tree produced by the {@code EnumRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRefineZExpr(@NotNull AtcalParser.RefineZExprContext ctx);
+	T visitEnumRef(@NotNull AtcalParser.EnumRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code AsWith}
-	 * labeled alternative in {@link AtcalParser#asRefinement}.
+	 * Visit a parse tree produced by the {@code WithRef}
+	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAsWith(@NotNull AtcalParser.AsWithContext ctx);
+	T visitWithRef(@NotNull AtcalParser.WithRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code AsEnum}
-	 * labeled alternative in {@link AtcalParser#asRefinement}.
+	 * Visit a parse tree produced by the {@code ZExprRef}
+	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAsEnum(@NotNull AtcalParser.AsEnumContext ctx);
+	T visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetDom}
 	 * labeled alternative in {@link AtcalParser#zExpr}.

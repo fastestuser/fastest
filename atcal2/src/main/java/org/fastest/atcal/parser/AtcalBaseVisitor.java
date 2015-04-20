@@ -165,28 +165,28 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAssignZExpr(@NotNull AtcalParser.AssignZExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitBasicRef(@NotNull AtcalParser.BasicRefContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitRefineZExpr(@NotNull AtcalParser.RefineZExprContext ctx) { return visitChildren(ctx); }
+	@Override public T visitEnumRef(@NotNull AtcalParser.EnumRefContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsWith(@NotNull AtcalParser.AsWithContext ctx) { return visitChildren(ctx); }
+	@Override public T visitWithRef(@NotNull AtcalParser.WithRefContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitAsEnum(@NotNull AtcalParser.AsEnumContext ctx) { return visitChildren(ctx); }
+	@Override public T visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
