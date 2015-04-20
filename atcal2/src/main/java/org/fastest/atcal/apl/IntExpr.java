@@ -5,9 +5,9 @@ package org.fastest.atcal.apl;
  */
 public class IntExpr implements APLExpr {
 
-    private final int value;
+    private final long value;
 
-    public IntExpr(int value) {
+    public IntExpr(long value) {
         this.value = value;
     }
 
