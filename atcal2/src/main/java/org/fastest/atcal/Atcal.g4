@@ -60,7 +60,7 @@ lawRefinement: zExpr '==>' refinement ( ',' refinement )* ;
 
 refinement : ( ID | '[' NUMBER? ']' )                                                                             # BasicRef
            | ( ID | '[' NUMBER? ']' ) 'AS' ( type | ID ) ( '[' typeCase (',' typeCase)* ']')?                     # EnumRef
-           | ( ID | '[' NUMBER? ']' ) 'AS' ( type | ID ) ( 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']' )?  # WithRef
+           | ( ID | '[' NUMBER? ']' ) 'AS' ( type | ID ) 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
            | lawRefinement                                                                                        # ZExprRef
            ;
 

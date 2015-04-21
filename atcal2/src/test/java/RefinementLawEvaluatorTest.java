@@ -1,11 +1,17 @@
+import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.fastest.atcal.ATCALType;
+import org.fastest.atcal.ContractType;
 import org.fastest.atcal.RefinementLawEvaluator;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by cristian on 4/16/15.
@@ -32,13 +38,18 @@ public class RefinementLawEvaluatorTest {
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
 
+
     private String evalLaw(String law, ZExprSchema scope) {
         ANTLRInputStream input = new ANTLRInputStream(law);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope);
+
+        final Map<String, ATCALType> types = Maps.newHashMap();
+        types.put("List", new ContractType("List", "newList", "add", "get"));
+
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, "", types);
         return eval.visit(tree).toString();
     }
 
@@ -66,6 +77,13 @@ public class RefinementLawEvaluatorTest {
     @Test
     public void lawEvalTest4() {
         String inputExpr = "var3 ==> var3 + var4.@CARD ==> a";
+        String result = evalLaw(inputExpr, atc1);
+        System.out.println(result);
+    }
+
+    @Test
+    public void lawEvalTest5() {
+        String inputExpr = "var4 ==> l AS List WITH [ var4.@]"; // TODO: we are missing the @ELEM operator!
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
