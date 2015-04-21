@@ -14,15 +14,15 @@ import java.util.ArrayList;
  */
 public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
 
-    private final ZExprSchema atc;
+    private final ZExprSchema scope;
 
-    public ZExprEvaluator(ZExprSchema atc) {
-        this.atc = atc;
+    public ZExprEvaluator(ZExprSchema scope) {
+        this.scope = scope;
     }
 
     @Override
     public ZExpr visitIdent(@NotNull AtcalParser.IdentContext ctx) {
-        Optional<ZVar> var = atc.getVar(ctx.ID().getText());
+        Optional<ZVar> var = scope.getVar(ctx.ID().getText());
         if(var.isPresent())
             return var.get().getValue();
         else
