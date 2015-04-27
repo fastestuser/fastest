@@ -66,11 +66,11 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
         List<APLStmt> codeBlock = Lists.newArrayList();
         try {
             if (ctx.ID() != null) {
-                codeBlock.add(new AssignStmt(ctx.ID().getText(), ZExprToAPLExpr(this.getScope())));
+                codeBlock.add(new AssignStmt(new APLVar(ctx.ID().getText()), ZExprToAPLExpr(this.getScope())));
             } else if (ctx.NUMBER() != null) {
-                codeBlock.add(new AssignStmt(aplScope + "[" + ctx.NUMBER().getText() + "]", ZExprToAPLExpr(this.getScope())));
+                codeBlock.add(new AssignStmt(new APLVar(aplScope + "[" + ctx.NUMBER().getText() + "]"), ZExprToAPLExpr(this.getScope())));
             } else {
-                codeBlock.add(new AssignStmt(aplScope + "[ ]", ZExprToAPLExpr(this.getScope())));
+                codeBlock.add(new AssignStmt(new APLVar(aplScope + "[ ]"), ZExprToAPLExpr(this.getScope())));
             }
         } catch (Exception e) {
             System.out.println("Unimplemented ZExpr translation.");
@@ -90,14 +90,20 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
 
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
 
-        RefinementLawEvaluator evaluator = new RefinementLawEvaluator(zScope, ctx.ID(1).getText(), types);
+        RefinementLawEvaluator evaluator = new RefinementLawEvaluator(zScope, ctx.ID(0).getText(), types);
 
         if(asType instanceof ContractType){
-            codeBlock.add(new AssignStmt(aplScope, new CallExpr(((ContractType) asType).getConstructor(), Lists.newArrayList(""))));
+
+            ContractType type = (ContractType)asType;
+            APLVar dataStruct = new APLVar(ctx.ID(0).getText() + '_' + type.getSetterArgs().get(0));
+            codeBlock.add(new AssignStmt(dataStruct, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
             for(AtcalParser.LawRefinementContext lawRefinementContext: ctx.lawRefinement()){
                 codeBlock.addAll(evaluator.visit(lawRefinementContext));
-                codeBlock.add(new AssignStmt("_", new CallExpr(((ContractType) asType).getSetter(), Lists.newArrayList("_"))));
             }
+            List<String> args = Lists.newArrayList(ctx.ID(0).getText() + '_' + type.getSetterArgs().get(0));
+            args.addAll(type.getSetterArgs().subList(1, type.getSetterArgs().size()));
+            codeBlock.add(new CallExpr(type.getSetter(), args));
+            codeBlock.add(new AssignStmt(new APLVar(ctx.ID(0).getText()), dataStruct));
         }
 
         return codeBlock;

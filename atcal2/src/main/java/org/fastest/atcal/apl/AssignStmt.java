@@ -5,16 +5,16 @@ package org.fastest.atcal.apl;
  */
 public class AssignStmt implements APLStmt {
 
-    private final String lvalue;
+    private final APLVar lvalue;
     private final APLExpr expr;
 
-    public AssignStmt(String lvalue, APLExpr expr) {
+    public AssignStmt(APLVar lvalue, APLExpr expr) {
         this.lvalue = lvalue;
         this.expr = expr;
     }
 
     @Override
     public String toString() {
-        return lvalue + '=' + expr;
+        return lvalue.toString() + '=' + expr;
     }
 }

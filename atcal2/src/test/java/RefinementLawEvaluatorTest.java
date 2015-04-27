@@ -1,3 +1,4 @@
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -11,6 +12,7 @@ import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,7 +49,10 @@ public class RefinementLawEvaluatorTest {
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
 
         final Map<String, ATCALType> types = Maps.newHashMap();
-        types.put("List", new ContractType("List", "newList", "add", "get"));
+        List<String> constArgs = Lists.newArrayList();
+        List<String> setterArgs = Lists.newArrayList("list", "a", "b");
+        List<String> getterArgs = Lists.newArrayList();
+        types.put("List", new ContractType("List", "newList", constArgs, "add", setterArgs, "get", getterArgs));
 
         RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, "", types);
         return eval.visit(tree).toString();
@@ -83,7 +88,7 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest5() {
-        String inputExpr = "var4 ==> l AS List WITH [ var4.@]"; // TODO: we are missing the @ELEM operator!
+        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a], var4.2 ==> b]"; // TODO: we are missing the @ELEM operator!
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
