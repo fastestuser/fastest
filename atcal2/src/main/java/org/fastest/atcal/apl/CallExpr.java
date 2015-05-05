@@ -17,6 +17,6 @@ public class CallExpr implements APLExpr, APLStmt {
 
     @Override
     public String toString() {
-        return "CALL " + funName + " " + args;
+        return "CALL(" + funName + " " + args + ")";
     }
 }

@@ -3,7 +3,7 @@ package org.fastest.atcal.apl;
 /**
  * Created by cristian on 27/04/15.
  */
-public class APLVar implements APLExpr {
+public class APLVar implements APLExpr, APLLValue {
 
     private final String name;
 

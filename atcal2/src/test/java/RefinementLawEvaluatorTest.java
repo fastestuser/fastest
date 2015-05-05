@@ -4,8 +4,10 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.ATCALType;
+import org.fastest.atcal.ArrayType;
 import org.fastest.atcal.ContractType;
 import org.fastest.atcal.RefinementLawEvaluator;
+import org.fastest.atcal.apl.APLVar;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
@@ -53,8 +55,9 @@ public class RefinementLawEvaluatorTest {
         List<String> setterArgs = Lists.newArrayList("list", "a", "b");
         List<String> getterArgs = Lists.newArrayList();
         types.put("List", new ContractType("List", "newList", constArgs, "add", setterArgs, "get", getterArgs));
+        types.put("myArr", new ArrayType("myArr", 10));
 
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, "", types);
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar(""), types);
         return eval.visit(tree).toString();
     }
 
@@ -88,7 +91,14 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest5() {
-        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a], var4.2 ==> b]"; // TODO: we are missing the @ELEM operator!
+        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a, var4.1 ==> b], var4.2 ==> b]";
+        String result = evalLaw(inputExpr, atc1);
+        System.out.println(result);
+    }
+
+    @Test
+    public void lawEvalTest6() {
+        String inputExpr = "var4 ==> l AS myArr WITH [ var4.1 ==> [1] AS List WITH [var1 ==> a], var4.2 ==> [2] AS List WITH [\"hola\" ==> b] ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }

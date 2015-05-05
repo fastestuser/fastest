@@ -138,26 +138,12 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code BasicRef}
+	 * Visit a parse tree produced by the {@code ImplRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitBasicRef(@NotNull AtcalParser.BasicRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code EnumRef}
-	 * labeled alternative in {@link AtcalParser#refinement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumRef(@NotNull AtcalParser.EnumRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code WithRef}
-	 * labeled alternative in {@link AtcalParser#refinement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitWithRef(@NotNull AtcalParser.WithRefContext ctx);
+	T visitImplRef(@NotNull AtcalParser.ImplRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ZExprRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
@@ -166,26 +152,47 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code SetDom}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * Visit a parse tree produced by the {@code VarLValue}
+	 * labeled alternative in {@link AtcalParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetDom(@NotNull AtcalParser.SetDomContext ctx);
+	T visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code SetDiff}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * Visit a parse tree produced by the {@code ArrayLValue}
+	 * labeled alternative in {@link AtcalParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetDiff(@NotNull AtcalParser.SetDiffContext ctx);
+	T visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code SetInter}
+	 * Visit a parse tree produced by the {@code EnumRef}
+	 * labeled alternative in {@link AtcalParser#asRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumRef(@NotNull AtcalParser.EnumRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code WithRef}
+	 * labeled alternative in {@link AtcalParser#asRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWithRef(@NotNull AtcalParser.WithRefContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code Group}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetInter(@NotNull AtcalParser.SetInterContext ctx);
+	T visitGroup(@NotNull AtcalParser.GroupContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NumMod}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumMod(@NotNull AtcalParser.NumModContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ProdProj}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
@@ -201,62 +208,6 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIdent(@NotNull AtcalParser.IdentContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code NumMod}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNumMod(@NotNull AtcalParser.NumModContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetRan}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetRan(@NotNull AtcalParser.SetRanContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetCons}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetCons(@NotNull AtcalParser.SetConsContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetCard}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetCard(@NotNull AtcalParser.SetCardContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code Group}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitGroup(@NotNull AtcalParser.GroupContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code StrLiteral}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitStrLiteral(@NotNull AtcalParser.StrLiteralContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code NumDiv}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNumDiv(@NotNull AtcalParser.NumDivContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code NumMinus}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNumMinus(@NotNull AtcalParser.NumMinusContext ctx);
-	/**
 	 * Visit a parse tree produced by the {@code NumMul}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
@@ -264,26 +215,12 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitNumMul(@NotNull AtcalParser.NumMulContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code NumPlus}
+	 * Visit a parse tree produced by the {@code SetDiff}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumPlus(@NotNull AtcalParser.NumPlusContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetElem}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetElem(@NotNull AtcalParser.SetElemContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code SetProj}
-	 * labeled alternative in {@link AtcalParser#zExpr}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitSetProj(@NotNull AtcalParser.SetProjContext ctx);
+	T visitSetDiff(@NotNull AtcalParser.SetDiffContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StrConcat}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
@@ -299,12 +236,40 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitProdCons(@NotNull AtcalParser.ProdConsContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code SetUnion}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetUnion(@NotNull AtcalParser.SetUnionContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetDom}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetDom(@NotNull AtcalParser.SetDomContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code NumLiteral}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitNumLiteral(@NotNull AtcalParser.NumLiteralContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NumMinus}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumMinus(@NotNull AtcalParser.NumMinusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code StrLiteral}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitStrLiteral(@NotNull AtcalParser.StrLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AutoExpr}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
@@ -313,10 +278,59 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitAutoExpr(@NotNull AtcalParser.AutoExprContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code SetUnion}
+	 * Visit a parse tree produced by the {@code SetCons}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetUnion(@NotNull AtcalParser.SetUnionContext ctx);
+	T visitSetCons(@NotNull AtcalParser.SetConsContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NumPlus}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumPlus(@NotNull AtcalParser.NumPlusContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetElem}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetElem(@NotNull AtcalParser.SetElemContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetCard}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetCard(@NotNull AtcalParser.SetCardContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code NumDiv}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumDiv(@NotNull AtcalParser.NumDivContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetProj}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetProj(@NotNull AtcalParser.SetProjContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetRan}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetRan(@NotNull AtcalParser.SetRanContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code SetInter}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitSetInter(@NotNull AtcalParser.SetInterContext ctx);
 }

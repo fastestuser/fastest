@@ -13,13 +13,13 @@ import java.util.Map;
 /**
  * Created by Cristian on 4/16/15.
  */
-public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
+public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
     private final ZExprSchema zScope;   // Evaluator's scope for z expressions
-    private final String aplScope;      // Evaluator's scope for APL code
+    private final APLLValue aplScope;      // Evaluator's scope for APL code
     private final Map<String, ATCALType> types; // Evaluator's declared types
 
-    public RefinementLawEvaluator(ZExprSchema zScope, String aplScope, Map<String, ATCALType> types) {
+    public RefinementLawEvaluator(ZExprSchema zScope, APLLValue aplScope, Map<String, ATCALType> types) {
         this.zScope = zScope;
         this.aplScope = aplScope;
         this.types = types;
@@ -34,15 +34,19 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
         if (exp2 != null)
             return new IntExpr(exp2.getNum());
 
+        ZExprString exp3 = zExpr instanceof ZExprString ? ((ZExprString) zExpr) : null;
+        if (exp3 != null)
+            return new StringExpr(exp3.getStr());
+
         throw new Exception();
     }
 
-    private ZExpr getScope(){
+    private ZExpr getScope() {
         return this.zScope.getVar("zScope").get().getValue();
     }
 
     @Override
-    public List<APLStmt> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
+    public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
         ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
         ZExpr zExpr = zExprEvaluator.visit(ctx.zExpr());
@@ -52,7 +56,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
 
         // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
         // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-        List<APLStmt> codeBlock = Lists.newArrayList();
+        List<APLExpr> codeBlock = Lists.newArrayList();
         RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
         for (AtcalParser.RefinementContext context : ctx.refinement())
             codeBlock.addAll(lawEvaluator.visit(context));
@@ -61,56 +65,90 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
     }
 
     @Override
-    public List<APLStmt> visitBasicRef(@NotNull AtcalParser.BasicRefContext ctx) {
+    public List<APLExpr> visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
+        return Lists.newArrayList((APLExpr) new APLVar(ctx.ID().getText()));
+    }
 
-        List<APLStmt> codeBlock = Lists.newArrayList();
+    @Override
+    public List<APLExpr> visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
+        if (ctx.NUMBER() != null) {
+            return Lists.newArrayList((APLExpr) new APLArray(aplScope.getName(), Integer.valueOf(ctx.NUMBER().getText())));
+        } else {
+            return Lists.newArrayList((APLExpr) new APLVar(aplScope + "[]"));
+        }
+    }
+
+    @Override
+    public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
         try {
-            if (ctx.ID() != null) {
-                codeBlock.add(new AssignStmt(new APLVar(ctx.ID().getText()), ZExprToAPLExpr(this.getScope())));
-            } else if (ctx.NUMBER() != null) {
-                codeBlock.add(new AssignStmt(new APLVar(aplScope + "[" + ctx.NUMBER().getText() + "]"), ZExprToAPLExpr(this.getScope())));
+            List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
+            APLLValue lvalue = (APLLValue) lvalueCodeBlock.get(0);
+            if (ctx.asRef() == null) {
+                return Lists.newArrayList((APLExpr) new AssignStmt(lvalue, ZExprToAPLExpr(this.getScope())));
             } else {
-                codeBlock.add(new AssignStmt(new APLVar(aplScope + "[ ]"), ZExprToAPLExpr(this.getScope())));
+                RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, lvalue, types);
+                return newScopeEvaluator.visit(ctx.asRef());
             }
         } catch (Exception e) {
             System.out.println("Unimplemented ZExpr translation.");
         }
-
-        return codeBlock;
+        return Lists.newArrayList();    // This should not happen!
     }
 
     @Override
-    public List<APLStmt> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
-        List<APLStmt> codeBlock = Lists.newArrayList();
+    public List<APLExpr> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
+        List<APLExpr> codeBlock = Lists.newArrayList();
 
         ATCALType asType = null;
         String typeId = null;
-        if((typeId = ctx.ID(1).getText()) != null)
+        if ((typeId = ctx.ID().getText()) != null)
             asType = types.get(typeId);
 
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
+        // Generate code according to the type of the refinement variable
 
-        RefinementLawEvaluator evaluator = new RefinementLawEvaluator(zScope, ctx.ID(0).getText(), types);
+        // Contract types are used to create complex data structures that have a contract (an interface).
+        // They have a constructor, a getter and a setter function that instantiate, extract or insert values.
+        if (asType instanceof ContractType) {
+            ContractType type = (ContractType) asType;
 
-        if(asType instanceof ContractType){
+            // Create a new temporal variable to hold the data structure under construction.
+            APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0));
+            codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
 
-            ContractType type = (ContractType)asType;
-            APLVar dataStruct = new APLVar(ctx.ID(0).getText() + '_' + type.getSetterArgs().get(0));
-            codeBlock.add(new AssignStmt(dataStruct, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
-            for(AtcalParser.LawRefinementContext lawRefinementContext: ctx.lawRefinement()){
-                codeBlock.addAll(evaluator.visit(lawRefinementContext));
+            // Evaluate the WITH-clauses. The evaluation must produce a block of code that defines one variable for each
+            // argument of the setter function in the contract type.
+            for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
+                codeBlock.addAll(visit(lawRefinementContext));
             }
-            List<String> args = Lists.newArrayList(ctx.ID(0).getText() + '_' + type.getSetterArgs().get(0));
+
+            // Insert the values of the refined WITH-clauses into the data structure using the provided setter function
+            // TODO: check the type values with the types of the arguments (the amount of them must also match!)
+            List<String> args = Lists.newArrayList(aplScope.getName() + '_' + type.getSetterArgs().get(0));
             args.addAll(type.getSetterArgs().subList(1, type.getSetterArgs().size()));
             codeBlock.add(new CallExpr(type.getSetter(), args));
-            codeBlock.add(new AssignStmt(new APLVar(ctx.ID(0).getText()), dataStruct));
-        }
 
+            // Assign the temporal variable holding the data structure to the real refinement variable.
+            codeBlock.add(new AssignStmt(aplScope, var));
+
+        // Array types are handled as a special case because they often have native support in the target language.
+        } else if (asType instanceof ArrayType) {
+            ArrayType type = (ArrayType) asType;
+
+            // Allocate a new array using the APL built-in function newArray and assign it to the current APL variable in scope.
+            codeBlock.add(new AssignStmt(aplScope, new CallExpr("newArray", Lists.newArrayList(String.valueOf(type.getSize())))));
+
+            // Evaluate the WITH-clauses. The evaluation produces a block of code that assign values to many indices in
+            // the array (or all).
+            for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
+                codeBlock.addAll(visit(lawRefinementContext));
+            }
+        }
         return codeBlock;
     }
 
     @Override
-    public List<APLStmt> visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx) {
+    public List<APLExpr> visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx) {
         return visitLawRefinement(ctx.lawRefinement());
     }
 }

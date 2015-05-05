@@ -13,6 +13,6 @@ public class StringExpr implements APLExpr {
 
     @Override
     public String toString() {
-        return value;
+        return "'" + value + "'";
     }
 }
