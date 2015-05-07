@@ -1,5 +1,8 @@
 package org.fastest.atcal;
 
+import org.fastest.atcal.apl.APLExpr;
+import org.fastest.atcal.z.ast.ZExpr;
+
 import java.util.List;
 
 /**
@@ -51,5 +54,9 @@ public class ContractType implements ATCALType {
 
     public List<String> getGetterArgs() {
         return getterArgs;
+    }
+
+    public APLExpr fromZExpr(ZExpr expr) throws Exception {
+        return null;
     }
 }

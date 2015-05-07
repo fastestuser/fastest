@@ -3,10 +3,7 @@ import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.fastest.atcal.ATCALType;
-import org.fastest.atcal.ArrayType;
-import org.fastest.atcal.ContractType;
-import org.fastest.atcal.RefinementLawEvaluator;
+import org.fastest.atcal.*;
 import org.fastest.atcal.apl.APLVar;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
@@ -56,6 +53,8 @@ public class RefinementLawEvaluatorTest {
         List<String> getterArgs = Lists.newArrayList();
         types.put("List", new ContractType("List", "newList", constArgs, "add", setterArgs, "get", getterArgs));
         types.put("myArr", new ArrayType("myArr", 10));
+        types.put("Int", new IntType());
+        types.put("String", new StringType());
 
         RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar(""), types);
         return eval.visit(tree).toString();
@@ -63,42 +62,35 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest1() {
-        String inputExpr = "5 ==> a";
-        String result = evalLaw(inputExpr, atc1);
-        System.out.println(result);
-    }
-
-    @Test
-    public void lawEvalTest2() {
-        String inputExpr = "pepe ==> []";
+        String inputExpr = "5 ==> a AS Int";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
     public void lawEvalTest3() {
-        String inputExpr = "var3 ==> [5]";
+        String inputExpr = "var3 ==> [5] AS Int";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
     public void lawEvalTest4() {
-        String inputExpr = "var3 ==> var3 + var4.@CARD ==> a";
+        String inputExpr = "var3 ==> var3 + var4.@CARD ==> a AS Int";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
     public void lawEvalTest5() {
-        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a, var4.1 ==> b], var4.2 ==> b]";
+        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a AS String , var4.1 ==> b AS Int], var4.2 ==> b AS Int]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
     public void lawEvalTest6() {
-        String inputExpr = "var4 ==> l AS myArr WITH [ var4.1 ==> [1] AS List WITH [var1 ==> a], var4.2 ==> [2] AS List WITH [\"hola\" ==> b] ]";
+        String inputExpr = "var4 ==> l AS myArr WITH [ var4.1 ==> [1] AS List WITH [var1 ==> a AS String], var4.2 ==> [2] AS List WITH [\"hola\" ==> b AS String] ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }

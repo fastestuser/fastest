@@ -166,12 +166,12 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code EnumRef}
+	 * Visit a parse tree produced by the {@code SimpleRef}
 	 * labeled alternative in {@link AtcalParser#asRef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEnumRef(@NotNull AtcalParser.EnumRefContext ctx);
+	T visitSimpleRef(@NotNull AtcalParser.SimpleRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code WithRef}
 	 * labeled alternative in {@link AtcalParser#asRef}.

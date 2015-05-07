@@ -5,7 +5,9 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.fastest.atcal.apl.*;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
-import org.fastest.atcal.z.ast.*;
+import org.fastest.atcal.z.ast.ZExpr;
+import org.fastest.atcal.z.ast.ZExprSchema;
+import org.fastest.atcal.z.ast.ZVar;
 
 import java.util.List;
 import java.util.Map;
@@ -23,22 +25,6 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         this.zScope = zScope;
         this.aplScope = aplScope;
         this.types = types;
-    }
-
-    private static APLExpr ZExprToAPLExpr(ZExpr zExpr) throws Exception {
-        ZExprConst exp = zExpr instanceof ZExprConst ? ((ZExprConst) zExpr) : null;
-        if (exp != null)
-            return new ConsExpr(exp.getValue());
-
-        ZExprNum exp2 = zExpr instanceof ZExprNum ? ((ZExprNum) zExpr) : null;
-        if (exp2 != null)
-            return new IntExpr(exp2.getNum());
-
-        ZExprString exp3 = zExpr instanceof ZExprString ? ((ZExprString) zExpr) : null;
-        if (exp3 != null)
-            return new StringExpr(exp3.getStr());
-
-        throw new Exception();
     }
 
     private ZExpr getScope() {
@@ -80,19 +66,10 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
     @Override
     public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
-        try {
-            List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
-            APLLValue lvalue = (APLLValue) lvalueCodeBlock.get(0);
-            if (ctx.asRef() == null) {
-                return Lists.newArrayList((APLExpr) new AssignStmt(lvalue, ZExprToAPLExpr(this.getScope())));
-            } else {
-                RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, lvalue, types);
-                return newScopeEvaluator.visit(ctx.asRef());
-            }
-        } catch (Exception e) {
-            System.out.println("Unimplemented ZExpr translation.");
-        }
-        return Lists.newArrayList();    // This should not happen!
+        List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
+        APLLValue lvalue = (APLLValue) lvalueCodeBlock.get(0);
+        RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, lvalue, types);
+        return newScopeEvaluator.visit(ctx.asRef());
     }
 
     @Override
@@ -131,7 +108,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             // Assign the temporal variable holding the data structure to the real refinement variable.
             codeBlock.add(new AssignStmt(aplScope, var));
 
-        // Array types are handled as a special case because they often have native support in the target language.
+            // Array types are handled as a special case because they often have native support in the target language.
         } else if (asType instanceof ArrayType) {
             ArrayType type = (ArrayType) asType;
 
@@ -143,6 +120,38 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
                 codeBlock.addAll(visit(lawRefinementContext));
             }
+        }
+        return codeBlock;
+    }
+
+    @Override
+    public List<APLExpr> visitSimpleRef(@NotNull AtcalParser.SimpleRefContext ctx) {
+
+        List<APLExpr> codeBlock = Lists.newArrayList();
+
+        // Get the type of the enumeration.
+        ATCALType asType = null;
+        String typeId = null;
+        if ((typeId = ctx.ID().getText()) != null)
+            asType = types.get(typeId);
+        // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
+
+        try {
+            APLExpr value = null;
+
+        /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
+            if (asType instanceof IntType) {
+                value = asType.fromZExpr(this.getScope());
+            } else if (asType instanceof StringType) {
+                value = asType.fromZExpr(this.getScope());
+            } else {
+                throw new Exception();
+            }
+
+            codeBlock.add(new AssignStmt(aplScope, value));
+
+        } catch (Exception e) {
+            System.out.println("Type error on SimpleRef");
         }
         return codeBlock;
     }

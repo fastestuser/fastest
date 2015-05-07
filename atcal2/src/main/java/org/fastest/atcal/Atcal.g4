@@ -58,7 +58,7 @@ epilogue: '@EPILOGUE'
 law: ( ID ':' )? ( lawRefinement );
 lawRefinement: zExpr '==>' refinement ( ',' refinement )* ;
 
-refinement : lvalue asRef?                # ImplRef
+refinement : lvalue asRef                 # ImplRef
            | lawRefinement                # ZExprRef
            ;
 
@@ -66,7 +66,7 @@ lvalue : ID                 # VarLValue
        | '[' NUMBER? ']'    # ArrayLValue
        ;
 
-asRef : 'AS' ( type | ID ) ( '[' typeCase (',' typeCase)* ']')?                     # EnumRef
+asRef : 'AS' ( type | ID )                                                          # SimpleRef
       | 'AS' ( type | ID ) 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
       ;
 

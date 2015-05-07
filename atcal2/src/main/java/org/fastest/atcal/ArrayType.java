@@ -1,5 +1,8 @@
 package org.fastest.atcal;
 
+import org.fastest.atcal.apl.APLExpr;
+import org.fastest.atcal.z.ast.ZExpr;
+
 /**
  * Created by Cristian on 29/04/15.
  */
@@ -19,6 +22,10 @@ public class ArrayType implements ATCALType {
 
     public int getSize() {
         return size;
+    }
+
+    public APLExpr fromZExpr(ZExpr expr) throws Exception {
+        return null;
     }
 
     @Override
