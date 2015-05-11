@@ -26,7 +26,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         if(var.isPresent())
             return var.get().getValue();
         else
-            return new ZExprConst(ctx.ID().getText());
+            return new ZExprConst(ctx.ID().getText(), 1);
     }
 
     @Override
@@ -41,7 +41,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
 
     @Override
     public ZExpr visitAutoExpr(@NotNull AtcalParser.AutoExprContext ctx) {
-        return new ZExprConst("@AUTOFILL");
+        return new ZExprConst("@AUTOFILL", 1);
     }
 
     @Override

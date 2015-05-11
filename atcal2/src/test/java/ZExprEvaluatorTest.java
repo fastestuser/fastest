@@ -146,7 +146,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "<a>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprProd.of(new ZExprConst("a"))));
+        assert (result.equals(ZExprProd.of(new ZExprConst("a", 1))));
     }
 
     @Test
@@ -154,7 +154,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "{a,b}";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprSet.of(new ZExprConst("a"), new ZExprConst("b"))));
+        assert (result.equals(ZExprSet.of(new ZExprConst("a", 1), new ZExprConst("b", 2))));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "{var4,b}";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprSet.of(ZExprSet.of(num1, num2), new ZExprConst("b"))));
+        assert (result.equals(ZExprSet.of(ZExprSet.of(num1, num2), new ZExprConst("b", 1))));
     }
 
     @Test
@@ -170,7 +170,7 @@ public class ZExprEvaluatorTest {
         String inputExpr = "<var4,b>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprProd.of(ZExprSet.of(num1, num2), new ZExprConst("b"))));
+        assert (result.equals(ZExprProd.of(ZExprSet.of(num1, num2), new ZExprConst("b", 1))));
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.fastest.atcal;
 
 import org.fastest.atcal.apl.StringExpr;
 import org.fastest.atcal.z.ast.ZExpr;
+import org.fastest.atcal.z.ast.ZExprConst;
 import org.fastest.atcal.z.ast.ZExprNum;
 import org.fastest.atcal.z.ast.ZExprString;
 
@@ -12,11 +13,13 @@ public class StringType implements ATCALType {
 
     // Conversion to string expression
     public StringExpr fromZExpr(ZExpr zExpr) throws Exception {
-        if (zExpr instanceof ZExprNum)
+        if (zExpr instanceof ZExprNum) {
             return new StringExpr(String.valueOf(((ZExprNum) zExpr).getNum()));
-        else if (zExpr instanceof ZExprString)
-            return new StringExpr(((ZExprString)zExpr).getStr());
-
+        } else if (zExpr instanceof ZExprString) {
+            return new StringExpr(((ZExprString) zExpr).getStr());
+        } else if (zExpr instanceof ZExprConst) {
+            return new StringExpr(((ZExprConst)zExpr).getValue());
+        }
         throw new Exception();
     }
 }

@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.*;
 import org.fastest.atcal.apl.APLVar;
+import org.fastest.atcal.apl.ConsExpr;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
@@ -38,7 +39,7 @@ public class RefinementLawEvaluatorTest {
     private ZVar var7 = new ZVar("var7", ZExprSet.of(prod3, prod4));
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
-
+    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0)), new ZVar("var2", new ZExprConst("pepe", 1)));
 
     private String evalLaw(String law, ZExprSchema scope) {
         ANTLRInputStream input = new ANTLRInputStream(law);
@@ -94,5 +95,29 @@ public class RefinementLawEvaluatorTest {
         String inputExpr = "var4 ==> l AS myArr WITH [ var4.1 ==> [1] AS List WITH [var1 ==> a AS String], var4.2 ==> [2] AS List WITH [\"hola\" ==> b AS String] ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
+    }
+
+    @Test
+    public void lawEvalTest7() {
+        String inputExpr = "var1 ==> a AS myEnum";
+        String result = evalLaw(inputExpr, atc3);
+        System.out.println(result);
+        assert(result.equals("[a=E1]"));
+    }
+
+    @Test
+    public void lawEvalTest8() {
+        String inputExpr = "var2 ==> a AS String";
+        String result = evalLaw(inputExpr, atc3);
+        System.out.println(result);
+        assert(result.equals("[a='pepe']"));
+    }
+
+    @Test
+    public void lawEvalTest9() {
+        String inputExpr = "var2 ==> a AS Int";
+        String result = evalLaw(inputExpr, atc3);
+        System.out.println(result);
+        assert(result.equals("[a=1]"));
     }
 }

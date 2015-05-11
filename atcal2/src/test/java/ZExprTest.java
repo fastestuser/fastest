@@ -6,12 +6,12 @@ import org.junit.Test;
  */
 public class ZExprTest {
 
-    private ZVar var1 = new ZVar("var1", new ZExprConst("val1"));
-    private ZVar var2 = new ZVar("var2", new ZExprConst("val2"));
-    private ZExprConst const1 = new ZExprConst("val3");
-    private ZExprConst const2 = new ZExprConst("val4");
-    private ZExprConst const3 = new ZExprConst("val5");
-    private ZExprConst const4 = new ZExprConst("val5");
+    private ZVar var1 = new ZVar("var1", new ZExprConst("val1", 1));
+    private ZVar var2 = new ZVar("var2", new ZExprConst("val2", 2));
+    private ZExprConst const1 = new ZExprConst("val3", 3);
+    private ZExprConst const2 = new ZExprConst("val4", 4);
+    private ZExprConst const3 = new ZExprConst("val5", 5);
+    private ZExprConst const4 = new ZExprConst("val5", 6);
     private ZExprProd crossProd1 = ZExprProd.of(const1, const3);
     private ZExprProd crossProd2 = ZExprProd.of(const1, const4);
     private ZExprSet set1 = ZExprSet.of(const1, const2);

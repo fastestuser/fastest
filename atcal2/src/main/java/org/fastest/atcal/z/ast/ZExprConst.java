@@ -6,13 +6,19 @@ package org.fastest.atcal.z.ast;
 public class ZExprConst implements ZExpr {
 
     private final String value;
+    private final long constId;
 
-    public ZExprConst(String value) {
+    public ZExprConst(String value, long constId) {
         this.value = value;
+        this.constId = constId;
     }
 
     public String getValue() {
         return value;
+    }
+
+    public long getConstId(){
+        return constId;
     }
 
     @Override
