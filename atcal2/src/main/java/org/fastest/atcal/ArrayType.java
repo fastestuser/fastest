@@ -25,7 +25,7 @@ public class ArrayType implements ATCALType {
     }
 
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
-        return null;
+        throw new Exception();
     }
 
     @Override

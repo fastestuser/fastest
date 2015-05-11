@@ -9,6 +9,6 @@ import org.fastest.atcal.z.ast.ZExpr;
 public class RecordType implements ATCALType {
 
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
-        return null;
+        throw new Exception();
     }
 }
