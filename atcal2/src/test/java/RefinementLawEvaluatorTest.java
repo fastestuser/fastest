@@ -55,6 +55,7 @@ public class RefinementLawEvaluatorTest {
         types.put("myArr", new ArrayType("myArr", 10));
         types.put("Int", new IntType());
         types.put("String", new StringType());
+        types.put("myEnum", new EnumType("myEnum", Lists.newArrayList("E1", "E2", "E3")));
 
         RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar(""), types);
         return eval.visit(tree).toString();
@@ -69,7 +70,7 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest3() {
-        String inputExpr = "var3 ==> [5] AS Int";
+        String inputExpr = "var3 ==> [5] AS myEnum";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
