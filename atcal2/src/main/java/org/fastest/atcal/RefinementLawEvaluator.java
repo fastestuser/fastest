@@ -129,27 +129,21 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
         List<APLExpr> codeBlock = Lists.newArrayList();
 
-        // Get the type of the enumeration.
+        // Get the target type of the refinement
         ATCALType asType = null;
         String typeId = null;
         if ((typeId = ctx.ID().getText()) != null)
             asType = types.get(typeId);
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
 
+        // Try to refine the Z expression to an APL expression of the given type.
+        // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
+        // refined into an integer).
+        // If we try such refinement an exception is produced that we capture here to notify the user.
         try {
-            APLExpr value = null;
-
         /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
-            if (asType instanceof IntType) {
-                value = asType.fromZExpr(this.getScope());
-            } else if (asType instanceof StringType) {
-                value = asType.fromZExpr(this.getScope());
-            } else {
-                throw new Exception();
-            }
-
+            APLExpr value = asType.fromZExpr(this.getScope());
             codeBlock.add(new AssignStmt(aplScope, value));
-
         } catch (Exception e) {
             System.out.println("Type error on SimpleRef");
         }
