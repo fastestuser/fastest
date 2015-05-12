@@ -94,7 +94,6 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
         return "{" + set + '}';
     }
 
-    @Override
     public Iterator<ZExpr> iterator() {
         return set.iterator();
     }
