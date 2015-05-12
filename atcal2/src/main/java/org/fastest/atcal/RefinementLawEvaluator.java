@@ -136,7 +136,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             asType = types.get(typeId);
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
 
-        // Try to refine the Z expression to an APL expression of the given type.
+        // Refine the Z expression to an APL expression of the given type.
         // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
         // refined into an integer).
         // If we try such refinement an exception is produced that we capture here to notify the user.

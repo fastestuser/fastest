@@ -5,12 +5,16 @@ package org.fastest.atcal.z.ast;
  */
 public class ZExprConst implements ZExpr {
 
+    public static enum ConstantType {BASIC, ENUM};
+
     private final String value;
     private final long constId;
+    private final ConstantType type;
 
-    public ZExprConst(String value, long constId) {
+    public ZExprConst(String value, long constId, ConstantType type) {
         this.value = value;
         this.constId = constId;
+        this.type = type;
     }
 
     public String getValue() {
@@ -19,6 +23,10 @@ public class ZExprConst implements ZExpr {
 
     public long getConstId(){
         return constId;
+    }
+
+    public ConstantType getType() {
+        return type;
     }
 
     @Override
