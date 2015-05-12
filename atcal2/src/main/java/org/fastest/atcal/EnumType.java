@@ -8,6 +8,7 @@ import org.fastest.atcal.z.ast.ZExprNum;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Created by Cristian on 05/05/15.
@@ -32,7 +33,7 @@ public class EnumType implements ATCALType {
         return elements.get(e);
     }
 
-    // Conversion to enum constants
+    // Conversion to enum constants from Z types without bijection maps.
     public ConsExpr fromZExpr(ZExpr zExpr) throws Exception {
 
         // Convert from Z numeric expression
@@ -46,22 +47,34 @@ public class EnumType implements ATCALType {
 
             return (ConsExpr) elements.values().toArray()[value];
 
-        // Convert from Z constant value
+            // Convert from Z constant value
         } else if (zExpr instanceof ZExprConst) {
-            ZExprConst zExprConst = (ZExprConst)zExpr;
+            ZExprConst zExprConst = (ZExprConst) zExpr;
 
-            // We use the constant ID as the default bijection between the Z constant type and the integers.
-            int value = (int) zExprConst.getConstId();// TODO: what happens if the value is beyond the int range?
-            if (value < 0 && value > elements.values().size())
-                throw new Exception();
+            switch (zExprConst.getType()) {
+                // If the Z type of the constant is a basic (or given) type we use positional constant refinement
+                case BASIC:
+                    // Use the constant ID as the index in the enumeration to convert
+                    // TODO: what happens if the value is beyond the int range?
+                    int value = (int) zExprConst.getConstId();
+                    if (value < 0 && value > elements.values().size())
+                        throw new Exception();
 
-            return (ConsExpr) elements.values().toArray()[value];
+                    return (ConsExpr) elements.values().toArray()[value];
+
+                // If the Z type of the constant is an enumeration type look up the matching APL constant by name
+                case ENUM:
+                    if (elements.containsKey(zExprConst.getValue()))
+                        return (ConsExpr) elements.get(zExprConst.getValue());
+                    else
+                        throw new Exception();  // Fail if Z constant does not match any name in the ATCAL enumeration.
+            }
         }
 
         // Unsupported conversion
         throw new Exception();
     }
-
+    
     @Override
     public String toString() {
         return "Enum " + name + "(" + elements.values() + ")";
