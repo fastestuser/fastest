@@ -173,6 +173,13 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSimpleRef(@NotNull AtcalParser.SimpleRefContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code BijMapRef}
+	 * labeled alternative in {@link AtcalParser#asRef}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBijMapRef(@NotNull AtcalParser.BijMapRefContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code WithRef}
 	 * labeled alternative in {@link AtcalParser#asRef}.
 	 * @param ctx the parse tree
