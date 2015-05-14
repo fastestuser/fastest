@@ -5,13 +5,11 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.*;
 import org.fastest.atcal.apl.APLVar;
-import org.fastest.atcal.apl.ConsExpr;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +37,8 @@ public class RefinementLawEvaluatorTest {
     private ZVar var7 = new ZVar("var7", ZExprSet.of(prod3, prod4));
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
-    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)), new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
+    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)),
+            new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
 
     private String evalLaw(String law, ZExprSchema scope) {
         ANTLRInputStream input = new ANTLRInputStream(law);
@@ -102,7 +101,7 @@ public class RefinementLawEvaluatorTest {
         String inputExpr = "var1 ==> a AS myEnum";
         String result = evalLaw(inputExpr, atc3);
         System.out.println(result);
-        assert(result.equals("[a=E1]"));
+        assert (result.equals("[a=E1]"));
     }
 
     @Test
@@ -110,7 +109,7 @@ public class RefinementLawEvaluatorTest {
         String inputExpr = "var2 ==> a AS String";
         String result = evalLaw(inputExpr, atc3);
         System.out.println(result);
-        assert(result.equals("[a='pepe']"));
+        assert (result.equals("[a='pepe']"));
     }
 
     @Test
@@ -118,6 +117,14 @@ public class RefinementLawEvaluatorTest {
         String inputExpr = "var2 ==> a AS Int";
         String result = evalLaw(inputExpr, atc3);
         System.out.println(result);
-        assert(result.equals("[a=1]"));
+        assert (result.equals("[a=1]"));
+    }
+
+    @Test
+    public void lawEvalTest10() {
+        String inputExpr = "var2 ==> a AS myEnum CASES [ toto -> E1 , pepe -> E3 ]";
+        String result = evalLaw(inputExpr, atc3);
+        System.out.println(result);
+        assert (result.equals("[a=E3]"));
     }
 }

@@ -1,11 +1,13 @@
 package org.fastest.atcal;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.fastest.atcal.apl.*;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.ZExpr;
+import org.fastest.atcal.z.ast.ZExprConst;
 import org.fastest.atcal.z.ast.ZExprSchema;
 import org.fastest.atcal.z.ast.ZVar;
 
@@ -146,6 +148,39 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             codeBlock.add(new AssignStmt(aplScope, value));
         } catch (Exception e) {
             System.out.println("Type error on SimpleRef");
+        }
+        return codeBlock;
+    }
+
+    @Override
+    public List<APLExpr> visitBijMapRef(@NotNull AtcalParser.BijMapRefContext ctx) {
+
+        List<APLExpr> codeBlock = Lists.newArrayList();
+
+        // Get the target type of the refinement
+        ATCALType asType = null;
+        String typeId = null;
+        if ((typeId = ctx.ID().getText()) != null)
+            asType = types.get(typeId);
+        // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
+
+        // The source and destination types must be constants, fail otherwise.
+        if (this.getScope() instanceof ZExprConst) {
+            ZExprConst zExprConst = (ZExprConst) this.getScope();
+
+            // Create bijection map
+            Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
+            for (AtcalParser.TypeCaseContext typeCase : ctx.typeCases().typeCase()) {
+                map.put(new ZExprConst(typeCase.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(typeCase.ID(1).getText()));
+            }
+
+            // Check that the mapping contains the Z constant mapping and generate code for the refinement
+            if (map.containsKey(zExprConst))
+                codeBlock.add(new AssignStmt(aplScope, map.get(zExprConst)));
+            else
+                System.out.println("Z Constant " + zExprConst.toString() + " not present in bijection map.");
+        } else {
+            System.out.println("Type error on BijMapRef");
         }
         return codeBlock;
     }
