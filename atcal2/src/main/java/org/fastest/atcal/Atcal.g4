@@ -15,35 +15,23 @@ plcode : '@PLCODE' ;
 
 preambleImport : ID '.@PREAMBLE' STMTEND ;
 
-datatypes : '@DATATYPES' (aliasType)* ;
+datatypes : '@DATATYPES' (typeDec)* ;
 
-type : recordType
-     | arrayType
-     | enumType
-     | contractType
-     | aliasType
-     | intType
-     | floatType
-     | stringType ;
+typeDec : 'DATATYPE' ID '=' type STMTEND;
 
-aliasType : 'DATATYPE' ID '=' type STMTEND;
+type : 'INT'                                                    # IntType
+     | 'FLOAT'                                                  # FloatType
+     | 'STRING'                                                 # StringType
+     | 'ARRAY' ID '(' NUMBER ')'                                # ArrayType
+     | 'ENUM' ID args                                           # EnumType
+     | 'RECORD' ID '(' ID ':' type ( ',' ID ':' type )* ')'     # RecordType
+     | 'CONSTRUCTOR' ID args 'SETTER' ID args 'GETTER' ID args  # ContractType
+     ;
 
-recordType: 'RECORD' ID '(' ( ID ( ',' ID )* )? ')';
+args : '(' ( ID ( ',' ID )* )? ')' ;
 
-arrayType: 'ARRAY' ID '(' NUMBER ')';
-
-contractType: 'CONSTRUCTOR' ID '(' ( ID ( ',' ID )* )? ')' 'SETTER' ID '(' ( ID ( ',' ID )* )? ')';
-
-enumType: 'ENUM' ID '(' ( ID ( ',' ID )* )? ')' ;
-
-intType: 'INT' ;
-
-floatType: 'FLOAT' ;
-
-stringType: 'STRING' ;
-
-typeCases: 'CASES' '[' typeCase (',' typeCase)* ']' ;
-
+// Constant mappings for enumeration and given types
+typeCases: 'MAP' '[' typeCase (',' typeCase)* ']' ;
 typeCase: ID '->' ( ID | STRING | NUMBER ) ;
 
 laws: '@LAWS'

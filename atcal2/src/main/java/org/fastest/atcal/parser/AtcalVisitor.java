@@ -42,59 +42,66 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitDatatypes(@NotNull AtcalParser.DatatypesContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#type}.
+	 * Visit a parse tree produced by {@link AtcalParser#typeDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitType(@NotNull AtcalParser.TypeContext ctx);
+	T visitTypeDec(@NotNull AtcalParser.TypeDecContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#aliasType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAliasType(@NotNull AtcalParser.AliasTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AtcalParser#recordType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitRecordType(@NotNull AtcalParser.RecordTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AtcalParser#arrayType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitArrayType(@NotNull AtcalParser.ArrayTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AtcalParser#contractType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitContractType(@NotNull AtcalParser.ContractTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AtcalParser#enumType}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitEnumType(@NotNull AtcalParser.EnumTypeContext ctx);
-	/**
-	 * Visit a parse tree produced by {@link AtcalParser#intType}.
+	 * Visit a parse tree produced by the {@code IntType}
+	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitIntType(@NotNull AtcalParser.IntTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#floatType}.
+	 * Visit a parse tree produced by the {@code FloatType}
+	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitFloatType(@NotNull AtcalParser.FloatTypeContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#stringType}.
+	 * Visit a parse tree produced by the {@code StringType}
+	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitStringType(@NotNull AtcalParser.StringTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ArrayType}
+	 * labeled alternative in {@link AtcalParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArrayType(@NotNull AtcalParser.ArrayTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code EnumType}
+	 * labeled alternative in {@link AtcalParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitEnumType(@NotNull AtcalParser.EnumTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code RecordType}
+	 * labeled alternative in {@link AtcalParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitRecordType(@NotNull AtcalParser.RecordTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code ContractType}
+	 * labeled alternative in {@link AtcalParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitContractType(@NotNull AtcalParser.ContractTypeContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link AtcalParser#args}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArgs(@NotNull AtcalParser.ArgsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#typeCases}.
 	 * @param ctx the parse tree
