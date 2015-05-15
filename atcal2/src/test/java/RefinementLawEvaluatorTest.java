@@ -51,7 +51,7 @@ public class RefinementLawEvaluatorTest {
         List<String> constArgs = Lists.newArrayList();
         List<String> setterArgs = Lists.newArrayList("list", "a", "b");
         List<String> getterArgs = Lists.newArrayList();
-        types.put("List", new ContractType("List", "newList", constArgs, "add", setterArgs, "get", getterArgs));
+        types.put("List", new ContractType("newList", constArgs, "add", setterArgs, "get", getterArgs));
         types.put("myArr", new ArrayType("myArr", 10));
         types.put("Int", new IntType());
         types.put("String", new StringType());
