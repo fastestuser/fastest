@@ -11,7 +11,6 @@ import java.util.Optional;
  */
 public class RecordType implements ATCALType {
 
-
     private final Map<String, ATCALType> fields;
 
     public RecordType(Map<String, ATCALType> fields) {
@@ -24,5 +23,12 @@ public class RecordType implements ATCALType {
 
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
         throw new Exception();
+    }
+
+    @Override
+    public String toString() {
+        return "RecordType{" +
+                "fields=" + fields +
+                '}';
     }
 }

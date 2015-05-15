@@ -53,4 +53,16 @@ public class ContractType implements ATCALType {
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
         throw new Exception();
     }
+
+    @Override
+    public String toString() {
+        return "ContractType{" +
+                "constructor='" + constructor + '\'' +
+                ", constArgs=" + constArgs +
+                ", setter='" + setter + '\'' +
+                ", setterArgs=" + setterArgs +
+                ", getter='" + getter + '\'' +
+                ", getterArgs=" + getterArgs +
+                '}';
+    }
 }
