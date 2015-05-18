@@ -48,6 +48,13 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitTypeDec(@NotNull AtcalParser.TypeDecContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code NameType}
+	 * labeled alternative in {@link AtcalParser#type}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNameType(@NotNull AtcalParser.NameTypeContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code IntType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree

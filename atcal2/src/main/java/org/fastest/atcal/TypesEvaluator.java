@@ -19,6 +19,7 @@ import java.util.Map;
 public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
     private final TypeEvaluator typeEval;
+    private final Map<String, ATCALType> types = Maps.newHashMap();
 
     // Helper function to simplify converting lists of terminal nodes into lists of strings
     private static final Function<TerminalNode, String> TERMINAL_TOSTRING = new Function<TerminalNode, String>() {
@@ -34,21 +35,32 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
     @Override
     public Map<String, ATCALType> visitDatatypes(@NotNull AtcalParser.DatatypesContext ctx) {
-        Map<String, ATCALType> types = Maps.newHashMap();
         for (AtcalParser.TypeDecContext typeDecContext : ctx.typeDec()) {
-            // TODO: What happens if the type already exists?
-            types.putAll(visit(typeDecContext));
+            types.put(typeDecContext.ID().getText(), this.typeEval.visit(typeDecContext.type()));
         }
-        return super.visitDatatypes(ctx);
+        return types;
     }
 
+    /**
+     * This method is only used for unit testing purposes. The normal type checking flow at runtime calls the method
+     * above that will skip this method to visit types directly (to avoid unpacking the single entry map returned by
+     * this method).
+     */
     @Override
     public Map<String, ATCALType> visitTypeDec(@NotNull AtcalParser.TypeDecContext ctx) {
         return ImmutableMap.of(ctx.ID().getText(), this.typeEval.visit(ctx.type()));
     }
 
     // Private nested class to evaluate individual types
-    private static class TypeEvaluator extends AtcalBaseVisitor<ATCALType> {
+    private class TypeEvaluator extends AtcalBaseVisitor<ATCALType> {
+
+        @Override
+        public ATCALType visitNameType(@NotNull AtcalParser.NameTypeContext ctx) {
+            if (!types.containsKey(ctx.getText()))
+                throw new RuntimeException("Unknown type " + ctx.getText());
+            else
+                return types.get(ctx.getText());
+        }
 
         @Override
         public ATCALType visitIntType(@NotNull AtcalParser.IntTypeContext ctx) {

@@ -24,6 +24,16 @@ public class TypesEvaluatorTest {
         return eval.visit(tree);
     }
 
+    Map<String, ATCALType> parseDatatypes(String typeDec) {
+        ANTLRInputStream input = new ANTLRInputStream(typeDec);
+        AtcalLexer lexer = new AtcalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        AtcalParser parser = new AtcalParser(tokens);
+        ParseTree tree = parser.datatypes();
+        TypesEvaluator eval = new TypesEvaluator();
+        return eval.visit(tree);
+    }
+
     @Test
     public void test1() {
         String intType = "DATATYPE myInt = INT;";
@@ -41,7 +51,18 @@ public class TypesEvaluatorTest {
         String contractType = "DATATYPE contract = CONSTRUCTOR c(a,b,c) SETTER s(d,e,f) GETTER g(h,i,j);";
         System.out.println(parseTypeDec(contractType));
 
-        String recordType = "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY toto (4), c:CONSTRUCTOR c(a,b,c) SETTER s(d,e,f) GETTER g(h,i,j), d:RECORD r2 (x:STRING));";
+        String recordType = "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY toto (4), c:CONSTRUCTOR c(a,b,c) " +
+                "SETTER s(d,e,f) GETTER g(h,i,j), d:RECORD r2 (x:STRING));";
         System.out.println(parseTypeDec(recordType));
+    }
+
+    @Test
+    public void test2() {
+        String testA = "@DATATYPES" +
+                "DATATYPE myInt = INT;" +
+                "DATATYPE myArray = ARRAY myInt (10);" +
+                "DATATYPE toto = myInt;" +
+                "DATATYPE node = RECORD r (a:myInt, b:myArray, c:toto);";
+        System.out.println(parseDatatypes(testA));
     }
 }

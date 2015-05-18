@@ -19,7 +19,8 @@ datatypes : '@DATATYPES' (typeDec)* ;
 
 typeDec : 'DATATYPE' ID '=' type STMTEND;
 
-type : 'INT'                                                    # IntType
+type : ID                                                       # NameType
+     | 'INT'                                                    # IntType
      | 'FLOAT'                                                  # FloatType
      | 'STRING'                                                 # StringType
      | 'ARRAY' ID '(' NUMBER ')'                                # ArrayType
