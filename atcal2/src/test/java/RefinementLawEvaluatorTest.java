@@ -40,6 +40,15 @@ public class RefinementLawEvaluatorTest {
     private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)),
             new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
 
+    private static final String datatypes = "" +
+            "@DATATYPES" +
+            "DATATYPE Int = INT;" +
+            "DATATYPE String = STRING;" +
+            "DATATYPE myArr = ARRAY  Int (10);" +
+            "DATATYPE myEnum = ENUM myEnum (E1, E2, E3);" +
+            "DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a, b) GETTER get();" +
+            "DATATYPE node = RECORD r (a:Int, b:myArr, c:String);";
+
     private String evalLaw(String law, ZExprSchema scope) {
         ANTLRInputStream input = new ANTLRInputStream(law);
         AtcalLexer lexer = new AtcalLexer(input);
@@ -47,18 +56,21 @@ public class RefinementLawEvaluatorTest {
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
 
-        final Map<String, ATCALType> types = Maps.newHashMap();
-        List<String> constArgs = Lists.newArrayList();
-        List<String> setterArgs = Lists.newArrayList("list", "a", "b");
-        List<String> getterArgs = Lists.newArrayList();
-        types.put("List", new ContractType("newList", constArgs, "add", setterArgs, "get", getterArgs));
-        types.put("myArr", new ArrayType("myArr", 10));
-        types.put("Int", new IntType());
-        types.put("String", new StringType());
-        types.put("myEnum", new EnumType("myEnum", Lists.newArrayList("E1", "E2", "E3")));
+        // Parse datatypes declarations used for testing.
+        final Map<String, ATCALType> types = parseDatatypes(datatypes);
 
         RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar(""), types);
         return eval.visit(tree).toString();
+    }
+
+    private Map<String, ATCALType> parseDatatypes(String typeDec) {
+        ANTLRInputStream input = new ANTLRInputStream(typeDec);
+        AtcalLexer lexer = new AtcalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        AtcalParser parser = new AtcalParser(tokens);
+        ParseTree tree = parser.datatypes();
+        TypesEvaluator eval = new TypesEvaluator();
+        return eval.visit(tree);
     }
 
     @Test
@@ -122,7 +134,7 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest10() {
-        String inputExpr = "var2 ==> a AS myEnum CASES [ toto -> E1 , pepe -> E3 ]";
+        String inputExpr = "var2 ==> a AS myEnum MAP [ toto -> E1 , pepe -> E3 ]";
         String result = evalLaw(inputExpr, atc3);
         System.out.println(result);
         assert (result.equals("[a=E3]"));
