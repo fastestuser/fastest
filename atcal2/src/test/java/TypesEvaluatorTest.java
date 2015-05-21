@@ -14,7 +14,7 @@ import java.util.Map;
  */
 public class TypesEvaluatorTest {
 
-    Map<String, ATCALType> parseTypeDec(String typeDec) {
+    private Map<String, ATCALType> parseTypeDec(String typeDec) {
         ANTLRInputStream input = new ANTLRInputStream(typeDec);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -24,7 +24,7 @@ public class TypesEvaluatorTest {
         return eval.visit(tree);
     }
 
-    Map<String, ATCALType> parseDatatypes(String typeDec) {
+    private Map<String, ATCALType> parseDatatypes(String typeDec) {
         ANTLRInputStream input = new ANTLRInputStream(typeDec);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
