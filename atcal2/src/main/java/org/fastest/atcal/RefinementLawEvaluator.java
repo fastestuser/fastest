@@ -80,7 +80,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
         ATCALType asType = null;
         String typeId = null;
-        if ((typeId = ctx.ID().getText()) != null)
+        if ((typeId = ctx.type().getText()) != null)
             asType = types.get(typeId);
 
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
@@ -122,6 +122,18 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
                 codeBlock.addAll(visit(lawRefinementContext));
             }
+
+            // Record types are handled separately because they have native support in the target language.
+        } else if (asType instanceof RecordType) {
+            RecordType type = (RecordType) asType;
+
+            // Evaluate the WITH-clauses. The evaluation must produce a block of code that defines one variable for each
+            // field of the record type.
+            for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
+                codeBlock.addAll(visit(lawRefinementContext));
+            }
+
+
         }
         return codeBlock;
     }
@@ -134,7 +146,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         // Get the target type of the refinement
         ATCALType asType = null;
         String typeId = null;
-        if ((typeId = ctx.ID().getText()) != null)
+        if ((typeId = ctx.type().getText()) != null)
             asType = types.get(typeId);
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
 
@@ -160,7 +172,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         // Get the target type of the refinement
         ATCALType asType = null;
         String typeId = null;
-        if ((typeId = ctx.ID().getText()) != null)
+        if ((typeId = ctx.type().getText()) != null)
             asType = types.get(typeId);
         // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
 

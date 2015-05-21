@@ -55,9 +55,9 @@ lvalue : ID                 # VarLValue
        | '[' NUMBER? ']'    # ArrayLValue
        ;
 
-asRef : 'AS' ( type | ID )                                                          # SimpleRef
-      | 'AS' ( type | ID ) typeCases                                                # BijMapRef
-      | 'AS' ( type | ID ) 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
+asRef : 'AS' type                                                          # SimpleRef
+      | 'AS' type typeCases                                                # BijMapRef
+      | 'AS' type 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
       ;
 
 // Z expressions
