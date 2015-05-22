@@ -67,6 +67,11 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
+    public List<APLExpr> visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx) {
+        return Lists.newArrayList((APLExpr) new APLVar(aplScope + "." + ctx.ID().getText()));
+    }
+
+    @Override
     public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
         List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
         APLLValue lvalue = (APLLValue) lvalueCodeBlock.get(0);

@@ -139,4 +139,11 @@ public class RefinementLawEvaluatorTest {
         System.out.println(result);
         assert (result.equals("[a=E3]"));
     }
+
+    @Test
+    public void lawEvalTest11(){
+        String inputExpr = "var4 ==> record AS node WITH [ var4.1 ==> .a AS Int, var2 ==> .b AS String ]";
+        String result = evalLaw(inputExpr, atc2);
+        System.out.println(result);
+    }
 }
