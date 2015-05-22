@@ -53,6 +53,7 @@ refinement : lvalue asRef                 # ImplRef
 
 lvalue : ID                 # VarLValue
        | '[' NUMBER? ']'    # ArrayLValue
+       | '.' ID             # FieldLValue
        ;
 
 asRef : 'AS' type                                                          # SimpleRef

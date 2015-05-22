@@ -180,6 +180,13 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code FieldLValue}
+	 * labeled alternative in {@link AtcalParser#lvalue}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code SimpleRef}
 	 * labeled alternative in {@link AtcalParser#asRef}.
 	 * @param ctx the parse tree
