@@ -11,4 +11,9 @@ public class FloatType implements ATCALType {
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
         throw new Exception();
     }
+
+    @Override
+    public String toString() {
+        return "Float";
+    }
 }

@@ -21,4 +21,8 @@ public class IntType implements ATCALType {
         throw new Exception();
     }
 
+    @Override
+    public String toString() {
+        return "Int";
+    }
 }

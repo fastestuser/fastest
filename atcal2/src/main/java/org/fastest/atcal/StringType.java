@@ -22,4 +22,9 @@ public class StringType implements ATCALType {
         }
         throw new Exception();
     }
+
+    @Override
+    public String toString() {
+        return "String";
+    }
 }

@@ -30,7 +30,7 @@ public class ArrayType implements ATCALType {
 
     @Override
     public String toString() {
-        return "ArrayType{" +
+        return "Array{" +
                 "name='" + name + '\'' +
                 ", size=" + size +
                 '}';
