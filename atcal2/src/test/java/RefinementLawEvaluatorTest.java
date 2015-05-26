@@ -146,4 +146,12 @@ public class RefinementLawEvaluatorTest {
         String result = evalLaw(inputExpr, atc2);
         System.out.println(result);
     }
+
+    @Test
+    public void lawEvalTest12(){
+        String inputExpr = "var4 ==> r AS RECORD rec (a:Int, b:myArr, c:String) WITH [ var4.1 ==> .a AS Int, var2 ==> .b AS String ]";
+        String result = evalLaw(inputExpr, atc2);
+        System.out.println(result);
+    }
+
 }
