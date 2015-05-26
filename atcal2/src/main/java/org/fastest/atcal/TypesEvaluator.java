@@ -30,7 +30,7 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
     };
 
     public TypesEvaluator() {
-        this.typeEval = new TypeEvaluator();
+        this.typeEval = new TypeEvaluator(types);
     }
 
     @Override
@@ -52,7 +52,13 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
     }
 
     // Private nested class to evaluate individual types
-    private class TypeEvaluator extends AtcalBaseVisitor<ATCALType> {
+    public static class TypeEvaluator extends AtcalBaseVisitor<ATCALType> {
+
+        private final Map<String, ATCALType> types;
+
+        public TypeEvaluator(Map<String, ATCALType> types) {
+            this.types = types;
+        }
 
         @Override
         public ATCALType visitNameType(@NotNull AtcalParser.NameTypeContext ctx) {
