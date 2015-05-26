@@ -33,6 +33,15 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         return this.zScope.getVar("zScope").get().getValue();
     }
 
+    private ATCALType resolveType(AtcalParser.TypeContext typeCtx) {
+        // Lookup the type id in the types table. If not found it may be an in-place declaration, thus parse it.
+        ATCALType asType = types.get(typeCtx.getText());
+        if (asType == null) {
+            asType = new TypesEvaluator.TypeEvaluator(types).visit(typeCtx);
+        }
+        return asType;
+    }
+
     @Override
     public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
@@ -83,14 +92,10 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     public List<APLExpr> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
         List<APLExpr> codeBlock = Lists.newArrayList();
 
-        ATCALType asType = null;
-        String typeId = null;
-        if ((typeId = ctx.type().getText()) != null)
-            asType = types.get(typeId);
+        // Get the ATCAL type of the refinement.
+        ATCALType asType = resolveType(ctx.type());
 
-        // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
-        // Generate code according to the type of the refinement variable
-
+        // Generate code according to the type of the refinement variable.
         // Contract types are used to create complex data structures that have a contract (an interface).
         // They have a constructor, a getter and a setter function that instantiate, extract or insert values.
         if (asType instanceof ContractType) {
@@ -145,15 +150,10 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
     @Override
     public List<APLExpr> visitSimpleRef(@NotNull AtcalParser.SimpleRefContext ctx) {
-
         List<APLExpr> codeBlock = Lists.newArrayList();
 
-        // Get the target type of the refinement
-        ATCALType asType = null;
-        String typeId = null;
-        if ((typeId = ctx.type().getText()) != null)
-            asType = types.get(typeId);
-        // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
+        // Get the ATCAL type of the refinement.
+        ATCALType asType = resolveType(ctx.type());
 
         // Refine the Z expression to an APL expression of the given type.
         // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
@@ -171,15 +171,10 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
     @Override
     public List<APLExpr> visitBijMapRef(@NotNull AtcalParser.BijMapRefContext ctx) {
-
         List<APLExpr> codeBlock = Lists.newArrayList();
 
-        // Get the target type of the refinement
-        ATCALType asType = null;
-        String typeId = null;
-        if ((typeId = ctx.type().getText()) != null)
-            asType = types.get(typeId);
-        // TODO : if type is defined in the refinement law, parse it with ATCAL's type visitor
+        // Get the ATCAL type of the refinement.
+        ATCALType asType = resolveType(ctx.type());
 
         // The source and destination types must be constants, fail otherwise.
         if (this.getScope() instanceof ZExprConst) {
