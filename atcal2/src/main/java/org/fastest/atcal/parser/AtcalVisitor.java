@@ -278,6 +278,13 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitSetDom(@NotNull AtcalParser.SetDomContext ctx);
 	/**
+	 * Visit a parse tree produced by the {@code ElemExpr}
+	 * labeled alternative in {@link AtcalParser#zExpr}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElemExpr(@NotNull AtcalParser.ElemExprContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code NumLiteral}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree

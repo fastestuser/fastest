@@ -66,6 +66,7 @@ zExpr : ID                                   # Ident
       | NUMBER                               # NumLiteral
       | STRING                               # StrLiteral
       | '@AUTOFILL'                          # AutoExpr
+      | ELEM                                 # ElemExpr
       | zExpr '.' TUPPROJ                    # ProdProj
       | '<' zExpr ( ',' zExpr )* '>'         # ProdCons
       | zExpr '.' NUMBER                     # SetElem
@@ -115,7 +116,7 @@ TUPPROJ : '#' NUMBER ;
 INTER : '/\\' ;
 UNION : '\\/' ;
 DIFF : '~' ;
-//ELEM : '@ELEM' ;
+ELEM : '@ELEM' ;
 
 // Match double-quoted strings
 STRING : '"' ( ESC | . )*? '"' ;

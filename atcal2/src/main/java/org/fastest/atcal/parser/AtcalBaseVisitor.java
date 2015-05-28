@@ -298,6 +298,13 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitElemExpr(@NotNull AtcalParser.ElemExprContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitNumLiteral(@NotNull AtcalParser.NumLiteralContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
