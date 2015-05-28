@@ -45,6 +45,15 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
     }
 
     @Override
+    public ZExpr visitElemExpr(@NotNull AtcalParser.ElemExprContext ctx) {
+        ZExpr zScope = scope.getVar("zScope").get().getValue();
+        if(zScope instanceof ZExprSet)
+            return new ZExprList((ZExprSet)zScope);
+        else
+            throw new RuntimeException("Invalid use of @ELEM operator. The current Z scope is not a set.");
+    }
+
+    @Override
     public ZExpr visitGroup(@NotNull AtcalParser.GroupContext ctx) {
         return visit(ctx.zExpr());
     }

@@ -29,7 +29,8 @@ public class ZExprEvaluatorTest {
     private ZVar var5 = new ZVar("var5", ZExprSet.of(num2, num3));
     private ZVar var6 = new ZVar("var6", ZExprSet.of(prod1, prod2));
     private ZVar var7 = new ZVar("var7", ZExprSet.of(prod3, prod4));
-    private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3);
+    private ZVar zScope = new ZVar("zScope", ZExprSet.of(num1, num2));
+    private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, zScope);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
 
     //        assertNotNull("Test file missing", getClass().getResource("/zExprEvaluatorTest.tcrl"));
@@ -179,5 +180,12 @@ public class ZExprEvaluatorTest {
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
         assert (result.equals(new ZExprNum(9)));
+    }
+
+    @Test
+    public void elemTest() {
+        String inputExpr = "@ELEM";
+        ZExpr result = evalExpr(inputExpr, atc1);
+        System.out.println(result.toString());
     }
 }
