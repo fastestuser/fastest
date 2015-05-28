@@ -1,15 +1,13 @@
 package org.fastest.atcal;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.fastest.atcal.apl.*;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
-import org.fastest.atcal.z.ast.ZExpr;
-import org.fastest.atcal.z.ast.ZExprConst;
-import org.fastest.atcal.z.ast.ZExprSchema;
-import org.fastest.atcal.z.ast.ZVar;
+import org.fastest.atcal.z.ast.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +27,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         this.types = types;
     }
 
-    private ZExpr getScope() {
+    private ZExpr getZScope() {
         return this.zScope.getVar("zScope").get().getValue();
     }
 
@@ -45,19 +43,32 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     @Override
     public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
-        ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
-        ZExpr zExpr = zExprEvaluator.visit(ctx.zExpr());
+        ZExprList zExprList = null;
+        {
+            ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
+            ZExpr zExpr = zExprEvaluator.visit(ctx.zExpr());
 
-        // Create a new zScope that includes the result of evaluating the Z expressions of the law
-        ZExprSchema newScope = ZExprSchema.add(zScope, new ZVar("zScope", zExpr));
+            // If the evaluation of the Z expression returns a single Z expression, package it in a single element list to
+            // factorize the rest of the code.
+            if (zExpr instanceof ZExprList) {
+                zExprList = (ZExprList) zExpr;
+            } else {
+                zExprList = new ZExprList(ImmutableList.of(zExpr));
+            }
+        }
 
-        // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
-        // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
+        // Evaluate the refinement using the list of Z expressions as contexts
         List<APLExpr> codeBlock = Lists.newArrayList();
-        RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
-        for (AtcalParser.RefinementContext context : ctx.refinement())
-            codeBlock.addAll(lawEvaluator.visit(context));
+        for (ZExpr zExpr : zExprList) {
+            // Create a new zScope that includes the result of evaluating the Z expressions of the law
+            ZExprSchema newScope = ZExprSchema.add(zScope, new ZVar("zScope", zExpr));
 
+            // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
+            // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
+            RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
+            for (AtcalParser.RefinementContext context : ctx.refinement())
+                codeBlock.addAll(lawEvaluator.visit(context));
+        }
         return codeBlock;
     }
 
@@ -159,7 +170,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         // If we try such refinement an exception is produced that we capture here to notify the user.
         try {
         /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
-            APLExpr value = asType.fromZExpr(this.getScope());
+            APLExpr value = asType.fromZExpr(this.getZScope());
             codeBlock.add(new AssignStmt(aplScope, value));
         } catch (Exception e) {
             System.out.println("Type error on SimpleRef");
@@ -175,8 +186,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         ATCALType asType = resolveType(ctx.type());
 
         // The source and destination types must be constants, fail otherwise.
-        if (this.getScope() instanceof ZExprConst) {
-            ZExprConst zExprConst = (ZExprConst) this.getScope();
+        if (this.getZScope() instanceof ZExprConst) {
+            ZExprConst zExprConst = (ZExprConst) this.getZScope();
 
             // Create bijection map
             Map<ZExprConst, ConsExpr> map = Maps.newHashMap();

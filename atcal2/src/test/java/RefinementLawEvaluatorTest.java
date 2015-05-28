@@ -154,4 +154,10 @@ public class RefinementLawEvaluatorTest {
         System.out.println(result);
     }
 
+    @Test
+    public void lawEvalTest13(){
+        String inputExpr = "var4 ==> r AS myArr WITH [ @ELEM ==> [] AS Int ]";
+        String result = evalLaw(inputExpr, atc1);
+        System.out.println(result);
+    }
 }
