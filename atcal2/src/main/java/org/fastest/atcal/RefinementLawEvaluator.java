@@ -94,8 +94,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     @Override
     public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
         List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
-        APLLValue lvalue = (APLLValue) lvalueCodeBlock.get(0);
-        RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, lvalue, types);
+        APLLValue newAPLScope = (APLLValue) lvalueCodeBlock.get(0);
+        RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types);
         return newScopeEvaluator.visit(ctx.asRef());
     }
 
