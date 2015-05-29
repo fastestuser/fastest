@@ -32,8 +32,8 @@ type : ID                                                       # NameType
 args : '(' ( ID ( ',' ID )* )? ')' ;
 
 // Constant mappings for enumeration and given types
-typeCases: 'MAP' '[' typeCase (',' typeCase)* ']' ;
-typeCase: ID '->' ( ID | STRING | NUMBER ) ;
+constMapping: 'MAP' '[' constMap (',' constMap)* ']' ;
+constMap: ID '->' ( ID | STRING | NUMBER ) ;
 
 laws: '@LAWS'
       (law STMTEND)* ;
@@ -57,7 +57,7 @@ lvalue : ID                 # VarLValue
        ;
 
 asRef : 'AS' type                                                          # SimpleRef
-      | 'AS' type typeCases                                                # BijMapRef
+      | 'AS' type constMapping                                             # BijMapRef
       | 'AS' type 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
       ;
 

@@ -191,8 +191,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
             // Create bijection map
             Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
-            for (AtcalParser.TypeCaseContext typeCase : ctx.typeCases().typeCase()) {
-                map.put(new ZExprConst(typeCase.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(typeCase.ID(1).getText()));
+            for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
+                map.put(new ZExprConst(constMap.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
             }
 
             // Check that the mapping contains the Z constant mapping and generate code for the refinement

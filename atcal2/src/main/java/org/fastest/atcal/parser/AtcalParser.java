@@ -27,14 +27,14 @@ public class AtcalParser extends Parser {
 		ELEM=55, STRING=56, WS=57;
 	public static final int
 		RULE_refinementRule = 0, RULE_preamble = 1, RULE_plcode = 2, RULE_preambleImport = 3, 
-		RULE_datatypes = 4, RULE_typeDec = 5, RULE_type = 6, RULE_args = 7, RULE_typeCases = 8, 
-		RULE_typeCase = 9, RULE_laws = 10, RULE_uut = 11, RULE_epilogue = 12, 
+		RULE_datatypes = 4, RULE_typeDec = 5, RULE_type = 6, RULE_args = 7, RULE_constMapping = 8, 
+		RULE_constMap = 9, RULE_laws = 10, RULE_uut = 11, RULE_epilogue = 12, 
 		RULE_law = 13, RULE_lawRefinement = 14, RULE_refinement = 15, RULE_lvalue = 16, 
 		RULE_asRef = 17, RULE_zExpr = 18;
 	public static final String[] ruleNames = {
 		"refinementRule", "preamble", "plcode", "preambleImport", "datatypes", 
-		"typeDec", "type", "args", "typeCases", "typeCase", "laws", "uut", "epilogue", 
-		"law", "lawRefinement", "refinement", "lvalue", "asRef", "zExpr"
+		"typeDec", "type", "args", "constMapping", "constMap", "laws", "uut", 
+		"epilogue", "law", "lawRefinement", "refinement", "lvalue", "asRef", "zExpr"
 	};
 
 	private static final String[] _LITERAL_NAMES = {
@@ -751,27 +751,27 @@ public class AtcalParser extends Parser {
 		return _localctx;
 	}
 
-	public static class TypeCasesContext extends ParserRuleContext {
-		public List<TypeCaseContext> typeCase() {
-			return getRuleContexts(TypeCaseContext.class);
+	public static class ConstMappingContext extends ParserRuleContext {
+		public List<ConstMapContext> constMap() {
+			return getRuleContexts(ConstMapContext.class);
 		}
-		public TypeCaseContext typeCase(int i) {
-			return getRuleContext(TypeCaseContext.class,i);
+		public ConstMapContext constMap(int i) {
+			return getRuleContext(ConstMapContext.class,i);
 		}
-		public TypeCasesContext(ParserRuleContext parent, int invokingState) {
+		public ConstMappingContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_typeCases; }
+		@Override public int getRuleIndex() { return RULE_constMapping; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitTypeCases(this);
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitConstMapping(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final TypeCasesContext typeCases() throws RecognitionException {
-		TypeCasesContext _localctx = new TypeCasesContext(_ctx, getState());
-		enterRule(_localctx, 16, RULE_typeCases);
+	public final ConstMappingContext constMapping() throws RecognitionException {
+		ConstMappingContext _localctx = new ConstMappingContext(_ctx, getState());
+		enterRule(_localctx, 16, RULE_constMapping);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -781,7 +781,7 @@ public class AtcalParser extends Parser {
 			setState(133); 
 			match(T__21);
 			setState(134); 
-			typeCase();
+			constMap();
 			setState(139);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
@@ -791,7 +791,7 @@ public class AtcalParser extends Parser {
 				setState(135); 
 				match(T__16);
 				setState(136); 
-				typeCase();
+				constMap();
 				}
 				}
 				setState(141);
@@ -813,27 +813,27 @@ public class AtcalParser extends Parser {
 		return _localctx;
 	}
 
-	public static class TypeCaseContext extends ParserRuleContext {
+	public static class ConstMapContext extends ParserRuleContext {
 		public List<TerminalNode> ID() { return getTokens(AtcalParser.ID); }
 		public TerminalNode ID(int i) {
 			return getToken(AtcalParser.ID, i);
 		}
 		public TerminalNode STRING() { return getToken(AtcalParser.STRING, 0); }
 		public TerminalNode NUMBER() { return getToken(AtcalParser.NUMBER, 0); }
-		public TypeCaseContext(ParserRuleContext parent, int invokingState) {
+		public ConstMapContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
-		@Override public int getRuleIndex() { return RULE_typeCase; }
+		@Override public int getRuleIndex() { return RULE_constMap; }
 		@Override
 		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
-			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitTypeCase(this);
+			if ( visitor instanceof AtcalVisitor ) return ((AtcalVisitor<? extends T>)visitor).visitConstMap(this);
 			else return visitor.visitChildren(this);
 		}
 	}
 
-	public final TypeCaseContext typeCase() throws RecognitionException {
-		TypeCaseContext _localctx = new TypeCaseContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_typeCase);
+	public final ConstMapContext constMap() throws RecognitionException {
+		ConstMapContext _localctx = new ConstMapContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_constMap);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
@@ -1396,8 +1396,8 @@ public class AtcalParser extends Parser {
 		public TypeContext type() {
 			return getRuleContext(TypeContext.class,0);
 		}
-		public TypeCasesContext typeCases() {
-			return getRuleContext(TypeCasesContext.class,0);
+		public ConstMappingContext constMapping() {
+			return getRuleContext(ConstMappingContext.class,0);
 		}
 		public BijMapRefContext(AsRefContext ctx) { copyFrom(ctx); }
 		@Override
@@ -1433,7 +1433,7 @@ public class AtcalParser extends Parser {
 				setState(216); 
 				type();
 				setState(217); 
-				typeCases();
+				constMapping();
 				}
 				break;
 			case 3:

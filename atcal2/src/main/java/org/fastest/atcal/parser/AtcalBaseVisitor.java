@@ -123,14 +123,14 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTypeCases(@NotNull AtcalParser.TypeCasesContext ctx) { return visitChildren(ctx); }
+	@Override public T visitConstMapping(@NotNull AtcalParser.ConstMappingContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitTypeCase(@NotNull AtcalParser.TypeCaseContext ctx) { return visitChildren(ctx); }
+	@Override public T visitConstMap(@NotNull AtcalParser.ConstMapContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

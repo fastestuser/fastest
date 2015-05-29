@@ -110,17 +110,17 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArgs(@NotNull AtcalParser.ArgsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#typeCases}.
+	 * Visit a parse tree produced by {@link AtcalParser#constMapping}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeCases(@NotNull AtcalParser.TypeCasesContext ctx);
+	T visitConstMapping(@NotNull AtcalParser.ConstMappingContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#typeCase}.
+	 * Visit a parse tree produced by {@link AtcalParser#constMap}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeCase(@NotNull AtcalParser.TypeCaseContext ctx);
+	T visitConstMap(@NotNull AtcalParser.ConstMapContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#laws}.
 	 * @param ctx the parse tree
