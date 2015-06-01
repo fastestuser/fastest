@@ -8,22 +8,23 @@ import org.fastest.atcal.z.ast.ZExpr;
  */
 public class ArrayType implements ATCALType {
 
-    private final String name;
+    private final ATCALType type;
     private final int size;
 
-    public ArrayType(String name, int size) {
-        this.name = name;
+    public ArrayType(ATCALType type, int size) {
+        this.type = type;
         this.size = size;
     }
 
-    public String getName() {
-        return name;
+    public ATCALType getType() {
+        return type;
     }
 
     public int getSize() {
         return size;
     }
 
+    @Override
     public APLExpr fromZExpr(ZExpr expr) throws Exception {
         throw new Exception();
     }
@@ -31,7 +32,7 @@ public class ArrayType implements ATCALType {
     @Override
     public String toString() {
         return "Array{" +
-                "name='" + name + '\'' +
+                "type='" + type + '\'' +
                 ", size=" + size +
                 '}';
     }
