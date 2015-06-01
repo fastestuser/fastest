@@ -59,7 +59,7 @@ public class RefinementLawEvaluatorTest {
         // Parse datatypes declarations used for testing.
         final Map<String, ATCALType> types = parseDatatypes(datatypes);
 
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar(""), types);
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), types);
         return eval.visit(tree).toString();
     }
 
@@ -82,7 +82,7 @@ public class RefinementLawEvaluatorTest {
 
     @Test
     public void lawEvalTest3() {
-        String inputExpr = "var3 ==> [5] AS myEnum";
+        String inputExpr = "var3 ==> h AS myEnum";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
