@@ -23,7 +23,7 @@ type : ID                                                       # NameType
      | 'INT'                                                    # IntType
      | 'FLOAT'                                                  # FloatType
      | 'STRING'                                                 # StringType
-     | 'ARRAY' ID '(' NUMBER ')'                                # ArrayType
+     | 'ARRAY' type '(' NUMBER ')'                                # ArrayType
      | 'ENUM' ID args                                           # EnumType
      | 'RECORD' ID '(' ID ':' type ( ',' ID ':' type )* ')'     # RecordType
      | 'CONSTRUCTOR' ID args 'SETTER' ID args 'GETTER' ID args  # ContractType
@@ -47,8 +47,8 @@ epilogue: '@EPILOGUE'
 law: ( ID ':' )? ( lawRefinement );
 lawRefinement: zExpr '==>' refinement ( ',' refinement )* ;
 
-refinement : lvalue asRef                 # ImplRef
-           | lawRefinement                # ZExprRef
+refinement : lvalue 'AS' type constMapping? withRef?   # ImplRef
+           | lawRefinement                             # ZExprRef
            ;
 
 lvalue : ID                 # VarLValue
@@ -56,10 +56,7 @@ lvalue : ID                 # VarLValue
        | '.' ID             # FieldLValue
        ;
 
-asRef : 'AS' type                                                          # SimpleRef
-      | 'AS' type constMapping                                             # BijMapRef
-      | 'AS' type 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']'       # WithRef
-      ;
+withRef : 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']' ;
 
 // Z expressions
 zExpr : ID                                   # Ident
