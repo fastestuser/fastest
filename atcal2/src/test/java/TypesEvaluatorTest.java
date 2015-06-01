@@ -45,13 +45,13 @@ public class TypesEvaluatorTest {
         String StringType = "DATATYPE myString = STRING;";
         System.out.println(parseTypeDec(StringType));
 
-        String arrayType = "DATATYPE myArray = ARRAY toto (10);";
+        String arrayType = "DATATYPE myArray = ARRAY INT (10);";
         System.out.println(parseTypeDec(arrayType));
 
         String contractType = "DATATYPE contract = CONSTRUCTOR c(a,b,c) SETTER s(d,e,f) GETTER g(h,i,j);";
         System.out.println(parseTypeDec(contractType));
 
-        String recordType = "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY toto (4), c:CONSTRUCTOR c(a,b,c) " +
+        String recordType = "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY INT (4), c:CONSTRUCTOR c(a,b,c) " +
                 "SETTER s(d,e,f) GETTER g(h,i,j), d:RECORD r2 (x:STRING));";
         System.out.println(parseTypeDec(recordType));
     }
