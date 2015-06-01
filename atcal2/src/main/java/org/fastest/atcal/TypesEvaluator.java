@@ -85,7 +85,8 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
         @Override
         public ATCALType visitArrayType(@NotNull AtcalParser.ArrayTypeContext ctx) {
-            return new ArrayType(ctx.ID().getText(), Integer.valueOf(ctx.NUMBER().getText()));
+            ATCALType type = visit(ctx.type());
+            return new ArrayType(type, Integer.valueOf(ctx.NUMBER().getText()));
         }
 
         @Override
