@@ -31,15 +31,6 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         return this.zScope.getVar("zScope").get().getValue();
     }
 
-    private ATCALType resolveType(AtcalParser.TypeContext typeCtx) {
-        // Lookup the type id in the types table. If not found it may be an in-place declaration, thus parse it.
-        ATCALType asType = types.get(typeCtx.getText());
-        if (asType == null) {
-            asType = new TypesEvaluator.TypeEvaluator(types).visit(typeCtx);
-        }
-        return asType;
-    }
-
     @Override
     public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
@@ -72,48 +63,107 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         return codeBlock;
     }
 
-    @Override
-    public List<APLExpr> visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
-        return Lists.newArrayList((APLExpr) new APLVar(ctx.ID().getText()));
-    }
+    // Private nested class to evaluate lvalues and their APL types.
+    public class LValueEvaluator extends AtcalBaseVisitor<APLLValue> {
 
-    @Override
-    public List<APLExpr> visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
-        if (ctx.NUMBER() != null) {
-            return Lists.newArrayList((APLExpr) new APLArray(aplScope.getName(), Integer.valueOf(ctx.NUMBER().getText())));
-        } else {
-            return Lists.newArrayList((APLExpr) new APLVar(aplScope + "[]"));
+        private final ATCALType type;
+
+        public LValueEvaluator(AtcalParser.TypeContext typeCtx) {
+            // Parse and resolve the type of the lvalue
+            this.type = resolveType(typeCtx);
+        }
+
+        private ATCALType resolveType(AtcalParser.TypeContext typeCtx) {
+            // Lookup the type id in the types table. If not found it may be an in-place declaration, thus parse it.
+            ATCALType asType = types.get(typeCtx.getText());
+            if (asType == null) {
+                asType = new TypesEvaluator.TypeEvaluator(types).visit(typeCtx);
+            }
+            return asType;
+        }
+
+        @Override
+        public APLLValue visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
+            if(type instanceof ArrayType)
+                return new APLArray(ctx.ID().getText(), type);
+            else
+                return new APLVar(ctx.ID().getText(), type);
+        }
+
+        @Override
+        public APLLValue visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
+            if (ctx.NUMBER() != null) {
+                return ((APLArray)aplScope).getIndex(Integer.valueOf(ctx.NUMBER().getText()));
+            } else {
+                return ((APLArray)aplScope).getNextIndex();
+            }
+        }
+
+        @Override
+        public APLLValue visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx) {
+            return new APLVar(aplScope + "." + ctx.ID().getText(), type);
         }
     }
 
     @Override
-    public List<APLExpr> visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx) {
-        return Lists.newArrayList((APLExpr) new APLVar(aplScope + "." + ctx.ID().getText()));
-    }
-
-    @Override
     public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
-        List<APLExpr> lvalueCodeBlock = visit(ctx.lvalue());
-        APLLValue newAPLScope = (APLLValue) lvalueCodeBlock.get(0);
-        RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types);
-        return newScopeEvaluator.visit(ctx.asRef());
+        List<APLExpr> codeBlock = Lists.newArrayList();
+        // Get the ATCAL lvalue of the refinement and use it as the new APL scope.
+        LValueEvaluator lValueEval = new LValueEvaluator(ctx.type());
+        APLLValue newAPLScope = lValueEval.visit(ctx.lvalue());
+
+        // If there is a mapping of constants then check source and destination types and build mapping table.
+        if (ctx.constMapping() != null) {
+            if (this.getZScope() instanceof ZExprConst) {
+                ZExprConst zExprConst = (ZExprConst) this.getZScope();
+
+                // Create constants map
+                Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
+                for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
+                    map.put(new ZExprConst(constMap.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
+                }
+
+                // Check that the mapping contains the Z constant mapping and generate code for the refinement
+                if (map.containsKey(zExprConst))
+                    codeBlock.add(new AssignStmt(newAPLScope, map.get(zExprConst)));
+                else
+                    System.out.println("Z Constant " + zExprConst.toString() + " not present in constants mapping.");
+
+                return codeBlock;
+            } else {
+                throw new RuntimeException("Type error on BijMapRef");
+            }
+        } else if (ctx.withRef() != null) {
+            // If there is a WITH clause then create an evaluator with the new APL lvalue and type scopes and evaluate it.
+            RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types);
+            return newScopeEvaluator.visit(ctx.withRef());
+        } else {
+            // Refine the Z expression to an APL expression of the given type.
+            // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
+            // refined into an integer).
+            // If we try such refinement an exception is produced that we capture here to notify the user.
+            try {
+            /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
+                APLExpr value = newAPLScope.getType().fromZExpr(this.getZScope());
+                codeBlock.add(new AssignStmt(newAPLScope, value));
+                return codeBlock;
+            } catch (Exception e) {
+                throw new RuntimeException("Type error on simple refinement");
+            }
+        }
     }
 
     @Override
     public List<APLExpr> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
         List<APLExpr> codeBlock = Lists.newArrayList();
-
-        // Get the ATCAL type of the refinement.
-        ATCALType asType = resolveType(ctx.type());
-
         // Generate code according to the type of the refinement variable.
         // Contract types are used to create complex data structures that have a contract (an interface).
         // They have a constructor, a getter and a setter function that instantiate, extract or insert values.
-        if (asType instanceof ContractType) {
-            ContractType type = (ContractType) asType;
+        if (aplScope.getType() instanceof ContractType) {
+            ContractType type = (ContractType) aplScope.getType();
 
             // Create a new temporal variable to hold the data structure under construction.
-            APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0));
+            APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0), aplScope.getType());
             codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
 
             // Evaluate the WITH-clauses. The evaluation must produce a block of code that defines one variable for each
@@ -131,9 +181,9 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             // Assign the temporal variable holding the data structure to the real refinement variable.
             codeBlock.add(new AssignStmt(aplScope, var));
 
+        } else if (aplScope.getType() instanceof ArrayType) {
             // Array types are handled as a special case because they often have native support in the target language.
-        } else if (asType instanceof ArrayType) {
-            ArrayType type = (ArrayType) asType;
+            ArrayType type = (ArrayType) aplScope.getType();
 
             // Allocate a new array using the APL built-in function newArray and assign it to the current APL variable in scope.
             codeBlock.add(new AssignStmt(aplScope, new CallExpr("newArray", Lists.newArrayList(String.valueOf(type.getSize())))));
@@ -144,64 +194,15 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
                 codeBlock.addAll(visit(lawRefinementContext));
             }
 
+        } else if (aplScope.getType() instanceof RecordType) {
             // Record types are handled separately because they have native support in the target language.
-        } else if (asType instanceof RecordType) {
-            RecordType type = (RecordType) asType;
+            RecordType type = (RecordType) aplScope.getType();
 
             // Evaluate the WITH-clauses. The evaluation must produce a block of code that defines one variable for each
             // field of the record type.
             for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
                 codeBlock.addAll(visit(lawRefinementContext));
             }
-        }
-        return codeBlock;
-    }
-
-    @Override
-    public List<APLExpr> visitSimpleRef(@NotNull AtcalParser.SimpleRefContext ctx) {
-        List<APLExpr> codeBlock = Lists.newArrayList();
-
-        // Get the ATCAL type of the refinement.
-        ATCALType asType = resolveType(ctx.type());
-
-        // Refine the Z expression to an APL expression of the given type.
-        // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
-        // refined into an integer).
-        // If we try such refinement an exception is produced that we capture here to notify the user.
-        try {
-        /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
-            APLExpr value = asType.fromZExpr(this.getZScope());
-            codeBlock.add(new AssignStmt(aplScope, value));
-        } catch (Exception e) {
-            System.out.println("Type error on SimpleRef");
-        }
-        return codeBlock;
-    }
-
-    @Override
-    public List<APLExpr> visitBijMapRef(@NotNull AtcalParser.BijMapRefContext ctx) {
-        List<APLExpr> codeBlock = Lists.newArrayList();
-
-        // Get the ATCAL type of the refinement.
-        ATCALType asType = resolveType(ctx.type());
-
-        // The source and destination types must be constants, fail otherwise.
-        if (this.getZScope() instanceof ZExprConst) {
-            ZExprConst zExprConst = (ZExprConst) this.getZScope();
-
-            // Create bijection map
-            Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
-            for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
-                map.put(new ZExprConst(constMap.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
-            }
-
-            // Check that the mapping contains the Z constant mapping and generate code for the refinement
-            if (map.containsKey(zExprConst))
-                codeBlock.add(new AssignStmt(aplScope, map.get(zExprConst)));
-            else
-                System.out.println("Z Constant " + zExprConst.toString() + " not present in bijection map.");
-        } else {
-            System.out.println("Type error on BijMapRef");
         }
         return codeBlock;
     }
