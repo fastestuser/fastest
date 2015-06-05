@@ -84,7 +84,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
         @Override
         public APLLValue visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
-            if(type instanceof ArrayType)
+            if (type instanceof ArrayType)
                 return new APLArray(ctx.ID().getText(), type);
             else
                 return new APLVar(ctx.ID().getText(), type);
@@ -93,9 +93,9 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         @Override
         public APLLValue visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
             if (ctx.NUMBER() != null) {
-                return ((APLArray)aplScope).getIndex(Integer.valueOf(ctx.NUMBER().getText()));
+                return ((APLArray) aplScope).getIndex(Integer.valueOf(ctx.NUMBER().getText()));
             } else {
-                return ((APLArray)aplScope).getNextIndex();
+                return ((APLArray) aplScope).getNextIndex();
             }
         }
 
@@ -142,14 +142,10 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             // There are restrictions on the refinement options for Z expressions (i.e an alphanumeric string cannot be
             // refined into an integer).
             // If we try such refinement an exception is produced that we capture here to notify the user.
-            try {
             /* The behavior of the simple refinement depends on both the type of the implementation variable and the specification value. */
-                APLExpr value = newAPLScope.getType().fromZExpr(this.getZScope());
-                codeBlock.add(new AssignStmt(newAPLScope, value));
-                return codeBlock;
-            } catch (Exception e) {
-                throw new RuntimeException("Type error on simple refinement");
-            }
+            APLExpr value = newAPLScope.getType().fromZExpr(this.getZScope());
+            codeBlock.add(new AssignStmt(newAPLScope, value));
+            return codeBlock;
         }
     }
 

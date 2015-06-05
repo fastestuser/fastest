@@ -6,7 +6,7 @@ import org.fastest.atcal.z.ast.ZExpr;
 /**
  * Created by Cristian on 29/04/15.
  */
-public class ArrayType implements ATCALType {
+public class ArrayType extends ATCALType {
 
     private final ATCALType type;
     private final int size;
@@ -22,11 +22,6 @@ public class ArrayType implements ATCALType {
 
     public int getSize() {
         return size;
-    }
-
-    @Override
-    public APLExpr fromZExpr(ZExpr expr) throws Exception {
-        throw new Exception();
     }
 
     @Override

@@ -8,17 +8,18 @@ import org.fastest.atcal.z.ast.ZExprNum;
 /**
  * Created by Cristian on 06/05/15.
  */
-public class IntType implements ATCALType {
+public class IntType extends ATCALType {
 
     // Conversion to integer expression
-    public LongExpr fromZExpr(ZExpr zExpr) throws Exception {
+    @Override
+    public LongExpr fromZExpr(ZExpr zExpr) {
         if (zExpr instanceof ZExprNum) {
             return new LongExpr(((ZExprNum) zExpr).getNum());
         } else if (zExpr instanceof ZExprConst){
             return new LongExpr(((ZExprConst) zExpr).getConstId());
         }
-
-        throw new Exception();
+        // Unsupported conversion
+        throw new RuntimeException("Unsupported operation.");
     }
 
     @Override

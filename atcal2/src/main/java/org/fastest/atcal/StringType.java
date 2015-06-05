@@ -9,18 +9,19 @@ import org.fastest.atcal.z.ast.ZExprString;
 /**
  * Created by Cristian on 06/05/15.
  */
-public class StringType implements ATCALType {
+public class StringType extends ATCALType {
 
     // Conversion to string expression
-    public StringExpr fromZExpr(ZExpr zExpr) throws Exception {
+    public StringExpr fromZExpr(ZExpr zExpr) {
         if (zExpr instanceof ZExprNum) {
             return new StringExpr(String.valueOf(((ZExprNum) zExpr).getNum()));
         } else if (zExpr instanceof ZExprString) {
             return new StringExpr(((ZExprString) zExpr).getStr());
         } else if (zExpr instanceof ZExprConst) {
-            return new StringExpr(((ZExprConst)zExpr).getValue());
+            return new StringExpr(((ZExprConst) zExpr).getValue());
         }
-        throw new Exception();
+        // Unsupported conversion
+        throw new RuntimeException("Unsupported operation.");
     }
 
     @Override

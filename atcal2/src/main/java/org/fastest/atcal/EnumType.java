@@ -8,12 +8,11 @@ import org.fastest.atcal.z.ast.ZExprNum;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Created by Cristian on 05/05/15.
  */
-public class EnumType implements ATCALType {
+public class EnumType extends ATCALType {
 
     private final String name;
     private final LinkedHashMap<String, ConsExpr> elements;
@@ -34,7 +33,8 @@ public class EnumType implements ATCALType {
     }
 
     // Conversion to enum constants from Z types without bijection maps.
-    public ConsExpr fromZExpr(ZExpr zExpr) throws Exception {
+    @Override
+    public ConsExpr fromZExpr(ZExpr zExpr) {
 
         // Convert from Z numeric expression
         if (zExpr instanceof ZExprNum) {
@@ -43,7 +43,7 @@ public class EnumType implements ATCALType {
             // Check if the numeric expression value is between the bounds of the array.
             int value = (int) zExprNum.getNum();     // TODO: what happens if the value is beyond the int range?
             if (value < 0 && value > elements.values().size())
-                throw new Exception();
+                throw new RuntimeException("Z integer value is outside ATCAL enumeration range.");
 
             return (ConsExpr) elements.values().toArray()[value];
 
@@ -58,7 +58,7 @@ public class EnumType implements ATCALType {
                     // TODO: what happens if the value is beyond the int range?
                     int value = (int) zExprConst.getConstId();
                     if (value < 0 && value > elements.values().size())
-                        throw new Exception();
+                        throw new RuntimeException("Z constant ID outside ATCAL enumeration range.");
 
                     return (ConsExpr) elements.values().toArray()[value];
 
@@ -67,14 +67,14 @@ public class EnumType implements ATCALType {
                     if (elements.containsKey(zExprConst.getValue()))
                         return (ConsExpr) elements.get(zExprConst.getValue());
                     else
-                        throw new Exception();  // Fail if Z constant does not match any name in the ATCAL enumeration.
+                        throw new RuntimeException("Z constant value does not match any element of ATCAL enumeration.");
             }
         }
 
         // Unsupported conversion
-        throw new Exception();
+        throw new RuntimeException("Unsupported operation.");
     }
-    
+
     @Override
     public String toString() {
         return "Enum " + name + "(" + elements.values() + ")";
