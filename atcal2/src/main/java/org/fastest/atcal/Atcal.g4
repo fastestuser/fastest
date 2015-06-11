@@ -23,7 +23,7 @@ type : ID                                                       # NameType
      | 'INT'                                                    # IntType
      | 'FLOAT'                                                  # FloatType
      | 'STRING'                                                 # StringType
-     | 'ARRAY' type '(' NUMBER ')'                                # ArrayType
+     | 'ARRAY' type '(' NUMBER ')'                              # ArrayType
      | 'ENUM' ID args                                           # EnumType
      | 'RECORD' ID '(' ID ':' type ( ',' ID ':' type )* ')'     # RecordType
      | 'CONSTRUCTOR' ID args 'SETTER' ID args 'GETTER' ID args  # ContractType
@@ -38,7 +38,7 @@ constMap: ID '->' ( ID | STRING | NUMBER ) ;
 laws: '@LAWS'
       (law STMTEND)* ;
 
-uut: '@UUT' ID '(' ( ID ( ',' ID )* )? ')' STMTEND ;
+uut: '@UUT' ID args STMTEND ;
 
 epilogue: '@EPILOGUE'
         ( plcode | ID '.@EPILOGUE')+ ;

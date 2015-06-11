@@ -32,6 +32,15 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
+    public List<APLExpr> visitLaws(@NotNull AtcalParser.LawsContext ctx) {
+        List<APLExpr> codeBlock = Lists.newArrayList();
+        for (AtcalParser.LawContext lawCtx : ctx.law())
+            codeBlock.addAll(visit(lawCtx.lawRefinement()));
+
+        return codeBlock;
+    }
+
+    @Override
     public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
         ZExprList zExprList = null;
