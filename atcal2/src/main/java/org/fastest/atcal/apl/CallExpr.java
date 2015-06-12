@@ -1,5 +1,7 @@
 package org.fastest.atcal.apl;
 
+import com.sun.deploy.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -17,6 +19,6 @@ public class CallExpr implements APLExpr, APLStmt {
 
     @Override
     public String toString() {
-        return "CALL(" + funName + " " + args + ")";
+        return funName + "(" + StringUtils.join(args, ",") + ")";
     }
 }

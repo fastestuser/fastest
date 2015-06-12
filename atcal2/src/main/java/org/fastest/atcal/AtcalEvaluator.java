@@ -12,6 +12,7 @@ import org.fastest.atcal.z.ast.ZExprSchema;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Cristian on 05/06/15.
@@ -33,6 +34,11 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         }
     };
 
+    /**
+     * Create a new ATCAL evaluator for the given abstract test case.
+     *
+     * @param atc the abstract test case.
+     */
     public AtcalEvaluator(ZExprSchema atc) {
         this.atc = atc;
     }
@@ -45,7 +51,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         this.preamble = "";
 
         // evaluate data type declarations if present
-        if(ctx.datatypes() != null) {
+        if (ctx.datatypes() != null) {
             TypesEvaluator typesEval = new TypesEvaluator();
             this.datatypes = typesEval.visit(ctx.datatypes());
         }
@@ -65,6 +71,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         this.epilogue = "";
 
         // return the final string representation of the concrete test case
-        return preamble + refinedLawsCode.toString() + plCode + uutCall.toString() + epilogue;
+        return preamble + refinedLawsCode.stream().map(Object::toString).collect(Collectors.joining("\n")) +
+                plCode + "\n" + uutCall.toString() + epilogue;
     }
 }
