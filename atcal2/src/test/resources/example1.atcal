@@ -4,9 +4,10 @@
 @PLCODE
 
 @DATATYPES
-DATATYPE String = STRING;
 
 @LAWS
-var1 ++ var2 ==> b AS String;
+var3 ==> a AS INT;
+var1 ++ var2 ==> b AS STRING;
+
 
 @UUT f(b);
