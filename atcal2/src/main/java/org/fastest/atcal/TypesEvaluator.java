@@ -19,7 +19,7 @@ import java.util.Map;
 public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
     private final TypeEvaluator typeEval;
-    private final Map<String, ATCALType> types = Maps.newHashMap();
+    private final Map<String, ATCALType> types;
 
     // Helper function to simplify converting lists of terminal nodes into lists of strings
     private static final Function<TerminalNode, String> TERMINAL_TOSTRING = new Function<TerminalNode, String>() {
@@ -30,6 +30,12 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
     };
 
     public TypesEvaluator() {
+        // preload the default data types (INT, FLOAT, STRING) in the type namespace.
+        this.types = Maps.newHashMap();
+        types.put("INT", new IntType());
+        types.put("FLOAT", new FloatType());
+        types.put("STRING", new StringType());
+
         this.typeEval = new TypeEvaluator(types);
     }
 
