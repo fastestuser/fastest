@@ -46,8 +46,7 @@ public class AtcalEvaluatorTest {
             AtcalLexer lexer = new AtcalLexer(input);
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             AtcalParser parser = new AtcalParser(tokens);
-            ParseTree tree = parser.refinementRule();
-            return tree;
+            return parser.refinementRule();
         } catch (IOException e) {
             fail(e.toString());
             return null;
@@ -58,8 +57,6 @@ public class AtcalEvaluatorTest {
     public void test1() {
         ParseTree atcalTree = parseFile("example1.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc1);
-        System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext)atcalTree));
+        System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
     }
-
-
 }

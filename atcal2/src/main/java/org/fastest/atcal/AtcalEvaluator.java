@@ -18,14 +18,6 @@ import java.util.stream.Collectors;
  * Created by Cristian on 05/06/15.
  */
 public class AtcalEvaluator extends AtcalBaseVisitor<String> {
-    private ZExprSchema atc;                      // abstract test case to refine
-    private String preamble;                      // programming language code (defined in this rule and/or imported)
-    private Map<String, ATCALType> datatypes;     // declared data types (types namespace)
-    private List<APLExpr> refinedLawsCode;        // APL code resulting from the evaluation of the refinement laws
-    private String plCode;                        // programming language code included in the rule
-    private CallExpr uut;                         // APL code to call the unit under test
-    private String epilogue;                      // programming language code (defined in this rule and/or imported)
-
     // Helper function to simplify converting lists of terminal nodes into lists of strings
     private static final Function<TerminalNode, String> TERMINAL_TOSTRING = new Function<TerminalNode, String>() {
         @Override
@@ -33,6 +25,13 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
             return o.getText();
         }
     };
+    private ZExprSchema atc;                      // abstract test case to refine
+    private String preamble;                      // programming language code (defined in this rule and/or imported)
+    private Map<String, ATCALType> datatypes;     // declared data types (types namespace)
+    private List<APLExpr> refinedLawsCode;        // APL code resulting from the evaluation of the refinement laws
+    private String plCode;                        // programming language code included in the rule
+    private CallExpr uut;                         // APL code to call the unit under test
+    private String epilogue;                      // programming language code (defined in this rule and/or imported)
 
     /**
      * Create a new ATCAL evaluator for the given abstract test case.

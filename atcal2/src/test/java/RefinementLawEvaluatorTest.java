@@ -1,16 +1,15 @@
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.fastest.atcal.*;
+import org.fastest.atcal.ATCALType;
+import org.fastest.atcal.RefinementLawEvaluator;
+import org.fastest.atcal.TypesEvaluator;
 import org.fastest.atcal.apl.APLVar;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,6 +17,14 @@ import java.util.Map;
  */
 public class RefinementLawEvaluatorTest {
 
+    private static final String datatypes = "" +
+            "@DATATYPES" +
+            "DATATYPE Int = INT;" +
+            "DATATYPE String = STRING;" +
+            "DATATYPE myArr = ARRAY  Int (10);" +
+            "DATATYPE myEnum = ENUM myEnum (E1, E2, E3);" +
+            "DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a, b) GETTER get();" +
+            "DATATYPE node = RECORD r (a:Int, b:myArr, c:String);";
     private ZExprNum num1 = new ZExprNum(1);
     private ZExprNum num2 = new ZExprNum(2);
     private ZExprNum num3 = new ZExprNum(3);
@@ -39,15 +46,6 @@ public class RefinementLawEvaluatorTest {
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
     private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)),
             new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
-
-    private static final String datatypes = "" +
-            "@DATATYPES" +
-            "DATATYPE Int = INT;" +
-            "DATATYPE String = STRING;" +
-            "DATATYPE myArr = ARRAY  Int (10);" +
-            "DATATYPE myEnum = ENUM myEnum (E1, E2, E3);" +
-            "DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a, b) GETTER get();" +
-            "DATATYPE node = RECORD r (a:Int, b:myArr, c:String);";
 
     private String evalLaw(String law, ZExprSchema scope) {
         ANTLRInputStream input = new ANTLRInputStream(law);
@@ -141,21 +139,21 @@ public class RefinementLawEvaluatorTest {
     }
 
     @Test
-    public void lawEvalTest11(){
+    public void lawEvalTest11() {
         String inputExpr = "var4 ==> record AS node WITH [ var4.1 ==> .a AS Int, var2 ==> .b AS String ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
-    public void lawEvalTest12(){
+    public void lawEvalTest12() {
         String inputExpr = "var4 ==> r AS RECORD rec (a:Int, b:myArr, c:String) WITH [ var4.1 ==> .a AS Int, var2 ==> .b AS String ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
     }
 
     @Test
-    public void lawEvalTest13(){
+    public void lawEvalTest13() {
         String inputExpr = "var4 ==> r AS myArr WITH [ @ELEM ==> [] AS Int ]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);

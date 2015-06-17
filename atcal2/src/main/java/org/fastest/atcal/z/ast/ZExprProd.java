@@ -13,27 +13,27 @@ public class ZExprProd implements ZExpr {
         this.prod = ImmutableList.copyOf(prod);
     }
 
-    private ZExprProd(ImmutableList<ZExpr> prod){
+    private ZExprProd(ImmutableList<ZExpr> prod) {
         this.prod = prod;
     }
 
-    public static ZExprProd of(ZExpr e1){
+    public static ZExprProd of(ZExpr e1) {
         return new ZExprProd(ImmutableList.of(e1));
     }
 
-    public static ZExprProd of(ZExpr e1, ZExpr e2){
+    public static ZExprProd of(ZExpr e1, ZExpr e2) {
         return new ZExprProd(ImmutableList.of(e1, e2));
     }
 
-    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3){
+    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3) {
         return new ZExprProd(ImmutableList.of(e1, e2, e3));
     }
 
-    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4){
+    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4) {
         return new ZExprProd(ImmutableList.of(e1, e2, e3, e4));
     }
 
-    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4, ZExpr e5){
+    public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4, ZExpr e5) {
         return new ZExprProd(ImmutableList.of(e1, e2, e3, e4, e5));
     }
 

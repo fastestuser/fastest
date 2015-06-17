@@ -43,7 +43,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     @Override
     public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
-        ZExprList zExprList = null;
+        ZExprList zExprList;
         {
             ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
             ZExpr zExpr = zExprEvaluator.visit(ctx.zExpr());
@@ -70,48 +70,6 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
                 codeBlock.addAll(lawEvaluator.visit(context));
         }
         return codeBlock;
-    }
-
-    // Private nested class to evaluate lvalues and their APL types.
-    public class LValueEvaluator extends AtcalBaseVisitor<APLLValue> {
-
-        private final ATCALType type;
-
-        public LValueEvaluator(AtcalParser.TypeContext typeCtx) {
-            // Parse and resolve the type of the lvalue
-            this.type = resolveType(typeCtx);
-        }
-
-        private ATCALType resolveType(AtcalParser.TypeContext typeCtx) {
-            // Lookup the type id in the types table. If not found it may be an in-place declaration, thus parse it.
-            ATCALType asType = types.get(typeCtx.getText());
-            if (asType == null) {
-                asType = new TypesEvaluator.TypeEvaluator(types).visit(typeCtx);
-            }
-            return asType;
-        }
-
-        @Override
-        public APLLValue visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
-            if (type instanceof ArrayType)
-                return new APLArray(ctx.ID().getText(), type);
-            else
-                return new APLVar(ctx.ID().getText(), type);
-        }
-
-        @Override
-        public APLLValue visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
-            if (ctx.NUMBER() != null) {
-                return ((APLArray) aplScope).getIndex(Integer.valueOf(ctx.NUMBER().getText()));
-            } else {
-                return ((APLArray) aplScope).getNextIndex();
-            }
-        }
-
-        @Override
-        public APLLValue visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx) {
-            return new APLVar(aplScope + "." + ctx.ID().getText(), type);
-        }
     }
 
     @Override
@@ -215,5 +173,47 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     @Override
     public List<APLExpr> visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx) {
         return visitLawRefinement(ctx.lawRefinement());
+    }
+
+    // Private nested class to evaluate lvalues and their APL types.
+    public class LValueEvaluator extends AtcalBaseVisitor<APLLValue> {
+
+        private final ATCALType type;
+
+        public LValueEvaluator(AtcalParser.TypeContext typeCtx) {
+            // Parse and resolve the type of the lvalue
+            this.type = resolveType(typeCtx);
+        }
+
+        private ATCALType resolveType(AtcalParser.TypeContext typeCtx) {
+            // Lookup the type id in the types table. If not found it may be an in-place declaration, thus parse it.
+            ATCALType asType = types.get(typeCtx.getText());
+            if (asType == null) {
+                asType = new TypesEvaluator.TypeEvaluator(types).visit(typeCtx);
+            }
+            return asType;
+        }
+
+        @Override
+        public APLLValue visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
+            if (type instanceof ArrayType)
+                return new APLArray(ctx.ID().getText(), type);
+            else
+                return new APLVar(ctx.ID().getText(), type);
+        }
+
+        @Override
+        public APLLValue visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx) {
+            if (ctx.NUMBER() != null) {
+                return ((APLArray) aplScope).getIndex(Integer.valueOf(ctx.NUMBER().getText()));
+            } else {
+                return ((APLArray) aplScope).getNextIndex();
+            }
+        }
+
+        @Override
+        public APLLValue visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx) {
+            return new APLVar(aplScope + "." + ctx.ID().getText(), type);
+        }
     }
 }

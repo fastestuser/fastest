@@ -4,7 +4,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by Cristian on 3/31/15.

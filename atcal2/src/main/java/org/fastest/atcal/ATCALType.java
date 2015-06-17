@@ -9,8 +9,9 @@ import org.fastest.atcal.z.ast.ZExpr;
 public abstract class ATCALType {
     /**
      * Convert a Z expression into an APL
-     * @param expr  The Z expression
-     * @return      An APL expression or a runtime exception if conversion is not supported.
+     *
+     * @param expr The Z expression
+     * @return An APL expression or a runtime exception if conversion is not supported.
      */
     public APLExpr fromZExpr(ZExpr expr) {
         throw new RuntimeException("Unsupported operation.");

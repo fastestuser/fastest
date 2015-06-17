@@ -1,9 +1,10 @@
 package org.fastest.atcal.util;
 
-/******************************************************************************
+/**
+ * ***************************************************************************
  * File: TopologicalSort.java
  * Author: Keith Schwarz (htiek@cs.stanford.edu)
- *
+ * <p/>
  * A linear-time algorithm for computing a topological sort of a directed
  * acyclic graph.  A topological sort is an ordering of the nodes in a graph
  * such that for each node v, all of the ancestors of v appear in the ordering
@@ -12,7 +13,7 @@ package org.fastest.atcal.util;
  * Running a topological sort and then visiting the nodes in the order
  * specified by this sorted order ensures that the necessary values for each
  * node are available before the node is visited.
- *
+ * <p/>
  * There are several algorithms for computing topological sorts.  The one used
  * here was first described in "Edge-Disjoint Spanning Trees and Depth-First
  * Search" by Robert Tarjan.  The algorithm is reminiscent of Kosaraju's SCC
@@ -24,7 +25,7 @@ package org.fastest.atcal.util;
  * expanding out any node.  Since those nodes will be added to the sorted order
  * before the expanded node, we have the desired property of the topological
  * sort.
- *
+ * <p/>
  * This process can be augmented to detect a cycle in the original graph.  As
  * we do the search, we'll maintain a set of nodes that we have visited and a
  * set of nodes that we have expanded.  If when doing the DFS we find a node
@@ -34,7 +35,10 @@ package org.fastest.atcal.util;
  * expand out the cycle.
  */
 
-import java.util.*; // For List, Map.
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public final class TopologicalSort {
     /**
@@ -65,7 +69,7 @@ public final class TopologicalSort {
         Set<T> expanded = new HashSet<T>();
 
         /* Fire off a DFS from each node in the graph. */
-        for (T node: gRev)
+        for (T node : gRev)
             explore(node, gRev, result, visited, expanded);
 
         /* Hand back the resulting ordering. */
@@ -106,7 +110,7 @@ public final class TopologicalSort {
         visited.add(node);
 
         /* Recursively explore all of the node's predecessors. */
-        for (T predecessor: g.edgesFrom(node))
+        for (T predecessor : g.edgesFrom(node))
             explore(predecessor, g, ordering, visited, expanded);
 
         /* Having explored all of the node's predecessors, we can now add this
@@ -128,14 +132,14 @@ public final class TopologicalSort {
         DirectedGraph<T> result = new DirectedGraph<T>();
 
         /* Add all the nodes from the original graph. */
-        for (T node: g)
+        for (T node : g)
             result.addNode(node);
 
         /* Scan over all the edges in the graph, adding their reverse to the
          * reverse graph.
          */
-        for (T node: g)
-            for (T endpoint: g.edgesFrom(node))
+        for (T node : g)
+            for (T endpoint : g.edgesFrom(node))
                 result.addEdge(endpoint, node);
 
         return result;

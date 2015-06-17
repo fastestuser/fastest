@@ -18,9 +18,6 @@ import java.util.Map;
  */
 public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
-    private final TypeEvaluator typeEval;
-    private final Map<String, ATCALType> types;
-
     // Helper function to simplify converting lists of terminal nodes into lists of strings
     private static final Function<TerminalNode, String> TERMINAL_TOSTRING = new Function<TerminalNode, String>() {
         @Override
@@ -28,6 +25,8 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
             return o.getText();
         }
     };
+    private final TypeEvaluator typeEval;
+    private final Map<String, ATCALType> types;
 
     public TypesEvaluator() {
         // preload the default data types (INT, FLOAT, STRING) in the type namespace.

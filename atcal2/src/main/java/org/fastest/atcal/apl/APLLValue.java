@@ -7,5 +7,6 @@ import org.fastest.atcal.ATCALType;
  */
 public interface APLLValue {
     String getName();
+
     ATCALType getType();
 }

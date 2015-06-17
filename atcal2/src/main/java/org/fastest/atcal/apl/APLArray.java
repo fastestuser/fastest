@@ -28,11 +28,11 @@ public class APLArray implements APLExpr, APLLValue {
     }
 
     public APLVar getIndex(int index) {
-        return new APLVar(name + "[" + index + "]", ((ArrayType)type).getType());
+        return new APLVar(name + "[" + index + "]", ((ArrayType) type).getType());
     }
 
-    public APLVar getNextIndex(){
-        return new APLVar(name + "[" + currentIndex++ + "]", ((ArrayType)type).getType());     // note the post increment in current index
+    public APLVar getNextIndex() {
+        return new APLVar(name + "[" + currentIndex++ + "]", ((ArrayType) type).getType());     // note the post increment in current index
     }
 
     @Override

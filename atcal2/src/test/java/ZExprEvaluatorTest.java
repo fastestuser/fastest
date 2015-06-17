@@ -36,7 +36,7 @@ public class ZExprEvaluatorTest {
     //        assertNotNull("Test file missing", getClass().getResource("/zExprEvaluatorTest.tcrl"));
     //        ANTLRInputStream input = new ANTLRInputStream(getClass().getResourceAsStream("/zExprEvaluatorTest.tcrl"));
 
-    private ZExpr evalExpr(String expr, ZExprSchema atc){
+    private ZExpr evalExpr(String expr, ZExprSchema atc) {
         ANTLRInputStream input = new ANTLRInputStream(expr);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

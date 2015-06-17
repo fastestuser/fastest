@@ -41,7 +41,7 @@ public final class DirectedGraph<T> implements Iterable<T> {
      * NoSuchElementException.
      *
      * @param start The start node.
-     * @param dest The destination node.
+     * @param dest  The destination node.
      * @throws NoSuchElementException If either the start or destination nodes
      *                                do not exist.
      */
@@ -60,7 +60,7 @@ public final class DirectedGraph<T> implements Iterable<T> {
      * exist, this throws a NoSuchElementException.
      *
      * @param start The start node.
-     * @param dest The destination node.
+     * @param dest  The destination node.
      * @throws NoSuchElementException If either node is not in the graph.
      */
     public void removeEdge(T start, T dest) {
@@ -77,7 +77,7 @@ public final class DirectedGraph<T> implements Iterable<T> {
      * graph, throws a NoSuchElementException.
      *
      * @param start The start node.
-     * @param end The destination node.
+     * @param end   The destination node.
      * @return Whether there is an edge from start to end.
      * @throws NoSuchElementException If either endpoint does not exist.
      */

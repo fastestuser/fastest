@@ -21,27 +21,27 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
         this.set = ImmutableSet.copyOf(set);
     }
 
-    private ZExprSet(ImmutableSet<ZExpr> set){
+    private ZExprSet(ImmutableSet<ZExpr> set) {
         this.set = set;
     }
 
-    public static ZExprSet of(ZExpr e1){
+    public static ZExprSet of(ZExpr e1) {
         return new ZExprSet(ImmutableSet.of(e1));
     }
 
-    public static ZExprSet of(ZExpr e1, ZExpr e2){
+    public static ZExprSet of(ZExpr e1, ZExpr e2) {
         return new ZExprSet(ImmutableSet.of(e1, e2));
     }
 
-    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3){
+    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3) {
         return new ZExprSet(ImmutableSet.of(e1, e2, e3));
     }
 
-    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4){
+    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4) {
         return new ZExprSet(ImmutableSet.of(e1, e2, e3, e4));
     }
 
-    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4, ZExpr e5){
+    public static ZExprSet of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4, ZExpr e5) {
         return new ZExprSet(ImmutableSet.of(e1, e2, e3, e4, e5));
     }
 
@@ -56,7 +56,7 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
         return set.size();
     }
 
-    public ZExpr get(int n){
+    public ZExpr get(int n) {
         return set.asList().get(n);
     }
 
