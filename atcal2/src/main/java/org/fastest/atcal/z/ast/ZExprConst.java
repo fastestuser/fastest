@@ -5,7 +5,7 @@ package org.fastest.atcal.z.ast;
  */
 public class ZExprConst implements ZExpr {
 
-    public static enum ConstantType {BASIC, ENUM};
+    public enum ConstantType {BASIC, ENUM}
 
     private final String value;
     private final long constId;
