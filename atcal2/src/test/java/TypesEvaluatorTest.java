@@ -17,7 +17,7 @@ public class TypesEvaluatorTest {
     private Map<String, ATCALType> parseDatatypes(String typeDec) {
         // preload the default data types (INT, FLOAT, STRING) in the type namespace.
         Map<String, ATCALType> datatypes = Maps.newHashMap();
-        datatypes.put("INT", new IntType());
+        datatypes.put("INT", IntType.getInstance());
         datatypes.put("FLOAT", new FloatType());
         datatypes.put("STRING", new StringType());
 

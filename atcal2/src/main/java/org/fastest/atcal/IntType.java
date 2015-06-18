@@ -8,7 +8,19 @@ import org.fastest.atcal.z.ast.ZExprNum;
 /**
  * Created by Cristian on 06/05/15.
  */
-public class IntType extends ATCALType {
+public final class IntType extends ATCALType {
+
+    private static final IntType INSTANCE = new IntType();
+
+    private IntType() {
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Already instantiated");
+        }
+    }
+
+    public static IntType getInstance() {
+        return INSTANCE;
+    }
 
     // Conversion to integer expression
     @Override

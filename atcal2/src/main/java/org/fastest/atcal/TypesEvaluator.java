@@ -70,7 +70,7 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
         @Override
         public ATCALType visitIntType(@NotNull AtcalParser.IntTypeContext ctx) {
-            return new IntType();
+            return types.get("INT");
         }
 
         @Override

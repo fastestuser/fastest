@@ -36,14 +36,13 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
 
     /**
      * Create a new ATCAL evaluator for the given abstract test case.
-     *
      * @param atc the abstract test case.
      */
     public AtcalEvaluator(ZExprSchema atc) {
         this.atc = atc;
         // preload the default data types (INT, FLOAT, STRING) in the type namespace.
         this.datatypes = Maps.newHashMap();
-        datatypes.put("INT", new IntType());
+        datatypes.put("INT", IntType.getInstance());
         datatypes.put("FLOAT", new FloatType());
         datatypes.put("STRING", new StringType());
     }
