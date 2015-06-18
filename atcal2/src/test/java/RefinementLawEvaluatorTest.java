@@ -1,14 +1,16 @@
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.*;
-import org.fastest.atcal.apl.APLVar;
+import org.fastest.atcal.apl.*;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -16,13 +18,7 @@ import java.util.Map;
  */
 public class RefinementLawEvaluatorTest {
 
-    private static final String datatypes = "" +
-            "@DATATYPES" +
-            "DATATYPE myEnum = ENUM myEnum (E1, E2, E3);" +
-            "DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a, b) GETTER get();" +
-            "DATATYPE myArr = ARRAY List (10);" +
-            "DATATYPE myIntArr = ARRAY INT (10);" +
-            "DATATYPE node = RECORD r (a:INT, b:myArr, c:STRING);";
+    // Z context
     private ZExprNum num1 = new ZExprNum(1);
     private ZExprNum num2 = new ZExprNum(2);
     private ZExprNum num3 = new ZExprNum(3);
@@ -45,29 +41,26 @@ public class RefinementLawEvaluatorTest {
     private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)),
             new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
 
-    private String evalLaw(String law, ZExprSchema scope) {
-        ANTLRInputStream input = new ANTLRInputStream(law);
-        AtcalLexer lexer = new AtcalLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        AtcalParser parser = new AtcalParser(tokens);
-        ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
+    private static final Map<String, ATCALType> DATATYPES = parseDatatypes();
 
-        // Parse datatypes declarations used for testing.
-        final Map<String, ATCALType> types = parseDatatypes(datatypes);
-
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), types);
-        return eval.visit(tree).toString();
-    }
-
-    private Map<String, ATCALType> parseDatatypes(String typeDec) {
+    private static Map<String, ATCALType> parseDatatypes() {
         // preload the default data types (INT, FLOAT, STRING) in the type namespace.
         Map<String, ATCALType> datatypes = Maps.newHashMap();
-        datatypes.put("INT", new IntType());
+        datatypes.put("INT", IntType.getInstance());
         datatypes.put("FLOAT", new FloatType());
         datatypes.put("STRING", new StringType());
 
+        // test suit DATATYPES
+        final String datatypesDef = "" +
+                "@DATATYPES" +
+                "DATATYPE myEnum = ENUM myEnum (E1, E2, E3);" +
+                "DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a, b) GETTER get();" +
+                "DATATYPE myArr = ARRAY List (10);" +
+                "DATATYPE myIntArr = ARRAY INT (10);" +
+                "DATATYPE node = RECORD r (a:INT, b:myArr, c:STRING);";
+
         // parse the types definitions for the test cases
-        ANTLRInputStream input = new ANTLRInputStream(typeDec);
+        ANTLRInputStream input = new ANTLRInputStream(datatypesDef);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
@@ -77,29 +70,55 @@ public class RefinementLawEvaluatorTest {
         return datatypes;
     }
 
+    private String evalLaw(String law, ZExprSchema scope) {
+        ANTLRInputStream input = new ANTLRInputStream(law);
+        AtcalLexer lexer = new AtcalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        AtcalParser parser = new AtcalParser(tokens);
+        ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES);
+        return eval.visit(tree).toString();
+    }
+
+    private List<APLExpr> evalLaw2(String law, ZExprSchema scope) {
+        ANTLRInputStream input = new ANTLRInputStream(law);
+        AtcalLexer lexer = new AtcalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        AtcalParser parser = new AtcalParser(tokens);
+        ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES);
+        return eval.visit(tree);
+    }
+
     @Test
-    public void lawEvalTest1() {
+    public void test1() {
         String inputExpr = "5 ==> a AS INT";
-        String result = evalLaw(inputExpr, atc1);
-        System.out.println(result);
+        List<APLExpr> expectedExprs = Lists.newArrayList(new AssignStmt(new APLVar("a", DATATYPES.get("INT")), new LongExpr(5)));
+        List<APLExpr> exprs = evalLaw2(inputExpr, atc1);
+        System.out.println(exprs);
+        assert(exprs.equals(expectedExprs));
     }
 
     @Test
-    public void lawEvalTest3() {
+    public void test2() {
         String inputExpr = "var3 ==> h AS myEnum";
-        String result = evalLaw(inputExpr, atc1);
-        System.out.println(result);
+        List<APLExpr> expectedExprs = Lists.newArrayList(new AssignStmt(new APLVar("h", DATATYPES.get("myEnum")), new ConsExpr("E3")));
+        List<APLExpr> exprs = evalLaw2(inputExpr, atc1);
+        System.out.println(exprs);
+        assert(exprs.equals(expectedExprs));
     }
 
     @Test
-    public void lawEvalTest4() {
+    public void test3() {
         String inputExpr = "var3 ==> var3 + var4.@CARD ==> a AS INT";
-        String result = evalLaw(inputExpr, atc1);
-        System.out.println(result);
+        List<APLExpr> expectedExprs = Lists.newArrayList(new AssignStmt(new APLVar("a", DATATYPES.get("INT")), new LongExpr(4)));
+        List<APLExpr> exprs = evalLaw2(inputExpr, atc1);
+        System.out.println(exprs);
+        assert(exprs.equals(expectedExprs));
     }
 
     @Test
-    public void lawEvalTest5() {
+    public void test4() {
         String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a AS STRING, var4.1 ==> b AS INT], var4.2 ==> b AS INT]";
         String result = evalLaw(inputExpr, atc1);
         System.out.println(result);
