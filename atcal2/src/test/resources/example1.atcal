@@ -1,13 +1,10 @@
-@RRULE prueba
+@RRULE example1
 
 @PREAMBLE
 @PLCODE
 
-@DATATYPES
-
 @LAWS
 var3 ==> a AS INT;
 var1 ++ var2 ==> b AS STRING;
-
 
 @UUT f(b);

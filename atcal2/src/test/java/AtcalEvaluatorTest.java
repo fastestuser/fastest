@@ -59,4 +59,11 @@ public class AtcalEvaluatorTest {
         AtcalEvaluator evaluator = new AtcalEvaluator(atc1);
         System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
     }
+
+    @Test
+    public void test2() {
+        ParseTree atcalTree = parseFile("example2.atcal");
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1);
+        System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
+    }
 }

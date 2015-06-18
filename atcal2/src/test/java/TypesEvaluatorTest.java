@@ -1,8 +1,8 @@
+import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.fastest.atcal.ATCALType;
-import org.fastest.atcal.TypesEvaluator;
+import org.fastest.atcal.*;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.junit.Test;
@@ -14,55 +14,35 @@ import java.util.Map;
  */
 public class TypesEvaluatorTest {
 
-    private Map<String, ATCALType> parseTypeDec(String typeDec) {
-        ANTLRInputStream input = new ANTLRInputStream(typeDec);
-        AtcalLexer lexer = new AtcalLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        AtcalParser parser = new AtcalParser(tokens);
-        ParseTree tree = parser.typeDec();
-        TypesEvaluator eval = new TypesEvaluator();
-        return eval.visit(tree);
-    }
-
     private Map<String, ATCALType> parseDatatypes(String typeDec) {
+        // preload the default data types (INT, FLOAT, STRING) in the type namespace.
+        Map<String, ATCALType> datatypes = Maps.newHashMap();
+        datatypes.put("INT", new IntType());
+        datatypes.put("FLOAT", new FloatType());
+        datatypes.put("STRING", new StringType());
+
+        // parse the types definitions for the test cases
         ANTLRInputStream input = new ANTLRInputStream(typeDec);
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.datatypes();
-        TypesEvaluator eval = new TypesEvaluator();
-        return eval.visit(tree);
+        TypesEvaluator eval = new TypesEvaluator(datatypes);
+        datatypes.putAll(eval.visit(tree));
+        return datatypes;
     }
 
     @Test
     public void test1() {
-        String intType = "DATATYPE myInt = INT;";
-        System.out.println(parseTypeDec(intType));
-
-        String floatType = "DATATYPE myFloat = FLOAT;";
-        System.out.println(parseTypeDec(floatType));
-
-        String StringType = "DATATYPE myString = STRING;";
-        System.out.println(parseTypeDec(StringType));
-
-        String arrayType = "DATATYPE myArray = ARRAY INT (10);";
-        System.out.println(parseTypeDec(arrayType));
-
-        String contractType = "DATATYPE contract = CONSTRUCTOR c(a,b,c) SETTER s(d,e,f) GETTER g(h,i,j);";
-        System.out.println(parseTypeDec(contractType));
-
-        String recordType = "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY INT (4), c:CONSTRUCTOR c(a,b,c) " +
-                "SETTER s(d,e,f) GETTER g(h,i,j), d:RECORD r2 (x:STRING));";
-        System.out.println(parseTypeDec(recordType));
-    }
-
-    @Test
-    public void test2() {
         String testA = "@DATATYPES" +
                 "DATATYPE myInt = INT;" +
+                "DATATYPE myFloat = FLOAT;" +
+                "DATATYPE myString = STRING;" +
                 "DATATYPE myArray = ARRAY myInt (10);" +
+                "DATATYPE contract = CONSTRUCTOR c(a,b,c) SETTER s(d,e,f) GETTER g(h,i,j);" +
                 "DATATYPE toto = myInt;" +
-                "DATATYPE node = RECORD r (a:myInt, b:myArray, c:toto);";
+                "DATATYPE myRecord = RECORD r (a:INT, b:ARRAY INT (4), c:CONSTRUCTOR c(a,b,c) " +
+                "SETTER s(d,e,f) GETTER g(h,i,j), d:RECORD r2 (x:STRING));";
         System.out.println(parseDatatypes(testA));
     }
 }

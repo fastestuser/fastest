@@ -102,6 +102,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             }
         } else if (ctx.withRef() != null) {
             // If there is a WITH clause then create an evaluator with the new APL lvalue and type scopes and evaluate it.
+            // TODO: check that the type of the new APL scope and the type of the refinement are compatible
             RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types);
             return newScopeEvaluator.visit(ctx.withRef());
         } else {

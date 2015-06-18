@@ -2,6 +2,7 @@ package org.fastest.atcal;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.fastest.atcal.apl.APLExpr;
@@ -40,6 +41,11 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
      */
     public AtcalEvaluator(ZExprSchema atc) {
         this.atc = atc;
+        // preload the default data types (INT, FLOAT, STRING) in the type namespace.
+        this.datatypes = Maps.newHashMap();
+        datatypes.put("INT", new IntType());
+        datatypes.put("FLOAT", new FloatType());
+        datatypes.put("STRING", new StringType());
     }
 
     @Override
@@ -51,8 +57,8 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
 
         // evaluate data type declarations if present
         if (ctx.datatypes() != null) {
-            TypesEvaluator typesEval = new TypesEvaluator();
-            this.datatypes = typesEval.visit(ctx.datatypes());
+            TypesEvaluator typesEval = new TypesEvaluator(datatypes);
+            this.datatypes.putAll(typesEval.visit(ctx.datatypes()));
         }
 
         // evaluate refinement laws

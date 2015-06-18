@@ -26,29 +26,24 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
         }
     };
     private final TypeEvaluator typeEval;
-    private final Map<String, ATCALType> types;
+    private final Map<String, ATCALType> datatypes;
 
-    public TypesEvaluator() {
-        // preload the default data types (INT, FLOAT, STRING) in the type namespace.
-        this.types = Maps.newHashMap();
-        types.put("INT", new IntType());
-        types.put("FLOAT", new FloatType());
-        types.put("STRING", new StringType());
-
-        this.typeEval = new TypeEvaluator(types);
+    public TypesEvaluator(Map<String, ATCALType> datatypes) {
+        this.datatypes = datatypes;
+        this.typeEval = new TypeEvaluator(datatypes);
     }
 
     @Override
     public Map<String, ATCALType> visitDatatypes(@NotNull AtcalParser.DatatypesContext ctx) {
         for (AtcalParser.TypeDecContext typeDecContext : ctx.typeDec()) {
-            types.put(typeDecContext.ID().getText(), this.typeEval.visit(typeDecContext.type()));
+            datatypes.put(typeDecContext.ID().getText(), this.typeEval.visit(typeDecContext.type()));
         }
-        return types;
+        return datatypes;
     }
 
     /**
      * This method is only used for unit testing purposes. The normal type checking flow at runtime calls the method
-     * above that will skip this method to visit types directly (to avoid unpacking the single entry map returned by
+     * above that will skip this method to visit datatypes directly (to avoid unpacking the single entry map returned by
      * this method).
      */
     @Override
@@ -56,7 +51,7 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
         return ImmutableMap.of(ctx.ID().getText(), this.typeEval.visit(ctx.type()));
     }
 
-    // Private nested class to evaluate individual types
+    // Private nested class to evaluate individual datatypes
     public static class TypeEvaluator extends AtcalBaseVisitor<ATCALType> {
 
         private final Map<String, ATCALType> types;

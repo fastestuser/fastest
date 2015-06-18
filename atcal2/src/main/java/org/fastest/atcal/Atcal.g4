@@ -31,7 +31,7 @@ type : ID                                                       # NameType
 
 args : '(' ( ID ( ',' ID )* )? ')' ;
 
-// Constant mappings for enumeration and given types
+// Constant mappings for enumeration and given datatypes
 constMapping: 'MAP' '[' constMap (',' constMap)* ']' ;
 constMap: ID '->' ( ID | STRING | NUMBER ) ;
 
