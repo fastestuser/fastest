@@ -1,5 +1,6 @@
 package org.fastest.atcal.apl;
 
+import com.google.common.base.Objects;
 import org.fastest.atcal.ATCALType;
 
 /**
@@ -23,6 +24,20 @@ public class APLVar implements APLExpr, APLLValue {
     @Override
     public ATCALType getType() {
         return type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof APLVar)) return false;
+        APLVar aplVar = (APLVar) o;
+        return Objects.equal(name, aplVar.name) &&
+                Objects.equal(type, aplVar.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name, type);
     }
 
     @Override
