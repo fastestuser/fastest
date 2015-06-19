@@ -1,5 +1,6 @@
 package org.fastest.atcal.apl;
 
+import com.google.common.base.Objects;
 import org.fastest.atcal.ATCALType;
 import org.fastest.atcal.ArrayType;
 
@@ -8,13 +9,27 @@ import org.fastest.atcal.ArrayType;
  */
 public class APLArray implements APLExpr, APLLValue {
 
-    private final String name;
+    private final String name;      // todo: arrays do not have names, variables do.
     private final ATCALType type;
     private int currentIndex = 0;   // scary side effect variable!
 
     public APLArray(String name, ATCALType type) {
         this.name = name;
         this.type = type;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof APLArray)) return false;
+        APLArray aplArray = (APLArray) o;
+        return Objects.equal(name, aplArray.name) &&
+                Objects.equal(type, aplArray.type);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name, type);
     }
 
     @Override

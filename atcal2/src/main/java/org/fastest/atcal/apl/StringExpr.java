@@ -1,5 +1,7 @@
 package org.fastest.atcal.apl;
 
+import com.google.common.base.Objects;
+
 /**
  * Created by Cristian on 4/20/15.
  */
@@ -9,6 +11,19 @@ public class StringExpr implements APLExpr {
 
     public StringExpr(String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof StringExpr)) return false;
+        StringExpr that = (StringExpr) o;
+        return Objects.equal(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(value);
     }
 
     @Override

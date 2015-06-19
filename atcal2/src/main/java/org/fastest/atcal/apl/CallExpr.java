@@ -1,5 +1,6 @@
 package org.fastest.atcal.apl;
 
+import com.google.common.base.Objects;
 import com.sun.deploy.util.StringUtils;
 
 import java.util.List;
@@ -15,6 +16,20 @@ public class CallExpr implements APLExpr, APLStmt {
     public CallExpr(String funName, List<String> args) {
         this.funName = funName;
         this.args = args;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CallExpr)) return false;
+        CallExpr callExpr = (CallExpr) o;
+        return Objects.equal(funName, callExpr.funName) &&
+                Objects.equal(args, callExpr.args);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(funName, args);
     }
 
     @Override
