@@ -6,8 +6,6 @@
 @DATATYPES
     DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a) GETTER get();
     DATATYPE myArr = ARRAY  List (10);
-    DATATYPE myEnum = ENUM myEnum (E1, E2, E3);
-    DATATYPE node = RECORD r (a:INT, b:myArr, c:STRING);
 
 @LAWS
 var4 ==> l AS myArr WITH [var4.1 ==> [1] AS List WITH [var1 ==> a AS STRING],
