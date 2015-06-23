@@ -9,6 +9,7 @@ import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -121,26 +122,58 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     public List<APLExpr> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
         List<APLExpr> codeBlock = Lists.newArrayList();
         // Generate code according to the type of the refinement variable.
-        // Contract types are used to create complex data structures that have a contract (an interface).
-        // They have a constructor, a getter and a setter function that instantiate, extract or insert values.
         if (aplScope.getType() instanceof ContractType) {
+            // Contract types are used to create complex data structures that have a contract (an interface).
+            // They have a constructor, a getter and a setter function that instantiate, extract or insert values.
             ContractType type = (ContractType) aplScope.getType();
 
             // Create a new temporal variable to hold the data structure under construction.
             APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0), aplScope.getType());
             codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
 
-            // Evaluate the WITH-clauses. The evaluation must produce a block of code that defines one variable for each
-            // argument of the setter function in the contract type.
+            // The evaluation of the WITH clause for a contract type requires evaluating all the Z expressions of the
+            // refinements in the clause beforehand. The result of this evaluation is a list of iterable Z expressions.
+            // The number of elements in each iterable Z expressions must be the same, and the number of these iterables
+            // must be equal to the arity of the contract type's setter function.
+            // Consider a contract type with a setter of arity equal to 3 and a WITH clause such as:
+            //     [ {a,b} ==> fst, {c,d} ==> snd, {e,f} ==> trd ]
+            // to refine this, first evaluate the Z expressions into a list of iterables L = [ [a,b], [c,d], [e,f] ].
+            // Then, refine the setter arguments fst, snd, and trd over the iterables:
+            // a ==> fst, c ==> snd, e ==> trd (call setter) b ==> fst, d ==> snd, f ==> trd (call setter).
+
+            // Check if setter arity matches
+            if (ctx.lawRefinement().size() != (type.getSetterArgs().size() - 1))
+                throw new RuntimeException("The number of refinements in WITH clause does not match the arity of " +
+                        "contract type's setter.");
+
+            // Evaluate Z expressions of refinements into a list of ZExpr iterators (one for each argument of the setter).
+            List<Iterator<ZExpr>> iteratorList = Lists.newArrayList();
+            ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
             for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
-                codeBlock.addAll(visit(lawRefinementContext));
+                ZExpr zExpr = zExprEvaluator.visit(lawRefinementContext.zExpr());
+                if (zExpr instanceof Iterable)
+                    iteratorList.add(((Iterable<ZExpr>) zExpr).iterator());
             }
 
-            // Insert the values of the refined WITH-clauses into the data structure using the provided setter function
-            // TODO: check the type values with the types of the arguments (the amount of them must also match!)
-            List<String> args = Lists.newArrayList(aplScope.getName() + '_' + type.getSetterArgs().get(0));
-            args.addAll(type.getSetterArgs().subList(1, type.getSetterArgs().size()));
-            codeBlock.add(new CallExpr(type.getSetter(), args));
+            // Evaluate the refinement clauses. The evaluation must produce a block of code that defines one variable
+            // for each argument of the setter function in the contract type.
+            while (iteratorList.get(0).hasNext()) {
+                for (Iterator<ZExpr> it : iteratorList) {
+                    // Create a new Z scope corresponding to the setters argument.
+                    ZExprSchema newScope = ZExprSchema.add(zScope, new ZVar("zScope", it.next()));
+
+                    // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
+                    // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
+                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
+                    codeBlock.addAll(lawEvaluator.visit(ctx.lawRefinement(iteratorList.indexOf(it)).refinement(0)));
+                }
+
+                // Insert the values of the refined clauses into the data structure using the provided setter function
+                // TODO: check the type values with the types of the arguments.
+                List<String> args = Lists.newArrayList(aplScope.getName() + '_' + type.getSetterArgs().get(0));
+                args.addAll(type.getSetterArgs().subList(1, type.getSetterArgs().size()));
+                codeBlock.add(new CallExpr(type.getSetter(), args));
+            }
 
             // Assign the temporal variable holding the data structure to the real refinement variable.
             codeBlock.add(new AssignStmt(aplScope, var));
