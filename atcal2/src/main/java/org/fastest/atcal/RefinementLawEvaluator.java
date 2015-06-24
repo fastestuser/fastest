@@ -47,7 +47,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         ZExprList zExprList;
         {
             ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
-            ZExpr zExpr = zExprEvaluator.visit(ctx.zExpr());
+            ZExpr zExpr = zExprEvaluator.visit(ctx.zExprs());
 
             // If the evaluation of the Z expression returns a single Z expression, package it in a single element list to
             // factorize the rest of the code.
@@ -150,7 +150,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             List<Iterator<ZExpr>> iteratorList = Lists.newArrayList();
             ZExprEvaluator zExprEvaluator = new ZExprEvaluator(zScope);
             for (AtcalParser.LawRefinementContext lawRefinementContext : ctx.lawRefinement()) {
-                ZExpr zExpr = zExprEvaluator.visit(lawRefinementContext.zExpr());
+                ZExpr zExpr = zExprEvaluator.visit(lawRefinementContext.zExprs());
                 if (zExpr instanceof Iterable)
                     iteratorList.add(((Iterable<ZExpr>) zExpr).iterator());
             }
@@ -202,11 +202,6 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
             }
         }
         return codeBlock;
-    }
-
-    @Override
-    public List<APLExpr> visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx) {
-        return visitLawRefinement(ctx.lawRefinement());
     }
 
     // Private nested class to evaluate lvalues and their APL types.

@@ -21,6 +21,20 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
     }
 
     @Override
+    public ZExpr visitZExprs(@NotNull AtcalParser.ZExprsContext ctx) {
+        ZExpr zExpr = visit(ctx.zExpr());
+        // if there is no more nested Z expressions return the evaluation result, otherwise create a nested scope and
+        // recursively evaluate the nested Z expressions.
+        if (ctx.zExprs() == null) {
+            return zExpr;
+        } else {
+            ZExprSchema newZScope = ZExprSchema.add(scope, new ZVar("zScope", zExpr));
+            ZExprEvaluator newZExprEval = new ZExprEvaluator(newZScope);
+            return newZExprEval.visit(ctx.zExprs());
+        }
+    }
+
+    @Override
     public ZExpr visitIdent(@NotNull AtcalParser.IdentContext ctx) {
         Optional<ZVar> var = scope.getVar(ctx.ID().getText());
         if (var.isPresent())

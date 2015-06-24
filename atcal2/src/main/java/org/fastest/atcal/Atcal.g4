@@ -45,10 +45,11 @@ epilogue: '@EPILOGUE'
 
 /******************* LAWS *********************/
 law: ( ID ':' )? ( lawRefinement );
-lawRefinement: zExpr '==>' refinement ( ',' refinement )* ;
+lawRefinement : zExprs '==>' refinement ( ',' refinement )* ;
+
+zExprs : zExpr ('==>' zExprs)? ;
 
 refinement : lvalue 'AS' type constMapping? withRef?   # ImplRef
-           | lawRefinement                             # ZExprRef
            ;
 
 lvalue : ID                 # VarLValue

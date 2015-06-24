@@ -152,19 +152,18 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AtcalParser#zExprs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitZExprs(@NotNull AtcalParser.ZExprsContext ctx);
+	/**
 	 * Visit a parse tree produced by the {@code ImplRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitImplRef(@NotNull AtcalParser.ImplRefContext ctx);
-	/**
-	 * Visit a parse tree produced by the {@code ZExprRef}
-	 * labeled alternative in {@link AtcalParser#refinement}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitZExprRef(@NotNull AtcalParser.ZExprRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code VarLValue}
 	 * labeled alternative in {@link AtcalParser#lvalue}.
