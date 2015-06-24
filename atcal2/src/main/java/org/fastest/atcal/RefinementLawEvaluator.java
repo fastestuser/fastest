@@ -153,6 +153,9 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
                 ZExpr zExpr = zExprEvaluator.visit(lawRefinementContext.zExprs());
                 if (zExpr instanceof Iterable)
                     iteratorList.add(((Iterable<ZExpr>) zExpr).iterator());
+                else
+                    // pack non-iterable Z expressions into an iterable collection to simplify the rest of the code.
+                    iteratorList.add(ImmutableList.of(zExpr).iterator());
             }
 
             // Evaluate the refinement clauses. The evaluation must produce a block of code that defines one variable
