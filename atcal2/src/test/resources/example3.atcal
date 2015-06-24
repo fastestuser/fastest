@@ -10,6 +10,6 @@
 @LAWS
 
 elecRoll ==> roll AS DBTable WITH [elecRoll.@DOM ==> vid AS INT, @AUTOFILL  ==> name AS STRING, @AUTOFILL ==> addr AS STRING];
-v ==> voter AS Voter WITH [@ELEM ==> .id AS INT];
+v ==> voter AS Voter WITH [v ==> .id AS INT];
 
 @UUT isVoter(voter);
