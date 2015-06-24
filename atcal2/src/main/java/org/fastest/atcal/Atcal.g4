@@ -63,7 +63,7 @@ withRef : 'WITH' '[' lawRefinement ( ',' lawRefinement)* ']' ;
 zExpr : ID                                   # Ident
       | NUMBER                               # NumLiteral
       | STRING                               # StrLiteral
-      | '@AUTOFILL'                          # AutoExpr
+      | AUTO                                 # AutoExpr
       | ELEM                                 # ElemExpr
       | zExpr '.' TUPPROJ                    # ProdProj
       | '<' zExpr ( ',' zExpr )* '>'         # ProdCons
@@ -75,7 +75,7 @@ zExpr : ID                                   # Ident
       | zExpr UNION zExpr                    # SetUnion
       | zExpr DIFF zExpr                     # SetDiff
       | '{' zExpr ( ',' zExpr )* '}'         # SetCons
-      | zExpr '.@CARD'                       # SetCard
+      | zExpr '.' CARD                       # SetCard
       | zExpr MUL zExpr                      # NumMul
       | zExpr DIV zExpr                      # NumDiv
       | zExpr MOD zExpr                      # NumMod
@@ -115,6 +115,8 @@ INTER : '/\\' ;
 UNION : '\\/' ;
 DIFF : '~' ;
 ELEM : '@ELEM' ;
+AUTO : '@AUTOFILL' ;
+CARD : '@CARD' ;
 
 // Match double-quoted strings
 STRING : '"' ( ESC | . )*? '"' ;

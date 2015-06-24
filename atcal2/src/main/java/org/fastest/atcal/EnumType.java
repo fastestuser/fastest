@@ -3,6 +3,7 @@ package org.fastest.atcal;
 import com.google.common.collect.Maps;
 import org.fastest.atcal.apl.ConsExpr;
 import org.fastest.atcal.z.ast.ZExpr;
+import org.fastest.atcal.z.ast.ZExprAuto;
 import org.fastest.atcal.z.ast.ZExprConst;
 import org.fastest.atcal.z.ast.ZExprNum;
 
@@ -69,6 +70,9 @@ public class EnumType extends ATCALType {
                     else
                         throw new RuntimeException("Z constant value does not match any element of ATCAL enumeration.");
             }
+        } else if (zExpr instanceof ZExprAuto) {
+            // AUTOFILL expressions get the first value in the enumeration
+            return elements.values().iterator().next();
         }
 
         // Unsupported conversion

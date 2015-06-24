@@ -2,6 +2,7 @@ package org.fastest.atcal;
 
 import org.fastest.atcal.apl.LongExpr;
 import org.fastest.atcal.z.ast.ZExpr;
+import org.fastest.atcal.z.ast.ZExprAuto;
 import org.fastest.atcal.z.ast.ZExprConst;
 import org.fastest.atcal.z.ast.ZExprNum;
 
@@ -29,6 +30,8 @@ public final class IntType extends ATCALType {
             return new LongExpr(((ZExprNum) zExpr).getNum());
         } else if (zExpr instanceof ZExprConst) {
             return new LongExpr(((ZExprConst) zExpr).getConstId());
+        } else if (zExpr instanceof ZExprAuto) {
+            return new LongExpr(0xDEADBEEF);
         }
         // Unsupported conversion
         throw new RuntimeException("Unsupported operation.");

@@ -1,10 +1,7 @@
 package org.fastest.atcal;
 
 import org.fastest.atcal.apl.StringExpr;
-import org.fastest.atcal.z.ast.ZExpr;
-import org.fastest.atcal.z.ast.ZExprConst;
-import org.fastest.atcal.z.ast.ZExprNum;
-import org.fastest.atcal.z.ast.ZExprString;
+import org.fastest.atcal.z.ast.*;
 
 /**
  * Created by Cristian on 06/05/15.
@@ -19,6 +16,8 @@ public class StringType extends ATCALType {
             return new StringExpr(((ZExprString) zExpr).getStr());
         } else if (zExpr instanceof ZExprConst) {
             return new StringExpr(((ZExprConst) zExpr).getValue());
+        } else if (zExpr instanceof ZExprAuto) {
+            return new StringExpr("AUTOFILL");
         }
         // Unsupported conversion
         throw new RuntimeException("Unsupported operation.");

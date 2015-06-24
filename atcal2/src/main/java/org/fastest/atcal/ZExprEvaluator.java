@@ -55,7 +55,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
 
     @Override
     public ZExpr visitAutoExpr(@NotNull AtcalParser.AutoExprContext ctx) {
-        return new ZExprConst("@AUTOFILL", 1, ZExprConst.ConstantType.BASIC);
+        return new ZExprAuto();
     }
 
     @Override
