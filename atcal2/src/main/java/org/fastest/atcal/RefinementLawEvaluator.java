@@ -21,11 +21,14 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     private final ZExprSchema zScope;   // Evaluator's scope for z expressions
     private final APLLValue aplScope;      // Evaluator's scope for APL code
     private final Map<String, ATCALType> types; // Evaluator's declared types
+    private final LValueFactory lValueFactory; // Evaluator's lvalue manager
 
-    public RefinementLawEvaluator(ZExprSchema zScope, APLLValue aplScope, Map<String, ATCALType> types) {
+    public RefinementLawEvaluator(ZExprSchema zScope, APLLValue aplScope, Map<String, ATCALType> types,
+                                  LValueFactory lValueFactory) {
         this.zScope = zScope;
         this.aplScope = aplScope;
         this.types = types;
+        this.lValueFactory = lValueFactory;
     }
 
     private ZExpr getZScope() {
@@ -66,7 +69,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
             // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
             // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-            RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
+            RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types, lValueFactory);
             for (AtcalParser.RefinementContext context : ctx.refinement())
                 codeBlock.addAll(lawEvaluator.visit(context));
         }
@@ -104,7 +107,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         } else if (ctx.withRef() != null) {
             // If there is a WITH clause then create an evaluator with the new APL lvalue and type scopes and evaluate it.
             // TODO: check that the type of the new APL scope and the type of the refinement are compatible
-            RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types);
+            RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types, lValueFactory);
             return newScopeEvaluator.visit(ctx.withRef());
         } else {
             // Refine the Z expression to an APL expression of the given type.
@@ -167,7 +170,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
 
                     // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
                     // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types);
+                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types, lValueFactory);
                     codeBlock.addAll(lawEvaluator.visit(ctx.lawRefinement(iteratorList.indexOf(it)).refinement(0)));
                 }
 
@@ -229,9 +232,9 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         @Override
         public APLLValue visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx) {
             if (type instanceof ArrayType)
-                return new APLArray(ctx.ID().getText(), type);
+                return lValueFactory.newArray(ctx.ID().getText(), type);
             else
-                return new APLVar(ctx.ID().getText(), type);
+                return lValueFactory.newVar(ctx.ID().getText(), type);
         }
 
         @Override

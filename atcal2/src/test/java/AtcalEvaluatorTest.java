@@ -29,11 +29,10 @@ public class AtcalEvaluatorTest {
     // "Test Adaptation for Model-Based Testing Methods Using Set-Based Specification Languages"
     private ZVar v = new ZVar("v", new ZExprConst("id_1", 0, ZExprConst.ConstantType.BASIC));
     private ZVar elecRoll = new ZVar("elecRoll", ZExprSet.of(ZExprProd.of(new ZExprConst("id_1", 0,
-            ZExprConst.ConstantType.BASIC), new ZExprConst("data_1", 0, ZExprConst.ConstantType.BASIC)),
+                    ZExprConst.ConstantType.BASIC), new ZExprConst("data_1", 0, ZExprConst.ConstantType.BASIC)),
             ZExprProd.of(new ZExprConst("id_2", 1,
                     ZExprConst.ConstantType.BASIC), new ZExprConst("data_2", 1, ZExprConst.ConstantType.BASIC))));
     private ZExprSchema atc4 = ZExprSchema.of(elecRoll, v);
-
 
     private ParseTree parseFile(String atcalSrc) {
         try {

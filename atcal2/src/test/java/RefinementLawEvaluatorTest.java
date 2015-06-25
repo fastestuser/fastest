@@ -76,7 +76,7 @@ public class RefinementLawEvaluatorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES);
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory());
         return eval.visit(tree).toString();
     }
 
@@ -86,7 +86,7 @@ public class RefinementLawEvaluatorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES);
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory());
         return eval.visit(tree);
     }
 
@@ -135,11 +135,11 @@ public class RefinementLawEvaluatorTest {
      */
     @Test
     public void test4() {
-        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> a AS STRING, var4.1 ==> b AS INT], var4.2 ==> b AS INT]";
+        String inputExpr = "var4 ==> l AS List WITH [ var4.1 ==> a AS List WITH [var1 ==> c AS STRING, var4.1 ==> b AS INT], var4.2 ==> b AS INT]";
         List<APLExpr> expectedExprs = Lists.newArrayList(
                 new AssignStmt(new APLVar("l_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
                 new AssignStmt(new APLVar("a_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
-                new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("Hello ")),
+                new AssignStmt(new APLVar("c", DATATYPES.get("STRING")), new StringExpr("Hello ")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
                 new CallExpr("add", Lists.newArrayList("a_list", "a", "b")),
                 new AssignStmt(new APLVar("a", DATATYPES.get("List")), new APLVar("a_list", DATATYPES.get("List"))),

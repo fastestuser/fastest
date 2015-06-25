@@ -6,6 +6,7 @@ import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.fastest.atcal.apl.APLExpr;
+import org.fastest.atcal.apl.APLLValue;
 import org.fastest.atcal.apl.CallExpr;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
@@ -60,8 +61,10 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
             this.datatypes.putAll(typesEval.visit(ctx.datatypes()));
         }
 
+        LValueFactory lValueFactory = new LValueFactory();
+
         // evaluate refinement laws
-        RefinementLawEvaluator refLawEval = new RefinementLawEvaluator(atc, null, datatypes);
+        RefinementLawEvaluator refLawEval = new RefinementLawEvaluator(atc, null, datatypes, lValueFactory);
         this.refinedLawsCode = refLawEval.visit(ctx.laws());
 
         // todo: get programming code
@@ -74,8 +77,13 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         // todo: get epilogue code
         this.epilogue = "";
 
+        String decls = "";
+        for(APLLValue lvalue: lValueFactory.getLValues()){
+            decls += lvalue.getType().toString() + " " + lvalue.getName() + "\n";
+        }
+
         // return the final string representation of the concrete test case
-        return preamble + refinedLawsCode.stream().map(Object::toString).collect(Collectors.joining("\n")) +
+        return preamble + decls + refinedLawsCode.stream().map(Object::toString).collect(Collectors.joining("\n")) +
                 plCode + "\n" + uutCall.toString() + epilogue;
     }
 }
