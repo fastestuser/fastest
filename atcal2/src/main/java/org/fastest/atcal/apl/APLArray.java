@@ -42,16 +42,68 @@ public class APLArray implements APLExpr, APLLValue {
         return type;
     }
 
-    public APLVar getIndex(int index) {
-        return new APLVar(name + "[" + index + "]", ((ArrayType) type).getType());
+    public APLLValue getIndex(int index) {
+        return new APLArrayIndex(this, index, ((ArrayType) type).getType());
     }
 
-    public APLVar getNextIndex() {
-        return new APLVar(name + "[" + currentIndex++ + "]", ((ArrayType) type).getType());     // note the post increment in current index
+    public APLLValue getNextIndex() {
+        // note the post increment in current index
+        return new APLArrayIndex(this, currentIndex++, ((ArrayType) type).getType());
     }
 
     @Override
     public String toString() {
         return name;
+    }
+
+    public class APLArrayIndex implements APLExpr, APLLValue {
+
+        private final APLArray parent;
+        private final ATCALType type;
+        private final int index;
+
+        private APLArrayIndex(APLArray parent, int index, ATCALType type) {
+            this.parent = parent;
+            this.index = index;
+            this.type = type;
+        }
+
+        @Override
+        public String getName() {
+            return parent.getName() + index;
+        }
+
+        public APLArray getParent() {
+            return parent;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        @Override
+        public ATCALType getType() {
+            return type;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof APLArrayIndex)) return false;
+            APLArrayIndex that = (APLArrayIndex) o;
+            return Objects.equal(index, that.index) &&
+                    Objects.equal(parent, that.parent) &&
+                    Objects.equal(type, that.type);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(parent, type, index);
+        }
+
+        @Override
+        public String toString(){
+            return parent.getName() + "[" + index + "]";
+        }
     }
 }

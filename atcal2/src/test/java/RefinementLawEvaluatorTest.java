@@ -159,18 +159,21 @@ public class RefinementLawEvaluatorTest {
     public void test5() {
         String inputExpr = "var4 ==> l AS myArr WITH [ var4.1 ==> [1] AS List WITH [var1 ==> a AS STRING, var4.1 ==> b AS INT]," +
                 "var4.2 ==> [2] AS List WITH [\"hola\" ==> a AS STRING, var4.1 ==> b AS INT] ]";
+
+        // Prepare expected statements list
+        APLArray array = new APLArray("l", DATATYPES.get("myArr"));
         List<APLStmt> expectedStmts = Lists.newArrayList(
-                new AssignStmt(new APLArray("l", DATATYPES.get("myArr")), new CallExpr("newArray", Lists.newArrayList("10"))),
-                new AssignStmt(new APLVar("l[1]_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
+                new AssignStmt(array, new CallExpr("newArray", Lists.newArrayList("10"))),
+                new AssignStmt(new APLVar("l1_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
                 new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("Hello ")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
-                new CallExpr("add", Lists.newArrayList("l[1]_list", "a", "b")),
-                new AssignStmt(new APLVar("l[1]", DATATYPES.get("List")), new APLVar("l[1]_list", DATATYPES.get("List"))),
-                new AssignStmt(new APLVar("l[2]_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
+                new CallExpr("add", Lists.newArrayList("l1_list", "a", "b")),
+                new AssignStmt(array.getIndex(1), new APLVar("l1_list", DATATYPES.get("List"))),
+                new AssignStmt(new APLVar("l2_list", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList(""))),
                 new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("hola")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
-                new CallExpr("add", Lists.newArrayList("l[2]_list", "a", "b")),
-                new AssignStmt(new APLVar("l[2]", DATATYPES.get("List")), new APLVar("l[2]_list", DATATYPES.get("List"))));
+                new CallExpr("add", Lists.newArrayList("l2_list", "a", "b")),
+                new AssignStmt(array.getIndex(2), new APLVar("l2_list", DATATYPES.get("List"))));
         List<APLStmt> stmts = evalLaw2(inputExpr, atc1);
 //        System.out.println(stmts);
 //        System.out.println(expectedStmts);
@@ -249,10 +252,11 @@ public class RefinementLawEvaluatorTest {
     @Test
     public void lawEvalTest13() {
         String inputExpr = "var4 ==> r AS myIntArr WITH [ @ELEM ==> [] AS INT ]";
-        List<APLStmt> expectedStmts = Lists.newArrayList(new AssignStmt(new APLArray("r", DATATYPES.get("myIntArr")),
-                        new CallExpr("newArray", Lists.newArrayList("10"))),
-                new AssignStmt(new APLVar("r[0]", DATATYPES.get("INT")), new LongExpr(1)),
-                new AssignStmt(new APLVar("r[1]", DATATYPES.get("INT")), new LongExpr(2)));
+        APLArray array = new APLArray("r", DATATYPES.get("myIntArr"));
+        List<APLStmt> expectedStmts = Lists.newArrayList(new AssignStmt(array,
+                new CallExpr("newArray", Lists.newArrayList("10"))),
+                new AssignStmt(array.getIndex(0), new LongExpr(1)),
+                new AssignStmt(array.getIndex(1), new LongExpr(2)));
         List<APLStmt> stmts = evalLaw2(inputExpr, atc1);
 //        System.out.println(stmts);
 //        System.out.println(expectedStmts);
