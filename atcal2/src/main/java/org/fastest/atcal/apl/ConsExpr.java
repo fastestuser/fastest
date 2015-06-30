@@ -11,6 +11,14 @@ public class ConsExpr implements APLExpr {
         this.value = value;
     }
 
+    /**
+     * Get the value of the expression
+     * @return  a string representing the constant value
+     */
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public String toString() {
         return value;

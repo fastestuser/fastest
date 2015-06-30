@@ -18,6 +18,22 @@ public class CallExpr implements APLExpr, APLStmt {
         this.args = args;
     }
 
+    /**
+     * Get function name
+     * @return  the function name
+     */
+    public String getFunName() {
+        return funName;
+    }
+
+    /**
+     * Get function call arguments
+     * @return  a list with the arguments
+     */
+    public List<String> getArgs() {
+        return args;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -13,6 +13,14 @@ public class StringExpr implements APLExpr {
         this.value = value;
     }
 
+    /**
+     * Get the string value of the expression
+     * @return  the string value
+     */
+    public String getValue() {
+        return value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

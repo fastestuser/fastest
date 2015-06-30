@@ -5,7 +5,7 @@ import com.google.common.base.Objects;
 /**
  * Created by Cristian on 4/20/15.
  */
-public class AssignStmt implements APLStmt, APLExpr {
+public class AssignStmt implements APLStmt {
 
     private final APLLValue lvalue;
     private final APLExpr expr;
@@ -13,6 +13,22 @@ public class AssignStmt implements APLStmt, APLExpr {
     public AssignStmt(APLLValue lvalue, APLExpr expr) {
         this.lvalue = lvalue;
         this.expr = expr;
+    }
+
+    /**
+     * Get the lvalue of the assignment
+     * @return  the lvalue
+     */
+    public APLLValue getLvalue() {
+        return lvalue;
+    }
+
+    /**
+     * Get the expression of the assignment
+     * @return  the expression
+     */
+    public APLExpr getExpr() {
+        return expr;
     }
 
     @Override

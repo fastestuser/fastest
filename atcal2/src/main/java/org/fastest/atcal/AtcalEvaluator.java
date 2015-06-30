@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.fastest.atcal.apl.APLExpr;
 import org.fastest.atcal.apl.APLLValue;
+import org.fastest.atcal.apl.APLStmt;
 import org.fastest.atcal.apl.CallExpr;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
@@ -30,7 +31,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
     private ZExprSchema atc;                      // abstract test case to refine
     private String preamble;                      // programming language code (defined in this rule and/or imported)
     private Map<String, ATCALType> datatypes;     // declared data types (types namespace)
-    private List<APLExpr> refinedLawsCode;        // APL code resulting from the evaluation of the refinement laws
+    private List<APLStmt> refinedLawsCode;        // APL code resulting from the evaluation of the refinement laws
     private String plCode;                        // programming language code included in the rule
     private CallExpr uut;                         // APL code to call the unit under test
     private String epilogue;                      // programming language code (defined in this rule and/or imported)

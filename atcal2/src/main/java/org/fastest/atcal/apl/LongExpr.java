@@ -13,6 +13,14 @@ public class LongExpr implements APLExpr {
         this.value = value;
     }
 
+    /**
+     * Get the value of the expression
+     * @return  the long value
+     */
+    public long getValue() {
+        return value;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -16,7 +16,7 @@ import java.util.Map;
 /**
  * Created by Cristian on 4/16/15.
  */
-public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
+public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
 
     private final ZExprSchema zScope;   // Evaluator's scope for z expressions
     private final APLLValue aplScope;      // Evaluator's scope for APL code
@@ -36,8 +36,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
-    public List<APLExpr> visitLaws(@NotNull AtcalParser.LawsContext ctx) {
-        List<APLExpr> codeBlock = Lists.newArrayList();
+    public List<APLStmt> visitLaws(@NotNull AtcalParser.LawsContext ctx) {
+        List<APLStmt> codeBlock = Lists.newArrayList();
         for (AtcalParser.LawContext lawCtx : ctx.law())
             codeBlock.addAll(visit(lawCtx.lawRefinement()));
 
@@ -45,7 +45,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
-    public List<APLExpr> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
+    public List<APLStmt> visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx) {
         // Evaluate the Z expressions of the law
         ZExprList zExprList;
         {
@@ -62,7 +62,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
         }
 
         // Evaluate the refinement using the list of Z expressions as contexts
-        List<APLExpr> codeBlock = Lists.newArrayList();
+        List<APLStmt> codeBlock = Lists.newArrayList();
         for (ZExpr zExpr : zExprList) {
             // Create a new zScope that includes the result of evaluating the Z expressions of the law
             ZExprSchema newScope = ZExprSchema.add(zScope, new ZVar("zScope", zExpr));
@@ -77,8 +77,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
-    public List<APLExpr> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
-        List<APLExpr> codeBlock = Lists.newArrayList();
+    public List<APLStmt> visitImplRef(@NotNull AtcalParser.ImplRefContext ctx) {
+        List<APLStmt> codeBlock = Lists.newArrayList();
         // Get the ATCAL lvalue of the refinement and use it as the new APL scope.
         LValueEvaluator lValueEval = new LValueEvaluator(ctx.type());
         APLLValue newAPLScope = lValueEval.visit(ctx.lvalue());
@@ -122,8 +122,8 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLExpr>> {
     }
 
     @Override
-    public List<APLExpr> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
-        List<APLExpr> codeBlock = Lists.newArrayList();
+    public List<APLStmt> visitWithRef(@NotNull AtcalParser.WithRefContext ctx) {
+        List<APLStmt> codeBlock = Lists.newArrayList();
         // Generate code according to the type of the refinement variable.
         if (aplScope.getType() instanceof ContractType) {
             // Contract types are used to create complex data structures that have a contract (an interface).
