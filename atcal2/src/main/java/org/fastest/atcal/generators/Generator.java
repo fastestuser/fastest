@@ -1,4 +1,4 @@
-package org.fastest.atcal;
+package org.fastest.atcal.generators;
 
 import org.fastest.atcal.apl.APLStmt;
 

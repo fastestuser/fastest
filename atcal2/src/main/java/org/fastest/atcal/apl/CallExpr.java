@@ -1,9 +1,9 @@
 package org.fastest.atcal.apl;
 
 import com.google.common.base.Objects;
-import com.sun.deploy.util.StringUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Cristian on 4/20/15.
@@ -20,7 +20,8 @@ public class CallExpr implements APLExpr, APLStmt {
 
     /**
      * Get function name
-     * @return  the function name
+     *
+     * @return the function name
      */
     public String getFunName() {
         return funName;
@@ -28,7 +29,8 @@ public class CallExpr implements APLExpr, APLStmt {
 
     /**
      * Get function call arguments
-     * @return  a list with the arguments
+     *
+     * @return a list with the arguments
      */
     public List<String> getArgs() {
         return args;
@@ -50,6 +52,6 @@ public class CallExpr implements APLExpr, APLStmt {
 
     @Override
     public String toString() {
-        return funName + "(" + StringUtils.join(args, ",") + ")";
+        return funName + "(" + args.stream().map(Object::toString).collect(Collectors.joining(",")) + ")";
     }
 }

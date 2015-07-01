@@ -1,6 +1,5 @@
 package org.fastest.atcal.generators;
 
-import org.fastest.atcal.Generator;
 import org.fastest.atcal.apl.*;
 
 import java.util.stream.Collectors;

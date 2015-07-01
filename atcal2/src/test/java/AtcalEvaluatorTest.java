@@ -2,7 +2,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.AtcalEvaluator;
-import org.fastest.atcal.Generator;
+import org.fastest.atcal.generators.Generator;
 import org.fastest.atcal.generators.PerlGen;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
