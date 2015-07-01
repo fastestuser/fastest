@@ -2,6 +2,8 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.fastest.atcal.AtcalEvaluator;
+import org.fastest.atcal.Generator;
+import org.fastest.atcal.generators.PerlGen;
 import org.fastest.atcal.parser.AtcalLexer;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.*;
@@ -24,6 +26,7 @@ public class AtcalEvaluatorTest {
     private ZVar var3 = new ZVar("var3", new ZExprNum(2));
     private ZVar var4 = new ZVar("var4", ZExprSet.of(num1, num2));
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
+    private Generator perlGen = new PerlGen();
 
     // ATC extracted from paper:
     // "Test Adaptation for Model-Based Testing Methods Using Set-Based Specification Languages"
@@ -51,21 +54,21 @@ public class AtcalEvaluatorTest {
     @Test
     public void test1() {
         ParseTree atcalTree = parseFile("example1.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1);
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, perlGen);
         System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
     }
 
     @Test
     public void test2() {
         ParseTree atcalTree = parseFile("example2.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1);
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, perlGen);
         System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
     }
 
     @Test
     public void test3() {
         ParseTree atcalTree = parseFile("example3.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc4);
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, perlGen);
         System.out.println(evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree));
     }
 }

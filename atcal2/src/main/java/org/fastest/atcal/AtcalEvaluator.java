@@ -9,6 +9,7 @@ import org.fastest.atcal.apl.APLExpr;
 import org.fastest.atcal.apl.APLLValue;
 import org.fastest.atcal.apl.APLStmt;
 import org.fastest.atcal.apl.CallExpr;
+import org.fastest.atcal.generators.PerlGen;
 import org.fastest.atcal.parser.AtcalBaseVisitor;
 import org.fastest.atcal.parser.AtcalParser;
 import org.fastest.atcal.z.ast.ZExprSchema;
@@ -35,18 +36,20 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
     private String plCode;                        // programming language code included in the rule
     private CallExpr uut;                         // APL code to call the unit under test
     private String epilogue;                      // programming language code (defined in this rule and/or imported)
+    private final Generator generator;            // code generator
 
     /**
      * Create a new ATCAL evaluator for the given abstract test case.
      * @param atc the abstract test case.
      */
-    public AtcalEvaluator(ZExprSchema atc) {
+    public AtcalEvaluator(ZExprSchema atc, Generator generator) {
         this.atc = atc;
         // preload the default data types (INT, FLOAT, STRING) in the type namespace.
         this.datatypes = Maps.newHashMap();
         datatypes.put("INT", IntType.getInstance());
         datatypes.put("FLOAT", new FloatType());
         datatypes.put("STRING", new StringType());
+        this.generator = generator;
     }
 
     @Override
@@ -84,7 +87,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         }
 
         // return the final string representation of the concrete test case
-        return preamble + decls + refinedLawsCode.stream().map(Object::toString).collect(Collectors.joining("\n")) +
-                plCode + "\n" + uutCall.toString() + epilogue;
+        return preamble + decls + refinedLawsCode.stream().map(e -> generator.generate(e)).collect(Collectors.joining("\n")) +
+                plCode + "\n" + generator.generate(uutCall) + epilogue;
     }
 }

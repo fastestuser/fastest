@@ -1,6 +1,6 @@
 package org.fastest.atcal.generators;
 
-import jdk.nashorn.internal.codegen.CompilerConstants;
+import org.fastest.atcal.Generator;
 import org.fastest.atcal.apl.*;
 
 import java.util.stream.Collectors;
@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
  * The Perl generator translates the APL code into a Perl program.
  * Created by Cristian on 26/06/15.
  */
-public class PerlGen {
+public class PerlGen implements Generator {
 
-    public static String generate(APLStmt aplStmt) {
-        if(aplStmt instanceof AssignStmt) {
-            return generate((AssignStmt)aplStmt);
+    public String generate(APLStmt aplStmt) {
+        if (aplStmt instanceof AssignStmt) {
+            return generate((AssignStmt) aplStmt);
         } else if (aplStmt instanceof CallExpr) {
             return generate((CallExpr) aplStmt) + ";";
         } else {
@@ -21,20 +21,20 @@ public class PerlGen {
         }
     }
 
-    public static String generate(AssignStmt assignStmt) {
+    private String generate(AssignStmt assignStmt) {
         String lvalueStr = PerlGen.generate(assignStmt.getLvalue());
         String exprStr = null;
         APLExpr expr = assignStmt.getExpr();
-        if(expr instanceof APLVar){
-            exprStr = PerlGen.generate((APLVar)assignStmt.getExpr());
+        if (expr instanceof APLVar) {
+            exprStr = PerlGen.generate((APLVar) assignStmt.getExpr());
         } else if (expr instanceof CallExpr) {
-            exprStr = PerlGen.generate((CallExpr)assignStmt.getExpr());
+            exprStr = PerlGen.generate((CallExpr) assignStmt.getExpr());
         } else if (expr instanceof ConsExpr) {
-            exprStr = PerlGen.generate((ConsExpr)assignStmt.getExpr());
+            exprStr = PerlGen.generate((ConsExpr) assignStmt.getExpr());
         } else if (expr instanceof LongExpr) {
-            exprStr = PerlGen.generate((LongExpr)assignStmt.getExpr());
-        }else if (expr instanceof StringExpr) {
-            exprStr = PerlGen.generate((StringExpr)assignStmt.getExpr());
+            exprStr = PerlGen.generate((LongExpr) assignStmt.getExpr());
+        } else if (expr instanceof StringExpr) {
+            exprStr = PerlGen.generate((StringExpr) assignStmt.getExpr());
         } else {
             throw new RuntimeException("Unsupported expression in APL statement.");
         }
@@ -43,13 +43,15 @@ public class PerlGen {
     }
 
     private static String generate(APLLValue lvalue) {
-        if(lvalue instanceof APLVar) {
+        if (lvalue instanceof APLVar) {
             return "$" + lvalue.getName();
-        } else if(lvalue instanceof APLArray.APLArrayIndex){
+        } else if (lvalue instanceof APLArray) {
+            return "@" + lvalue.getName();
+        } else if (lvalue instanceof APLArray.APLArrayIndex) {
             APLArray.APLArrayIndex varIdx = (APLArray.APLArrayIndex) lvalue;
             return "$" + varIdx.getParent().getName() + "[" + varIdx.getIndex() + "]";
         } else {
-            throw new RuntimeException("Unsupported APL lvalue type.");
+            throw new RuntimeException("Unsupported APL lvalue type:" + lvalue);
         }
     }
 
@@ -65,7 +67,7 @@ public class PerlGen {
         return consExpr.getValue();
     }
 
-    private static String generate(String s){
+    private static String generate(String s) {
         return "$" + s;
     }
 
