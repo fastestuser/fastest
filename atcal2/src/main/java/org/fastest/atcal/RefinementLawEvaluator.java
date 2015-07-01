@@ -132,7 +132,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
 
             // Create a new temporal variable to hold the data structure under construction.
             APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0), aplScope.getType());
-            codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), Lists.newArrayList(""))));
+            codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), type.getConstArgs())));
 
             // The evaluation of the WITH clause for a contract type requires evaluating all the Z expressions of the
             // refinements in the clause beforehand. The result of this evaluation is a list of iterable Z expressions.
