@@ -33,9 +33,6 @@ public class ZExprEvaluatorTest {
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, zScope);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
 
-    //        assertNotNull("Test file missing", getClass().getResource("/zExprEvaluatorTest.tcrl"));
-    //        ANTLRInputStream input = new ANTLRInputStream(getClass().getResourceAsStream("/zExprEvaluatorTest.tcrl"));
-
     private ZExpr evalExpr(String expr, ZExprSchema atc) {
         ANTLRInputStream input = new ANTLRInputStream(expr);
         AtcalLexer lexer = new AtcalLexer(input);
