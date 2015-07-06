@@ -1,8 +1,5 @@
 @RRULE example2
 
-@PREAMBLE
-@PLCODE
-
 @DATATYPES
     DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a) GETTER get();
     DATATYPE myArr = ARRAY  List (10);

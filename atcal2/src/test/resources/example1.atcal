@@ -1,8 +1,5 @@
 @RRULE example1
 
-@PREAMBLE
-@PLCODE
-
 @LAWS
 var3 ==> a AS INT;
 var1 ++ var2 ==> b AS STRING;
