@@ -39,13 +39,6 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitPreambleImport(@NotNull AtcalParser.PreambleImportContext ctx) { return visitChildren(ctx); }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation returns the result of calling
-	 * {@link #visitChildren} on {@code ctx}.</p>
-	 */
 	@Override public T visitDatatypes(@NotNull AtcalParser.DatatypesContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

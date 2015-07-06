@@ -2,20 +2,18 @@ grammar Atcal;
 
 /************* GLOBAL SRUCTURE *************/
 refinementRule : '@RRULE' ID
-                 preamble
+                 preamble?
                  datatypes?
                  laws
                  (plcode)?
                  uut
                  (epilogue)?;
 
-preamble : '@PREAMBLE' ( plcode | preambleImport )+ ;
+preamble : '@PREAMBLE' ( plcode | ID '.@PREAMBLE' STMTEND  )+ ;
 
-plcode : '@PLCODE' ;
+plcode : '@CODESTART' (.)*? '@CODEEND' ;
 
-preambleImport : ID '.@PREAMBLE' STMTEND ;
-
-datatypes : '@DATATYPES' (typeDec)* ;
+datatypes : '@DATATYPES' (typeDec)+ ;
 
 typeDec : 'DATATYPE' ID '=' type STMTEND;
 
@@ -40,8 +38,7 @@ laws: '@LAWS'
 
 uut: '@UUT' ID args STMTEND ;
 
-epilogue: '@EPILOGUE'
-        ( plcode | ID '.@EPILOGUE')+ ;
+epilogue: '@EPILOGUE' ( plcode | ID '.@EPILOGUE')+ ;
 
 /******************* LAWS *********************/
 law: ( ID ':' )? ( lawRefinement );
@@ -124,3 +121,4 @@ fragment ESC : '\\' [btnr"\\] ;
 
 // Match whitespace in lexer and remove it.
 WS : [ \t\r\n]+ -> skip ;
+

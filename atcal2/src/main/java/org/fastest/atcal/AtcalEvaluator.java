@@ -39,6 +39,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
 
     /**
      * Create a new ATCAL evaluator for the given abstract test case.
+     *
      * @param atc the abstract test case.
      */
     public AtcalEvaluator(ZExprSchema atc, Generator generator) {
@@ -55,10 +56,15 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
     public String visitRefinementRule(@NotNull AtcalParser.RefinementRuleContext ctx) {
         String ruleName = ctx.ID().getText();
 
-        // todo: get preamble code
+        // Get preamble if present
         this.preamble = "";
+        if (ctx.preamble() != null) {
+            for (AtcalParser.PlcodeContext plcodeContext : ctx.preamble().plcode()) {
+                this.preamble += visit(plcodeContext) + "\n";
+            }
+        }
 
-        // evaluate data type declarations if present
+        // Evaluate data type declarations if present
         if (ctx.datatypes() != null) {
             TypesEvaluator typesEval = new TypesEvaluator(datatypes);
             this.datatypes.putAll(typesEval.visit(ctx.datatypes()));
@@ -66,27 +72,38 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
 
         LValueFactory lValueFactory = new LValueFactory();
 
-        // evaluate refinement laws
+        // Evaluate refinement laws
         RefinementLawEvaluator refLawEval = new RefinementLawEvaluator(atc, null, datatypes, lValueFactory);
         this.refinedLawsCode = refLawEval.visit(ctx.laws());
 
-        // todo: get programming code
-        this.plCode = "";
+        // Get optional programming language code
+        if(ctx.plcode() != null)
+            this.plCode = visit(ctx.plcode());
 
-        // evaluate the UUT
+        // Evaluate the UUT
         List<String> uutArgs = Lists.transform(ctx.uut().args().ID(), TERMINAL_TOSTRING);
         CallExpr uutCall = new CallExpr(ctx.uut().ID().getText(), uutArgs);
 
-        // todo: get epilogue code
+        // Get preamble if present
         this.epilogue = "";
+        if (ctx.epilogue() != null) {
+            for (AtcalParser.PlcodeContext plcodeContext : ctx.epilogue().plcode()) {
+                this.epilogue += visit(plcodeContext) + "\n";
+            }
+        }
 
         String decls = "";
-        for(APLLValue lvalue: lValueFactory.getLValues()){
+        for (APLLValue lvalue : lValueFactory.getLValues()) {
             decls += lvalue.getType().toString() + " " + lvalue.getName() + "\n";
         }
 
         // return the final string representation of the concrete test case
         return preamble + decls + refinedLawsCode.stream().map(e -> generator.generate(e)).collect(Collectors.joining("\n")) +
                 plCode + "\n" + generator.generate(uutCall) + epilogue;
+    }
+
+    @Override
+    public String visitPlcode(@NotNull AtcalParser.PlcodeContext ctx) {
+        return ctx.getChild(1).getText();
     }
 }
