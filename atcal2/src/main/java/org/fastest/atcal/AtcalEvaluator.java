@@ -76,8 +76,9 @@ public class AtcalEvaluator extends AtcalBaseVisitor<String> {
         RefinementLawEvaluator refLawEval = new RefinementLawEvaluator(atc, null, datatypes, lValueFactory);
         this.refinedLawsCode = refLawEval.visit(ctx.laws());
 
-        // Get optional programming language code
-        if(ctx.plcode() != null)
+        // Get optional programming language
+        this.plCode = "";
+        if (ctx.plcode() != null)
             this.plCode = visit(ctx.plcode());
 
         // Evaluate the UUT
