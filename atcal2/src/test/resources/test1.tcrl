@@ -1,7 +1,0 @@
-@RRULE prueba
-@PREAMBLE
-@PLCODE
-@LAWS
-var1 ++ var2 ==> b;
-@UUT
-f(b);
