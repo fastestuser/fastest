@@ -1,0 +1,17 @@
+package nlg.base.linguistic;
+
+public enum CategoriaGramatical {
+	ADJETIVO,
+	ADVERBIO,
+	ARTICULO,
+	DETERMINANTE,
+	NOMBRE,
+	VERBO,
+	PRONOMBRE,
+	CONJUNCION,
+	NUMERAL,
+	INTERJECCION,
+	ABREVIATURA,
+	PREPOSICION,
+	SIGNO_PUNTUACION
+}
