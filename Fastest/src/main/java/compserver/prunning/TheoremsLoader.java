@@ -83,7 +83,7 @@ public class TheoremsLoader {
 		try{
 			System.out.println("Loading pruning theorems...");
 			// We load the operators
-			BufferedReader inOp = new BufferedReader(new FileReader(operatorsFileName));
+			BufferedReader inOp = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(operatorsFileName)));
 			String line;
 			while((line = inOp.readLine())!= null)
 				operatorsList.add(line);
@@ -102,7 +102,7 @@ public class TheoremsLoader {
 			}
 
 			// We load the theorems
-			BufferedReader in = new BufferedReader(new FileReader(theoremsFileName));
+			BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(theoremsFileName)));
 			StringBuilder text = new StringBuilder();
 			while((line = in.readLine())!= null)
 				text.append(line+"\n");

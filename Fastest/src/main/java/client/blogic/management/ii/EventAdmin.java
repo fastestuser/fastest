@@ -107,7 +107,7 @@ public class EventAdmin {
         Properties props = new Properties();
 
         try {
-            URL url = Event_.class.getResource("events.properties");
+            URL url = Event_.class.getResource("/events.properties");
             if (url != null) {
                 props.load(url.openStream());
                 Set<String> nameSet = props.stringPropertyNames();

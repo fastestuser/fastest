@@ -32,9 +32,10 @@ public class CServersConfigLoader{
 		CServersControl cServersControl = CServersControl.getInstance();
 
 		try{
-			BufferedReader in = new BufferedReader(new FileReader(fileName));
+			BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
 			String line;
 			while((line = in.readLine())!= null){
+				System.out.println(line);
 				String lineParts[] = line.split(" ");
 				// We extract the server's name from the file
 				String serverName = lineParts[0];

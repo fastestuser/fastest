@@ -32,7 +32,7 @@ public class RWRulesLoader {
 	private String rwRulesFileName;
 	/**
 	 * Creates instaces of RWRulesLoader.
-	 * @param fileName the file where the rewrite rules are defined.
+	 * @param rwRulesFileName the file where the rewrite rules are defined.
 	 */
 	public RWRulesLoader(String rwRulesFileName){
 		this.rwRulesFileName = rwRulesFileName;
@@ -48,7 +48,7 @@ public class RWRulesLoader {
 
 		try{
 			// We load the rewrite rules
-			BufferedReader in = new BufferedReader(new FileReader(rwRulesFileName));
+			BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(rwRulesFileName)));
 			StringBuilder text = new StringBuilder();
 			String line;
 			while((line = in.readLine())!= null)
