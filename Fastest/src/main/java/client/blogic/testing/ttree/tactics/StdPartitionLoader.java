@@ -44,7 +44,7 @@ public class StdPartitionLoader {
         StdPartitionsControl stdPartitionsControl = StdPartitionsControl.getInstance();
 
         try {
-            BufferedReader in = new BufferedReader(new FileReader(fileName));
+            BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(fileName)));
             String line;
             //String text = "";
             StringBuilder text = new StringBuilder();

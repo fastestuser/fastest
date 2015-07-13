@@ -47,7 +47,7 @@ public class SPTactic extends AbstractTactic {
         //URL url = SPTactic.class.getResource("SPTactic.class");
         //String urlStr = url.toString();
         String currentDir = "";
-        (new StdPartitionLoader(currentDir + "lib/conf/stdpartition.spf")).loadStdPartitions();
+        (new StdPartitionLoader("/conf/stdpartition.spf")).loadStdPartitions();
         if (tClassNumbersMap == null) {
             tClassNumbersMap = new HashMap<String, Integer>();
         }
