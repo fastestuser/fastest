@@ -86,9 +86,9 @@ public class AtcalEvaluatorTest {
     @Test
     public void test3() {
         ParseTree atcalTree = parseFile("example3.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen);
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, new PerlGen());
         String output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-//        System.out.println(output);
+        System.out.println(output);
         assert(output.equals("Int vid\nContractType{constructor='newDBTable', constArgs=[], setter='insert', " +
                 "setterArgs=[table, vid, name, addr], getter='select', getterArgs=[]} roll\nString name\n" +
                 "RecordType{fields={id=Int}} voter\nString addr\nroll_table=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
