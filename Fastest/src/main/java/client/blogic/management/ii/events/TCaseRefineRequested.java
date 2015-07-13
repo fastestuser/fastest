@@ -8,12 +8,12 @@ import common.z.AbstractTCase;
 public class TCaseRefineRequested extends Event_{
     private String opName;
     private AbstractTCase absTCase;
-    private String targetLanguaje;
+    private String targetLanguage;
 
-    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String targetLanguaje){
+    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String targetLanguage){
 		this.opName = opName;
 		this.absTCase = absTCase;
-		this.targetLanguaje = targetLanguaje;
+		this.targetLanguage = targetLanguage;
 		super.setEventName("tCaseRefineRequested");
 	}
     /**
@@ -41,8 +41,8 @@ public class TCaseRefineRequested extends Event_{
 		return absTCase;
 	}
 
-	public String getTargetLanguaje(){
-		return targetLanguaje;
+	public String getTargetLanguage(){
+		return targetLanguage;
 	}
 	
 	

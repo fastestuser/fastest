@@ -686,7 +686,7 @@ public final class Controller extends IIComponent {
         AbstractTCase absTCase = tCaseRefineRequested.getAbstractTCase();
         String refLawName = tCaseRefineRequested.getRefLawName();
         String pathUUT = tCaseRefineRequested.getPathUUT();
-        String targetLanguaje = tCaseRefineRequested.getTargetLanguaje();
+        String targetLanguaje = tCaseRefineRequested.getTargetLanguage();
         new TCaseRefClientRunner(opName, absTCase, pathUUT, targetLanguaje, refLawName);
         }*/ // Es incorrecto. Se mandara 2 veces a refinar el mismo caso!!!
 		else if (event_ instanceof FastestResetted) {
