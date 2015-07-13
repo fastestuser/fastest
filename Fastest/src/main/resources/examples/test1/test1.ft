@@ -1,0 +1,6 @@
+loadspec /home/mcristia/fceia/software/fastest/examples/test1/test1.tex
+selop A
+addtactic A SP \cup B \cup \{x:\nat | x > 1\} \setminus \{x:\nat | x > 10\}
+genalltt
+prunett
+
