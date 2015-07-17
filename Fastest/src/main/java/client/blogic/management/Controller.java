@@ -3,6 +3,7 @@ package client.blogic.management;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -212,15 +213,13 @@ public final class Controller extends IIComponent {
 		inicio = 0;
 		inicioPoda = 0;
 		leaves = new ConcreteRepository<TClass>();
-		File configFile = null; // solo constructor
 		FastestUtils.resetTacticsNumbersMap();
 		try {
 			//
 			//URL url = ClientTextUI.class.getResource("ClientTextUI.class");
 			//String urlStr = url.toString();
-			String currentDir = "";
-			configFile = new File(currentDir + "lib/conf/fastest.conf");
-			BufferedReader in = new BufferedReader(new FileReader(configFile));
+			String configFile = "/conf/fastest.conf";
+			BufferedReader in = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(configFile)));
 			String line;
 			while ((line = in.readLine()) != null) {
 				String lineParts[] = line.split("=");
@@ -254,7 +253,7 @@ public final class Controller extends IIComponent {
 			in.close();
 
 		} catch (Exception e) {
-			System.out.println("Error reading file " + configFile.getAbsolutePath() + ".");
+			System.out.println("Error reading configuration file.");
 		}
 	}
 
