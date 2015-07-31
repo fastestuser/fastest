@@ -1,21 +1,17 @@
-// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/Fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
 package client.blogic.testing.atcal.parser;
-
-import org.antlr.v4.runtime.*;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNDeserializer;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.ParseTreeVisitor;
-import org.antlr.v4.runtime.tree.TerminalNode;
-
+import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.misc.*;
+import org.antlr.v4.runtime.tree.*;
 import java.util.List;
+import java.util.Iterator;
+import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class AtcalParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.5", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.5.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -87,7 +83,7 @@ public class AtcalParser extends Parser {
 	}
 
 	@Override
-	@NotNull
+
 	public Vocabulary getVocabulary() {
 		return VOCABULARY;
 	}
@@ -146,15 +142,15 @@ public class AtcalParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(38); 
+			setState(38);
 			match(T__0);
-			setState(39); 
+			setState(39);
 			match(ID);
 			setState(41);
 			_la = _input.LA(1);
 			if (_la==T__1) {
 				{
-				setState(40); 
+				setState(40);
 				preamble();
 				}
 			}
@@ -163,29 +159,29 @@ public class AtcalParser extends Parser {
 			_la = _input.LA(1);
 			if (_la==T__5) {
 				{
-				setState(43); 
+				setState(43);
 				datatypes();
 				}
 			}
 
-			setState(46); 
+			setState(46);
 			laws();
 			setState(48);
 			_la = _input.LA(1);
 			if (_la==T__3) {
 				{
-				setState(47); 
+				setState(47);
 				plcode();
 				}
 			}
 
-			setState(50); 
+			setState(50);
 			uut();
 			setState(52);
 			_la = _input.LA(1);
 			if (_la==T__27) {
 				{
-				setState(51); 
+				setState(51);
 				epilogue();
 				}
 			}
@@ -236,7 +232,7 @@ public class AtcalParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(54); 
+			setState(54);
 			match(T__1);
 			setState(59); 
 			_errHandler.sync(this);
@@ -247,17 +243,17 @@ public class AtcalParser extends Parser {
 				switch (_input.LA(1)) {
 				case T__3:
 					{
-					setState(55); 
+					setState(55);
 					plcode();
 					}
 					break;
 				case ID:
 					{
-					setState(56); 
+					setState(56);
 					match(ID);
-					setState(57); 
+					setState(57);
 					match(T__2);
-					setState(58); 
+					setState(58);
 					match(STMTEND);
 					}
 					break;
@@ -301,19 +297,19 @@ public class AtcalParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(63); 
+			setState(63);
 			match(T__3);
 			setState(67);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,6,_ctx);
-			while ( _alt!=1 && _alt!= ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=1 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1+1 ) {
 					{
 					{
 					setState(64);
 					matchWildcard();
 					}
-					}
+					} 
 				}
 				setState(69);
 				_errHandler.sync(this);
@@ -361,7 +357,7 @@ public class AtcalParser extends Parser {
 			{
 			setState(72);
 			match(T__5);
-			setState(74);
+			setState(74); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
@@ -371,7 +367,7 @@ public class AtcalParser extends Parser {
 				typeDec();
 				}
 				}
-				setState(76);
+				setState(76); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==T__6 );
@@ -439,7 +435,7 @@ public class AtcalParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_type; }
-
+	 
 		public TypeContext() { }
 		public void copyFrom(TypeContext ctx) {
 			super.copyFrom(ctx);
@@ -845,8 +841,9 @@ public class AtcalParser extends Parser {
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << ID) | (1L << NUMBER) | (1L << STRING))) != 0)) ) {
 			_errHandler.recoverInline(this);
+			} else {
+				consume();
 			}
-			consume();
 			}
 		}
 		catch (RecognitionException re) {
@@ -995,7 +992,7 @@ public class AtcalParser extends Parser {
 			{
 			setState(169);
 			match(T__27);
-			setState(173);
+			setState(173); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
@@ -1020,7 +1017,7 @@ public class AtcalParser extends Parser {
 					throw new NoViableAltException(this);
 				}
 				}
-				setState(175);
+				setState(175); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==T__3 || _la==ID );
@@ -1124,7 +1121,7 @@ public class AtcalParser extends Parser {
 			setState(190);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,17,_ctx);
-			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
@@ -1133,7 +1130,7 @@ public class AtcalParser extends Parser {
 					setState(187);
 					refinement();
 					}
-					}
+					} 
 				}
 				setState(192);
 				_errHandler.sync(this);
@@ -1207,7 +1204,7 @@ public class AtcalParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_refinement; }
-
+	 
 		public RefinementContext() { }
 		public void copyFrom(RefinementContext ctx) {
 			super.copyFrom(ctx);
@@ -1284,7 +1281,7 @@ public class AtcalParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_lvalue; }
-
+	 
 		public LvalueContext() { }
 		public void copyFrom(LvalueContext ctx) {
 			super.copyFrom(ctx);
@@ -1444,7 +1441,7 @@ public class AtcalParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_zExpr; }
-
+	 
 		public ZExprContext() { }
 		public void copyFrom(ZExprContext ctx) {
 			super.copyFrom(ctx);
@@ -1883,7 +1880,7 @@ public class AtcalParser extends Parser {
 			setState(310);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,28,_ctx);
-			while ( _alt!=2 && _alt!= ATN.INVALID_ALT_NUMBER ) {
+			while ( _alt!=2 && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
@@ -1896,9 +1893,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(263);
 						if (!(precpred(_ctx, 12))) throw new FailedPredicateException(this, "precpred(_ctx, 12)");
-						setState(264); 
+						setState(264);
 						match(INTER);
-						setState(265); 
+						setState(265);
 						zExpr(13);
 						}
 						break;
@@ -1908,9 +1905,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(266);
 						if (!(precpred(_ctx, 11))) throw new FailedPredicateException(this, "precpred(_ctx, 11)");
-						setState(267); 
+						setState(267);
 						match(UNION);
-						setState(268); 
+						setState(268);
 						zExpr(12);
 						}
 						break;
@@ -1920,9 +1917,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(269);
 						if (!(precpred(_ctx, 10))) throw new FailedPredicateException(this, "precpred(_ctx, 10)");
-						setState(270); 
+						setState(270);
 						match(DIFF);
-						setState(271); 
+						setState(271);
 						zExpr(11);
 						}
 						break;
@@ -1932,9 +1929,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(272);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
-						setState(273); 
+						setState(273);
 						match(MUL);
-						setState(274); 
+						setState(274);
 						zExpr(8);
 						}
 						break;
@@ -1944,9 +1941,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(275);
 						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
-						setState(276); 
+						setState(276);
 						match(DIV);
-						setState(277); 
+						setState(277);
 						zExpr(7);
 						}
 						break;
@@ -1956,9 +1953,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(278);
 						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(279); 
+						setState(279);
 						match(MOD);
-						setState(280); 
+						setState(280);
 						zExpr(6);
 						}
 						break;
@@ -1968,9 +1965,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(281);
 						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
-						setState(282); 
+						setState(282);
 						match(PLUS);
-						setState(283); 
+						setState(283);
 						zExpr(5);
 						}
 						break;
@@ -1980,9 +1977,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(284);
 						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
-						setState(285); 
+						setState(285);
 						match(MINUS);
-						setState(286); 
+						setState(286);
 						zExpr(4);
 						}
 						break;
@@ -1992,9 +1989,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(287);
 						if (!(precpred(_ctx, 2))) throw new FailedPredicateException(this, "precpred(_ctx, 2)");
-						setState(288); 
+						setState(288);
 						match(T__37);
-						setState(289); 
+						setState(289);
 						zExpr(3);
 						}
 						break;
@@ -2004,9 +2001,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(290);
 						if (!(precpred(_ctx, 18))) throw new FailedPredicateException(this, "precpred(_ctx, 18)");
-						setState(291); 
+						setState(291);
 						match(T__31);
-						setState(292); 
+						setState(292);
 						match(TUPPROJ);
 						}
 						break;
@@ -2016,9 +2013,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(293);
 						if (!(precpred(_ctx, 16))) throw new FailedPredicateException(this, "precpred(_ctx, 16)");
-						setState(294); 
+						setState(294);
 						match(T__31);
-						setState(295); 
+						setState(295);
 						match(NUMBER);
 						}
 						break;
@@ -2028,9 +2025,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(296);
 						if (!(precpred(_ctx, 15))) throw new FailedPredicateException(this, "precpred(_ctx, 15)");
-						setState(297); 
+						setState(297);
 						match(T__31);
-						setState(298); 
+						setState(298);
 						match(DOM);
 						}
 						break;
@@ -2040,9 +2037,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(299);
 						if (!(precpred(_ctx, 14))) throw new FailedPredicateException(this, "precpred(_ctx, 14)");
-						setState(300); 
+						setState(300);
 						match(T__31);
-						setState(301); 
+						setState(301);
 						match(RAN);
 						}
 						break;
@@ -2052,9 +2049,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(302);
 						if (!(precpred(_ctx, 13))) throw new FailedPredicateException(this, "precpred(_ctx, 13)");
-						setState(303); 
+						setState(303);
 						match(T__31);
-						setState(304); 
+						setState(304);
 						match(PROJ);
 						}
 						break;
@@ -2064,9 +2061,9 @@ public class AtcalParser extends Parser {
 						pushNewRecursionContext(_localctx, _startState, RULE_zExpr);
 						setState(305);
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
-						setState(306); 
+						setState(306);
 						match(T__31);
-						setState(307); 
+						setState(307);
 						match(CARD);
 						}
 						break;
@@ -2092,42 +2089,42 @@ public class AtcalParser extends Parser {
 
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int predIndex) {
 		switch (ruleIndex) {
-		case 18: 
+		case 18:
 			return zExpr_sempred((ZExprContext)_localctx, predIndex);
 		}
 		return true;
 	}
 	private boolean zExpr_sempred(ZExprContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: 
+		case 0:
 			return precpred(_ctx, 12);
-		case 1: 
+		case 1:
 			return precpred(_ctx, 11);
-		case 2: 
+		case 2:
 			return precpred(_ctx, 10);
-		case 3: 
+		case 3:
 			return precpred(_ctx, 7);
-		case 4: 
+		case 4:
 			return precpred(_ctx, 6);
-		case 5: 
+		case 5:
 			return precpred(_ctx, 5);
-		case 6: 
+		case 6:
 			return precpred(_ctx, 4);
-		case 7: 
+		case 7:
 			return precpred(_ctx, 3);
-		case 8: 
+		case 8:
 			return precpred(_ctx, 2);
-		case 9: 
+		case 9:
 			return precpred(_ctx, 18);
-		case 10: 
+		case 10:
 			return precpred(_ctx, 16);
-		case 11: 
+		case 11:
 			return precpred(_ctx, 15);
-		case 12: 
+		case 12:
 			return precpred(_ctx, 14);
-		case 13: 
+		case 13:
 			return precpred(_ctx, 13);
-		case 14: 
+		case 14:
 			return precpred(_ctx, 8);
 		}
 		return true;

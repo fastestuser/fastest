@@ -1,7 +1,7 @@
 grammar SLog2Z;
 
 @header {
-package compserver.tcasegen.strategies.setlog.setlogtoz;
+//package compserver.tcasegen.strategies.setlog.setlogtoz;
 	import java.util.LinkedList;
 	import java.util.List;
 	import java.util.HashMap;
@@ -159,7 +159,7 @@ constr
 	;
 	
 restr
-locals [StringPointer valor;]
+locals [StringPointer valor]
 @init{$restr::valor = new StringPointer();}
 	: 'set(' expr ')' {$restr::valor.setString("{}"); slVars.put($expr.text,$restr::valor);}
 	| 'list(' expr ')' {$restr::valor.setString("[]"); slVars.put($expr.text,$restr::valor);}
@@ -206,7 +206,7 @@ locals [StringPointer valor;]
 	;
 
 seqIgual
-locals [StringPointer valor;]
+locals [StringPointer valor]
 @init{$seqIgual::valor = new StringPointer();}
 	:	(v1=NAME {slVars.put($v1.text,$seqIgual::valor);} '=' v2=expr {slVars.put($v2.text,$seqIgual::valor);} ',')+
 		{

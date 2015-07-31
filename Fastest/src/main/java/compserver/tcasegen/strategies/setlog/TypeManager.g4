@@ -5,7 +5,6 @@ grammar TypeManager;
 //el cual puede ser accedido o consultado mediante la interfaz.
 
 @header {
-	package compserver.tcasegen.strategies.setlog;
 	import javax.swing.tree.DefaultMutableTreeNode;
 	import javax.swing.tree.DefaultTreeModel;
 	import javax.swing.tree.TreeNode;

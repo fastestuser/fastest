@@ -5,7 +5,6 @@ grammar Expr;
 //  para setlog. Es parte del proceso de generacion de casos de prueba.
 //
 @header {
-	package compserver.tcasegen.strategies.setlog.ztosetlog;
 	import compserver.tcasegen.strategies.setlog.TypeManagerParser;
 	import compserver.tcasegen.strategies.setlog.TypeManagerLexer;
 	import java.util.HashMap;
@@ -815,7 +814,7 @@ paragraph
 	;
       
 basic_type
-locals [ArrayList<String> typeList;]
+locals [ArrayList<String> typeList]
 @init{$basic_type::typeList = new ArrayList<String>();}
 	:	'[' a=declName {$basic_type::typeList.add($a.text);} (',' b=declName {$basic_type::typeList.add($b.text);})* ']'
 	{
@@ -841,7 +840,7 @@ equivalent_type
 	;
 	
 enumeration_type
-locals [ArrayList<String> cases;]
+locals [ArrayList<String> cases]
 @init{$enumeration_type::cases = new ArrayList<String>();}
 	:	d=declName '::=' a=declName {$enumeration_type::cases.add($a.text);} (expression)? 
 	    ('|' b=declName {$enumeration_type::cases.add($b.text);} (expression)? )* 
@@ -882,7 +881,7 @@ declPart:	declaration ((';' | NL) declaration)*
 	;
 	
 declaration
-locals [ArrayList<String> vars;]
+locals [ArrayList<String> vars]
 @init{$declaration::vars = new ArrayList<String>();}
 	:	a=declName {$declaration::vars.add($a.text);} (',' b=declName {$declaration::vars.add($b.text);})* ':' expression 
 	{
@@ -2042,15 +2041,15 @@ locals [ArrayList<String> elements = new ArrayList<String>(), String setlogName 
 	}
 	|	'\\nat' '_{1}' 
 	{	
-		printInfo($endExpression.text, false);	
+		printInfo($ctx.getText(), false);
 	}
 	|	'\\nat' 
 	{	
-		printInfo($endExpression.text, false);	
+		printInfo($ctx.getText(), false);
 	}
 	|	'\\num'
 	{	
-		printInfo($endExpression.text, false);	
+		printInfo($ctx.getText(), false);
 	}	
 	;
 	

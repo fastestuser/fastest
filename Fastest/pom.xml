@@ -29,8 +29,9 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4</artifactId>
-            <version>4.5</version>
+            <version>4.5.1</version>
         </dependency>
+
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr-runtime</artifactId>
@@ -50,6 +51,18 @@
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>18.0</version>
+        </dependency>
+        <dependency>
+            <groupId>swiprolog</groupId>
+            <artifactId>jpl</artifactId>
+            <version>6.6.4-2</version>
+            <scope>system</scope>
+            <systemPath>/usr/lib/swi-prolog/lib/jpl.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>net.java.dev.jna</groupId>
+            <artifactId>jna</artifactId>
+            <version>4.1.0</version>
         </dependency>
     </dependencies>
 

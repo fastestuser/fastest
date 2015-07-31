@@ -72,7 +72,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 			return abstractTCase;
 		}
 		abstractTCase = buildTCase(zVars,tClass);//crea caso con las zvars generadas
-		integrate(tClass,abstractTCase);//integra el caso si tiene incls
+
+		integrate(tClass,abstractTCase);//integra el caso si tiene incls (Tesina de Joaquín 1 hablar con Maxi si opcional).
 		return abstractTCase;
 	}
 	

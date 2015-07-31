@@ -39,7 +39,7 @@ public class ZExprEvaluatorTest {
         AtcalLexer lexer = new AtcalLexer(input);
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
-        ParseTree tree = parser.zExpr(); // begin parsing at zExpr
+        ParseTree tree = parser.zExprs(); // begin parsing at zExpr
         ZExprEvaluator eval = new ZExprEvaluator(atc);
         return eval.visit(tree);
     }

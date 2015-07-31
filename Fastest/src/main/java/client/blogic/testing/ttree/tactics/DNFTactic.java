@@ -56,7 +56,7 @@ public class DNFTactic extends AbstractTactic {
         List<Pred> conjunctsList = controller.getSchemaDNFPredList(opName);
 
         int maxNumberOfDNFPredsToMultiply = controller.getMaxDNFPredsToMultiply();
-
+        System.out.println(maxNumberOfDNFPredsToMultiply);
 
         if (conjunctsList == null) {
             return tClassList;

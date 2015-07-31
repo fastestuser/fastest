@@ -1,6 +1,5 @@
-// Generated from /home/cristian/workspace/fastest/atcal2/src/main/java/org/fastest/atcal/Atcal.g4 by ANTLR 4.5
+// Generated from /home/cristian/workspace/fastest/Fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
 package client.blogic.testing.atcal.parser;
-import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
 /**
@@ -16,334 +15,334 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRefinementRule(@NotNull AtcalParser.RefinementRuleContext ctx);
+	T visitRefinementRule(AtcalParser.RefinementRuleContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#preamble}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPreamble(@NotNull AtcalParser.PreambleContext ctx);
+	T visitPreamble(AtcalParser.PreambleContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#plcode}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitPlcode(@NotNull AtcalParser.PlcodeContext ctx);
+	T visitPlcode(AtcalParser.PlcodeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#datatypes}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitDatatypes(@NotNull AtcalParser.DatatypesContext ctx);
+	T visitDatatypes(AtcalParser.DatatypesContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#typeDec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitTypeDec(@NotNull AtcalParser.TypeDecContext ctx);
+	T visitTypeDec(AtcalParser.TypeDecContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NameType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNameType(@NotNull AtcalParser.NameTypeContext ctx);
+	T visitNameType(AtcalParser.NameTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code IntType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIntType(@NotNull AtcalParser.IntTypeContext ctx);
+	T visitIntType(AtcalParser.IntTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code FloatType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFloatType(@NotNull AtcalParser.FloatTypeContext ctx);
+	T visitFloatType(AtcalParser.FloatTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StringType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStringType(@NotNull AtcalParser.StringTypeContext ctx);
+	T visitStringType(AtcalParser.StringTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ArrayType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayType(@NotNull AtcalParser.ArrayTypeContext ctx);
+	T visitArrayType(AtcalParser.ArrayTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code EnumType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEnumType(@NotNull AtcalParser.EnumTypeContext ctx);
+	T visitEnumType(AtcalParser.EnumTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code RecordType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitRecordType(@NotNull AtcalParser.RecordTypeContext ctx);
+	T visitRecordType(AtcalParser.RecordTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ContractType}
 	 * labeled alternative in {@link AtcalParser#type}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitContractType(@NotNull AtcalParser.ContractTypeContext ctx);
+	T visitContractType(AtcalParser.ContractTypeContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#args}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArgs(@NotNull AtcalParser.ArgsContext ctx);
+	T visitArgs(AtcalParser.ArgsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#constMapping}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstMapping(@NotNull AtcalParser.ConstMappingContext ctx);
+	T visitConstMapping(AtcalParser.ConstMappingContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#constMap}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitConstMap(@NotNull AtcalParser.ConstMapContext ctx);
+	T visitConstMap(AtcalParser.ConstMapContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#laws}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLaws(@NotNull AtcalParser.LawsContext ctx);
+	T visitLaws(AtcalParser.LawsContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#uut}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUut(@NotNull AtcalParser.UutContext ctx);
+	T visitUut(AtcalParser.UutContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#epilogue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitEpilogue(@NotNull AtcalParser.EpilogueContext ctx);
+	T visitEpilogue(AtcalParser.EpilogueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#law}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLaw(@NotNull AtcalParser.LawContext ctx);
+	T visitLaw(AtcalParser.LawContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#lawRefinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitLawRefinement(@NotNull AtcalParser.LawRefinementContext ctx);
+	T visitLawRefinement(AtcalParser.LawRefinementContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#zExprs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitZExprs(@NotNull AtcalParser.ZExprsContext ctx);
+	T visitZExprs(AtcalParser.ZExprsContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ImplRef}
 	 * labeled alternative in {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImplRef(@NotNull AtcalParser.ImplRefContext ctx);
+	T visitImplRef(AtcalParser.ImplRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code VarLValue}
 	 * labeled alternative in {@link AtcalParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitVarLValue(@NotNull AtcalParser.VarLValueContext ctx);
+	T visitVarLValue(AtcalParser.VarLValueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ArrayLValue}
 	 * labeled alternative in {@link AtcalParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitArrayLValue(@NotNull AtcalParser.ArrayLValueContext ctx);
+	T visitArrayLValue(AtcalParser.ArrayLValueContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code FieldLValue}
 	 * labeled alternative in {@link AtcalParser#lvalue}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitFieldLValue(@NotNull AtcalParser.FieldLValueContext ctx);
+	T visitFieldLValue(AtcalParser.FieldLValueContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#withRef}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitWithRef(@NotNull AtcalParser.WithRefContext ctx);
+	T visitWithRef(AtcalParser.WithRefContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Group}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitGroup(@NotNull AtcalParser.GroupContext ctx);
+	T visitGroup(AtcalParser.GroupContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumMod}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumMod(@NotNull AtcalParser.NumModContext ctx);
+	T visitNumMod(AtcalParser.NumModContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ProdProj}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProdProj(@NotNull AtcalParser.ProdProjContext ctx);
+	T visitProdProj(AtcalParser.ProdProjContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code Ident}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitIdent(@NotNull AtcalParser.IdentContext ctx);
+	T visitIdent(AtcalParser.IdentContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumMul}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumMul(@NotNull AtcalParser.NumMulContext ctx);
+	T visitNumMul(AtcalParser.NumMulContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetDiff}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetDiff(@NotNull AtcalParser.SetDiffContext ctx);
+	T visitSetDiff(AtcalParser.SetDiffContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StrConcat}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStrConcat(@NotNull AtcalParser.StrConcatContext ctx);
+	T visitStrConcat(AtcalParser.StrConcatContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ProdCons}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitProdCons(@NotNull AtcalParser.ProdConsContext ctx);
+	T visitProdCons(AtcalParser.ProdConsContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetUnion}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetUnion(@NotNull AtcalParser.SetUnionContext ctx);
+	T visitSetUnion(AtcalParser.SetUnionContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetDom}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetDom(@NotNull AtcalParser.SetDomContext ctx);
+	T visitSetDom(AtcalParser.SetDomContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code ElemExpr}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitElemExpr(@NotNull AtcalParser.ElemExprContext ctx);
+	T visitElemExpr(AtcalParser.ElemExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumLiteral}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumLiteral(@NotNull AtcalParser.NumLiteralContext ctx);
+	T visitNumLiteral(AtcalParser.NumLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumMinus}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumMinus(@NotNull AtcalParser.NumMinusContext ctx);
+	T visitNumMinus(AtcalParser.NumMinusContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code StrLiteral}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitStrLiteral(@NotNull AtcalParser.StrLiteralContext ctx);
+	T visitStrLiteral(AtcalParser.StrLiteralContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code AutoExpr}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitAutoExpr(@NotNull AtcalParser.AutoExprContext ctx);
+	T visitAutoExpr(AtcalParser.AutoExprContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetCons}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetCons(@NotNull AtcalParser.SetConsContext ctx);
+	T visitSetCons(AtcalParser.SetConsContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumPlus}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumPlus(@NotNull AtcalParser.NumPlusContext ctx);
+	T visitNumPlus(AtcalParser.NumPlusContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetElem}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetElem(@NotNull AtcalParser.SetElemContext ctx);
+	T visitSetElem(AtcalParser.SetElemContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetCard}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetCard(@NotNull AtcalParser.SetCardContext ctx);
+	T visitSetCard(AtcalParser.SetCardContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code NumDiv}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitNumDiv(@NotNull AtcalParser.NumDivContext ctx);
+	T visitNumDiv(AtcalParser.NumDivContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetProj}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetProj(@NotNull AtcalParser.SetProjContext ctx);
+	T visitSetProj(AtcalParser.SetProjContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetRan}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetRan(@NotNull AtcalParser.SetRanContext ctx);
+	T visitSetRan(AtcalParser.SetRanContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code SetInter}
 	 * labeled alternative in {@link AtcalParser#zExpr}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitSetInter(@NotNull AtcalParser.SetInterContext ctx);
+	T visitSetInter(AtcalParser.SetInterContext ctx);
 }

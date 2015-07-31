@@ -111,14 +111,14 @@ public class RefineCommand implements Command {
 					return;
 				}
 
-				//Extraemos las variables que serán referenciadas (REF)
+//				Extraemos las variables que serán referenciadas (REF)
 				RefinementRules.generateReferencedVars(refRuleName);
 				
-				//se resuelven los import con el uutPath
+//				se resuelven los import con el uutPath
 				String preamble = RefinementRules.getRule(refRuleName).getPreamble();
 				String unfoldedPreamble = ImportResolver.getResolver(targetLanguaje).resolver(preamble, pathUUT,output);
 				RefinementRules.getRule(refRuleName).setUnfoldedPreamble(unfoldedPreamble);
-				
+
 				FTCRLUtils.setRule(RefinementRules.getRule(refRuleName));
 				eventAdmin.announceEvent(new RefineAbsTCasesRequested(opName, absTCasesColl,targetLanguaje));
 
