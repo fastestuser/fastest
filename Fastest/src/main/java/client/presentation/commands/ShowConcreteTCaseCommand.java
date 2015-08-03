@@ -113,7 +113,7 @@ public class ShowConcreteTCaseCommand implements Command{
 				for(int i=0;i<ctCases.size();i++){
 					ConcreteTCase auxCTCase = ctCases.get(i);
 					String auxCTCName = auxCTCase.getConcreteTCaseName();
-					String targetLanguaje = auxCTCase.getLanguaje();
+					String targetLanguaje = auxCTCase.getLanguage();
 					String fileExtension = "";
 					if(targetLanguaje.equals("Java"))
 						fileExtension = ".java";

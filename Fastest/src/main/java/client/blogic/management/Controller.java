@@ -1,8 +1,6 @@
 package client.blogic.management;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -659,13 +657,13 @@ public final class Controller extends IIComponent {
 			RefineAbsTCasesRequested refineAbsTCasesRequested =	(RefineAbsTCasesRequested) event_;
 			Collection<AbstractTCase> tcaColl =	refineAbsTCasesRequested.getAbsTCasesColl();
 			//opName = refineAbsTCasesRequested.getOpName();
-			String targetLanguaje = refineAbsTCasesRequested.getTargetLanguaje();
+			String targetLanguage = refineAbsTCasesRequested.getTargetLanguage();
 			Iterator<AbstractTCase> iter = tcaColl.iterator();
 			while (iter.hasNext()) {
 				AbstractTCase atc = iter.next();
 				opName = SpecUtils.getAxParaName(atc);
 				pendingToRef++;
-				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, targetLanguaje);
+				TCaseRefineRequested tCaseRefineRequested =	new TCaseRefineRequested(opName, atc, targetLanguage);
 				try {
 					EventAdmin eventAdmin = EventAdmin.getInstance();
 					eventAdmin.announceEvent(tCaseRefineRequested);

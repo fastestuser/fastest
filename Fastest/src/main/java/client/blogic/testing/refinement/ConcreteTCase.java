@@ -19,7 +19,7 @@ public class ConcreteTCase {
     private AbstractTCase abstractTCase; //
     private String absLawName;
     private String opName; //
-    private String targetLanguaje; //
+    private String targetLanguage; //
     private String initDecls;
     private String uutLine;
     private String plCode;
@@ -82,11 +82,11 @@ public class ConcreteTCase {
     public String getOpName(){
 	return opName;
     }
-    public void setLanguaje(String targetLanguaje){
-	this.targetLanguaje = targetLanguaje;
+    public void setLanguage(String targetLanguage){
+	this.targetLanguage = targetLanguage;
     }
-    public String getLanguaje(){
-	return targetLanguaje;
+    public String getLanguage(){
+	return targetLanguage;
     }
 
     public String getDeclaraciones() {

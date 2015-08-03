@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*;
 
 import client.blogic.testing.refinement.ConcreteTCase;
-import client.blogic.testing.refinementOld.TCaseAssignment;
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.impl.*;
 import common.z.UtilSymbols;
@@ -449,7 +448,7 @@ public final class Utils {
 	 * return the source code
 	 */
 	public static String printCTC(String testName, ConcreteTCase ctc) {
-		String targetLanguaje = ctc.getLanguaje();
+		String targetLanguaje = ctc.getLanguage();
 		if(targetLanguaje.equals("C"))
 			return printCTCC(testName,ctc);
 		else if(targetLanguaje.equals("Java")) // Ver consistencia may/min

@@ -13,12 +13,12 @@ public class TCaseRefClientRunner implements Runnable {
 	private String opName;
 	private AbstractTCase abstractTCase;
 	private ConcreteTCase concreteTCase;
-	private String targetLanguaje;
+	private String targetLanguage;
 
-	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase, String targetLanguaje) {
+	public TCaseRefClientRunner(String opName, AbstractTCase abstractTCase, String targetLanguage) {
 		this.opName = opName;
 		this.abstractTCase = abstractTCase;
-		this.targetLanguaje = targetLanguaje;
+		this.targetLanguage = targetLanguage;
 	}
 
 	public ConcreteTCase getConcreteTCase() {
@@ -28,14 +28,14 @@ public class TCaseRefClientRunner implements Runnable {
 	@Override
 	public void run() {
 		try {
-			// We analyze the targetLanguaje and create the corresponding refiner
-			Refiner refiner = Refiner.getRefiner(targetLanguaje);
+			// We analyze the targetLanguage and create the corresponding refiner
+			Refiner refiner = Refiner.getRefiner(targetLanguage);
 			refiner.refineCase(abstractTCase.getMyAxPara());
 			String abstractName = SpecUtils.getAxParaName(abstractTCase);
 			String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";
 			concreteTCase = new ConcreteTCase();
 			concreteTCase.setOpName(opName);
-			concreteTCase.setLanguaje(this.targetLanguaje);
+			concreteTCase.setLanguage(this.targetLanguage);
 			concreteTCase.setConcreteTCaseName(concreteName);
 			concreteTCase.setAbstractTCase(abstractTCase);
 			RefinementRule rule = FTCRLUtils.getRule();

@@ -30,7 +30,7 @@ public class RefineAST{
 		// We set some fields in the concrete case
 		ctc.setPreamble(ast.getPreamble());
 		ctc.setEpilogue(ast.getEpilogue());
-		ctc.setLanguaje(targetLanguaje);
+		ctc.setLanguage(targetLanguaje);
 
 		// We analyze the targetLanguaje and create the corresponding refiner
 		RefineExpr refiner = null;
