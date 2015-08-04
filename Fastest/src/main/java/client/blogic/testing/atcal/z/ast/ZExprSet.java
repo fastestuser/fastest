@@ -17,7 +17,7 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
         this.set = ImmutableSet.copyOf(set);
     }
 
-    private ZExprSet(Set<ZExpr> set) {
+    public ZExprSet(Set<ZExpr> set) {
         this.set = ImmutableSet.copyOf(set);
     }
 
