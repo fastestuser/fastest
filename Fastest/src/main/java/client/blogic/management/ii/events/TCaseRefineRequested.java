@@ -1,49 +1,66 @@
 package client.blogic.management.ii.events;
 
+import client.blogic.testing.atcal.RefinementRule;
 import common.z.AbstractTCase;
 
 /**
- * @author Hache
+ * Created by Cristian on 05/08/15.
  */
-public class TCaseRefineRequested extends Event_{
-    private String opName;
-    private AbstractTCase absTCase;
-    private String targetLanguage;
 
-    public TCaseRefineRequested(String opName, AbstractTCase absTCase, String targetLanguage){
-		this.opName = opName;
-		this.absTCase = absTCase;
-		this.targetLanguage = targetLanguage;
-		super.setEventName("tCaseRefineRequested");
-	}
+/**
+ * An instance of this class represents a refine request of an abstract test case into a programming language using
+ * a given refinement rule.
+ */
+public class TCaseRefineRequested extends Event_ {
+
+    private final String opName;
+    private final AbstractTCase abstractTCase;
+    private final String targetLanguage;
+    private final RefinementRule refinementRule;
+
+    public TCaseRefineRequested
+            (String opName, AbstractTCase abstractTCase, String targetLanguage, RefinementRule refinementRule) {
+        this.opName = opName;
+        this.abstractTCase = abstractTCase;
+        this.targetLanguage = targetLanguage;
+        this.refinementRule = refinementRule;
+        super.setEventName("tCaseRefineRequested");
+    }
+
     /**
-     * Sets the name of the operation associated to this object.
-     * @param opName
+     * Gets the name of the operation associated to the refine request.
+     *
+     * @return the name of the operation
      */
-	public void setOpName(String opName){
-		this.opName = opName;
-	}
+    public String getOpName() {
+        return opName;
+    }
 
     /**
-     * Gets the name of the operation associated to this object.
-     * @return
+     * Gets the abstract test case associated to the refine request.
+     *
+     * @return the abstract test case
      */
-	public String getOpName(){
-		return opName;
-	}
+    public AbstractTCase getAbstractTCase() {
+        return abstractTCase;
+    }
 
+    /**
+     * Gets the target language of the refine request.
+     *
+     * @return the target language
+     */
+    public String getTargetLanguage() {
+        return targetLanguage;
+    }
 
-	public void setAbstractTCase(AbstractTCase absTCase){
-		this.absTCase = absTCase;
-	}
-
-	public AbstractTCase getAbstractTCase(){
-		return absTCase;
-	}
-
-	public String getTargetLanguage(){
-		return targetLanguage;
-	}
-	
-	
+    /**
+     * Gets the refinement rule file of the refine request.
+     *
+     * @return the refinement rule file
+     */
+    public RefinementRule getRefinementRule() {
+        return refinementRule;
+    }
 }
+

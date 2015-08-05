@@ -11,7 +11,7 @@ import common.z.SpecUtils;
 import common.z.TClass;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.events.TCaseGenerated;
-import client.blogic.management.ii.events.TCaseRefineRequestedJAVA;
+import client.blogic.management.ii.events.TCaseRefineRequestedOld;
 import client.blogic.management.ii.events.RefLawSelected;
 import client.blogic.testing.refinement.ConcreteTCase;
 
@@ -66,9 +66,9 @@ public class TCaseRefClient {
         if (event_ instanceof TCaseGenerated) {
 
             abstractTCaseList.add(((TCaseGenerated) event_).getAbstractTCase());
-        } else if (event_ instanceof TCaseRefineRequestedJAVA) {
+        } else if (event_ instanceof TCaseRefineRequestedOld) {
 
-            TCaseRefineRequestedJAVA tCaseRefineRequestEvent = (TCaseRefineRequestedJAVA) event_;
+            TCaseRefineRequestedOld tCaseRefineRequestEvent = (TCaseRefineRequestedOld) event_;
 
             opName = tCaseRefineRequestEvent.getOpName();
             tClass = tCaseRefineRequestEvent.getTClass();

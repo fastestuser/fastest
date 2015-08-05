@@ -38,13 +38,12 @@ public class TCRLFileParser {
 	}
 
 	private static String unfoldPreamble(String preamble){
-		RefinementRules.instance();
 		String REGEX = "^(\\w*)\\.@PREAMBLE$";
 		Pattern p = Pattern.compile(REGEX,Pattern.MULTILINE);
 		Matcher m = p.matcher(preamble);
 		String unpreambulo = new String();
 		while(m.find()) {
-			unpreambulo = RefinementRules.getRule(m.group(1)).getPreamble();
+			unpreambulo = RefinementRules.getInstance().getRule(m.group(1)).getPreamble();
 			preamble = m.replaceFirst(unfoldPreamble(unpreambulo));
 			m = p.matcher(preamble);
 		}
@@ -52,15 +51,14 @@ public class TCRLFileParser {
 	}
 	//resuelve los preambles incluidos recursivamente 
 	private static void resolvePreamble(){
-		RefinementRules.instance();
-		Iterator<String> it = RefinementRules.getRefRuleNames();
+		Iterator<String> it = RefinementRules.getInstance().getRefRuleNames();
 		String preamble = "";
 		String ruleName = "";
 		RefinementRule rule;
 		while (it.hasNext()) {
 			try{
 				ruleName = it.next();
-				rule = RefinementRules.getRule(ruleName);
+				rule = RefinementRules.getInstance().getRule(ruleName);
 				preamble = rule.getPreamble();
 				preamble = unfoldPreamble(preamble);
 				rule.setPreamble(preamble);
@@ -75,12 +73,11 @@ public class TCRLFileParser {
 	}
 
 	private static void resolveLawsReferences(){
-		RefinementRules.instance();
 		//if (RefinementRules.isEmpty()){
 		//	System.out.println("Error when trying to resolve the rules.");
 		//	System.out.println("Refinements rules not loaded.");
 		//}
-		Iterator<String> it = RefinementRules.getRefRuleNames();
+		Iterator<String> it = RefinementRules.getInstance().getRefRuleNames();
 		RefinementRuleContext ruleContext;
 		ANTLRInputStream input;
 		String ruleString;
@@ -91,7 +88,7 @@ public class TCRLFileParser {
 		while (it.hasNext()){
 			try{
 				ruleName = it.next();
-				rule = RefinementRules.getRule(ruleName);
+				rule = RefinementRules.getInstance().getRule(ruleName);
 				ruleContext = rule.getTree();
 				ruleString = ruleContext.accept(new FTCRLPreprocVisitor(ruleContext));
 				input = new ANTLRInputStream(ruleString);
@@ -118,7 +115,6 @@ public class TCRLFileParser {
 
 			RefinementRuleContext ruleContext;
 			RefinementRule rule;
-			RefinementRules.instance();
 			String refRuleAux[],srefrule,section,preamble, uut, epilogue,ruleString,name,plcode = "",laws;
 			String refRulesAux[] = refRulesString.split("@RRULE");
 			
@@ -173,7 +169,7 @@ public class TCRLFileParser {
 				//habria qeu pasar todo esto a despues de refinement, pero antes camgiar la gramatica
 				if(ruleContext != null){
 					rule = new RefinementRule(ruleContext, preamble, epilogue, plcode);
-					RefinementRules.addRule(ruleContext.name().getText(), rule);
+					RefinementRules.getInstance().addRule(ruleContext.name().getText(), rule);
 				} else{
 					System.out.println("Refinement rule "+name.trim()+" not loaded.");
 				}

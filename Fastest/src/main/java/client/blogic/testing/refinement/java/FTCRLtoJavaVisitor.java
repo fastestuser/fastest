@@ -49,8 +49,7 @@ public final class FTCRLtoJavaVisitor extends FTCRLtoCodeVisitor {
 			warnings = new StringBuilder();
 			varNumber = 0;
 			//Inicializamos las ref vars
-			RefinementRules.instance();
-			referencedVars = RefinementRules.getReferencedVars();
+			referencedVars = RefinementRules.getInstance().getReferencedVars();
 
 			//Cargamos el codigo java para obtener los tipos de las variables
 			extractJavaTypes(FTCRLUtils.getRule().getUnfoldedPreamble());

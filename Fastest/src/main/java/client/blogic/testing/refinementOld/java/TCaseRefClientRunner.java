@@ -5,9 +5,8 @@ import java.io.*;
 import common.z.TClass;
 import common.z.AbstractTCase;
 import client.blogic.management.ii.EventAdmin;
-import client.blogic.management.ii.events.TCaseRefinedJAVA;
+import client.blogic.management.ii.events.TCaseRefinedOld;
 import client.blogic.testing.refinement.ConcreteTCase;
-import client.blogic.testing.refinementOld.*;
 
 /**
  * Represents test case refinement to run as a client.
@@ -78,7 +77,7 @@ public class TCaseRefClientRunner {
     		//--------------------------------------------------------------------------------
     		concreteTCase = RefineAST.refine(ast, abstractTCase);
     		//--------------------------------------------------------------------------------
-    		TCaseRefinedJAVA tCaseRefinedEvent = new TCaseRefinedJAVA(opName, tClass, concreteTCase);
+    		TCaseRefinedOld tCaseRefinedEvent = new TCaseRefinedOld(opName, tClass, concreteTCase);
             
     		try{
                 

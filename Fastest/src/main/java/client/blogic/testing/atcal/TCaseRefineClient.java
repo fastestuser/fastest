@@ -18,7 +18,8 @@ public class TCaseRefineClient extends IIComponent {
             String opName = tCaseRefineRequested.getOpName();
             AbstractTCase absTCase = tCaseRefineRequested.getAbstractTCase();
             String targetLanguage = tCaseRefineRequested.getTargetLanguage();
-            (new Thread(new TCaseRefineClientRunner(opName, absTCase, targetLanguage))).start();
+            RefinementRule refinementRule = tCaseRefineRequested.getRefinementRule();
+                    (new Thread(new TCaseRefineClientRunner(opName, absTCase, targetLanguage, refinementRule))).start();
         } else {
             throw new IllegalArgumentException();
         }

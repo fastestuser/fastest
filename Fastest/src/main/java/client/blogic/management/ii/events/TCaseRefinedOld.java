@@ -1,37 +1,38 @@
 package client.blogic.management.ii.events;
 
-import common.z.AbstractTCase;
+import client.blogic.testing.refinement.ConcreteTCase;
 import common.z.TClass;
 
 /**
- * Represents the implicit invocation event that must be announced when the user orders the
- * generation of JAVA concrete test case.
- *
+ * Represents the implicit invocation event that must be announced when the 
+ * refined JAVA test case is generated.
+ * 
  * @author  Pablo D. Coca
  *
  * @since   v2.0
  *
  * @version 2.0
  */
-public class TCaseRefineRequestedJAVA extends Event_{
+public class TCaseRefinedOld extends Event_{
     
 	private String opName;
-    private TClass tClass;
-    private AbstractTCase abstractTCase;
+	private TClass tClass;
+    private ConcreteTCase concreteTCase;
 
-    public TCaseRefineRequestedJAVA(String opName, TClass tClass, AbstractTCase abstractTCase){
-		
+    public TCaseRefinedOld(String opName, TClass tClass, ConcreteTCase concreteTCase){
+        
     	this.opName = opName;
 		this.tClass = tClass;
-		this.abstractTCase = abstractTCase;
-		super.setEventName("tCaseRefineRequestedJAVA");
-	}
+        this.concreteTCase = concreteTCase;
+		super.setEventName("tCaseRefinedJAVA");
+		
+    }
     
     /**
      * Sets the name of the operation associated to this object.
      * @param opName
      */
-	public void setOpName(String opName){
+    public void setOpName(String opName){
 		this.opName = opName;
 	}
 
@@ -47,7 +48,7 @@ public class TCaseRefineRequestedJAVA extends Event_{
      * Sets the test class associated to this object.
      * @param tClass
      */
- 	public void setTClass(TClass tClass){
+	public void setTClass(TClass tClass){
 		this.tClass = tClass;
 	}
 
@@ -63,16 +64,15 @@ public class TCaseRefineRequestedJAVA extends Event_{
      * Sets the abstract test case associated to this object.
      * @param abstractTCase
      */
-	public void setAbstractTCase(AbstractTCase abstractTCase){
-		this.abstractTCase = abstractTCase;
+	public void setConcreteTCase(ConcreteTCase concreteTCase){
+		this.concreteTCase = concreteTCase;
 	}
 
     /**
      * Gets the abstract test case associated to this object.
      * @return the abstract test case
      */
-	public AbstractTCase getAbstractTCase(){
-		return abstractTCase;
+	public ConcreteTCase getConcreteTCase(){
+		return concreteTCase;
 	}
-
 }
