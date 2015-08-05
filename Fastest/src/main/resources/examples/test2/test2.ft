@@ -1,0 +1,5 @@
+loadspec src/main/resources/examples/test2/test2.tex
+selop A
+addtactic A SP \cup b \cup \{1\}
+genalltt
+genalltca

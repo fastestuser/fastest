@@ -1,0 +1,9 @@
+@RRULE test3
+
+@DATATYPES
+    DATATYPE Set = CONSTRUCTOR newSet() SETTER add(set, elem) GETTER get();
+
+@LAWS
+b ==> myB AS Set WITH [@ELEM ==> elem AS INT];
+
+@UUT pepe(myB);

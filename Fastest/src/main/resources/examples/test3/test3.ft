@@ -1,0 +1,6 @@
+loadspec src/main/resources/examples/test3/test3.tex
+selop A
+addtactic A SP \cup b \cup \{1\}
+genalltt
+genalltca
+refine A_SP_4 to test pepe implemented in java with test3
