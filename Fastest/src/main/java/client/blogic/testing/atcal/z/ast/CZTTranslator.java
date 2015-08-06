@@ -1,11 +1,12 @@
 package client.blogic.testing.atcal.z.ast;
 
-import net.sourceforge.czt.base.ast.Term;
-import net.sourceforge.czt.base.visitor.TermVisitor;
-import net.sourceforge.czt.z.ast.*;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.NumExpr;
+import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.SetExpr;
 import net.sourceforge.czt.z.impl.ZExprListImpl;
+import net.sourceforge.czt.z.visitor.ExprVisitor;
 
-import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -13,26 +14,18 @@ import java.util.stream.Collectors;
 /**
  * Created by Cristian on 03/08/15.
  */
-public final class CZTTranslator implements TermVisitor<ZExpr> {
+
+/**
+ * This class implements a visitor that translates CZT expressions into ATCAL Z expressions.
+ * ATCAL has its own AST to represent the abstract test cases that simplifies the refiner's implementation.
+ */
+public final class CZTTranslator implements ExprVisitor<ZExpr> {
 
     @Override
-    public ZExpr visitTerm(Term term) {
-        if (term instanceof ZSchText) {
-            ZSchText zSchText = (ZSchText)term;
-            ZVar zVar = (ZVar)(zSchText.getPred().accept(CZTTranslator.this));
-            return ZExprSchema.of(zVar);
+    public ZExpr visitExpr(Expr expr) {
 
-        } else if (term instanceof MemPred) {
-            MemPred memPred = (MemPred) term;
-            if (memPred.getMixfix() == true) {
-                RefExpr leftExpr = (RefExpr) (memPred.getLeftExpr());
-                SetExpr rightExpr = (SetExpr)memPred.getRightExpr();
-                return new ZVar(leftExpr.getName().toString(), rightExpr.getZExprList().get(0).accept(CZTTranslator.this));
-            } else {
-                throw new RuntimeException("Unsupported term: " + term);
-            }
-        } else if (term instanceof SetExpr) {
-            ZExprListImpl zExprList = (ZExprListImpl)((SetExpr) term).getExprList();
+        if (expr instanceof SetExpr) {
+            ZExprListImpl zExprList = (ZExprListImpl) ((SetExpr) expr).getExprList();
             Set<ZExpr> zExprSet = zExprList.stream().map(new Function<Expr, ZExpr>() {
                 @Override
                 public ZExpr apply(Expr expr) {
@@ -40,11 +33,17 @@ public final class CZTTranslator implements TermVisitor<ZExpr> {
                 }
             }).collect(Collectors.toSet());
             return new ZExprSet(zExprSet);
-        } else if (term instanceof NumExpr) {
-            //Todo: What if the number is bigger than a long?
-            return new ZExprNum(((NumExpr)term).getValue().longValue());
-        }
 
-        return null;
+        } else if (expr instanceof NumExpr) {
+            //Todo: What if the number is bigger than a long?
+            return new ZExprNum(((NumExpr) expr).getValue().longValue());
+
+        } else if (expr instanceof RefExpr) {
+            // The empty set expression has an instance of a different class than the rest of the sets.
+            if (((RefExpr) expr).getZName().getWord().equals("∅"))
+                return ZExprSet.getEmptySet();
+
+        }
+        throw new RuntimeException("Unsupported CZT expr translation.");
     }
 }
