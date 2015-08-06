@@ -1,6 +1,10 @@
 package common.z;
 
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.RefExpr;
+
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -10,6 +14,7 @@ import java.util.List;
 public interface AbstractTCase extends TClass{
 	public void setInclsNotIntegrated(List<String> incls);
 	public String getInclsNotIntegrated();
+	public Map<RefExpr, Expr> getVarExpMap();
 }
 
 

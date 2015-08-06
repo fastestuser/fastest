@@ -59,7 +59,7 @@ public class TCaseNodeAdder implements TTreeVisitor<Boolean>{
 			unfoldedPred = SpecUtils.andPreds(unfoldedPred, SpecUtils.getAxParaPred(foldedAxPara));
 			SpecUtils.setAxParaPred(unfoldedAxPara, unfoldedPred);
 			SpecUtils.setAxParaName(unfoldedAxPara, SpecUtils.getAxParaName(foldedAxPara));
-			AbstractTCase unfoldedAbsTCase = new AbstractTCaseImpl(unfoldedAxPara, foldedAbsTCase.getSchName());
+			AbstractTCase unfoldedAbsTCase = new AbstractTCaseImpl(unfoldedAxPara, foldedAbsTCase.getSchName(), foldedAbsTCase.getVarExpMap());
 			TTreeNode tCaseNode = new TCaseNode(foldedAbsTCase, unfoldedAbsTCase, tClassNode);
             AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
             AbstractRepository<TTreeNode> newChildren = new ConcreteRepository<TTreeNode>();

@@ -30,11 +30,13 @@ public class AbstractTCaseImpl implements AbstractTCase{
 	private AxPara myAxPara;
 	private String schName;
 	private List<String> inclsNotIntegrated;
+	private final Map<RefExpr, Expr> varExprMap;
 	
 	public AbstractTCaseImpl(AxPara axPara, String schName){
             setMyAxPara(axPara);
             this.schName = schName;
-        }	
+			this.varExprMap = null;
+        }
 
     
     /**
@@ -60,6 +62,7 @@ public class AbstractTCaseImpl implements AbstractTCase{
 		SpecUtils.setAxParaName(newAxPara, schName);
 		SpecUtils.setAxParaPred(newAxPara, SpecUtils.createAndPred(varExprMap));
 		setMyAxPara(newAxPara);
+		this.varExprMap = varExprMap;
 	}
 
 
@@ -152,7 +155,7 @@ public class AbstractTCaseImpl implements AbstractTCase{
 
     @Override
 	public AxPara clone(){
-		return new AbstractTCaseImpl((AxPara)myAxPara.accept(new CZTCloner()), schName);
+		return new AbstractTCaseImpl((AxPara)myAxPara.accept(new CZTCloner()), schName, varExprMap);
 	}
 
 
@@ -176,6 +179,10 @@ public class AbstractTCaseImpl implements AbstractTCase{
 		
 	}
 
+	@Override
+	public Map<RefExpr, Expr> getVarExpMap() {
+		return this.varExprMap;
+	}
 
 	@Override
 	public String getInclsNotIntegrated() {
