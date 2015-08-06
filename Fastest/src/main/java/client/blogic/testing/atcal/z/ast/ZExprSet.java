@@ -45,6 +45,14 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
         return new ZExprSet(ImmutableSet.of(e1, e2, e3, e4, e5));
     }
 
+    private static final class EmptySetHolder {
+        static final ZExprSet emptySet = new ZExprSet(Sets.newHashSet());
+    }
+
+    public static ZExprSet getEmptySet() {
+        return EmptySetHolder.emptySet;
+    }
+
     public boolean contains(ZExpr expr) {
         if (expr == null)
             return false;
