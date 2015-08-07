@@ -85,10 +85,6 @@ public final class Controller extends IIComponent {
     // Indicates how many test trees are being considered for obtaining abstract
     // test cases
     private int pendingTTrees;
-    // Indicates if the refining process is active
-    //private boolean refining;
-    // Indicates how many abstract test cases are being refined
-    private int pendingToRef;
     // lista de tipos libres
     private List<FreePara> freeParas;
     // Son los nombres de los tipos basicos
@@ -171,7 +167,6 @@ public final class Controller extends IIComponent {
         pendingAbsTCases = 0;
         pendingPrunnings = 0;
         pendingTTrees = 0;
-        pendingToRef = 0;
         freeParas = null;
         basicTypeNames = null;
         userDefinedTypes = null;
@@ -302,46 +297,6 @@ public final class Controller extends IIComponent {
             inicioPoda = cal.getTimeInMillis();
             }
             pendingPrunnings++;*/
-        } else if (event_ instanceof TCaseRefined) {
-            TCaseRefined tCaseRefined = (TCaseRefined) event_;
-            String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
-
-            if (tCaseRefined.getConcreteTCase() != null) {
-                opRefTCaseMap.put(tCaseRefined.getConcreteTCase().getConcreteTCaseName(), tCaseRefined.getConcreteTCase());
-                //			if (opRefTCaseMap.get(tCaseRefined.getOpName()) != null) {
-                //				opRefTCaseMap.get(tCaseRefined.getOpName()).add(tCaseRefined.getConcreteTCase());
-                //			} else {
-                //				List<ConcreteTCase> list = new ArrayList<ConcreteTCase>();
-                //				list.add(tCaseRefined.getConcreteTCase());
-                //				opRefTCaseMap.put(tCaseRefined.getOpName(), list);
-                //}
-
-                absTCaseRefTCaseMap.put(tCaseName, tCaseRefined.getConcreteTCase());
-                String warnings = tCaseRefined.getConcreteTCase().hasWarnings() ? " WARNING" : "";
-                System.out.println(tCaseName + " test case refination -> SUCCESS." + warnings);
-            } else {
-                System.out.println(tCaseName + " test case refination -> FAILED.");
-            }
-            pendingToRef--;
-
-            if (pendingToRef == 0)
-                processFinished();
-
-            //				if (!refining) {
-            //					processFinished();
-            //				}
-            //				try {
-            //					EventAdmin eventAdmin = EventAdmin.getInstance();
-            //					eventAdmin.announceEvent(new AllTCasesRefined());
-            //				} catch (Exception e) {
-            //					e.printStackTrace();
-            //				}
-
-            //		} else if (event_ instanceof AllTCasesRefined) {
-            //			//refining = false;
-            //			//if (pendingToRef == 0) {
-            //				processFinished();
-            //			//}
         } else if (event_ instanceof RefLawSelected) {
             RefLawSelected refLawSelected = (RefLawSelected) event_;
             this.selectedRefLaw = refLawSelected.getRefLawName();
@@ -605,9 +560,7 @@ public final class Controller extends IIComponent {
                         }
                     }
                 }
-
             } else {
-
                 System.out.println(tClassName + " test case generation -> SUCCESS.");
                 TClassNode tClassNode = opTTreeMap.get(opName);
                 Boolean correctlyadded = tClassNode.acceptVisitor(new TCaseNodeAdder(tClassName, abstractTCase));
@@ -627,42 +580,7 @@ public final class Controller extends IIComponent {
                 processFinished();
                 //}
             }
-        } else if (event_ instanceof RefineAbsTCasesRequested) {
-            Calendar cal = Calendar.getInstance();
-            inicio = cal.getTimeInMillis();
-            RefineAbsTCasesRequested refineAbsTCasesRequested = (RefineAbsTCasesRequested) event_;
-            Collection<AbstractTCase> tcaColl = refineAbsTCasesRequested.getAbsTCasesColl();
-            String targetLanguage = refineAbsTCasesRequested.getTargetLanguage();
-            Iterator<AbstractTCase> iter = tcaColl.iterator();
-            while (iter.hasNext()) {
-                AbstractTCase atc = iter.next();
-                opName = SpecUtils.getAxParaName(atc);
-                pendingToRef++;
-                TCaseRefineRequested tCaseRefineRequested = new TCaseRefineRequested(opName, atc, targetLanguage,
-                        refineAbsTCasesRequested.getRefinementRule());
-                try {
-                    EventAdmin eventAdmin = EventAdmin.getInstance();
-                    eventAdmin.announceEvent(tCaseRefineRequested);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            } // No se si funcionara. Creo que no esta SINCRONiZADO!!!
-            //			try {
-            //				EventAdmin eventAdmin = EventAdmin.getInstance();
-            //				eventAdmin.announceEvent(new AllTCasesRefined());
-            //			} catch (Exception e) {
-            //				e.printStackTrace();
-            //			}
-        } /*else if (event_ instanceof TCaseRefineRequested){
-        TCaseRefineRequested tCaseRefineRequested = (TCaseRefineRequested) event_;
-        opName = tCaseRefineRequested.getOpName();
-        AbstractTCase absTCase = tCaseRefineRequested.getAbstractTCase();
-        String refLawName = tCaseRefineRequested.getRefLawName();
-        String pathUUT = tCaseRefineRequested.getPathUUT();
-        String targetLanguaje = tCaseRefineRequested.getTargetLanguage();
-        new TCaseRefClientRunner(opName, absTCase, pathUUT, targetLanguaje, refLawName);
-        }*/ // Es incorrecto. Se mandara 2 veces a refinar el mismo caso!!!
-        else if (event_ instanceof FastestResetted) {
+        } else if (event_ instanceof FastestResetted) {
             sectionManager = null;
             nomTexFileSpec = null;
             originalSpec = null;
@@ -680,7 +598,6 @@ public final class Controller extends IIComponent {
             pendingAbsTCases = 0;
             pendingPrunnings = 0;
             pendingTTrees = 0;
-            pendingToRef = 0;
             freeParas = null;
             basicTypeNames = null;
             userDefinedTypes = null;
