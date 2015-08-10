@@ -1,8 +1,8 @@
 package client.presentation.commands;
 
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
 import client.blogic.management.ii.events.CTCaseRunRequested;
 import client.blogic.management.ii.EventAdmin;
@@ -24,7 +24,7 @@ public class RunConcreteTCaseCommand implements Command{
 	runCode = runCode.replace("(.*)",ctcName);
 
 	// We look for the concrete case with name ctcName
-	ConcreteTCase ctCase = controller.getOpTCaseRefinedMap().get(ctcName); 
+	ConcreteTCase ctCase = controller.getOpTCaseRefinedMap().get(ctcName);
 	if(ctCase==null){
 		System.out.println(ctcName+" is not the name of a refined case");
 		return;

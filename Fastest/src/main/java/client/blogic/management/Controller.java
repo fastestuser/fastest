@@ -3,7 +3,7 @@ package client.blogic.management;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.management.ii.events.*;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;

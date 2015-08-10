@@ -3,7 +3,7 @@ package client.blogic.testing.ttree.visitors;
 import java.io.*;
 import java.util.*;
 
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TCaseNode;
@@ -98,7 +98,7 @@ import common.repository.AbstractIterator;
 		String s1 = "",s2 = "";
 		if (m.get(tCaseStr)!=null){
 			 String warning = m.get(tCaseStr).hasWarnings()?" (with warnings)":"";
-			 s1 = " > " + m.get(tCaseStr).getConcreteTCaseName() + warning;
+			 s1 = " > " + m.get(tCaseStr).getName() + warning;
 		}
 		if (!tCaseNode.getValue().getInclsNotIntegrated().isEmpty()){
 			s2 = " not integrated with " + tCaseNode.getValue().getInclsNotIntegrated();

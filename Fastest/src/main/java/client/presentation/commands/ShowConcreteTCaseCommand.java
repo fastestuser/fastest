@@ -3,11 +3,11 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import client.blogic.testing.atcal.ConcreteTCase;
 import common.z.AbstractTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.refinement.CTCPrinter;
-import client.blogic.testing.refinement.ConcreteTCase;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
@@ -112,7 +112,7 @@ public class ShowConcreteTCaseCommand implements Command{
 				// We must print in files
 				for(int i=0;i<ctCases.size();i++){
 					ConcreteTCase auxCTCase = ctCases.get(i);
-					String auxCTCName = auxCTCase.getConcreteTCaseName();
+					String auxCTCName = auxCTCase.getName();
 					String targetLanguaje = auxCTCase.getLanguage();
 					String fileExtension = "";
 					if(targetLanguaje.equals("Java"))

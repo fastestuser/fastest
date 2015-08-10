@@ -3,9 +3,9 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.ConcreteTCase;
 
 /**
  *

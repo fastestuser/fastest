@@ -52,7 +52,7 @@ public class TCaseRefClientRunner implements Runnable {
 			System.out.println("Error when trying to refine " + opName + ":\n" + e.getMessage());
 		} finally {
 			try{
-				TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,concreteTCase);
+				TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName,abstractTCase,null);
 				EventAdmin eventAdmin = EventAdmin.getInstance();
 				eventAdmin.announceEvent(tCaseRefinedEvent);
 			} catch (Exception e) {

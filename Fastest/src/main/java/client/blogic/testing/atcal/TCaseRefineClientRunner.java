@@ -8,6 +8,7 @@ import client.blogic.testing.atcal.z.ast.ZExpr;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
 import client.blogic.testing.atcal.z.ast.ZVar;
 import common.z.AbstractTCase;
+import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.RefExpr;
 
@@ -64,15 +65,19 @@ public class TCaseRefineClientRunner implements Runnable {
 
         // Get the ATCAL rule and evaluate it for the abstract test case.
         AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, new BaseGen());
-        String output = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
+        String code = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
 
-        // Show the input and output.
+        String concreteName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
+//        String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";
+        ConcreteTCase concreteTCase = new ConcreteTCase(concreteName, targetLanguage, code);
+
+        // Show the input and code.
         System.out.println(atc);
-        System.out.println(output);
+        System.out.println(code);
 
         // announce that the refinement process has finished.
         try {
-            TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName, abstractTCase, null);
+            TCaseRefined tCaseRefinedEvent = new TCaseRefined(opName, abstractTCase, concreteTCase);
             EventAdmin eventAdmin = EventAdmin.getInstance();
             eventAdmin.announceEvent(tCaseRefinedEvent);
         } catch (IllegalAccessException e) {

@@ -3,10 +3,10 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.execution.Executer;
-import client.blogic.testing.refinement.ConcreteTCase;
 import compserver.abstraction.capture.execution.CompilationInfo;
 
 /**
@@ -70,7 +70,7 @@ public class CompileCommand implements Command{
 				while(iterator.hasNext() && ctCase == null){
 					Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
 					ConcreteTCase auxCTCase = mapEntry.getValue();
-					String ctcAuxName = auxCTCase.getConcreteTCaseName();
+					String ctcAuxName = auxCTCase.getName();
 					if(ctcAuxName.equals(ctcName)){
 						ctCase = auxCTCase;
 					}
@@ -99,7 +99,7 @@ public class CompileCommand implements Command{
 				while(iterator.hasNext()){
 					Map.Entry<String, ConcreteTCase> mapEntry = iterator.next();
 					ConcreteTCase auxCTCase = mapEntry.getValue();
-					String auxCTCaseName = auxCTCase.getConcreteTCaseName();
+					String auxCTCaseName = auxCTCase.getName();
 					String workingPath = cInfo.getWorkingDirectory();
 					if(!workingPath.endsWith(File.separator))
 						workingPath += File.separator; 

@@ -1,6 +1,7 @@
 package client.blogic.testing.refinement;
 
 import client.blogic.testing.refinement.java.CTCPrinterJava;
+import client.blogic.testing.atcal.ConcreteTCase;
 
 public abstract class CTCPrinter {
 	/**

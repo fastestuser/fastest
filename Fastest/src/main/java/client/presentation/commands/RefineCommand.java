@@ -139,7 +139,7 @@ public class RefineCommand extends IIComponent implements Command {
             Controller controller = myClientUI.getMyController();
 
             if (tCaseRefined.getConcreteTCase() != null) {
-                controller.getOpTCaseRefinedMap().put(tCaseRefined.getConcreteTCase().getConcreteTCaseName(), tCaseRefined.getConcreteTCase());
+                controller.getOpTCaseRefinedMap().put(tCaseRefined.getConcreteTCase().getName(), tCaseRefined.getConcreteTCase());
                 controller.getAbsTCaseConcrTCaseMap().put(tCaseName, tCaseRefined.getConcreteTCase());
                 String warnings = tCaseRefined.getConcreteTCase().hasWarnings() ? " WARNING" : "";
                 System.out.println(tCaseName + " test case refination -> SUCCESS." + warnings);
