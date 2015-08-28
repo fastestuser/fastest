@@ -2,10 +2,11 @@ package common.z.czt.visitors;
 
 import net.sourceforge.czt.base.ast.*;
 import net.sourceforge.czt.base.visitor.*;
+
 import java.util.*;
 
+import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
-
 import net.sourceforge.czt.z.visitor.VarDeclVisitor;
 import net.sourceforge.czt.z.ast.FreePara;
 import net.sourceforge.czt.z.ast.Freetype;
@@ -26,14 +27,14 @@ import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
  * A visitor that obtains all the needed predicates to use in the NR strategy
  */
 
-public class FreetypeVarsExtractor
+public class FreeTypeVarsExtractor
 implements TermVisitor<Map<Term,String>>, VarDeclVisitor<Map<Term,String>>
 {
 
 	protected ZFreetypeListImpl zFreetypeListImpl;
 
-	public FreetypeVarsExtractor(ClientTextUI clientTextUI){
-		Spec spec = clientTextUI.getMyController().getOriginalSpec();
+	public FreeTypeVarsExtractor(Controller controller){
+		Spec spec = controller.getOriginalSpec();
 
 		for (Sect sect : spec.getSect()) {
 			if (sect instanceof ZSect) {

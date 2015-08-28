@@ -1,0 +1,160 @@
+STRATEGY FTOnly
+  FOREACH(v:getFTVariables(OP))
+    addtactic OP FT v
+    IF(APPLIED == TI)
+      exit
+    END
+  END
+END
+
+STRATEGY SPOnly
+  FOREACH(e:getSPExpressions(OP))
+    FOREACH(n:treeRoot(OP).leaves())
+      IF(e IN n)
+        addtactic n SP e.op e
+        IF(APPLIED == TI)
+          exit
+        END
+      END
+    END
+  END
+END
+
+STRATEGY NROnly
+  FOREACH(e:getNRVariables(OP))
+    FOREACH(n:treeRoot(OP).leaves())
+      IF(e IN n)
+        addtactic n NR e e.ran
+        IF(APPLIED == TI)
+          exit
+        END
+      END
+    END
+  END
+END
+
+STRATEGY ISEOnly
+  FOREACH(e:getISEExpressions(OP))
+    FOREACH(n:treeRoot(OP).leaves())
+      IF(e IN n)
+        addtactic n ISE e
+        IF(APPLIED == TI)
+          exit
+        END
+      END
+    END
+  END
+END
+
+STRATEGY FuncionalidadBasica
+  genalltt
+  prunett
+END
+
+STRATEGY Enumeraciones
+  genalltt
+  applystrategy FTOnly TI
+  genalltt
+  prunett
+END
+
+STRATEGY LimitesDeImplementacion
+  genalltt
+  applystrategy NROnly TI
+  genalltt
+  prunett
+END
+
+STRATEGY ValoresImportantes
+  genalltt
+  applystrategy ISEOnly TI
+  genalltt
+  prunett
+END
+
+STRATEGY Matematica
+  genalltt
+  applystrategy SPOnly TI
+  genalltt
+  prunett
+END
+
+STRATEGY TodaFuncionalidad
+  genalltt
+  applystrategy SPOnly TI
+  IF(TI == APPLIED)
+    applystrategy FTOnly TI
+  ELSE
+    applystrategy FTOnly (TI-APPLIED)
+  END
+  genalltt
+  prunett
+END
+
+STRATEGY MatematicaYLimites
+  genalltt
+  applystrategy SPOnly TI
+  IF(TI == APPLIED)
+    applystrategy NROnly TI
+  ELSE
+    applystrategy NROnly (TI-APPLIED)
+  END
+  genalltt
+  prunett
+END
+
+STRATEGY BuenTesting
+  genalltt
+  applystrategy SPOnly TI
+  IF(TI == APPLIED)
+    applystrategy NROnly TI
+  ELSE
+    applystrategy NROnly (TI-APPLIED)
+  END
+  IF(TI == 2*APPLIED)
+    applystrategy ISEOnly TI
+  ELSE IF(TI > APPLIED)
+    applystrategy ISEOnly (TI-APPLIED)
+  END
+  genalltt
+  prunett
+END
+
+STRATEGY TestingFuerte
+  genalltt
+  applystrategy SPOnly TI
+  IF(TI == APPLIED)
+    applystrategy NROnly TI
+  ELSE
+    applystrategy NROnly (TI-APPLIED)
+  END
+  IF(TI == 2*APPLIED)
+    applystrategy FTOnly TI
+  ELSE IF(TI > APPLIED)
+    applystrategy FTOnly (TI-APPLIED)
+  END
+  genalltt
+  prunett
+END
+
+STRATEGY TestingCompleto
+  genalltt
+  applystrategy SPOnly TI
+  IF(TI == APPLIED)
+    applystrategy NROnly TI
+  ELSE
+    applystrategy NROnly (TI-APPLIED)
+  END
+  IF(TI == 2*APPLIED)
+    applystrategy FTOnly TI
+  ELSE IF(TI > APPLIED)
+    applystrategy FTOnly (TI-APPLIED)
+  END
+  IF(TI == 3*APPLIED)
+    applystrategy ISEOnly TI
+  ELSE IF(TI > APPLIED)
+    applystrategy ISEOnly (TI-APPLIED)
+  END
+  genalltt
+  prunett
+END

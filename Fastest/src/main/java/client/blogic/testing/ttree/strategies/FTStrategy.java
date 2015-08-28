@@ -17,7 +17,7 @@ import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.DeclList;
 
 import common.z.SpecUtils;
-import common.z.czt.visitors.FreetypeVarsExtractor;
+import common.z.czt.visitors.FreeTypeVarsExtractor;
 
 
 /**
@@ -79,7 +79,7 @@ public class FTStrategy{
 
 				if (opTTreeRoot.getValue().getSchName().equals(unitToTestName + "_VIS")) {
 					DeclList declList = SpecUtils.getAxParaListOfDecl(opTTreeRoot.getValue().getMyAxPara());
-					freetypeVars = declList.accept(new FreetypeVarsExtractor(clientTextUI));
+					freetypeVars = declList.accept(new FreeTypeVarsExtractor(clientTextUI.getMyController()));
 					break;
 				}
 			}

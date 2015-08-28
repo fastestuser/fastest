@@ -142,6 +142,8 @@ public final class Controller extends IIComponent {
     private String setlogFile = "setlog4617.pl"; //Default value
     //Option to determine if the translation from Z to setlog is printed on screen
     private boolean setlogPrint = false;
+	//Option to determine if the tactis applied using FTSDL are printed on screen
+	private boolean ftsdlPrint = false;
     // Repositorio de designaciones
     private DesignationRepo desigRepo;
 
@@ -215,7 +217,10 @@ public final class Controller extends IIComponent {
                     } else if (lineParts[0].equals("SETLOG_PRINT")) {
                         if (lineParts[1].equalsIgnoreCase("true"))
                             setlogPrint = true;
-                    }
+                    } else if (lineParts[0].equals("FTSDL_PRINT")) {
+						if (lineParts[1].equalsIgnoreCase("true"))
+							ftsdlPrint = true;
+					}
                 }
             }
             in.close();
@@ -1203,6 +1208,10 @@ public final class Controller extends IIComponent {
     public boolean getSetlogPrint() {
         return setlogPrint;
     }
+    
+    public boolean getftsdlPrint(){
+		return ftsdlPrint;        
+	}
 
     public List<String> getBasicTypeNames() {
         return basicTypeNames;
