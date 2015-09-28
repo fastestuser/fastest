@@ -1,25 +1,23 @@
 package compserver.abstraction.capture.execution;
 
-import java.util.*;
-
 
 /**
  * Instances of this class encapsulates the information of compilation
  */
 public class CompilationInfo{
-	public CompilationInfo(String targetLanguaje,String platform, String compiler,String compileOptions, String workingDirectory){
-		this.targetLanguaje = targetLanguaje;
+	public CompilationInfo(String targetLanguage,String platform, String compiler,String compileOptions, String workingDirectory){
+		this.targetLanguage = targetLanguage;
 		this.platform = platform;
 		this.compiler = compiler;
 		this.compileOptions = compileOptions;
 		this.workingDirectory = workingDirectory;
 	}
 	/**
-	* Gets the languaje in which is encoded the UUT
+	* Gets the language in which is encoded the UUT
 	* @return
 	*/
-	public String getTargetLanguaje(){
-		return targetLanguaje;     
+	public String getTargetLanguage(){
+		return targetLanguage;
 	}
 	/**
 	* Gets the platform in which run the UUT
@@ -49,7 +47,7 @@ public class CompilationInfo{
 	public String getWorkingDirectory(){
 		return workingDirectory;
 	}
-	private String targetLanguaje;
+	private String targetLanguage;
 	private String platform;
 	private String compiler;
 	private String compileOptions;

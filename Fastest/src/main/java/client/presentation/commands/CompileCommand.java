@@ -157,7 +157,7 @@ public class CompileCommand implements Command{
 		}
 	}
 	private String getExtension(CompilationInfo compilationInfo){
-		String targetLanguaje = compilationInfo.getTargetLanguaje();
+		String targetLanguaje = compilationInfo.getTargetLanguage();
 		if(targetLanguaje.equals("C"))
 			return ".c";
 		else if(targetLanguaje.equals("Java"))
