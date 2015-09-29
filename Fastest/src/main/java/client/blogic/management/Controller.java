@@ -138,9 +138,7 @@ public final class Controller extends IIComponent {
     private int maxDNFClasses;
     //If the predicate of the VIS of an operation contains more than
     private int maxDNFPredsToMultiply;
-    //
     private int maxPredsToAnalize;
-    //
     //The timeout used in prolog, for setlog to find a case for a class
     private int setlogTimeout = 100; //Default value
     //Setlog File, shouled be in setlog folder
