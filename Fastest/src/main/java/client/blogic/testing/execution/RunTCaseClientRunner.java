@@ -1,53 +1,58 @@
 package client.blogic.testing.execution;
 
-import java.io.*;
-import compserver.abstraction.capture.execution.CompilationInfo;
-import client.blogic.management.ii.events.RunFinished;
 import client.blogic.management.ii.EventAdmin;
+import client.blogic.management.ii.events.RunCTCFinished;
+import compserver.abstraction.capture.execution.CompilationInfo;
+
+import java.io.File;
 
 /**
- * Instances of this class has the responsibility of request, to a computation 
- * server, for the running of a concrete case and abstract the output. Each request must 
+ * Instances of this class has the responsibility of request, to a computation
+ * server, for the running of a concrete case and abstract the output. Each request must
  * be done through a new instance of ServiceMediator, which is the only one that has the
  * knowledge about how the connection with the servers are implemented.
  */
-public class RunTCaseClientRunner implements Runnable
-{
+public class RunTCaseClientRunner implements Runnable {
 
-	/**
-	 * Creates new instances of TClassPruneClientRunner
-	 * @param tClass
-	 */
-	public RunTCaseClientRunner(String runCode, CompilationInfo compilationInfo){
-		this.compilationInfo = compilationInfo;
-		this.runCode = runCode;
-	}
+    /**
+     * Creates new instances of TClassPruneClientRunner
+     *
+     * @param tClass
+     */
+    public RunTCaseClientRunner(String runCode, CompilationInfo compilationInfo) {
+        this.compilationInfo = compilationInfo;
+        this.runCode = runCode;
+    }
 
-	/**
-	 * Requests the running of a concrete test and the subsequent abstraction of 
-	 * the output, either to the client itself or to a computation server.
-	 *  After a response arrives, it announces a TCaseAbstracted event.
-	 */
-	public void run(){
-		// Por ahora no considero el servidor
-		try{
-			// We obtain the working directory
-			String workingDirectory = compilationInfo.getWorkingDirectory();
-			if(!workingDirectory.endsWith(File.separator))
-				workingDirectory += File.separator; 
-			// We run the script test
-			// El executer deberia devolver el status de la ejecucion!!!
-			Executer.execute(runCode, workingDirectory);
-			EventAdmin eventAdmin = EventAdmin.getInstance();
-			RunFinished event = new RunFinished();
-			eventAdmin.announceEvent(event);
+    /**
+     * Requests the running of a concrete test and the subsequent abstraction of
+     * the output, either to the client itself or to a computation server.
+     * After a response arrives, it announces a TCaseAbstracted event.
+     */
+    public void run() {
+        // The code skips the server for now and runs the test locally.
+        try {
+            // Obtain the working directory
+            String workingDirectory = compilationInfo.getWorkingDirectory();
+            if (!workingDirectory.endsWith(File.separator))
+                workingDirectory += File.separator;
 
-		}
-		catch(Exception e){
-			e.printStackTrace(System.out);
-		}
+            // Run the concrete test case
+            Execution execution = Executor.execute(runCode, workingDirectory);
 
-	}
-	private CompilationInfo compilationInfo;
-	private String runCode;
+            // TODO: abstract the output
+
+
+            EventAdmin eventAdmin = EventAdmin.getInstance();
+            RunCTCFinished event = new RunCTCFinished(execution);
+            eventAdmin.announceEvent(event);
+
+        } catch (Exception e) {
+            e.printStackTrace(System.out);
+        }
+
+    }
+
+    private CompilationInfo compilationInfo;
+    private String runCode;
 }

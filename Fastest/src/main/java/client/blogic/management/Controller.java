@@ -23,6 +23,7 @@ import common.z.TClass;
 import common.z.czt.visitors.ContainsTermVerifier;
 import common.z.czt.visitors.SchemeUnfolder;
 import common.z.czt.visitors.TClassNodeUnfolder;
+import compserver.abstraction.capture.execution.CompilationInfo;
 import compserver.prunning.PruneUtils;
 import compserver.prunning.TreePruner;
 import net.sourceforge.czt.session.SectionManager;
@@ -117,6 +118,10 @@ public final class Controller extends IIComponent {
     // Gives the variables, whose type is basic, defined in axiomatic
     // definition
     private Map<String, List<String>> basicAxDefs;
+
+    // Environment configuration with compilers and interpreters settings.
+    private CompilationInfo compilationInfo;
+
     private Lock myLock;
     long inicio;
     long inicioPoda;
@@ -317,7 +322,7 @@ public final class Controller extends IIComponent {
         //			//				e.printStackTrace();
         //			//			}
         //		}
-        else if (event_ instanceof RunFinished) {
+        else if (event_ instanceof RunCTCFinished) {
             try {
                 ClientUI clientUI = getMyClientUI();
                 if (clientUI instanceof ClientTextUI) {
@@ -1101,13 +1106,13 @@ public final class Controller extends IIComponent {
         return this.absTCaseRefTCaseMap;
     }
 
-//	public void setCompilationInfo(CompilationInfo compilationInfo) {
-//		this.compilationInfo = compilationInfo;
-//	}
-//
-//	public CompilationInfo getCompilationInfo() {
-//		return compilationInfo;
-//	}
+	public void setCompilationInfo(CompilationInfo compilationInfo) {
+		this.compilationInfo = compilationInfo;
+	}
+
+	public CompilationInfo getCompilationInfo() {
+		return compilationInfo;
+	}
 
     private void processFinished() {
         Calendar cal = Calendar.getInstance();

@@ -6,7 +6,7 @@ import java.util.*;
 import client.blogic.testing.atcal.ConcreteTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.execution.Executer;
+import client.blogic.testing.execution.Executor;
 import compserver.abstraction.capture.execution.CompilationInfo;
 
 /**
@@ -93,7 +93,7 @@ public class CompileCommand implements Command{
 				PrintWriter printer = new PrintWriter(new FileWriter(workingPath + ctcName + getExtension(cInfo)));
 				printer.println(ctcCaseStr);
 				printer.flush();
-				Executer.execute(compileCode, workingPath);
+				Executor.execute(compileCode, workingPath);
 			}
 			else if(mode.equals("complete")){
 				while(iterator.hasNext()){
@@ -111,7 +111,7 @@ public class CompileCommand implements Command{
 					// the user indicates
 					String auxCompileCode = compileCode.replace("(.*)",auxCTCaseName);
 					//compileCode = compileCode.replace("(.*)",auxCTCaseName);
-					Executer.execute(auxCompileCode, workingPath);
+					Executor.execute(auxCompileCode, workingPath);
 				}
 			}
 //			else if(mode.equals("operation")){
@@ -142,7 +142,7 @@ public class CompileCommand implements Command{
 //							String auxCompileCode = compileCode.replace("(.*)",auxCTCName);
 //							//compileCode = compileCode.replace("(.*)",auxCTCName);
 //
-//							Executer.execute(auxCompileCode, workingPath);
+//							Executor.execute(auxCompileCode, workingPath);
 //						}
 //					}
 //				}
