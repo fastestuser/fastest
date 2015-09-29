@@ -1,0 +1,35 @@
+package client.blogic.testing.execution;
+
+/**
+ * This class represents the output of a test case execution
+ */
+public class Execution {
+
+    private final Object yamlData;
+    private final String stdOutput;
+    private final String stdError;
+    private final int exitCode;
+
+    public Execution(Object yamlData, String stdOutput, String stdError, int exitCode) {
+        this.yamlData = yamlData;
+        this.stdOutput = stdOutput;
+        this.stdError = stdError;
+        this.exitCode = exitCode;
+    }
+
+    public Object getYamlData() {
+        return yamlData;
+    }
+
+    public String getStdOutput() {
+        return stdOutput;
+    }
+
+    public String getStdError() {
+        return stdError;
+    }
+
+    public int getExitCode() {
+        return exitCode;
+    }
+}
