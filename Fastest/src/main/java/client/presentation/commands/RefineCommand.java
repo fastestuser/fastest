@@ -138,11 +138,13 @@ public class RefineCommand extends IIComponent implements Command {
             String tCaseName = tCaseRefined.getAbstractTCase().getSchName();
             Controller controller = myClientUI.getMyController();
 
+            // If the refinement was successful then add the concrete test case to the map of operation names to refined
+            // concrete test cases, and to the map of abstract test cases to refined concrete test cases.
             if (tCaseRefined.getConcreteTCase() != null) {
                 controller.getOpTCaseRefinedMap().put(tCaseRefined.getConcreteTCase().getName(), tCaseRefined.getConcreteTCase());
                 controller.getAbsTCaseConcrTCaseMap().put(tCaseName, tCaseRefined.getConcreteTCase());
                 String warnings = tCaseRefined.getConcreteTCase().hasWarnings() ? " WARNING" : "";
-                System.out.println(tCaseName + " test case refination -> SUCCESS." + warnings);
+                System.out.println(tCaseName + " test case refination -> SUCCESS. " + tCaseRefined.getConcreteTCase().getName() + " was generated. " + warnings);
             } else {
                 System.out.println(tCaseName + " test case refination -> FAILED.");
             }
