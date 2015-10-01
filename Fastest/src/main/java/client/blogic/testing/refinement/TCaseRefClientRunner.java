@@ -42,8 +42,8 @@ public class TCaseRefClientRunner implements Runnable {
 			concreteTCase.setPreamble(rule.getPreamble());
 			concreteTCase.setEpilogue(rule.getEpilogue());
 			concreteTCase.setPlCode(rule.getPlCode());
-			concreteTCase.setDeclaraciones(refiner.getDeclarations());
-			concreteTCase.setAsignaciones(refiner.getAssignements());
+			concreteTCase.setDeclarations(refiner.getDeclarations());
+			concreteTCase.setAssignments(refiner.getAssignements());
 			concreteTCase.setUutLine(refiner.getUutLine());
 			concreteTCase.setWarnings(refiner.getWarnings());
 		}catch(IllegalArgumentException e){

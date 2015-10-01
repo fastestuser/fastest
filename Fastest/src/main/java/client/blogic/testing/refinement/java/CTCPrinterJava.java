@@ -73,11 +73,11 @@ public final class CTCPrinterJava extends CTCPrinter{
 //                         "\t\t}\n");
 //
 //		// CONCATENATES the REFINEMENT TEXT of ALL ASSIGNMENTS
-//		String decl = ctc.getDeclaraciones();
+//		String decl = ctc.getDeclarations();
 //		if (decl != null)
 //			decl = "\t\t" + decl.replaceAll("\\n", "\n\t\t");
 //		ctcString.append(decl);
-//		String assign = ctc.getAsignaciones();
+//		String assign = ctc.getAssignments();
 //		if (assign != null){
 //			assign = assign.replaceAll("\\n", "\n\t\t");
 //			assign = assign.replaceFirst("\\\t\\\t$", "");

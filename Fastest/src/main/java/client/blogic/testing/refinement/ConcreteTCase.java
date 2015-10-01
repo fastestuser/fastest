@@ -1,126 +1,125 @@
 package client.blogic.testing.refinement;
 
-import java.util.*;
-import client.blogic.testing.refinementOld.TCaseAssignment;
 import common.z.AbstractTCase;
 
 /**
  * This module stores all the information related to a concrete test case
+ *
  * @author Hache
  */
 
 public class ConcreteTCase {
     private String preamble; //
     private String epilogue; //
-    private List<TCaseAssignment> tCaseAssignments = new ArrayList<TCaseAssignment>();
-    private String declaraciones;
-    private String asignaciones;
+    private String declarations;
+    private String assignments;
     private String concreteTCaseName; //
     private AbstractTCase abstractTCase; //
-    private String absLawName;
     private String opName; //
     private String targetLanguage; //
     private String initDecls;
     private String uutLine;
     private String plCode;
     private String warnings;
-    
-    public void setPreamble(String preable){
+
+    public void setPreamble(String preable) {
         this.preamble = preable;
     }
-    public void setInitDeclarations(String initDecls){
+
+    public void setInitDeclarations(String initDecls) {
         this.initDecls = initDecls;
     }
-    
-    public void setEpilogue(String epilogue){
+
+    public void setEpilogue(String epilogue) {
         this.epilogue = epilogue;
     }
-    public void addTCaseAssignment(TCaseAssignment tCaseAssignment){
-        tCaseAssignments.add(tCaseAssignment);
-    }
 
-    public void addTCaseAssignment(List<TCaseAssignment> tCaseAssignments){
-        this.tCaseAssignments.addAll(tCaseAssignments);
-    }
-    
-    public String getPreamble(){
+    public String getPreamble() {
         return preamble;
     }
 
-    public String getInitDeclarations(){
+    public String getInitDeclarations() {
         return initDecls;
     }
 
-    public String getEpilogue(){
+    public String getEpilogue() {
         return epilogue;
     }
 
-    public List<TCaseAssignment> getAssigments(){
-        return tCaseAssignments;
-    }
-    public void setConcreteTCaseName(String concreteTCaseName){
-	this.concreteTCaseName = concreteTCaseName;
-    }
-    public String getConcreteTCaseName(){
-	return concreteTCaseName;
-    }
-    public void setAbstractTCase(AbstractTCase abstractTCase){
-	this.abstractTCase = abstractTCase;
-    }
-    public AbstractTCase getAbstractTCase(){
-	return abstractTCase;
-    }
-    public void setAbsLawName(String absLawName){
-	this.absLawName = absLawName;
-    }
-    public String getAbsLawName(){
-	return absLawName;
-    }
-    public void setOpName(String opName){
-	this.opName = opName;
-    }
-    public String getOpName(){
-	return opName;
-    }
-    public void setLanguage(String targetLanguage){
-	this.targetLanguage = targetLanguage;
-    }
-    public String getLanguage(){
-	return targetLanguage;
+    public void setConcreteTCaseName(String concreteTCaseName) {
+        this.concreteTCaseName = concreteTCaseName;
     }
 
-    public String getDeclaraciones() {
-		return declaraciones;
-	}
-	public void setDeclaraciones(String declaraciones) {
-		this.declaraciones = declaraciones;
-	}
-	public String getAsignaciones() {
-		return asignaciones;
-	}
-	public void setAsignaciones(String asignaciones) {
-		this.asignaciones = asignaciones;
-	}
-	public String getUutLine() {
-		return uutLine;
-	}
-	public void setUutLine(String uutLine) {
-		this.uutLine = uutLine;
-	}
-	public String getPlCode() {
-		return plCode;
-	}
-	public void setPlCode(String plcode) {
-		this.plCode = plcode;
-	}
-	public String getWarnings() {
-		return warnings;
-	}
-	public void setWarnings(String warnings) {
-		this.warnings = warnings;
-	}
-	public boolean hasWarnings(){
-		return !warnings.isEmpty();
-	}
+    public String getConcreteTCaseName() {
+        return concreteTCaseName;
+    }
+
+    public void setAbstractTCase(AbstractTCase abstractTCase) {
+        this.abstractTCase = abstractTCase;
+    }
+
+    public AbstractTCase getAbstractTCase() {
+        return abstractTCase;
+    }
+
+    public void setOpName(String opName) {
+        this.opName = opName;
+    }
+
+    public String getOpName() {
+        return opName;
+    }
+
+    public void setLanguage(String targetLanguage) {
+        this.targetLanguage = targetLanguage;
+    }
+
+    public String getLanguage() {
+        return targetLanguage;
+    }
+
+    public String getDeclarations() {
+        return declarations;
+    }
+
+    public void setDeclarations(String declarations) {
+        this.declarations = declarations;
+    }
+
+    public String getAssignments() {
+        return assignments;
+    }
+
+    public void setAssignments(String assignments) {
+        this.assignments = assignments;
+    }
+
+    public String getUutLine() {
+        return uutLine;
+    }
+
+    public void setUutLine(String uutLine) {
+        this.uutLine = uutLine;
+    }
+
+    public String getPlCode() {
+        return plCode;
+    }
+
+    public void setPlCode(String plcode) {
+        this.plCode = plcode;
+    }
+
+    public String getWarnings() {
+        return warnings;
+    }
+
+    public void setWarnings(String warnings) {
+        this.warnings = warnings;
+    }
+
+    public boolean hasWarnings() {
+        return !warnings.isEmpty();
+    }
 
 }
