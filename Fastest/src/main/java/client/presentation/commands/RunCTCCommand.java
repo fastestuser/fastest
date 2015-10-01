@@ -30,7 +30,8 @@ public class RunCTCCommand implements Command {
                 return;
             }
 
-            CompilationInfo compilationInfo = controller.getCompilationInfo();
+           // CompilationInfo compilationInfo = controller.getCompilationInfo();
+            CompilationInfo compilationInfo = new CompilationInfo("", "", "", "", ".");
             if (compilationInfo == null) {
                 System.out.println("The information of compilation has not been loaded.");
                 System.out.println("You must set this information before try to run " + concreteTCaseName);
