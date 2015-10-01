@@ -9,6 +9,7 @@ import java.io.InputStreamReader;
  * This class controls the execution of the concrete test cases.
  * It captures the test case's standard output, standard error, exit code and parses the yaml file with the state of the
  * specification variables.
+ * @author Cristian Rosa
  */
 public abstract class Executor {
 

@@ -2,9 +2,11 @@ package client.blogic.testing.execution;
 
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.RunCTCFinished;
-import compserver.abstraction.capture.execution.CompilationInfo;
+import client.blogic.testing.atcal.ConcreteTCase;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
 /**
  * Instances of this class has the responsibility of request, to a computation
@@ -14,34 +16,46 @@ import java.io.File;
  */
 public class RunTCaseClientRunner implements Runnable {
 
+    private final ExecutionCommandBuilder commandBuilder = new PerlCommandBuilder();  // TODO: do not hardcode perl here
+    private final String workingDirectory;
+    private final ConcreteTCase concreteTCase;
+
     /**
-     * Creates new instances of TClassPruneClientRunner
+     * Creates new instances of the test case client runner
      *
-     * @param tClass
+     * @param concreteTCase   the concrete test case to run
+     * @param compilationInfo the information
      */
-    public RunTCaseClientRunner(String runCode, CompilationInfo compilationInfo) {
-        this.compilationInfo = compilationInfo;
-        this.runCode = runCode;
+    public RunTCaseClientRunner(ConcreteTCase concreteTCase, String workingDirectory) {
+        this.concreteTCase = concreteTCase;
+        this.workingDirectory =
+                workingDirectory.endsWith(File.separator) ? workingDirectory : workingDirectory + File.separator;
     }
 
     /**
-     * Requests the running of a concrete test and the subsequent abstraction of
+     * Requests the execution of a concrete test and the subsequent abstraction of
      * the output, either to the client itself or to a computation server.
      * After a response arrives, it announces a TCaseAbstracted event.
      */
     public void run() {
-        // The code skips the server for now and runs the test locally.
+        // TODO: The code skips the server for now and runs the test locally.
         try {
-            // Obtain the working directory
-            String workingDirectory = compilationInfo.getWorkingDirectory();
-            if (!workingDirectory.endsWith(File.separator))
-                workingDirectory += File.separator;
+            // Write the test program code into a file
+            String testFileName = commandBuilder.getTestFileName(concreteTCase.getName());
+            PrintWriter printer = new PrintWriter(new FileWriter(workingDirectory + testFileName));
+            printer.println(concreteTCase.getCode());
+            printer.flush();
 
-            // Run the concrete test case
-            Execution execution = Executor.execute(runCode, workingDirectory);
+            // Compile the test program if required
+            if (commandBuilder.requiresCompilation()) {
+                // TODO: add support for compilation here
+            }
+
+            // Get the test program's execution command and run it.
+            String execCommand = commandBuilder.getExecCommand(workingDirectory + testFileName);
+            Execution execution = Executor.execute(execCommand, workingDirectory);
 
             // TODO: abstract the output
-
 
             EventAdmin eventAdmin = EventAdmin.getInstance();
             RunCTCFinished event = new RunCTCFinished(execution);
@@ -50,9 +64,5 @@ public class RunTCaseClientRunner implements Runnable {
         } catch (Exception e) {
             e.printStackTrace(System.out);
         }
-
     }
-
-    private CompilationInfo compilationInfo;
-    private String runCode;
 }
