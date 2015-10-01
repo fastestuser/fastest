@@ -3,6 +3,8 @@ package client.blogic.testing.atcal;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRefined;
 import client.blogic.testing.atcal.generators.BaseGen;
+import client.blogic.testing.atcal.generators.Generator;
+import client.blogic.testing.atcal.generators.PerlGen;
 import client.blogic.testing.atcal.z.ast.CZTTranslator;
 import client.blogic.testing.atcal.z.ast.ZExpr;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
@@ -60,20 +62,29 @@ public class TCaseRefineClientRunner implements Runnable {
 
     @Override
     public void run() {
+
+        // Instantiate the right code generator for the refinement.
+        Generator codeGen = null;
+        if(targetLanguage.equalsIgnoreCase("perl"))
+            codeGen = new PerlGen();
+        else if(targetLanguage.equalsIgnoreCase("debug"))
+            codeGen = new BaseGen();
+        else
+            throw new RuntimeException("The " + targetLanguage + " language is not supported by the testing backend.");
+
         // Translate the abstract test case to ATCAL AST.
         ZExprSchema atc = ATCToZExpr(abstractTCase);
 
         // Get the ATCAL rule and evaluate it for the abstract test case.
-        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, new BaseGen());
+        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, codeGen);
         String code = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
 
         String concreteName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
-//        String concreteName = abstractName.substring(0,abstractName.indexOf("_TCASE")) + "_CTCASE";
         ConcreteTCase concreteTCase = new ConcreteTCase(concreteName, targetLanguage, code);
 
         // Show the input and code.
-        System.out.println(atc);
-        System.out.println(code);
+        // System.out.println(atc);
+        // System.out.println(code);
 
         // announce that the refinement process has finished.
         try {
