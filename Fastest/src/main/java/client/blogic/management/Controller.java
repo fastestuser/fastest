@@ -182,6 +182,7 @@ public final class Controller extends IIComponent {
         auxiliarDecls = new HashMap<String, ZDeclList>();
         blockedAxDefs = new ArrayList<String>();
         basicAxDefs = null;
+        compilationInfo = null;
         myLock = new ReentrantLock(); //solo constructor
         inicio = 0;
         inicioPoda = 0;
