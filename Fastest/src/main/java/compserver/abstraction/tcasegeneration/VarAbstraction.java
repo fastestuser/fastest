@@ -5,15 +5,13 @@ import java.net.URL;
 import java.util.*;
 import java.math.BigInteger;
 
+import client.blogic.testing.atcal.ConstantStore;
 import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.impl.*;
-import common.z.AbstractTCase;
-import common.z.SpecUtils;
 import common.z.UtilSymbols;
 import compserver.abstraction.types.impltypes.*;
 import compserver.abstraction.types.spectypes.*;
 import compserver.abstraction.capture.*;
-import client.blogic.testing.refinementOld.ConstantStore;
 import compserver.abstraction.*;
 
 
