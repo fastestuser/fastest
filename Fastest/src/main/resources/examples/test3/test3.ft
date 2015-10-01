@@ -4,4 +4,5 @@ addtactic A SP \cup b \cup \{1\}
 genalltt
 genalltca
 loadrefrule src/main/resources/examples/test3/test3.atcal
-refine A_SP_2 to test pepe implemented in java with test3
+refine A_SP_7 to test pepe implemented in perl with test3
+runtest A_SP_7_CTCASE_CTCASE
