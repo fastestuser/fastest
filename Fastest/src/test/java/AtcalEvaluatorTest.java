@@ -1,4 +1,5 @@
 import client.blogic.testing.atcal.AtcalEvaluator;
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.atcal.generators.BaseGen;
 import client.blogic.testing.atcal.generators.Generator;
 import client.blogic.testing.atcal.generators.PerlGen;
@@ -59,10 +60,10 @@ public class AtcalEvaluatorTest {
     @Test
     public void test1() {
         ParseTree atcalTree = parseFile("example1.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen);
-        String output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-        //System.out.println(output);
-        assert(output.equals("Int a\nString b\na=2\nb='Hello world'\nf(b)"));
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Basic refinement");
+        ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
+        //System.out.println(output.getCode());
+        assert(output.getCode().equals("a=2\nb='Hello world'\nf(b)"));
     }
 
     /**
@@ -71,11 +72,9 @@ public class AtcalEvaluatorTest {
     @Test
     public void test2() {
         ParseTree atcalTree = parseFile("example2.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen);
-        String output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-//        System.out.println(output);
-        assert(output.equals("String a\nString b\nArray{type='ContractType{constructor='newList', constArgs=[]," +
-                " setter='add', setterArgs=[list, a], getter='get', getterArgs=[]}', size=10} l\nl=newArray(10)\n" +
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Nested array of lists");
+        ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
+        assert(output.getCode().equals("l=newArray(10)\n" +
                 "l1_list=newList()\na='Hello '\nadd(l1_list,a)\nl[1]=l1_list\nl2_list=newList()\n" +
                 "b='hola'\nadd(l2_list,a)\nl[2]=l2_list\nf(l)"));
     }
@@ -87,12 +86,10 @@ public class AtcalEvaluatorTest {
     @Test
     public void test3() {
         ParseTree atcalTree = parseFile("example3.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen);
-        String output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-//        System.out.println(output);
-        assert(output.equals("Int vid\nContractType{constructor='newDBTable', constArgs=[], setter='insert', " +
-                "setterArgs=[table, vid, name, addr], getter='select', getterArgs=[]} roll\nString name\n" +
-                "RecordType{fields={id=Int}} voter\nString addr\nroll_table=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen, "Autofill with contracts and multi ref laws.");
+        ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
+        //System.out.println(output.getCode());
+        assert(output.getCode().equals("roll_table=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
                 "addr='AUTOFILL'\ninsert(roll_table,vid,name,addr)\nvid=1\nname='AUTOFILL'\naddr='AUTOFILL'\n" +
                 "insert(roll_table,vid,name,addr)\nroll=roll_table\nvoter.id=0\nisVoter(voter)"));
     }

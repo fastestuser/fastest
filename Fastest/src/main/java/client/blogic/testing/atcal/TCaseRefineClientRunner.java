@@ -75,16 +75,11 @@ public class TCaseRefineClientRunner implements Runnable {
         // Translate the abstract test case to ATCAL AST.
         ZExprSchema atc = ATCToZExpr(abstractTCase);
 
+        String concreteTCaseName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
+
         // Get the ATCAL rule and evaluate it for the abstract test case.
-        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, codeGen);
-        String code = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
-
-        String concreteName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
-        ConcreteTCase concreteTCase = new ConcreteTCase(concreteName, targetLanguage, code);
-
-        // Show the input and code.
-        // System.out.println(atc);
-        // System.out.println(code);
+        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, codeGen, concreteTCaseName);
+        ConcreteTCase concreteTCase = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
 
         // announce that the refinement process has finished.
         try {
