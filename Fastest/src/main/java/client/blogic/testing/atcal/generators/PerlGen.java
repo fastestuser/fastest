@@ -10,6 +10,11 @@ import java.util.stream.Collectors;
  */
 public class PerlGen implements Generator {
 
+    @Override
+    public String getTargetLanguage() {
+        return "perl";
+    }
+
     public String generate(APLStmt aplStmt) {
         if (aplStmt instanceof AssignStmt) {
             return generate((AssignStmt) aplStmt);
