@@ -1,7 +1,7 @@
 @RRULE example3
 
 @DATATYPES
-    DATATYPE DBTable = CONSTRUCTOR newDBTable() SETTER insert(table, vid, name, addr) GETTER select();
+    DATATYPE DBTable = CONSTRUCTOR newDBTable() SETTER insert(vid, name, addr) GETTER select();
     DATATYPE Voter = RECORD voter (id:INT);
 
 @LAWS

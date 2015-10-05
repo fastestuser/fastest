@@ -1,7 +1,7 @@
 @RRULE example2
 
 @DATATYPES
-    DATATYPE List = CONSTRUCTOR newList() SETTER add(list, a) GETTER get();
+    DATATYPE List = CONSTRUCTOR newList() SETTER add(a) GETTER get();
     DATATYPE myArr = ARRAY  List (10);
 
 @LAWS

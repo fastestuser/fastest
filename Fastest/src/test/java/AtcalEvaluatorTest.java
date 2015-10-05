@@ -62,7 +62,7 @@ public class AtcalEvaluatorTest {
         ParseTree atcalTree = parseFile("example1.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Basic refinement");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-        //System.out.println(output.getCode());
+//        System.out.println(output.getCode());
         assert(output.getCode().equals("a=2\nb='Hello world'\nf(b)"));
     }
 
@@ -72,11 +72,12 @@ public class AtcalEvaluatorTest {
     @Test
     public void test2() {
         ParseTree atcalTree = parseFile("example2.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Nested array of lists");
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, new PerlGen(), "Nested array of lists");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
+        System.out.println(output.getCode());
         assert(output.getCode().equals("l=newArray(10)\n" +
-                "l1_list=newList()\na='Hello '\nadd(l1_list,a)\nl[1]=l1_list\nl2_list=newList()\n" +
-                "b='hola'\nadd(l2_list,a)\nl[2]=l2_list\nf(l)"));
+                "l1_tmp=newList()\na='Hello '\nl1_tmp.add(a)\nl[1]=l1_tmp\nl2_tmp=newList()\n" +
+                "b='hola'\nl2_tmp.add(a)\nl[2]=l2_tmp\nf(l)"));
     }
 
     /**
@@ -88,9 +89,9 @@ public class AtcalEvaluatorTest {
         ParseTree atcalTree = parseFile("example3.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen, "Autofill with contracts and multi ref laws.");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-        //System.out.println(output.getCode());
-        assert(output.getCode().equals("roll_table=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
-                "addr='AUTOFILL'\ninsert(roll_table,vid,name,addr)\nvid=1\nname='AUTOFILL'\naddr='AUTOFILL'\n" +
-                "insert(roll_table,vid,name,addr)\nroll=roll_table\nvoter.id=0\nisVoter(voter)"));
+        System.out.println(output.getCode());
+        assert(output.getCode().equals("roll_tmp=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
+                "addr='AUTOFILL'\nroll_tmp.insert(vid,name,addr)\nvid=1\nname='AUTOFILL'\naddr='AUTOFILL'\n" +
+                "roll_tmp.insert(vid,name,addr)\nroll=roll_tmp\nvoter.id=0\nisVoter(voter)"));
     }
 }

@@ -132,7 +132,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
             ContractType type = (ContractType) aplScope.getType();
 
             // Create a new temporal variable to hold the data structure under construction.
-            APLVar var = new APLVar(aplScope.getName() + '_' + type.getSetterArgs().get(0), aplScope.getType());
+            APLVar var = new APLVar(aplScope.getName() + "_tmp", aplScope.getType());
             codeBlock.add(new AssignStmt(var, new CallExpr(type.getConstructor(), type.getConstArgs())));
 
             // The evaluation of the WITH clause for a contract type requires evaluating all the Z expressions of the
@@ -146,7 +146,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
             // a ==> fst, c ==> snd, e ==> trd (call setter) b ==> fst, d ==> snd, f ==> trd (call setter).
 
             // Check if setter arity matches
-            if (ctx.lawRefinement().size() != (type.getSetterArgs().size() - 1))
+            if (ctx.lawRefinement().size() != (type.getSetterArgs().size()))
                 throw new RuntimeException("The number of refinements in WITH clause does not match the arity of " +
                         "contract type's setter.");
 
@@ -171,15 +171,13 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
 
                     // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
                     // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types, lValueFactory);
+                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, var, types, new LValueFactory());
                     codeBlock.addAll(lawEvaluator.visit(ctx.lawRefinement(iteratorList.indexOf(it)).refinement(0)));
                 }
 
                 // Insert the values of the refined clauses into the data structure using the provided setter function
                 // TODO: check the type values with the types of the arguments.
-                List<String> args = Lists.newArrayList(aplScope.getName() + '_' + type.getSetterArgs().get(0));
-                args.addAll(type.getSetterArgs().subList(1, type.getSetterArgs().size()));
-                codeBlock.add(new CallExpr(type.getSetter(), args));
+                codeBlock.add(new ContractAssignStmt(var, type.getSetterArgs()));
             }
 
             // Assign the temporal variable holding the data structure to the real refinement variable.

@@ -1,5 +1,6 @@
 package client.blogic.testing.atcal.generators;
 
+import client.blogic.testing.atcal.ContractType;
 import client.blogic.testing.atcal.apl.*;
 
 import java.util.stream.Collectors;
@@ -20,6 +21,8 @@ public class PerlGen implements Generator {
             return generate((AssignStmt) aplStmt);
         } else if (aplStmt instanceof CallExpr) {
             return generate((CallExpr) aplStmt) + ";";
+        } else if (aplStmt instanceof ContractAssignStmt) {
+            return generate((ContractAssignStmt) aplStmt);
         } else {
             throw new RuntimeException("Unsupported APL statement.");
         }
@@ -77,5 +80,11 @@ public class PerlGen implements Generator {
 
     private static String generate(CallExpr callExpr) {
         return callExpr.getFunName() + "(" + callExpr.getArgs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
+    }
+
+    private static String generate(ContractAssignStmt contractAssignStmt) {
+        String setterMethod = ((ContractType)contractAssignStmt.getLvalue().getType()).getSetter();
+        String setterCall = setterMethod + "(" + contractAssignStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
+        return "$" + contractAssignStmt.getLvalue().getName() + "->" + setterCall + ";";
     }
 }
