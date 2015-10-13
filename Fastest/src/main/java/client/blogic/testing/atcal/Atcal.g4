@@ -24,7 +24,7 @@ type : ID                                                       # NameType
      | 'ARRAY' type '(' NUMBER ')'                              # ArrayType
      | 'ENUM' ID args                                           # EnumType
      | 'RECORD' ID '(' ID ':' type ( ',' ID ':' type )* ')'     # RecordType
-     | 'CONSTRUCTOR' ID args 'SETTER' ID args 'GETTER' ID args  # ContractType
+     | ('MODULE' STRING )? 'CONSTRUCTOR' ID args 'SETTER' ID args 'GETTER' ID args  # ContractType
      ;
 
 args : '(' ( ID ( ',' ID )* )? ')' ;

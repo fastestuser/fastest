@@ -10,7 +10,6 @@ import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -108,9 +107,15 @@ public class TypesEvaluator extends AtcalBaseVisitor<Map<String, ATCALType>> {
 
         @Override
         public ATCALType visitContractType(@NotNull AtcalParser.ContractTypeContext ctx) {
-            return new ContractType(ctx.ID(0).getText(), Lists.transform(ctx.args(0).ID(), TERMINAL_TOSTRING),
-                    ctx.ID(1).getText(), Lists.transform(ctx.args(1).ID(), TERMINAL_TOSTRING),
-                    ctx.ID(2).getText(), Lists.transform(ctx.args(2).ID(), TERMINAL_TOSTRING));
+            if (ctx.STRING() != null) {
+                return new ContractType(ctx.STRING().getText(), ctx.ID(0).getText(), Lists.transform(ctx.args(0).ID(), TERMINAL_TOSTRING),
+                        ctx.ID(1).getText(), Lists.transform(ctx.args(1).ID(), TERMINAL_TOSTRING),
+                        ctx.ID(2).getText(), Lists.transform(ctx.args(2).ID(), TERMINAL_TOSTRING));
+            } else {
+                return new ContractType(ctx.ID(0).getText(), Lists.transform(ctx.args(0).ID(), TERMINAL_TOSTRING),
+                        ctx.ID(1).getText(), Lists.transform(ctx.args(1).ID(), TERMINAL_TOSTRING),
+                        ctx.ID(2).getText(), Lists.transform(ctx.args(2).ID(), TERMINAL_TOSTRING));
+            }
         }
     }
 }

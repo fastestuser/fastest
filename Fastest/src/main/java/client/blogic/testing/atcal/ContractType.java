@@ -6,6 +6,7 @@ import java.util.List;
  * Created by cristian on 4/21/15.
  */
 public class ContractType extends ATCALType {
+    private final String module;
     private final String constructor;
     private final List<String> constArgs;
     private final String setter;
@@ -15,12 +16,28 @@ public class ContractType extends ATCALType {
 
     public ContractType(String constructor, List<String> constArgs, String setter, List<String> setterArgs,
                         String getter, List<String> getterArgs) {
+        this.module = null;
         this.constructor = constructor;
         this.constArgs = constArgs;
         this.setter = setter;
         this.setterArgs = setterArgs;
         this.getter = getter;
         this.getterArgs = getterArgs;
+    }
+
+    public ContractType(String module, String constructor, List<String> constArgs, String setter, List<String> setterArgs,
+                        String getter, List<String> getterArgs) {
+        this.module = module.replaceAll("\"", "");  // remove string characters
+        this.constructor = constructor;
+        this.constArgs = constArgs;
+        this.setter = setter;
+        this.setterArgs = setterArgs;
+        this.getter = getter;
+        this.getterArgs = getterArgs;
+    }
+
+    public String getModule() {
+        return module;
     }
 
     public String getConstructor() {
