@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 /**
  * Created by Cristian on 05/10/15.
  */
-public class ContractAssignStmt implements APLStmt {
+public class SetterCallStmt implements APLStmt {
 
     private final APLLValue lvalue;
     private final Collection<String> exprs;
 
-    public ContractAssignStmt(APLLValue lvalue, Collection<String> exprs){
+    public SetterCallStmt(APLLValue lvalue, Collection<String> exprs){
         this.lvalue = lvalue;
         this.exprs = exprs;
     }
@@ -30,8 +30,8 @@ public class ContractAssignStmt implements APLStmt {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ContractAssignStmt)) return false;
-        ContractAssignStmt that = (ContractAssignStmt) o;
+        if (!(o instanceof SetterCallStmt)) return false;
+        SetterCallStmt that = (SetterCallStmt) o;
         return Objects.equal(lvalue, that.lvalue) &&
                 Objects.equal(exprs, that.exprs);
     }

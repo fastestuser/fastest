@@ -141,10 +141,10 @@ public class RefinementLawEvaluatorTest {
                 new AssignStmt(new APLVar("a_tmp", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList())),
                 new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("Hello ")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
-                new ContractAssignStmt(new APLVar("a_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
+                new SetterCallStmt(new APLVar("a_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
                 new AssignStmt(new APLVar("a", DATATYPES.get("List")), new APLVar("a_tmp", DATATYPES.get("List"))),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(2)),
-                new ContractAssignStmt(new APLVar("l_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
+                new SetterCallStmt(new APLVar("l_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
                 new AssignStmt(new APLVar("l", DATATYPES.get("List")), new APLVar("l_tmp", DATATYPES.get("List"))));
         List<APLStmt> stmts = evalLaw2(inputExpr, atc1);
 //        System.out.println(stmts);
@@ -167,12 +167,12 @@ public class RefinementLawEvaluatorTest {
                 new AssignStmt(new APLVar("l1_tmp", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList())),
                 new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("Hello ")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
-                new ContractAssignStmt(new APLVar("l1_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
+                new SetterCallStmt(new APLVar("l1_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
                 new AssignStmt(array.getIndex(1), new APLVar("l1_tmp", DATATYPES.get("List"))),
                 new AssignStmt(new APLVar("l2_tmp", DATATYPES.get("List")), new CallExpr("newList", Lists.newArrayList())),
                 new AssignStmt(new APLVar("a", DATATYPES.get("STRING")), new StringExpr("hola")),
                 new AssignStmt(new APLVar("b", DATATYPES.get("INT")), new LongExpr(1)),
-                new ContractAssignStmt(new APLVar("l2_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
+                new SetterCallStmt(new APLVar("l2_tmp", DATATYPES.get("List")), Lists.newArrayList("a", "b")),
                 new AssignStmt(array.getIndex(2), new APLVar("l2_tmp", DATATYPES.get("List"))));
         List<APLStmt> stmts = evalLaw2(inputExpr, atc1);
 //        System.out.println(stmts);

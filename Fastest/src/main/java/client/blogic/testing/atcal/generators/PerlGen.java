@@ -21,8 +21,10 @@ public class PerlGen implements Generator {
             return generate((AssignStmt) aplStmt);
         } else if (aplStmt instanceof CallExpr) {
             return generate((CallExpr) aplStmt) + ";";
-        } else if (aplStmt instanceof ContractAssignStmt) {
-            return generate((ContractAssignStmt) aplStmt);
+        } else if (aplStmt instanceof SetterCallStmt) {
+            return generate((SetterCallStmt) aplStmt);
+        } else if (aplStmt instanceof ConstructorCallStmt) {
+            return generate((ConstructorCallStmt) aplStmt);
         } else {
             throw new RuntimeException("Unsupported APL statement.");
         }
@@ -82,9 +84,17 @@ public class PerlGen implements Generator {
         return callExpr.getFunName() + "(" + callExpr.getArgs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
     }
 
-    private static String generate(ContractAssignStmt contractAssignStmt) {
-        String setterMethod = ((ContractType)contractAssignStmt.getLvalue().getType()).getSetter();
-        String setterCall = setterMethod + "(" + contractAssignStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
-        return "$" + contractAssignStmt.getLvalue().getName() + "->" + setterCall + ";";
+    private static String generate(SetterCallStmt setterCallStmt) {
+        String setterMethod = ((ContractType) setterCallStmt.getLvalue().getType()).getSetter();
+        String setterCall = setterMethod + "(" + setterCallStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
+        return "$" + setterCallStmt.getLvalue().getName() + "->" + setterCall + ";";
+    }
+
+    private static String generate(ConstructorCallStmt constructorCallStmt) {
+        ContractType type = (ContractType) constructorCallStmt.getLvalue().getType();
+        String module = type.getModule();
+        String constructor = type.getConstructor();
+        String constructorCall = module + "->" + constructor + "(" + constructorCallStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
+        return "$" + constructorCallStmt.getLvalue().getName() + "=" + constructorCall + ";";
     }
 }
