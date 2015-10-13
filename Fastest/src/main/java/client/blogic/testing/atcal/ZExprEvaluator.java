@@ -41,7 +41,7 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
         if (var.isPresent())
             return var.get().getValue();
         else
-            return new ZExprConst(ctx.ID().getText(), 1, ZExprConst.ConstantType.BASIC);
+            return new ZExprConst(ctx.ID().getText(), ZExprConst.ConstantType.BASIC);
     }
 
     @Override

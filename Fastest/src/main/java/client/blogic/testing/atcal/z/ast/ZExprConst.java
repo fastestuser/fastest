@@ -8,9 +8,10 @@ public class ZExprConst implements ZExpr {
     private final String value;
     private final long constId;
     private final ConstantType type;
-    public ZExprConst(String value, long constId, ConstantType type) {
+
+    public ZExprConst(String value, ConstantType type) {
         this.value = value;
-        this.constId = constId;
+        this.constId = value.hashCode();
         this.type = type;
     }
 

@@ -9,7 +9,6 @@ import client.blogic.testing.atcal.z.ast.*;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import org.junit.Test;
 
 import java.io.IOException;
@@ -33,11 +32,11 @@ public class AtcalEvaluatorTest {
 
     // ATC extracted from paper:
     // "Test Adaptation for Model-Based Testing Methods Using Set-Based Specification Languages"
-    private ZVar v = new ZVar("v", new ZExprConst("id_1", 0, ZExprConst.ConstantType.BASIC));
-    private ZVar elecRoll = new ZVar("elecRoll", ZExprSet.of(ZExprProd.of(new ZExprConst("id_1", 0,
-                    ZExprConst.ConstantType.BASIC), new ZExprConst("data_1", 0, ZExprConst.ConstantType.BASIC)),
-            ZExprProd.of(new ZExprConst("id_2", 1,
-                    ZExprConst.ConstantType.BASIC), new ZExprConst("data_2", 1, ZExprConst.ConstantType.BASIC))));
+    private ZVar v = new ZVar("v", new ZExprConst("id_1", ZExprConst.ConstantType.BASIC));
+    private ZVar elecRoll = new ZVar("elecRoll", ZExprSet.of(ZExprProd.of(new ZExprConst("id_1",
+                    ZExprConst.ConstantType.BASIC), new ZExprConst("data_1", ZExprConst.ConstantType.BASIC)),
+            ZExprProd.of(new ZExprConst("id_2", ZExprConst.ConstantType.BASIC),
+                    new ZExprConst("data_2", ZExprConst.ConstantType.BASIC))));
     private ZExprSchema atc4 = ZExprSchema.of(elecRoll, v);
 
     private ParseTree parseFile(String atcalSrc) {
@@ -63,7 +62,7 @@ public class AtcalEvaluatorTest {
         AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Basic refinement");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
 //        System.out.println(output.getCode());
-        assert(output.getCode().equals("a=2\nb='Hello world'\nf(b)"));
+        assert (output.getCode().equals("a=2\nb='Hello world'\nf(b)"));
     }
 
     /**
@@ -75,7 +74,7 @@ public class AtcalEvaluatorTest {
         AtcalEvaluator evaluator = new AtcalEvaluator(atc1, new PerlGen(), "Nested array of lists");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
         System.out.println(output.getCode());
-        assert(output.getCode().equals("l=newArray(10)\n" +
+        assert (output.getCode().equals("l=newArray(10)\n" +
                 "l1_tmp=newList()\na='Hello '\nl1_tmp.add(a)\nl[1]=l1_tmp\nl2_tmp=newList()\n" +
                 "b='hola'\nl2_tmp.add(a)\nl[2]=l2_tmp\nf(l)"));
     }
@@ -90,7 +89,7 @@ public class AtcalEvaluatorTest {
         AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen, "Autofill with contracts and multi ref laws.");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
         System.out.println(output.getCode());
-        assert(output.getCode().equals("roll_tmp=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
+        assert (output.getCode().equals("roll_tmp=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
                 "addr='AUTOFILL'\nroll_tmp.insert(vid,name,addr)\nvid=1\nname='AUTOFILL'\naddr='AUTOFILL'\n" +
                 "roll_tmp.insert(vid,name,addr)\nroll=roll_tmp\nvoter.id=0\nisVoter(voter)"));
     }

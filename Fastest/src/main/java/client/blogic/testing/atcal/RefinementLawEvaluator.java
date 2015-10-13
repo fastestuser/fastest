@@ -92,7 +92,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<List<APLStmt>> {
                 // Create constants map
                 Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
                 for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
-                    map.put(new ZExprConst(constMap.ID(0).getText(), 0, ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
+                    map.put(new ZExprConst(constMap.ID(0).getText(), ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
                 }
 
                 // Check that the mapping contains the Z constant mapping and generate code for the refinement

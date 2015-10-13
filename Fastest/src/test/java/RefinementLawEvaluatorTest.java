@@ -38,8 +38,8 @@ public class RefinementLawEvaluatorTest {
     private ZVar var7 = new ZVar("var7", ZExprSet.of(prod3, prod4));
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
-    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", 0, ZExprConst.ConstantType.BASIC)),
-            new ZVar("var2", new ZExprConst("pepe", 1, ZExprConst.ConstantType.BASIC)));
+    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", ZExprConst.ConstantType.BASIC)),
+            new ZVar("var2", new ZExprConst("pepe", ZExprConst.ConstantType.BASIC)));
 
     private static final Map<String, ATCALType> DATATYPES = parseDatatypes();
 
