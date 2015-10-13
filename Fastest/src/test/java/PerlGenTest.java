@@ -73,7 +73,7 @@ public class PerlGenTest {
         ZExprSchema atc = abstractTCaseFromFile("atc1.tex");
         System.out.println(atc);
         ParseTree parseTree = parseFile("perlGenTest1.atcal");
-        AtcalEvaluator evaluaºtor = new AtcalEvaluator(atc, new PerlGen(), "Basic refinement");
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc, new PerlGen(), "Basic refinement");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
         System.out.println(output.getCode());
     }
