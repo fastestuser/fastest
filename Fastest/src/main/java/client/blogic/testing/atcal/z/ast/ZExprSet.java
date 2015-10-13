@@ -1,5 +1,6 @@
 package client.blogic.testing.atcal.z.ast;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 
@@ -99,7 +100,7 @@ public class ZExprSet implements ZExpr, Iterable<ZExpr> {
 
     @Override
     public String toString() {
-        return "{" + set + '}';
+        return "{" + Joiner.on(",").join(set) + '}';
     }
 
     public Iterator<ZExpr> iterator() {

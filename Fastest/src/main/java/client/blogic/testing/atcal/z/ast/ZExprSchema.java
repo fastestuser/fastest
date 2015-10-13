@@ -1,5 +1,6 @@
 package client.blogic.testing.atcal.z.ast;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
@@ -73,6 +74,6 @@ public class ZExprSchema implements ZExpr {
 
     @Override
     public String toString() {
-        return "[" + schema + ']';
+        return "[" + Joiner.on(",").join(schema.values()) + ']';
     }
 }
