@@ -1,0 +1,9 @@
+@RRULE perlgenTest1
+
+@DATATYPES
+ DATATYPE Set = MODULE "Set::Light" CONSTRUCTOR new() SETTER insert(elm) GETTER get();
+
+@LAWS
+a ==> myA AS INT;
+b ==> mySet AS Set WITH [ @ELEM ==> elm AS INT];
+@UUT print(b);
