@@ -1,5 +1,7 @@
 package client.blogic.testing.atcal.z.ast;
 
+import com.google.common.base.Joiner;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
@@ -32,6 +34,6 @@ public class ZExprList implements ZExpr, Iterable<ZExpr> {
 
     @Override
     public String toString() {
-        return "ZExprList" + zExprs;
+        return "⟨" + Joiner.on(",").join(zExprs) + "⟩";
     }
 }

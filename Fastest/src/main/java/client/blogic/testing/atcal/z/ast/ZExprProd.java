@@ -1,5 +1,6 @@
 package client.blogic.testing.atcal.z.ast;
 
+import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
 /**
@@ -60,6 +61,6 @@ public class ZExprProd implements ZExpr {
 
     @Override
     public String toString() {
-        return "<" + prod + '>';
+        return "(" + Joiner.on(",").join(prod) + ')';
     }
 }

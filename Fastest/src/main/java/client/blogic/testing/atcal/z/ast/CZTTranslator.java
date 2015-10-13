@@ -1,12 +1,14 @@
 package client.blogic.testing.atcal.z.ast;
 
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.NumExpr;
-import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.SetExpr;
+import net.sourceforge.czt.base.ast.Term;
+import net.sourceforge.czt.util.Visitor;
+import net.sourceforge.czt.z.ast.*;
+import net.sourceforge.czt.z.ast.ZExprList;
+import net.sourceforge.czt.z.impl.ApplExprImpl;
 import net.sourceforge.czt.z.impl.ZExprListImpl;
 import net.sourceforge.czt.z.visitor.ExprVisitor;
 
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -17,7 +19,7 @@ import java.util.stream.Collectors;
 
 /**
  * This class implements a visitor that translates CZT expressions into ATCAL Z expressions.
- * ATCAL has its own AST to represent the abstract test cases that simplifies the refiner's implementation.
+ * ATCAL has its own AST to represent the abstract test cases that simplifies the refiner implementation.
  */
 public final class CZTTranslator implements ExprVisitor<ZExpr> {
 
@@ -40,9 +42,25 @@ public final class CZTTranslator implements ExprVisitor<ZExpr> {
 
         } else if (expr instanceof RefExpr) {
             // The empty set expression has an instance of a different class than the rest of the sets.
-            if (((RefExpr) expr).getZName().getWord().equals("∅"))
+            RefExpr refExpr = (RefExpr)expr;
+            if (refExpr.getZName().getWord().equals("∅"))
                 return ZExprSet.getEmptySet();
+            else
+                return new ZExprConst(refExpr.getZName().getWord(), ZExprConst.ConstantType.BASIC);
 
+        } else if (expr instanceof TupleExpr) {
+            ZExpr[] array = {};
+            TupleExpr tupleExpr = (TupleExpr)expr;
+            List<ZExpr> exprList = tupleExpr.getZExprList().stream().map(zExpr -> zExpr.accept(this)).collect(Collectors.toList());
+            return new ZExprProd(exprList.toArray(array));
+
+        } else if (expr instanceof ApplExpr) {
+            ApplExpr applExpr = (ApplExpr)expr;
+            if(applExpr.getMixfix() && ((RefExpr)applExpr.getLeftExpr()).getZName().getWord().equals("⟨ ,, ⟩")){
+                ZExprList zExprList = ((SetExpr)applExpr.getRightExpr()).getZExprList();
+                return new client.blogic.testing.atcal.z.ast.ZExprList((zExprList.stream().
+                        map( t -> ((TupleExpr)t).getZExprList().get(1).accept(this)).collect(Collectors.toList())));
+            }
         }
         throw new RuntimeException("Unsupported CZT expr translation.");
     }
