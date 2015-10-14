@@ -4,15 +4,15 @@ import nlg.base.textSpecification.PhraseSpec;
 
 public class LinguisticRealizer {
 	
-	public String realise(PhraseSpec ps) {
-		ConcordanciaArticulo ca = new ConcordanciaArticulo();
-		ConcordanciaVerbo cv = new ConcordanciaVerbo();
-		Verbalizador converter = new Verbalizador();
+	public String realize(PhraseSpec ps) {
+		ArticleRealizer articleRealizer = new ArticleRealizer();
+		VerbRealizer verbRealizer = new VerbRealizer();
+		PhraseRealizer phraseRealizer = new PhraseRealizer();
 		
-		ps.accept(ca);
-		ps.accept(cv);
+		ps.accept(articleRealizer);
+		ps.accept(verbRealizer);
 		
-		return ps.accept(converter);
+		return ps.accept(phraseRealizer);
 	}
 	
 	

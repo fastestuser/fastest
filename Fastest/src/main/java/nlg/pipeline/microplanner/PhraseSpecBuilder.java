@@ -89,6 +89,7 @@ public class PhraseSpecBuilder {
 				Word w1 = wIt.next();
 				InfoMorfologica info = FreeLingUtils.getInfoMorfologica(w1.getTag());
 	
+				// TODO mover esto de aca, sería mas apropiado que este dentro de la parte de realización linguistica
 				if (null != info.getCatGramatical() && info.getCatGramatical().equals(CategoriaGramatical.ARTICULO)) {
 					// primer palabra: articulo
 					// verifico si la seguna palabra es un nombre

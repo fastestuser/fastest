@@ -43,11 +43,7 @@ public class DocumentPlanner {
 			// Proceso las expresiones
 			List<ExpVerbalization> expVerbList = new ArrayList<ExpVerbalization>();
 			for (ExprZ expr : exprList) {
-				ExprZ newExpr = expRefiner.refine(expr);
-				
-				if (null != newExpr) {
-					expVerbList.add(new ExpVerbalization(newExpr));
-				}
+				expRefiner.refine(expr).map(e -> expVerbList.add(new ExpVerbalization(e)));
 			}
 			
 			// Recupero nombre de la operacion a testear

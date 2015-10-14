@@ -15,7 +15,7 @@ import nlg.base.textSpecification.PhraseSpecVisitor;
 // conjuga verbo de una oracion bimembre segun numero del sujeto
 // para este trabaja los verbos se conjugarán siempre en 
 // 3era persona tiempo presente
-public class ConcordanciaVerbo implements PhraseSpecVisitor<Void> {
+public class VerbRealizer implements PhraseSpecVisitor<Void> {
 
 	@Override
 	public Void visitPSConcatenacion(PSConcatenacion ps) {

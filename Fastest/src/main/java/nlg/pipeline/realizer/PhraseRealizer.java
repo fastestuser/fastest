@@ -13,7 +13,7 @@ import nlg.base.textSpecification.PhraseSpecVisitor;
  * Clase encargada del ultimo paso
  * Convierte a texto una especificacion ya trabajada
  */
-public class Verbalizador implements PhraseSpecVisitor<String> {
+public class PhraseRealizer implements PhraseSpecVisitor<String> {
 
 	@Override
 	public String visitPSConcatenacion(PSConcatenacion ps) {

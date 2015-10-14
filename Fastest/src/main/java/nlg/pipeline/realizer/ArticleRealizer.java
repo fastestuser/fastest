@@ -13,7 +13,7 @@ import nlg.base.textSpecification.PhraseSpec;
 import nlg.base.textSpecification.PhraseSpecVisitor;
 
 // completa articulos faltantes en una frase nominal
-public class ConcordanciaArticulo implements PhraseSpecVisitor<Void> {
+public class ArticleRealizer implements PhraseSpecVisitor<Void> {
 
 	@Override
 	public Void visitPSConcatenacion(PSConcatenacion ps) {

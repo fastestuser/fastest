@@ -1,5 +1,7 @@
 package nlg.pipeline.documentPlanner;
 
+import java.util.Optional;
+
 import nlg.base.expression.ExprNotEq;
 import nlg.base.expression.ExprSet;
 import nlg.base.expression.ExprZ;
@@ -17,15 +19,15 @@ public class ExprRefiner {
 	 *  (solo considera algunos casos, no evalua la expresion)
 	 * 2) Realiza algunas reducciones triviales
 	 */
-	public ExprZ refine(ExprZ expr) {
+	public Optional<ExprZ> refine(ExprZ expr) {
 		// Evaluo algunas tautologias
 		if (exprSetNotEmpty(expr)) {
-			return null;
+			return Optional.empty();
 		}
 		
 		ExprZ ret = reduceDomMapsTo(expr);
 		
-		return ret;
+		return Optional.of(ret);
 	}
 	
 	
