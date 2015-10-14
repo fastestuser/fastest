@@ -1,7 +1,9 @@
 import client.blogic.testing.atcal.Atcal;
 import client.blogic.testing.atcal.z.ast.*;
+import com.google.common.io.Resources;
 import org.junit.Test;
 
+import java.net.URL;
 import java.util.Arrays;
 
 /**
@@ -11,7 +13,9 @@ public class CZTTranslatorTest {
 
     @Test
     public void test() {
-        ZExprSchema atc = Atcal.parseATCFile("CZTTranslatorTest/atc1.tex");
+
+        URL fileURL = Resources.getResource("CZTTranslatorTest/atc1.tex");
+        ZExprSchema atc = Atcal.parseATCFile(fileURL);
 
         ZExprSchema atcTest = new ZExprSchema.Builder().
                 addNumVar("a", 1).
