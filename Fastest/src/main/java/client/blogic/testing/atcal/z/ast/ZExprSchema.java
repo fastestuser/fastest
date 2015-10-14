@@ -4,8 +4,10 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Cristian on 4/1/15.
@@ -75,5 +77,37 @@ public class ZExprSchema implements ZExpr {
     @Override
     public String toString() {
         return "[" + Joiner.on(",").join(schema.values()) + ']';
+    }
+
+    /**
+     * Z expression schema builder class
+     */
+    public static class Builder {
+
+        private Set<ZVar> vars;
+
+        public Builder() {
+            this.vars = Sets.newHashSet();
+        }
+
+        public Builder addNumVar(String name, long num){
+            this.vars.add(new ZVar(name, new ZExprNum(num)));
+            return this;
+        }
+
+        public Builder addConstVar(String name, String cons){
+            this.vars.add(new ZVar(name, new ZExprConst(cons, ZExprConst.ConstantType.BASIC)));
+            return this;
+        }
+
+        public Builder addVar(String name, ZExpr expr){
+            this.vars.add(new ZVar(name, expr));
+            return this;
+        }
+
+        public ZExprSchema build(){
+            ZVar[] a = {};
+            return new ZExprSchema(vars.toArray(a));
+        }
     }
 }
