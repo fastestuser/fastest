@@ -1,0 +1,15 @@
+\begin{schema}{ATC\_1}\\
+ a : \nat ;
+ b : \power \nat ;
+ d : \power A ;
+ e : \nat \cross \nat;
+ f : \power \A \cross \nat ;
+ k : seq \nat
+\where
+ a = 1 \\
+ b = \{ 1, 2, 3, 4 \} \\
+ d = \{ h, i, j \} \\
+ e = \(1, 2\) \\
+ f = \{ \(x,1\) , \(y,2\) \} \\
+ k = \langle 1, 2, 3, 4 \rangle
+\end{schema}
