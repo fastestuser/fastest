@@ -15,6 +15,10 @@ public class ZExprConst implements ZExpr {
         this.type = type;
     }
 
+    public static ZExprConst basic(String value) {
+        return new ZExprConst(value, ConstantType.BASIC);
+    }
+
     public String getValue() {
         return value;
     }
