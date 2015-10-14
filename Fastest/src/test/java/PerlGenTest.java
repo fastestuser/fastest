@@ -1,3 +1,4 @@
+import client.blogic.testing.atcal.Atcal;
 import client.blogic.testing.atcal.AtcalEvaluator;
 import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.atcal.generators.PerlGen;
@@ -48,31 +49,21 @@ public class PerlGenTest {
         }
     }
 
-    private ZExprSchema abstractTCaseFromFile(String filename) {
-        ZLive zLive = UniqueZLive.getInstance();
-        URL specFile = Resources.getResource(filename);
-        ArrayList<ZVar> translatedVars = Lists.newArrayList();
-        final CZTTranslator cztTranslator = new CZTTranslator();
-        try {
-            List<String> fileLines = Resources.readLines(specFile, Charsets.UTF_8);
-            for(String line: fileLines){
-                String[] varVal = line.split("=");
-                RefExpr var = (RefExpr) ParseUtils.parseExpr(new StringSource(varVal[0]), zLive.getCurrentSection(), zLive.getSectionManager());
-                Expr expr = ParseUtils.parseExpr(new StringSource(varVal[1]), zLive.getCurrentSection(), zLive.getSectionManager());
-                translatedVars.add(new ZVar(var.getName().toString(), expr.accept(cztTranslator)));
-            }
-            return new ZExprSchema(translatedVars.toArray(new ZVar[translatedVars.size()]));
-        } catch (IOException | CommandException e) {
-            e.printStackTrace();
-        }
-        return null;
+    @Test
+    public void test1() {
+        URL fileURL = Resources.getResource("perlGenTest/atc1.tex");
+        ZExprSchema atc = Atcal.parseATCFile(fileURL);
+        ParseTree parseTree = parseFile("perlGenTest/perlGenTest1.atcal");
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc, new PerlGen(), "Basic refinement");
+        ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
+        System.out.println(output.getCode());
     }
 
     @Test
-    public void test1() {
-        ZExprSchema atc = abstractTCaseFromFile("atc1.tex");
-        System.out.println(atc);
-        ParseTree parseTree = parseFile("perlGenTest1.atcal");
+    public void test2() {
+        URL fileURL = Resources.getResource("perlGenTest/atc2.tex");
+        ZExprSchema atc = Atcal.parseATCFile(fileURL);
+        ParseTree parseTree = parseFile("perlGenTest/perlGenTest2.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc, new PerlGen(), "Basic refinement");
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
         System.out.println(output.getCode());
