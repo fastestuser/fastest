@@ -3,14 +3,13 @@ package nlg.pipeline.microplanner;
 import java.util.ArrayList;
 import java.util.List;
 
+import client.blogic.management.Controller;
 import nlg.base.documentPlan.DocumentPlan;
 import nlg.base.documentPlan.ExpVerbalization;
 import nlg.base.documentPlan.TClassDescriptionPlan;
 import nlg.base.textSpecification.PhraseSpec;
 import nlg.base.textSpecification.TSDocument;
 import nlg.base.textSpecification.TSItemisedList;
-import nlg.base.textSpecification.TextSpec;
-import client.blogic.management.Controller;
 
 public class MicroPlanner {
 
@@ -25,7 +24,7 @@ public class MicroPlanner {
 		TSDocument document = new TSDocument();
 		document.setTitle(dp.getTitle());
 	
-		List<TextSpec> paragraphs = new ArrayList<TextSpec>();
+		List<TSItemisedList> paragraphs = new ArrayList<TSItemisedList>();
 		
 		for (TClassDescriptionPlan tClassDesc : dp.gettClassDescPlanList()) {
 			String opName = tClassDesc.getOpName();

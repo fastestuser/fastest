@@ -8,7 +8,7 @@ import java.util.List;
  * de prueba, donde las restricciones se deben
  * mostrar en forma de lista.
  */
-public class TSItemisedList implements TextSpec {
+public class TSItemisedList {
 	
 	private PhraseSpec introduction;
 	private List<PhraseSpec> elements;
@@ -28,10 +28,4 @@ public class TSItemisedList implements TextSpec {
 	public void setElements(List<PhraseSpec> elements) {
 		this.elements = elements;
 	}
-
-	@Override
-	public <X> X accept(TextSpecVisitor<X> visitor) {
-		return visitor.visitTSItemisedList(this);
-	}
-
 }

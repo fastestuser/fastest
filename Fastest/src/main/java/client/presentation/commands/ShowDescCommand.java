@@ -1,19 +1,27 @@
 package client.presentation.commands;
 
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.Map;
+
+import client.blogic.management.Controller;
+import client.blogic.testing.ttree.TClassNode;
+import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.presentation.ClientTextUI;
+import common.z.TClass;
+import nlg.pipeline.controller.NLGPipeline;
+import nlg.pipeline.realizer.TextSurfaceRealizer;
 
 /**
  * Command para imprimir en pantalla la descripcion
  * de una clase de prueba indicada.
  */
-// TODO falta implementar
 public class ShowDescCommand implements Command {
 
 	@Override
 	public void run(ClientTextUI clientTextUI, String args) {
-		/*
 		// Valido parametros
-		// Sintaxis: showdesc nombre_clase_prueba
+		// Sintaxis: showdesc [nombre_clase_prueba|nombre_operacion]
 		final String argv[] = args.split(" ");
         int argc = argv.length;
         
@@ -27,11 +35,12 @@ public class ShowDescCommand implements Command {
             return;
         }
         
-        
         // Recupero map operation names -> associated test trees
         Controller controller = clientTextUI.getMyController();
         Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
         
+        NLGPipeline pipeline = new NLGPipeline(controller);
+        pipeline.setSurfaceRealizer(new TextSurfaceRealizer());
         
         // Obtengo clase de prueba y intento describirla
         String schName = firstArg;
@@ -45,13 +54,11 @@ public class ShowDescCommand implements Command {
             tClass = (TClass) opTTreeRoot.acceptVisitor(new SchemeTTreeFinder(schName, -1));
             
             if (null != tClass) {
-            	TClassDescription desc = 
-            			DescriptionUtils.describeTClass(
-	            			tClass, 
-	            			key, 
-	            			clientTextUI.getMyController().getDesigRepo());
-            	DescriptionUtils.printDescription(desc);
-            	
+            	try {
+					clientTextUI.getOutput().print(pipeline.run(Arrays.asList(tClass.getSchName())));
+				} catch (Exception e) {
+					clientTextUI.getOutput().print("Error: " + e.getMessage());
+				}
             	fail = false;
             	break;
             }
@@ -60,9 +67,6 @@ public class ShowDescCommand implements Command {
         if (fail) {
         	stdout.println("'" + schName + "' is not the name of any schema.");
         }
-        */
 	}
-	
-
 
 }

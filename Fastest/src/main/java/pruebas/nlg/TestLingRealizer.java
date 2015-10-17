@@ -45,7 +45,7 @@ public static void main(String args[]) throws IOException {
 		
 		List<PhraseSpec> pss = ((TSItemisedList) ts.getParagraphs().get(0)).getElements();
 		for (PhraseSpec ps : pss) {
-			System.out.println(lr.realise(ps));
+			System.out.println(lr.realize(ps));
 		}
 		
 	}
