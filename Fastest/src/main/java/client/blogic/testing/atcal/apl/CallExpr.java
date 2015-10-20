@@ -11,9 +11,9 @@ import java.util.stream.Collectors;
 public class CallExpr implements APLExpr, APLStmt {
 
     private final String funName;
-    private final List<String> args;
+    private final List<APLLValue> args;
 
-    public CallExpr(String funName, List<String> args) {
+    public CallExpr(String funName, List<APLLValue> args) {
         this.funName = funName;
         this.args = args;
     }
@@ -32,7 +32,7 @@ public class CallExpr implements APLExpr, APLStmt {
      *
      * @return a list with the arguments
      */
-    public List<String> getArgs() {
+    public List<APLLValue> getArgs() {
         return args;
     }
 

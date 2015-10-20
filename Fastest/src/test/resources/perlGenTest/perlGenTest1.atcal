@@ -5,5 +5,5 @@
 
 @LAWS
 a ==> myA AS INT;
-b ==> mySet AS Set WITH [ @ELEM ==> elm AS INT];
-@UUT print(b);
+b ==> myArr AS ARRAY INT (10) WITH [ @ELEM ==> [] AS INT];
+@UUT print(myArr);

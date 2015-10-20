@@ -68,5 +68,4 @@ public class PerlGenTest {
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
         System.out.println(output.getCode());
     }
-
 }

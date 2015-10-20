@@ -25,6 +25,8 @@ public class PerlGen implements Generator {
             return generate((SetterCallStmt) aplStmt);
         } else if (aplStmt instanceof ConstructorCallStmt) {
             return generate((ConstructorCallStmt) aplStmt);
+        } else if (aplStmt instanceof ArrayDeclStmt) {
+            return "";  // perl does not require array declaration
         } else {
             throw new RuntimeException("Unsupported APL statement.");
         }

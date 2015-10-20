@@ -35,6 +35,10 @@ public class LValueFactory {
         }
     }
 
+    public APLLValue getLValue(String name){
+        return lvalues.get(name);
+    }
+
     public Collection<APLLValue> getLValues() {
         return lvalues.values();
     }
