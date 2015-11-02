@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.stream.Collectors;
 
 /**
  * This class controls the execution of the concrete test cases.
@@ -33,18 +34,10 @@ public abstract class Executor {
             int exitCode = proc.waitFor();
 
             // read the output from the command (is redirected through fastest input stream)
-            String stdOutput = null;
-            String line = null;
-            while ((line = stdInputBuffer.readLine()) != null) {
-                stdOutput += "\n" + line;
-            }
+            String stdOutput = stdInputBuffer.lines().collect(Collectors.joining("\n"));
 
             // read any errors from the attempted command
-            String stdError = null;
-            line = null;
-            while ((line = stdErrorBuffer.readLine()) != null) {
-                stdError += "\n" + line;
-            }
+            String stdError = stdErrorBuffer.lines().collect(Collectors.joining("\n"));
 
             return new Execution(null, stdOutput, stdError, exitCode);
 
