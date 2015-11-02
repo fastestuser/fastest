@@ -1,5 +1,6 @@
 package client.blogic.testing.atcal.generators;
 
+import client.blogic.testing.atcal.ATCALType;
 import client.blogic.testing.atcal.ContractType;
 import client.blogic.testing.atcal.apl.*;
 
@@ -88,11 +89,20 @@ public class PerlGen implements Generator {
 
     private static String generate(SetterCallStmt setterCallStmt) {
         String setterMethod = ((ContractType) setterCallStmt.getLvalue().getType()).getSetter();
-        String setterCall = setterMethod + "(" + setterCallStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
-        return "$" + setterCallStmt.getLvalue().getName() + "->" + setterCall + ";";
+        if (setterMethod.equals("HASH")) {
+            return generate(setterCallStmt.getLvalue().getName()) + "->{" + generate(setterCallStmt.getExprs().get(0)) + "} = " +
+                    generate(setterCallStmt.getExprs().get(1)) + ";";
+        } else {
+            String setterCall = setterMethod + "(" +
+                    setterCallStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
+            return "$" + setterCallStmt.getLvalue().getName() + "->" + setterCall + ";";
+        }
     }
 
     private static String generate(ConstructorCallStmt constructorCallStmt) {
+        if(((ContractType)(constructorCallStmt.getLvalue().getType())).getConstructor().equals("HASH"))
+            return "";
+
         ContractType type = (ContractType) constructorCallStmt.getLvalue().getType();
         String module = type.getModule();
         String constructor = type.getConstructor();
