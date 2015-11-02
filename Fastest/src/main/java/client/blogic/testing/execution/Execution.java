@@ -32,4 +32,14 @@ public class Execution {
     public int getExitCode() {
         return exitCode;
     }
+
+    @Override
+    public String toString() {
+        return "Execution{" +
+                "yamlData=" + yamlData +
+                ", stdOutput='" + stdOutput + '\'' +
+                ", stdError='" + stdError + '\'' +
+                ", exitCode=" + exitCode +
+                '}';
+    }
 }
