@@ -88,12 +88,12 @@ public class PerlGen implements Generator {
     }
 
     private static String generate(SetterCallStmt setterCallStmt) {
-        String setterMethod = ((ContractType) setterCallStmt.getLvalue().getType()).getSetter();
-        if (setterMethod.equals("HASH")) {
+        String constructor = ((ContractType) setterCallStmt.getLvalue().getType()).getConstructor();
+        if (constructor.equals("HASH")) {
             return generate(setterCallStmt.getLvalue().getName()) + "->{" + generate(setterCallStmt.getExprs().get(0)) + "} = " +
                     generate(setterCallStmt.getExprs().get(1)) + ";";
         } else {
-            String setterCall = setterMethod + "(" +
+            String setterCall = constructor + "(" +
                     setterCallStmt.getExprs().stream().map(PerlGen::generate).collect(Collectors.joining(",")) + ")";
             return "$" + setterCallStmt.getLvalue().getName() + "->" + setterCall + ";";
         }
