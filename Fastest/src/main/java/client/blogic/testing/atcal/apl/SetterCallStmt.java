@@ -3,7 +3,7 @@ package client.blogic.testing.atcal.apl;
 import client.blogic.testing.atcal.ContractType;
 import com.google.common.base.Objects;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 public class SetterCallStmt implements APLStmt {
 
     private final APLLValue lvalue;
-    private final Collection<String> exprs;
+    private final List<String> exprs;
 
-    public SetterCallStmt(APLLValue lvalue, Collection<String> exprs){
+    public SetterCallStmt(APLLValue lvalue, List<String> exprs) {
         this.lvalue = lvalue;
         this.exprs = exprs;
     }
@@ -23,7 +23,7 @@ public class SetterCallStmt implements APLStmt {
         return lvalue;
     }
 
-    public Collection<String> getExprs() {
+    public List<String> getExprs() {
         return exprs;
     }
 
@@ -44,6 +44,6 @@ public class SetterCallStmt implements APLStmt {
     @Override
     public String toString() {
         String args = this.exprs.stream().map(Object::toString).collect(Collectors.joining(","));
-        return lvalue.getName() + "." + ((ContractType)lvalue.getType()).getSetter() + "(" + args + ")";
+        return lvalue.getName() + "." + ((ContractType) lvalue.getType()).getSetter() + "(" + args + ")";
     }
 }
