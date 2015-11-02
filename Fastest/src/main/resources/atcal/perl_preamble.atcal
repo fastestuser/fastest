@@ -1,0 +1,9 @@
+@PREAMBLE
+@CODESTART
+
+use YAML;
+
+sub __fastest_dump {
+  print Dump ( @_ );
+}
+@CODEEND

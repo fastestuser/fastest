@@ -15,6 +15,7 @@ import com.google.common.io.Resources;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,17 +50,20 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
         datatypes.put("FLOAT", new FloatType());
         datatypes.put("STRING", new StringType());
 
-        // load pre-defined data types of target language from library
-        URL typeLibUrl = getClass().getResource("/atcal/" + codegen.getTargetLanguage() + ".lib");
         try {
+            // load pre-defined data types of target language from library
+            URL typeLibUrl = getClass().getResource("/atcal/" + codegen.getTargetLanguage() + "_datatypes.atcal");
             String typeLib = Resources.toString(typeLibUrl, Charsets.UTF_8);
-            // Tokenize ATCAL refinement rule.
-            ANTLRInputStream input = new ANTLRInputStream(typeLib);
-            AtcalLexer lexer = new AtcalLexer(input);
-            CommonTokenStream tokens = new CommonTokenStream(lexer);
-            AtcalParser parser = new AtcalParser(tokens);
+            AtcalParser parser = parseAtcalFile(typeLib);
             TypesEvaluator typesEvaluator = new TypesEvaluator(datatypes);
             datatypes.putAll(typesEvaluator.visitDatatypes(parser.datatypes()));
+
+            // load default preamble
+            URL preambleUrl = getClass().getResource("/atcal/" + codegen.getTargetLanguage() + "_preamble.atcal");
+            String preamblePath = Resources.toString(preambleUrl, Charsets.UTF_8);
+            parser = parseAtcalFile(preamblePath);
+            this.preamble = getPlCode(parser.preamble().PLCODE(0));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,16 +71,27 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
         this.concreteTCaseName = concreteTCaseName;
     }
 
+    private AtcalParser parseAtcalFile(String fileName) {
+        // Tokenize ATCAL refinement rule.
+        ANTLRInputStream input = new ANTLRInputStream(fileName);
+        AtcalLexer lexer = new AtcalLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        return new AtcalParser(tokens);
+    }
+
+    private String getPlCode(TerminalNode plcode) {
+        // The plcode in the preamble is a antlr token that includes the delimiting keywords that should be removed.
+        String tokenText = plcode.getText();
+        return tokenText.substring(10, tokenText.length() -  8);   // remove delimiting keywords
+    }
+
     @Override
     public ConcreteTCase visitRefinementRule(@NotNull AtcalParser.RefinementRuleContext ctx) {
         String ruleName = ctx.ID().getText();
 
         // Get preamble if present.
-        this.preamble = "";
         if (ctx.preamble() != null) {
-            // The plcode in the preamble is a antlr token that includes the delimiting keywords that should be removed.
-            String tokenText = ctx.preamble().PLCODE().get(0).getText();
-            String plcode = tokenText.substring(10, tokenText.length() -  8);   // remove delimiting keywords
+            String plcode = getPlCode(ctx.preamble().PLCODE(0));
             this.preamble +=  plcode + "\n";
         }
 
@@ -103,9 +118,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
         // Get preamble if present
         this.epilogue = "";
         if (ctx.epilogue() != null) {
-            // The plcode in the epilogue is a antlr token that includes the delimiting keywords that should be removed.
-            String tokenText = ctx.epilogue().PLCODE().get(0).getText();
-            String plcode = tokenText.substring(10, tokenText.length() -  8);   // remove delimiting keywords
+            String plcode = getPlCode(ctx.epilogue().PLCODE(0));
             this.epilogue += plcode + "\n";
         }
 
