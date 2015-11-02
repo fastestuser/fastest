@@ -5,13 +5,11 @@ refinementRule : '@RRULE' ID
                  preamble?
                  datatypes?
                  laws
-                 (plcode)?
+                 (PLCODE)?
                  uut
                  (epilogue)?;
 
-preamble : '@PREAMBLE' ( plcode | ID '.@PREAMBLE' STMTEND  )+ ;
-
-plcode : '@CODESTART' (.)*? '@CODEEND' ;
+preamble : '@PREAMBLE' ( PLCODE | ID '.@PREAMBLE' STMTEND  )+ ;
 
 datatypes : '@DATATYPES' (typeDec)+ ;
 
@@ -38,7 +36,7 @@ laws: '@LAWS'
 
 uut: '@UUT' ID args STMTEND ;
 
-epilogue: '@EPILOGUE' ( plcode | ID '.@EPILOGUE')+ ;
+epilogue: '@EPILOGUE' ( PLCODE | ID '.@EPILOGUE')+ ;
 
 /******************* LAWS *********************/
 law: ( ID ':' )? ( lawRefinement );
@@ -86,6 +84,8 @@ zExpr : ID                                   # Ident
 // Use semicolon as statement end
 STMTEND : SEMICOLON+;
 fragment SEMICOLON : ';';
+
+PLCODE : '@CODESTART' (.)*? '@CODEEND' ;
 
 // Match identifiers using C syntax
 ID : ID_LETTER ( ID_LETTER | DIGIT )* ;

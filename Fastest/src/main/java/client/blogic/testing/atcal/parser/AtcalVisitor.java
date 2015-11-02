@@ -23,12 +23,6 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitPreamble(AtcalParser.PreambleContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#plcode}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitPlcode(AtcalParser.PlcodeContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link AtcalParser#datatypes}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

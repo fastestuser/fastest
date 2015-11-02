@@ -59,7 +59,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
             CommonTokenStream tokens = new CommonTokenStream(lexer);
             AtcalParser parser = new AtcalParser(tokens);
             TypesEvaluator typesEvaluator = new TypesEvaluator(datatypes);
-            typesEvaluator.visitDatatypes(parser.datatypes());
+            datatypes.putAll(typesEvaluator.visitDatatypes(parser.datatypes()));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -71,12 +71,13 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
     public ConcreteTCase visitRefinementRule(@NotNull AtcalParser.RefinementRuleContext ctx) {
         String ruleName = ctx.ID().getText();
 
-        // Get preamble if present
+        // Get preamble if present.
         this.preamble = "";
         if (ctx.preamble() != null) {
-            for (AtcalParser.PlcodeContext plcodeContext : ctx.preamble().plcode()) {
-                this.preamble += visit(plcodeContext) + "\n";
-            }
+            // The plcode in the preamble is a antlr token that includes the delimiting keywords that should be removed.
+            String tokenText = ctx.preamble().PLCODE().get(0).getText();
+            String plcode = tokenText.substring(10, tokenText.length() -  8);   // remove delimiting keywords
+            this.preamble +=  plcode + "\n";
         }
 
         // Evaluate data type declarations if present
@@ -93,8 +94,8 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         // Get optional programming language
         this.plCode = "";
-        if (ctx.plcode() != null)
-            this.plCode = ctx.getChild(1).getText();
+        if (ctx.PLCODE() != null)
+            this.plCode = ctx.PLCODE().getText();
 
         // Evaluate the UUT
         CallExpr uutCall = UUTEval(ctx.uut(), lValueFactory);
@@ -102,17 +103,23 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
         // Get preamble if present
         this.epilogue = "";
         if (ctx.epilogue() != null) {
-            for (AtcalParser.PlcodeContext plcodeContext : ctx.epilogue().plcode()) {
-                this.epilogue += visit(plcodeContext) + "\n";
-            }
+            // The plcode in the epilogue is a antlr token that includes the delimiting keywords that should be removed.
+            String tokenText = ctx.epilogue().PLCODE().get(0).getText();
+            String plcode = tokenText.substring(10, tokenText.length() -  8);   // remove delimiting keywords
+            this.epilogue += plcode + "\n";
         }
 
+        // Generate calls to dump functions in order to capture the state variables changes
+        String dumpCalls = lValueFactory.getLValues().stream().map(
+                callExpr -> codegen.generate(new CallExpr("__fastest_dump", Lists.newArrayList(callExpr)))
+        ).collect(Collectors.joining("\n"));
+
         // Generate the final refined code with the code generator
-        String refinedCode = refinedLawsCode.getStmtList().stream().map
-                (e -> codegen.generate(e)).collect(Collectors.joining("\n"));
+        String refinedCode = refinedLawsCode.getStmtList().stream().map(
+                e -> codegen.generate(e)).collect(Collectors.joining("\n"));
 
         // Assemble the final test case code
-        String testCaseCode = preamble + refinedCode + plCode + "\n" + codegen.generate(uutCall) + epilogue;
+        String testCaseCode = preamble + refinedCode + plCode + "\n" + codegen.generate(uutCall) + "\n" + epilogue + dumpCalls;
 
         // Generate a new concrete test case with the result of the refinement.
         return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode);
