@@ -52,7 +52,7 @@ public class RunTCaseClientRunner implements Runnable {
             }
 
             // Get the test program's execution command and run it.
-            String execCommand = commandBuilder.getExecCommand(workingDirectory + testFileName);
+            String execCommand = commandBuilder.getExecCommand(testFileName);
             Execution execution = Executor.execute(execCommand, workingDirectory);
 
             // TODO: abstract the output
