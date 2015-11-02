@@ -2,12 +2,16 @@ package client.presentation.commands;
 
 import client.blogic.management.Controller;
 import client.blogic.management.ii.EventAdmin;
+import client.blogic.management.ii.IIComponent;
+import client.blogic.management.ii.events.Event_;
+import client.blogic.management.ii.events.RunCTCFinished;
 import client.blogic.management.ii.events.RunCTCRequested;
 import client.blogic.testing.atcal.ConcreteTCase;
+import client.blogic.testing.execution.Execution;
 import client.presentation.ClientTextUI;
 import compserver.abstraction.capture.execution.CompilationInfo;
 
-public class RunCTCCommand implements Command {
+public class RunCTCCommand extends IIComponent implements Command {
     /**
      * Runs this command.
      *
@@ -48,6 +52,21 @@ public class RunCTCCommand implements Command {
                 }
         } catch (Exception e) {
             e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * Manages an implicit invocation event with the result of concrete test case execution.
+     * @param event
+     * @throws IllegalArgumentException
+     */
+    public synchronized void manageEvent(Event_ event) throws IllegalArgumentException {
+        if (event instanceof RunCTCFinished) {
+            Execution execution = ((RunCTCFinished)event).getExecution();
+            System.out.println(execution);
+
+            // Parse the YAML output and abstract it back to a Z schema
+            
         }
     }
 }
