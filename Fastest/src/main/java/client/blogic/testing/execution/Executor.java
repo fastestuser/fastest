@@ -22,19 +22,30 @@ public abstract class Executor {
     public static Execution execute(String command, String workingDir) {
         try {
             // execute the concrete test case and pipe the standard output and error.
-            Process proc = Runtime.getRuntime().exec(command, null, new File(workingDir));
+            ProcessBuilder pb = new ProcessBuilder(command.split(" "));
+            //pb.directory(new File(workingDir));
+            Process proc = pb.start();
+
+
             BufferedReader stdInputBuffer = new BufferedReader(new InputStreamReader(proc.getInputStream()));
             BufferedReader stdErrorBuffer = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
 
+            int exitCode = proc.waitFor();
+
             // read the output from the command (is redirected through fastest input stream)
             String stdOutput = null;
-            while ((stdOutput += stdInputBuffer.readLine()) != null) ;
+            String line = null;
+            while ((line = stdInputBuffer.readLine()) != null) {
+                stdOutput += "\n" + line;
+            }
 
             // read any errors from the attempted command
             String stdError = null;
-            while ((stdError = stdErrorBuffer.readLine()) != null) ;
+            line = null;
+            while ((line = stdErrorBuffer.readLine()) != null) {
+                stdError += "\n" + line;
+            }
 
-            int exitCode = proc.waitFor();
             return new Execution(null, stdOutput, stdError, exitCode);
 
         } catch (IOException | InterruptedException e) {
