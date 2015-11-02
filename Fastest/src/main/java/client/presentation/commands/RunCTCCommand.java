@@ -18,7 +18,6 @@ public class RunCTCCommand implements Command {
     public void run(ClientTextUI clientTextUI, String args) {
         try {
             Controller controller = clientTextUI.getMyController();
-            System.out.println("I am here!");
             // TODO: Support multiple test cases
             String parts[] = args.split("[ ]+", 2);
             String concreteTCaseName = parts[0];
