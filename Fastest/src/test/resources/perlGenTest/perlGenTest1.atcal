@@ -1,9 +1,8 @@
 @RRULE perlgenTest1
 
-@DATATYPES
- DATATYPE Set = MODULE "Set::Light" CONSTRUCTOR new() SETTER insert(elm) GETTER get();
-
 @LAWS
 a ==> myA AS INT;
 b ==> myArr AS ARRAY INT (10) WITH [ @ELEM ==> [] AS INT];
-@UUT print(myArr);
+c ==> myHash AS HASH WITH [c.@DOM ==> key AS INT, c.@RAN ==> val AS STRING];
+
+@UUT print(myHash);
