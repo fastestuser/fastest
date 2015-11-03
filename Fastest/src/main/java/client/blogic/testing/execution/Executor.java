@@ -1,9 +1,6 @@
 package client.blogic.testing.execution;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.stream.Collectors;
 
 /**
@@ -35,11 +32,18 @@ public abstract class Executor {
 
             // read the output from the command (is redirected through fastest input stream)
             String stdOutput = stdInputBuffer.lines().collect(Collectors.joining("\n"));
+            stdInputBuffer.close();
 
             // read any errors from the attempted command
             String stdError = stdErrorBuffer.lines().collect(Collectors.joining("\n"));
+            stdErrorBuffer.close();
 
-            return new Execution(null, stdOutput, stdError, exitCode);
+            // read serialized state
+            BufferedReader stateReader = new BufferedReader(new InputStreamReader(new FileInputStream("state.yml")));
+            String serializedState = stateReader.lines().collect(Collectors.joining("\n"));
+            stateReader.close();
+
+            return new Execution(serializedState, stdOutput, stdError, exitCode);
 
         } catch (IOException | InterruptedException e) {
             // in case of an exception return an execution with exit code 1 that represents an error
