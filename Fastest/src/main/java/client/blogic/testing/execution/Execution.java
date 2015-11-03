@@ -5,19 +5,19 @@ package client.blogic.testing.execution;
  */
 public class Execution {
 
-    private final Object yamlData;
+    private final String yamlData;
     private final String stdOutput;
     private final String stdError;
     private final int exitCode;
 
-    public Execution(Object yamlData, String stdOutput, String stdError, int exitCode) {
+    public Execution(String yamlData, String stdOutput, String stdError, int exitCode) {
         this.yamlData = yamlData;
         this.stdOutput = stdOutput;
         this.stdError = stdError;
         this.exitCode = exitCode;
     }
 
-    public Object getYamlData() {
+    public String getYamlData() {
         return yamlData;
     }
 
