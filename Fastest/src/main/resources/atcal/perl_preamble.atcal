@@ -1,9 +1,11 @@
 @PREAMBLE
 @CODESTART
 
-use YAML;
+use YAML::XS;
 
 sub __fastest_dump {
-  print Dump ( @_ );
+  open F, '>', 'state.yml';
+  print F Dump ( @_ );
+  close F;
 }
 @CODEEND
