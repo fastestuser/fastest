@@ -122,10 +122,9 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
             this.epilogue += plcode + "\n";
         }
 
-        // Generate calls to dump functions in order to capture the state variables changes
-        String dumpCalls = lValueFactory.getLValues().stream().map(
-                callExpr -> codegen.generate(new CallExpr("__fastest_dump", Lists.newArrayList(callExpr)))
-        ).collect(Collectors.joining("\n"));
+        // Generate calls to dump functions to capture the changes in state variables
+        String dumpCalls = codegen.getDumpCode(lValueFactory.getLValues());
+
 
         // Generate the final refined code with the code generator
         String refinedCode = refinedLawsCode.getStmtList().stream().map(

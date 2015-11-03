@@ -1,9 +1,10 @@
 package client.blogic.testing.atcal.generators;
 
-import client.blogic.testing.atcal.ATCALType;
 import client.blogic.testing.atcal.ContractType;
 import client.blogic.testing.atcal.apl.*;
+import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.stream.Collectors;
 
 /**
@@ -15,6 +16,17 @@ public class PerlGen implements Generator {
     @Override
     public String getTargetLanguage() {
         return "perl";
+    }
+
+    @Override
+    public String getDumpCode(Collection<APLLValue> lvaluesSet) {
+        String dumpCode = lvaluesSet.stream().map(
+                lvalue -> "$state->{'" + lvalue.getName() + "'} = \\" + generate(lvalue) + ";"
+        ).collect(Collectors.joining("\n"));
+
+        dumpCode += "\n__fastest_dump($state);";
+
+        return dumpCode;
     }
 
     public String generate(APLStmt aplStmt) {
@@ -100,7 +112,7 @@ public class PerlGen implements Generator {
     }
 
     private static String generate(ConstructorCallStmt constructorCallStmt) {
-        if(((ContractType)(constructorCallStmt.getLvalue().getType())).getConstructor().equals("HASH"))
+        if (((ContractType) (constructorCallStmt.getLvalue().getType())).getConstructor().equals("HASH"))
             return "";
 
         ContractType type = (ContractType) constructorCallStmt.getLvalue().getType();
