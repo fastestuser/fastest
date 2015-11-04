@@ -3,6 +3,8 @@ package client.blogic.testing.atcal.z.ast;
 import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 
+import java.util.List;
+
 /**
  * Created by Cristian on 4/1/15.
  */
@@ -36,6 +38,10 @@ public class ZExprProd implements ZExpr {
 
     public static ZExprProd of(ZExpr e1, ZExpr e2, ZExpr e3, ZExpr e4, ZExpr e5) {
         return new ZExprProd(ImmutableList.of(e1, e2, e3, e4, e5));
+    }
+
+    public ImmutableList<ZExpr> getValues(){
+        return prod;
     }
 
     public ZExpr getValue(int pos) {
