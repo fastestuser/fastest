@@ -9,17 +9,18 @@ import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.ZExprList;
 import net.sourceforge.czt.z.util.Factory;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
- * Created by Cristian on 04/11/15.
+ * This class implements the abstraction function from implementation to specification values.
+ *
+ * @author Cristian Rosa on 04/11/15.
  */
 public class Abstraction {
 
@@ -27,6 +28,27 @@ public class Abstraction {
     private static final Factory zFactory = zLive.getFactory();
     private final Map<Long, ZExprConst> bijectionMap;
 
+    /**
+     * Helper function to transform an iterable into a stream
+     *
+     * @param iterable the iterable to transform
+     * @return a stream
+     */
+    public static <T> Stream<T> stream(Iterable<T> iterable) {
+        return StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(
+                        iterable.iterator(),
+                        Spliterator.ORDERED
+                ),
+                false
+        );
+    }
+
+    /**
+     * Creates a new abstraction instance.
+     *
+     * @param bijectionMap a map from values to constant names
+     */
     public Abstraction(Map<Long, ZExprConst> bijectionMap) {
         this.bijectionMap = bijectionMap;
     }
@@ -43,6 +65,8 @@ public class Abstraction {
             if (o instanceof Integer) {
                 String constantName = bijectionMap.get(o).getValue();
                 return null; //FIXME: return a constant expression zFactory.createZName(constantName);
+            } else if (o instanceof String) {
+                return zFactory.createRefExpr(zFactory.createZName((String)o));
             } else {
                 throw new RuntimeException("Cannot abstract object as constant.");
             }
@@ -65,15 +89,21 @@ public class Abstraction {
                         s -> zFactory.createRefExpr(zFactory.createZName(s))
                 ).collect(Collectors.toList()));
             } else if (o instanceof List) {
-                List<Expr> exprList = ((List<Object>) o).stream().map(v -> toZExpr(v, target)).collect(Collectors.toList());
+                List<Object> objectList = (List<Object>) o;
+                List<Expr> exprList = objectList.stream().flatMap(
+                        obj -> stream(((ZExprList) target)).map(t -> toZExpr(obj, t))
+                ).collect(Collectors.toList());
                 return zFactory.createSequence(exprList);
             } else {
                 throw new RuntimeException("Cannot abstract object into a sequence.");
             }
 
         } else if (target instanceof ZExprSet) {
-            if (o instanceof Set) {
-                List<Expr> exprList = ((Set<Object>) o).stream().map(v -> toZExpr(v, target)).collect(Collectors.toList());
+            if (o instanceof List) {
+                List<Object> objectSet = (List<Object>) o;
+                List<Expr> exprList = objectSet.stream().flatMap(
+                        obj -> stream(((ZExprSet) target)).map(t -> toZExpr(obj, t))
+                ).collect(Collectors.toList());
                 return zFactory.createSetExpr(zFactory.createZExprList(exprList));
             } else {
                 throw new RuntimeException("Cannot abstract object into a set.");
@@ -81,15 +111,19 @@ public class Abstraction {
 
         } else if (target instanceof ZExprSchema) {
             if (o instanceof Map) {
+                Map<String, Object> objectMap = (Map<String, Object>) o;
+                ZExprSchema targetSchema = (ZExprSchema) target;
                 Map<RefExpr, Expr> vars = Maps.newHashMap();
-                for (Map.Entry<String, Object> var : ((Map<String, Object>) o).entrySet())
-                    vars.put(zFactory.createRefExpr(zFactory.createZName(var.getKey())), toZExpr(var.getValue(), target));
+                for(ZVar zVar: targetSchema.getMap().values()){
+                    Object impVar = objectMap.get(zVar.getName());
+                    vars.put(zFactory.createRefExpr(zFactory.createZName(zVar.getName())), toZExpr(impVar, zVar.getValue()));
+                }
+
                 Pred pred = SpecUtils.createAndPred(vars);
                 return zFactory.createSchExpr(zFactory.createZSchText(null, pred));
             } else {
                 throw new RuntimeException("Cannot abstract object into a schema.");
             }
-
         } else {
             throw new RuntimeException("Unsupported target abstraction type");
         }
