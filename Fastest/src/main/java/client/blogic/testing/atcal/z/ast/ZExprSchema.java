@@ -57,6 +57,10 @@ public class ZExprSchema implements ZExpr {
         return Optional.fromNullable(schema.get(varName));
     }
 
+    public ImmutableMap<String, ZVar> getMap() {
+        return schema;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
