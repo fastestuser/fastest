@@ -1,24 +1,24 @@
 package common.z;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import client.blogic.testing.atcal.z.ast.CZTTranslator;
+import common.z.czt.UniqueZLive;
+import net.sourceforge.czt.animation.eval.ZLive;
 import net.sourceforge.czt.base.ast.Term;
-import net.sourceforge.czt.z.ast.AxPara;
-import net.sourceforge.czt.z.ast.PreExpr;
-import net.sourceforge.czt.z.ast.SchText;
-import net.sourceforge.czt.z.ast.ZSchText;
-import net.sourceforge.czt.z.ast.NameList;
-import net.sourceforge.czt.z.ast.ZNameList;
-import net.sourceforge.czt.z.ast.ZDeclList;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.RefExpr;
-import net.sourceforge.czt.z.ast.ZName;
-import net.sourceforge.czt.z.ast.ZFactory;
-import net.sourceforge.czt.z.ast.Box;
+import net.sourceforge.czt.base.util.UnmarshalException;
+import net.sourceforge.czt.parser.circus.ParseUtils;
+import net.sourceforge.czt.parser.util.ParseException;
+import net.sourceforge.czt.session.FileSource;
+import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.util.Visitor;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 
 import common.z.czt.visitors.CZTCloner;
+import net.sourceforge.czt.z.util.Factory;
 
 
 /**
@@ -65,7 +65,23 @@ public class AbstractTCaseImpl implements AbstractTCase{
 		this.varExprMap = varExprMap;
 	}
 
-
+	public static AbstractTCase fromFile(URL fileURL) {
+		try {
+			final CZTTranslator cztTranslator = new CZTTranslator();
+			ZLive zLive = UniqueZLive.getInstance();
+			Factory zFactory = zLive.getFactory();
+			Spec spec = (Spec) ParseUtils.parse(new FileSource(fileURL.getFile()), zLive.getSectionManager());
+			ZParaList o = (ZParaList) (spec.getSect().get(0).getChildren()[2]);
+			AxPara axPara = (AxPara) (o.get(1));
+			Pred p = SpecUtils.getAxParaPred(axPara);
+			Map<RefExpr, Expr> translatedVars = SpecUtils.getAssignedValues(p).entrySet().stream().collect(
+					Collectors.toMap(entry -> zFactory.createRefExpr(zFactory.createZName(entry.getKey())), Map.Entry::getValue));
+			return new AbstractTCaseImpl(axPara, fileURL.getFile(), translatedVars);
+		} catch (ParseException | IOException | UnmarshalException e) {
+			e.printStackTrace();
+		}
+		return null;
+	};
 
     
     /**

@@ -36,34 +36,11 @@ public class Atcal {
     public static ZExprSchema ATCToZExpr(AbstractTCase atc) {
         final CZTTranslator cztTranslator = new CZTTranslator();
         ArrayList<ZVar> translatedVars = new ArrayList<ZVar>();
+
         for (Map.Entry<RefExpr, Expr> varExpr : atc.getVarExpMap().entrySet()) {
             ZExpr expr = varExpr.getValue().accept(cztTranslator);
             translatedVars.add(new ZVar(varExpr.getKey().getName().toString(), expr));
         }
         return new ZExprSchema(translatedVars.toArray(new ZVar[translatedVars.size()]));
-    }
-
-    /**
-     * Parses an abstract test case from a tex file to ATCAL's Z AST.
-     *
-     * @param fileURL the name of the file to parse
-     * @return an instance of Z schema using ATCAL's AST
-     */
-    public static ZExprSchema parseATCFile(URL fileURL) {
-        try {
-            final CZTTranslator cztTranslator = new CZTTranslator();
-            ZLive zLive = UniqueZLive.getInstance();
-            Spec spec = (Spec) ParseUtils.parse(new FileSource(fileURL.getFile()), zLive.getSectionManager());
-            ZParaList o = (ZParaList) (spec.getSect().get(0).getChildren()[2]);
-            AxPara axPara = (AxPara) (o.get(1));
-            Pred p = SpecUtils.getAxParaPred(axPara);
-            List<ZVar> translatedVars = SpecUtils.getAssignedValues(p).entrySet().stream().map(
-                    mapEntry -> new ZVar(mapEntry.getKey(), mapEntry.getValue().accept(cztTranslator))
-            ).collect(Collectors.toList());
-            return new ZExprSchema(translatedVars.toArray(new ZVar[translatedVars.size()]));
-        } catch (ParseException | IOException | UnmarshalException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }
