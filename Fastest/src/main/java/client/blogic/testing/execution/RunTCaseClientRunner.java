@@ -24,7 +24,6 @@ public class RunTCaseClientRunner implements Runnable {
      * Creates new instances of the test case client runner
      *
      * @param concreteTCase   the concrete test case to run
-     * @param compilationInfo the information
      */
     public RunTCaseClientRunner(ConcreteTCase concreteTCase, String workingDirectory) {
         this.concreteTCase = concreteTCase;
@@ -58,7 +57,7 @@ public class RunTCaseClientRunner implements Runnable {
             // TODO: abstract the output
 
             EventAdmin eventAdmin = EventAdmin.getInstance();
-            RunCTCFinished event = new RunCTCFinished(execution);
+            RunCTCFinished event = new RunCTCFinished(concreteTCase, execution);
             eventAdmin.announceEvent(event);
 
         } catch (Exception e) {
