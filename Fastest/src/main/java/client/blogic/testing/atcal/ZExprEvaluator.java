@@ -208,12 +208,10 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
     }
 
     // Strings operations
-
     @Override
     public ZExprString visitStrConcat(@NotNull AtcalParser.StrConcatContext ctx) {
-        // TODO: check that the operands are both of string type
-        String leftOp = ((ZExprString) visit(ctx.zExpr(0))).getStr();
-        String rightOp = ((ZExprString) visit(ctx.zExpr(1))).getStr();
-        return new ZExprString(leftOp + rightOp);
+        String leftOpStr = ZExprString.fromZExpr(visit(ctx.zExpr(0))).getStr();
+        String rightOpStr = ZExprString.fromZExpr(visit(ctx.zExpr(1))).getStr();
+        return new ZExprString(leftOpStr + rightOpStr);
     }
 }

@@ -10,6 +10,19 @@ public class ZExprString implements ZExpr {
         this.str = str;
     }
 
+
+    public static ZExprString fromZExpr(ZExpr zExpr) {
+        if (zExpr instanceof ZExprString) {
+            return (ZExprString)zExpr;
+        }if (zExpr instanceof ZExprConst) {
+            return new ZExprString(((ZExprConst)zExpr).getValue());
+        } else if (zExpr instanceof ZExprNum) {
+            return new ZExprString(Long.toString(((ZExprNum) zExpr).getNum()));
+        } else {
+            throw new RuntimeException("Cannot convert Z expression to string.");
+        }
+    }
+
     public String getStr() {
         return str;
     }
