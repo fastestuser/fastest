@@ -1,6 +1,8 @@
 import client.blogic.testing.atcal.Atcal;
 import client.blogic.testing.atcal.z.ast.*;
 import com.google.common.io.Resources;
+import common.z.AbstractTCase;
+import common.z.AbstractTCaseImpl;
 import org.junit.Test;
 
 import java.net.URL;
@@ -15,9 +17,11 @@ public class CZTTranslatorTest {
     public void test() {
 
         URL fileURL = Resources.getResource("CZTTranslatorTest/atc1.tex");
-        ZExprSchema atc = Atcal.parseATCFile(fileURL);
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(fileURL);
+        ZExprSchema zExprSchema = Atcal.ATCToZExpr(atc);
 
-        ZExprSchema atcTest = new ZExprSchema.Builder().
+
+        ZExprSchema zExprSchemaTest = new ZExprSchema.Builder().
                 addNumVar("a", 1).
                 addVar("b", ZExprSet.of(new ZExprNum(1), new ZExprNum(2), new ZExprNum(3), new ZExprNum(4))).
                 addVar("d", ZExprSet.of(ZExprConst.basic("h"), ZExprConst.basic("i"), ZExprConst.basic("j"))).
@@ -27,7 +31,7 @@ public class CZTTranslatorTest {
 
 //        System.out.println(atc);
 //        System.out.println(ZExprSchema.add(ZExprSchema.of(a,b,d,e,f), k));
-        assert (atcTest.equals(atc));
+        assert (zExprSchemaTest.equals(zExprSchema));
     }
 
 }
