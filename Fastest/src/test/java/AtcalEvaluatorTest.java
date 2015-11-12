@@ -2,10 +2,10 @@ import client.blogic.testing.atcal.AtcalEvaluator;
 import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.atcal.generators.BaseGen;
 import client.blogic.testing.atcal.generators.Generator;
-import client.blogic.testing.atcal.generators.PerlGen;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
-import client.blogic.testing.atcal.z.ast.*;
+import common.z.AbstractTCase;
+import common.z.AbstractTCaseImpl;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -21,23 +21,7 @@ import static org.junit.Assert.fail;
  */
 public class AtcalEvaluatorTest {
 
-    private ZExprNum num1 = new ZExprNum(1);
-    private ZExprNum num2 = new ZExprNum(2);
-    private ZVar var1 = new ZVar("var1", new ZExprString("Hello "));
-    private ZVar var2 = new ZVar("var2", new ZExprString("world"));
-    private ZVar var3 = new ZVar("var3", new ZExprNum(2));
-    private ZVar var4 = new ZVar("var4", ZExprSet.of(num1, num2));
-    private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
-    private Generator baseGen = new BaseGen();
-
-    // ATC extracted from paper:
-    // "Test Adaptation for Model-Based Testing Methods Using Set-Based Specification Languages"
-    private ZVar v = new ZVar("v", new ZExprConst("id_1", ZExprConst.ConstantType.BASIC));
-    private ZVar elecRoll = new ZVar("elecRoll", ZExprSet.of(ZExprProd.of(new ZExprConst("id_1",
-                    ZExprConst.ConstantType.BASIC), new ZExprConst("data_1", ZExprConst.ConstantType.BASIC)),
-            ZExprProd.of(new ZExprConst("id_2", ZExprConst.ConstantType.BASIC),
-                    new ZExprConst("data_2", ZExprConst.ConstantType.BASIC))));
-    private ZExprSchema atc4 = ZExprSchema.of(elecRoll, v);
+    private static final Generator BASE_GEN = new BaseGen();
 
     private ParseTree parseFile(String atcalSrc) {
         try {
@@ -59,9 +43,10 @@ public class AtcalEvaluatorTest {
     @Test
     public void test1() {
         ParseTree atcalTree = parseFile("example1.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, baseGen, "Basic refinement");
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(this.getClass().getClassLoader().getResource("AtcalEvaluatorTest/atc1.tex"));
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc, BASE_GEN);
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
-//        System.out.println(output.getCode());
+        System.out.println(output.getCode());
         assert (output.getCode().equals("a=2\nb='Hello world'\nf(b)"));
     }
 
@@ -71,26 +56,50 @@ public class AtcalEvaluatorTest {
     @Test
     public void test2() {
         ParseTree atcalTree = parseFile("example2.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc1, new PerlGen(), "Nested array of lists");
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(getClass().getResource("/AtcalEvaluatorTest/atc1.tex"));
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc, BASE_GEN);
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
         System.out.println(output.getCode());
-        assert (output.getCode().equals("l=newArray(10)\n" +
-                "l1_tmp=newList()\na='Hello '\nl1_tmp.add(a)\nl[1]=l1_tmp\nl2_tmp=newList()\n" +
-                "b='hola'\nl2_tmp.add(a)\nl[2]=l2_tmp\nf(l)"));
+        assert (output.getCode().equals("Array{type='ContractType{constructor='newList', constArgs=[], setter='add', " +
+                "setterArgs=[a], getter='get', getterArgs=[]}', size=10} l[10]\n" +
+                "l1_tmp=newList()\n" +
+                "a='Hello'\n" +
+                "l1_tmp.add(a)\n" +
+                "l[1]=l1_tmp\n" +
+                "l2_tmp=newList()\n" +
+                "b='hola'\n" +
+                "l2_tmp.add(a)\n" +
+                "l[2]=l2_tmp\n" +
+                "f(l)"));
     }
 
     /**
-     * Extracted from paper example.
+     * ATC extracted from paper:
+     * "Test Adaptation for Model-Based Testing Methods Using Set-Based Specification Languages"
      * It contains autofill, contract types, and multiple refinement laws.
      */
     @Test
     public void test3() {
         ParseTree atcalTree = parseFile("example3.atcal");
-        AtcalEvaluator evaluator = new AtcalEvaluator(atc4, baseGen, "Autofill with contracts and multi ref laws.");
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(getClass().getClassLoader().getResource("AtcalEvaluatorTest/atc2.tex"));
+        AtcalEvaluator evaluator = new AtcalEvaluator(atc, BASE_GEN);
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) atcalTree);
         System.out.println(output.getCode());
-        assert (output.getCode().equals("roll_tmp=newDBTable()\nvid=0\nname='AUTOFILL'\n" +
-                "addr='AUTOFILL'\nroll_tmp.insert(vid,name,addr)\nvid=1\nname='AUTOFILL'\naddr='AUTOFILL'\n" +
-                "roll_tmp.insert(vid,name,addr)\nroll=roll_tmp\nvoter.id=0\nisVoter(voter)"));
+        assert (output.getCode().equals("roll_tmp=newDBTable()\n" +
+                "vid=2\n" +
+                "name='Peter'\n" +
+                "addr='AUTOFILL'\n" +
+                "roll_tmp.insert(vid,name,addr)\n" +
+                "vid=1\n" +
+                "name='Paul'\n" +
+                "addr='AUTOFILL'\n" +
+                "roll_tmp.insert(vid,name,addr)\n" +
+                "vid=3\n" +
+                "name='Joe'\n" +
+                "addr='AUTOFILL'\n" +
+                "roll_tmp.insert(vid,name,addr)\n" +
+                "roll=roll_tmp\n" +
+                "voter.id=1\n" +
+                "isVoter(voter)"));
     }
 }

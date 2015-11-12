@@ -57,13 +57,8 @@ public class TCaseRefineClientRunner implements Runnable {
         else
             throw new RuntimeException("The " + targetLanguage + " language is not supported by the testing backend.");
 
-        // Translate the abstract test case to ATCAL AST.
-        ZExprSchema atc = Atcal.ATCToZExpr(abstractTCase);
-
-        String concreteTCaseName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
-
         // Get the ATCAL rule and evaluate it for the abstract test case.
-        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(atc, codeGen, concreteTCaseName);
+        AtcalEvaluator atcalEvaluator = new AtcalEvaluator(abstractTCase, codeGen);
         ConcreteTCase concreteTCase = atcalEvaluator.visitRefinementRule(refinementRule.getContext());
 
         // announce that the refinement process has finished.
