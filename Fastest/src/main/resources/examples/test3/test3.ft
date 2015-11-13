@@ -1,6 +1,6 @@
 loadspec src/main/resources/examples/test3/test3.tex
 selop A
-addtactic A SP \cup b \cup \{1\}
+addtactic A SP \cup b \cup \{1, 2, 3\}
 genalltt
 genalltca
 loadrefrule src/main/resources/examples/test3/test3.atcal

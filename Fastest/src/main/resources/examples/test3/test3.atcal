@@ -1,6 +1,6 @@
 @RRULE test3
 
 @LAWS
-b ==> myB AS ARRAY INT(10) WITH [@ELEM ==> [] AS INT];
+b ==> b AS ARRAY INT(10) WITH [@ELEM ==> [] AS INT];
 
-@UUT print(myB);
+@UUT print(b);
