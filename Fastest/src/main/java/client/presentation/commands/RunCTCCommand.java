@@ -6,10 +6,22 @@ import client.blogic.management.ii.IIComponent;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.events.RunCTCFinished;
 import client.blogic.management.ii.events.RunCTCRequested;
+import client.blogic.testing.atcal.Abstraction;
 import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.execution.Execution;
 import client.presentation.ClientTextUI;
+import com.google.common.collect.Maps;
+import common.z.SpecUtils;
+import common.z.czt.UniqueZLive;
 import compserver.abstraction.capture.execution.CompilationInfo;
+import net.sourceforge.czt.animation.eval.ZLive;
+import net.sourceforge.czt.z.ast.Expr;
+import net.sourceforge.czt.z.ast.Pred;
+import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.util.Factory;
+import org.yaml.snakeyaml.Yaml;
+
+import java.util.Map;
 
 public class RunCTCCommand extends IIComponent implements Command {
     /**
@@ -62,11 +74,15 @@ public class RunCTCCommand extends IIComponent implements Command {
      */
     public synchronized void manageEvent(Event_ event) throws IllegalArgumentException {
         if (event instanceof RunCTCFinished) {
-            Execution execution = ((RunCTCFinished)event).getExecution();
-            System.out.println(execution);
+            RunCTCFinished runCTCFinished = (RunCTCFinished)event;
+            Execution execution = runCTCFinished.getExecution();
 
             // Parse the YAML output and abstract it back to a Z schema
-            
+            Yaml yaml = new Yaml();
+            Map<String, Object> yamlData = (Map<String, Object>)yaml.load(execution.getYamlData());
+            Abstraction abstraction = new Abstraction(runCTCFinished.getConcreteTCase());
+            // Print the Z schema
+            UniqueZLive.getInstance().printTerm(System.out, abstraction.toAxPara(yamlData));
         }
     }
 }
