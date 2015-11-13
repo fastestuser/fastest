@@ -1,4 +1,5 @@
 import client.blogic.testing.atcal.Abstraction;
+import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.atcal.z.ast.*;
 import com.google.common.collect.Maps;
 import common.z.SpecUtils;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class AbstractionTest {
 
-    private static final Map<Long, ZExprConst> bijectionMap = Maps.newHashMap();
+    private static final ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", null, null);
 
     private Map<String, Object> loadYaml(String resourceName) {
         // Parse the YAML output and abstract it back to a Z schema
@@ -25,7 +26,7 @@ public class AbstractionTest {
 
     @Test
     public void numTest() {
-        Abstraction abstraction = new Abstraction(bijectionMap);
+        Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/abstractionTest.yml");
         ZExprNum zExprNum = new ZExprNum(1);
         System.out.println(abstraction.toZExpr(yamlData.get("myA"), zExprNum));
@@ -33,7 +34,7 @@ public class AbstractionTest {
 
     @Test
     public void seqTest() {
-        Abstraction abstraction = new Abstraction(bijectionMap);
+        Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/abstractionTest.yml");
         ZExprList zExprList = new ZExprList(Arrays.asList(new ZExprNum(1)));
         System.out.println(SpecUtils.termToLatex(abstraction.toZExpr(yamlData.get("myArr"), zExprList)));
@@ -41,7 +42,7 @@ public class AbstractionTest {
 
     @Test
     public void schemaTest() {
-        Abstraction abstraction = new Abstraction(bijectionMap);
+        Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/abstractionTest.yml");
         ZExprSchema zExprSchema = ZExprSchema.of(new ZVar("1", ZExprConst.basic("a")),
                 new ZVar("2", ZExprConst.basic("b")), new ZVar("3", ZExprConst.basic("c")));
@@ -50,9 +51,9 @@ public class AbstractionTest {
 
     @Test
     public void setTest() {
-        Abstraction abstraction = new Abstraction(bijectionMap);
+        Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/abstractionTest.yml");
-        ZExprSet zExprSet = ZExprSet.of(new ZExprNum(1));
+        ZExprSet zExprSet = ZExprSet.of(new ZExprNum(1), new ZExprNum(2));
         System.out.println(SpecUtils.termToLatex(abstraction.toZExpr(yamlData.get("myArr"), zExprSet)));
     }
 }

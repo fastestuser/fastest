@@ -1,19 +1,17 @@
 package client.blogic.testing.atcal;
 
 import client.blogic.testing.atcal.z.ast.*;
+import client.blogic.testing.atcal.z.ast.ZExprList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.z.ast.Expr;
-import net.sourceforge.czt.z.ast.Pred;
-import net.sourceforge.czt.z.ast.RefExpr;
+import net.sourceforge.czt.z.ast.*;
 import net.sourceforge.czt.z.util.Factory;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -26,7 +24,7 @@ public class Abstraction {
 
     private static final ZLive zLive = UniqueZLive.getInstance();
     private static final Factory zFactory = zLive.getFactory();
-    private final Map<Long, ZExprConst> bijectionMap;
+    private final ConcreteTCase concreteTCase;
 
     /**
      * Helper function to transform an iterable into a stream
@@ -45,12 +43,12 @@ public class Abstraction {
     }
 
     /**
-     * Creates a new abstraction instance.
+     * Creates a new instance of the abstraction class
      *
-     * @param bijectionMap a map from values to constant names
+     * @param concreteTCase the concrete test case whose execution should be abstracted
      */
-    public Abstraction(Map<Long, ZExprConst> bijectionMap) {
-        this.bijectionMap = bijectionMap;
+    public Abstraction(ConcreteTCase concreteTCase) {
+        this.concreteTCase = concreteTCase;
     }
 
     public Expr toZExpr(Object o, ZExpr target) {
@@ -63,10 +61,10 @@ public class Abstraction {
         } else if (target instanceof ZExprConst) {
             // TODO: this conversion should consider bijection mappings
             if (o instanceof Integer) {
-                String constantName = bijectionMap.get(o).getValue();
+                String constantName = concreteTCase.getBijectionMap().get(o).getValue();
                 return null; //FIXME: return a constant expression zFactory.createZName(constantName);
             } else if (o instanceof String) {
-                return zFactory.createRefExpr(zFactory.createZName((String)o));
+                return zFactory.createRefExpr(zFactory.createZName((String) o));
             } else {
                 throw new RuntimeException("Cannot abstract object as constant.");
             }
@@ -101,9 +99,8 @@ public class Abstraction {
         } else if (target instanceof ZExprSet) {
             if (o instanceof List) {
                 List<Object> objectSet = (List<Object>) o;
-                List<Expr> exprList = objectSet.stream().flatMap(
-                        obj -> stream(((ZExprSet) target)).map(t -> toZExpr(obj, t))
-                ).collect(Collectors.toList());
+                ZExpr t = ((ZExprSet)target).get(0);
+                List<Expr> exprList = objectSet.stream().map(obj -> toZExpr(obj, t)).collect(Collectors.toList());
                 return zFactory.createSetExpr(zFactory.createZExprList(exprList));
             } else {
                 throw new RuntimeException("Cannot abstract object into a set.");
@@ -114,7 +111,7 @@ public class Abstraction {
                 Map<String, Object> objectMap = (Map<String, Object>) o;
                 ZExprSchema targetSchema = (ZExprSchema) target;
                 Map<RefExpr, Expr> vars = Maps.newHashMap();
-                for(ZVar zVar: targetSchema.getMap().values()){
+                for (ZVar zVar : targetSchema.getMap().values()) {
                     Object impVar = objectMap.get(zVar.getName());
                     vars.put(zFactory.createRefExpr(zFactory.createZName(zVar.getName())), toZExpr(impVar, zVar.getValue()));
                 }
@@ -127,5 +124,21 @@ public class Abstraction {
         } else {
             throw new RuntimeException("Unsupported target abstraction type");
         }
+    }
+
+    public AxPara toAxPara(Map<String, Object> yamlData) {
+        Map<RefExpr, Expr> vars = Maps.newHashMap();
+        for (Map.Entry<String, Object> var : yamlData.entrySet())
+            vars.put(zFactory.createRefExpr(zFactory.createZName(var.getKey())),
+                    toZExpr(var.getValue(), concreteTCase.getZExprSchema().getVar(var.getKey()).get().getValue()));
+
+        Pred pred2 = SpecUtils.createAndPred(vars);
+
+        DeclList declList = SpecUtils.getAxParaListOfDecl(concreteTCase.getAbstractTCase().getMyAxPara());
+        NameList nameList = concreteTCase.getAbstractTCase().getMyAxPara().getNameList();
+
+        // Construct the Z schema with the parsed predicates
+        SchText schText = zFactory.createZSchText(declList, pred2);
+        return zFactory.createAxPara(nameList, schText, Box.AxBox);
     }
 }
