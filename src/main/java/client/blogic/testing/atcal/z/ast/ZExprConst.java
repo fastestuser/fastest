@@ -6,13 +6,11 @@ package client.blogic.testing.atcal.z.ast;
 public class ZExprConst implements ZExpr {
 
     private final String value;
-    private final long constId;
     private final ConstantType type;
-    private long counter = 0;
+    
 
     public ZExprConst(String value, ConstantType type) {
         this.value = value;
-        this.constId = counter++;
         this.type = type;
     }
 
@@ -22,10 +20,6 @@ public class ZExprConst implements ZExpr {
 
     public String getValue() {
         return value;
-    }
-
-    public long getConstId() {
-        return constId;
     }
 
     public ConstantType getType() {
