@@ -6,6 +6,7 @@ import client.blogic.testing.atcal.z.ast.ZExprAuto;
 import client.blogic.testing.atcal.z.ast.ZExprConst;
 import client.blogic.testing.atcal.z.ast.ZExprNum;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Range;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -25,12 +26,16 @@ public class EnumType extends ATCALType {
             this.elements.put(e, new ConsExpr(e));
     }
 
-    public String getName() {
-        return name;
+    public ConsExpr getElemByName(String e) {
+        return elements.get(e);
     }
 
-    public ConsExpr getElem(String e) {
-        return elements.get(e);
+    public ConsExpr getElemByIndex(int index) {
+        return elements.values().toArray(new ConsExpr[elements.values().size()])[index];
+    }
+
+    public int getElemCount(){
+        return elements.size();
     }
 
     // Conversion to enum constants from Z types without bijection maps.
@@ -43,33 +48,12 @@ public class EnumType extends ATCALType {
 
             // Check if the numeric expression value is between the bounds of the array.
             int value = (int) zExprNum.getNum();     // TODO: what happens if the value is beyond the int range?
-            if (value < 0 && value > elements.values().size())
+            if (!Range.closed(0, getElemCount()).contains(value))
                 throw new RuntimeException("Z integer value is outside ATCAL enumeration range.");
 
-            return (ConsExpr) elements.values().toArray()[value];
+            return getElemByIndex(value);
 
             // Convert from Z constant value
-        } else if (zExpr instanceof ZExprConst) {
-            ZExprConst zExprConst = (ZExprConst) zExpr;
-
-            switch (zExprConst.getType()) {
-                // If the Z type of the constant is a basic (or given) type we use positional constant refinement
-                case BASIC:
-                    // Use the constant ID as the index in the enumeration to convert
-                    // TODO: what happens if the value is beyond the int range?
-                    int value = (int) zExprConst.getConstId();
-                    if (value < 0 && value > elements.values().size())
-                        throw new RuntimeException("Z constant ID outside ATCAL enumeration range.");
-
-                    return (ConsExpr) elements.values().toArray()[value];
-
-                // If the Z type of the constant is an enumeration type look up the matching APL constant by name
-                case ENUM:
-                    if (elements.containsKey(zExprConst.getValue()))
-                        return (ConsExpr) elements.get(zExprConst.getValue());
-                    else
-                        throw new RuntimeException("Z constant value does not match any element of ATCAL enumeration.");
-            }
         } else if (zExpr instanceof ZExprAuto) {
             // AUTOFILL expressions get the first value in the enumeration
             return elements.values().iterator().next();

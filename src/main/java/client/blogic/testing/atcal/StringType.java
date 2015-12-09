@@ -15,8 +15,6 @@ public class StringType extends ATCALType {
             return new StringExpr(String.valueOf(((ZExprNum) zExpr).getNum()));
         } else if (zExpr instanceof ZExprString) {
             return new StringExpr(((ZExprString) zExpr).getStr());
-        } else if (zExpr instanceof ZExprConst) {
-            return new StringExpr(((ZExprConst) zExpr).getValue());
         } else if (zExpr instanceof ZExprAuto) {
             return new StringExpr("AUTOFILL");
         }

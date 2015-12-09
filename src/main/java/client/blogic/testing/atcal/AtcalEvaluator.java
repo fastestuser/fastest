@@ -114,8 +114,11 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         LValueFactory lValueFactory = new LValueFactory();
 
+        ConstantMapper constantMapper = new ConstantMapper();
+
         // Evaluate refinement laws
-        RefinementLawEvaluator refLawEval = new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory);
+        RefinementLawEvaluator refLawEval =
+                new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, constantMapper);
         this.refinedLawsCode = refLawEval.visit(ctx.laws());
 
         // Get optional programming language
@@ -146,7 +149,8 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
                 refinedCode + plCode + "\n" + codegen.generate(uutCall) + "\n" + epilogue + dumpCalls).trim();
 
         // Generate a new concrete test case with the result of the refinement.
-        return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode, zExprSchema, abstractTCase);
+        return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode, zExprSchema,
+                abstractTCase, constantMapper);
     }
 
     /**

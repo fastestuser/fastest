@@ -8,7 +8,7 @@ public class ZExprConst implements ZExpr {
     private final String value;
     private final long constId;
     private final ConstantType type;
-    private static long counter = 0;
+    private long counter = 0;
 
     public ZExprConst(String value, ConstantType type) {
         this.value = value;
@@ -54,5 +54,8 @@ public class ZExprConst implements ZExpr {
         return value;
     }
 
-    public enum ConstantType {BASIC, ENUM}
+    public enum ConstantType {
+        BASIC,
+        ENUM
+    }
 }

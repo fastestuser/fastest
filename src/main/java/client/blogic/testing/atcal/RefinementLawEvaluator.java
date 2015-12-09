@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.misc.NotNull;
 
-
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,21 +18,29 @@ import java.util.Map;
  */
 public class RefinementLawEvaluator extends AtcalBaseVisitor<CodeBlock> {
 
-    private final ZExprSchema zScope;   // Evaluator's scope for z expressions
-    private final APLLValue aplScope;      // Evaluator's scope for APL code
-    private final Map<String, ATCALType> types; // Evaluator's declared types
-    private final LValueFactory lValueFactory; // Evaluator's lvalue manager
+    private final ZExprSchema zScope;   // Scope for z expressions
+    private final APLLValue aplScope;      // Scope for APL code
+    private final Map<String, ATCALType> types; // Declared types
+    private final LValueFactory lValueFactory; // LValue manager
+    // The constant mapper manages the mappings from Z constants to APL expressions
+    private final ConstantMapper constantMapper;
 
     public RefinementLawEvaluator(ZExprSchema zScope, APLLValue aplScope, Map<String, ATCALType> types,
-                                  LValueFactory lValueFactory) {
+                                  LValueFactory lValueFactory, ConstantMapper constantMapper) {
         this.zScope = zScope;
         this.aplScope = aplScope;
         this.types = types;
         this.lValueFactory = lValueFactory;
+        this.constantMapper = constantMapper;
+
     }
 
     private ZExpr getZScope() {
         return this.zScope.getVar("zScope").get().getValue();
+    }
+
+    public ConstantMapper getConstantMapper() {
+        return constantMapper;
     }
 
     @Override
@@ -70,7 +77,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<CodeBlock> {
 
             // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
             // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-            RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types, lValueFactory);
+            RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, aplScope, types, lValueFactory, constantMapper);
             for (AtcalParser.RefinementContext context : ctx.refinement())
                 codeBlock.join(lawEvaluator.visit(context));
         }
@@ -83,32 +90,43 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<CodeBlock> {
         // Get the ATCAL lvalue of the refinement and use it as the new APL scope.
         LValueEvaluator lValueEval = new LValueEvaluator(ctx.type());
         APLLValue newAPLScope = lValueEval.visit(ctx.lvalue());
+        ATCALType newAPLScopeType = newAPLScope.getType();
 
-        // If there is a mapping of constants then check source and destination types and build mapping table.
-        if (ctx.constMapping() != null) {
-            if (this.getZScope() instanceof ZExprConst) {
-                ZExprConst zExprConst = (ZExprConst) this.getZScope();
-
-                // Create constants map
-                Map<ZExprConst, ConsExpr> map = Maps.newHashMap();
-                for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
-                    map.put(new ZExprConst(constMap.ID(0).getText(), ZExprConst.ConstantType.BASIC), new ConsExpr(constMap.ID(1).getText()));
+        if (this.getZScope() instanceof ZExprConst) {
+            ZExprConst zExprConst = (ZExprConst) this.getZScope();
+            APLExpr aplExpr = null;
+            if (newAPLScopeType instanceof IntType) {
+                aplExpr = constantMapper.toInt(zExprConst);
+            } else if (newAPLScopeType instanceof StringType) {
+                aplExpr = constantMapper.toString(zExprConst);
+            } else if (newAPLScopeType instanceof EnumType) {
+                // Use a custom mapping of enum constants mapping table if present.
+                EnumType enumType = (EnumType) newAPLScopeType;
+                if (ctx.constMapping() != null) {
+                    Map<ZExprConst, ConsExpr> customMap = Maps.newHashMap();
+                    for (AtcalParser.ConstMapContext constMap : ctx.constMapping().constMap()) {
+                        customMap.put(ZExprConst.basic(constMap.ID(0).getText()),
+                                enumType.getElemByName(constMap.ID(1).getText()));
+                    }
+                    aplExpr = constantMapper.toEnum(zExprConst, customMap);
+                } else {
+                    aplExpr = constantMapper.toEnum(zExprConst, enumType);
                 }
-
-                // Check that the mapping contains the Z constant mapping and generate code for the refinement
-                if (map.containsKey(zExprConst))
-                    codeBlock.addStmt(new AssignStmt(newAPLScope, map.get(zExprConst)));
-                else
-                    System.out.println("Z Constant " + zExprConst.toString() + " not present in constants mapping.");
-
-                return codeBlock;
             } else {
-                throw new RuntimeException("Type error on BijMapRef");
+                throw new RuntimeException(
+                        String.format("Cannot map Z constant %s to lvalue of type %s.",
+                                zExprConst.getValue(), newAPLScopeType.toString()));
             }
+
+            codeBlock.addStmt(new AssignStmt(newAPLScope, aplExpr));
+            return codeBlock;
+
+        } else if (ctx.constMapping() != null) {
+            throw new RuntimeException("Bijection mappings only apply to refine constant values.");
         } else if (ctx.withRef() != null) {
             // If there is a WITH clause then create an evaluator with the new APL lvalue and type scopes and evaluate it.
             // TODO: check that the type of the new APL scope and the type of the refinement are compatible
-            RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types, lValueFactory);
+            RefinementLawEvaluator newScopeEvaluator = new RefinementLawEvaluator(zScope, newAPLScope, types, lValueFactory, constantMapper);
             return newScopeEvaluator.visit(ctx.withRef());
         } else {
             // Refine the Z expression to an APL expression of the given type.
@@ -171,7 +189,7 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<CodeBlock> {
 
                     // Recursively evaluate the refinements of the law with the new Z scope and the current APL scope
                     // The evaluation of each refinement produces a block of intermediate code that is collected to produce the output.
-                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, var, types, new LValueFactory());
+                    RefinementLawEvaluator lawEvaluator = new RefinementLawEvaluator(newScope, var, types, new LValueFactory(), constantMapper);
                     codeBlock.join(lawEvaluator.visit(ctx.lawRefinement(iteratorList.indexOf(it)).refinement(0)));
                 }
 

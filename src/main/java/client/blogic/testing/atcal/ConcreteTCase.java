@@ -4,12 +4,12 @@ package client.blogic.testing.atcal;
  * Created by Cristian on 07/08/15.
  */
 
+import client.blogic.testing.atcal.apl.APLExpr;
 import client.blogic.testing.atcal.z.ast.ZExprConst;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
 import common.z.AbstractTCase;
-
-import java.util.Map;
 
 /**
  * This class represents an immutable refined test case.
@@ -21,7 +21,7 @@ public class ConcreteTCase {
     private final String code;
     private final AbstractTCase abstractTCase;
     private final ZExprSchema zExprSchema;
-    private final ImmutableMap<Long, ZExprConst> bijectionMap = null;
+    private final ConstantMapper constantMapper;
 
     /**
      * Returns a new immutable instance of a refined test case
@@ -29,12 +29,13 @@ public class ConcreteTCase {
      * @param language the programming language
      * @param code     the code of the program
      */
-    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase) {
+    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase, ConstantMapper constantMapper) {
         this.name = name;
         this.language = language;
         this.code = code;
         this.abstractTCase = abstractTCase;
         this.zExprSchema = zExprSchema;
+        this.constantMapper = constantMapper;
     }
 
     /**
@@ -87,8 +88,8 @@ public class ConcreteTCase {
      *
      * @return the bijection map
      */
-    public Map<Long, ZExprConst> getBijectionMap() {
-        return bijectionMap;
+    public ConstantMapper getConstantMapper() {
+        return constantMapper;
     }
 
     /**

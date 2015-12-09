@@ -29,8 +29,6 @@ public final class IntType extends ATCALType {
     public LongExpr fromZExpr(ZExpr zExpr) {
         if (zExpr instanceof ZExprNum) {
             return new LongExpr(((ZExprNum) zExpr).getNum());
-        } else if (zExpr instanceof ZExprConst) {
-            return new LongExpr(((ZExprConst) zExpr).getConstId());
         } else if (zExpr instanceof ZExprAuto) {
             return new LongExpr(0xDEADBEEF);
         }
