@@ -7,15 +7,16 @@ public class ZExprConst implements ZExpr {
 
     private final String value;
     private final ConstantType type;
-    
+    private final String zVarName;
 
-    public ZExprConst(String value, ConstantType type) {
+    public ZExprConst(String value, String zVarName, ConstantType type) {
         this.value = value;
         this.type = type;
+        this.zVarName = zVarName;
     }
 
-    public static ZExprConst basic(String value) {
-        return new ZExprConst(value, ConstantType.BASIC);
+    public static ZExprConst basic(String value, String zVarName) {
+        return new ZExprConst(value, zVarName, ConstantType.BASIC);
     }
 
     public String getValue() {
@@ -24,6 +25,10 @@ public class ZExprConst implements ZExpr {
 
     public ConstantType getType() {
         return type;
+    }
+
+    public String getZVarName() {
+        return zVarName;
     }
 
     @Override

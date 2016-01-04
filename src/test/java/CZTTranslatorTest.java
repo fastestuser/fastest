@@ -24,9 +24,9 @@ public class CZTTranslatorTest {
         ZExprSchema zExprSchemaTest = new ZExprSchema.Builder().
                 addNumVar("a", 1).
                 addVar("b", ZExprSet.of(new ZExprNum(1), new ZExprNum(2), new ZExprNum(3), new ZExprNum(4))).
-                addVar("d", ZExprSet.of(ZExprConst.basic("h"), ZExprConst.basic("i"), ZExprConst.basic("j"))).
+                addVar("d", ZExprSet.of(ZExprConst.basic("h", "d"), ZExprConst.basic("i", "d"), ZExprConst.basic("j", "d"))).
                 addVar("e", ZExprProd.of(new ZExprNum(1), new ZExprNum(2))).
-                addVar("f", ZExprSet.of(ZExprProd.of(ZExprConst.basic("x"), new ZExprNum(1)), ZExprProd.of(ZExprConst.basic("y"), new ZExprNum(2)))).
+                addVar("f", ZExprSet.of(ZExprProd.of(ZExprConst.basic("x", "f"), new ZExprNum(1)), ZExprProd.of(ZExprConst.basic("y", "f"), new ZExprNum(2)))).
                 addVar("k", new ZExprList(Arrays.asList(new ZExprNum(1), new ZExprNum(2), new ZExprNum(3), new ZExprNum(4)))).build();
 
 //        System.out.println(atc);

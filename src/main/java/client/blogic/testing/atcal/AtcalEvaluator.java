@@ -8,6 +8,7 @@ import client.blogic.testing.atcal.parser.AtcalBaseVisitor;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
+import client.blogic.testing.atcal.z.ast.ZVar;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
@@ -114,12 +115,14 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         LValueFactory lValueFactory = new LValueFactory();
 
-        ConstantMapper constantMapper = new ConstantMapper();
+        Map<String, ConstantMapper> zVarConstantMaps = Maps.newHashMap();
 
         // Evaluate refinement laws
-        RefinementLawEvaluator refLawEval =
-                new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, constantMapper);
-        this.refinedLawsCode = refLawEval.visit(ctx.laws());
+        for (AtcalParser.LawContext lawCtx : ctx.laws().law()) {
+            RefinementLawEvaluator refLawEval =
+                    new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps);
+            this.refinedLawsCode = refLawEval.visit(ctx.laws());
+        }
 
         // Get optional programming language
         this.plCode = "";
@@ -150,7 +153,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         // Generate a new concrete test case with the result of the refinement.
         return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode, zExprSchema,
-                abstractTCase, constantMapper);
+                abstractTCase, zVarConstantMaps);
     }
 
     /**

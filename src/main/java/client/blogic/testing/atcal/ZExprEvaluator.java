@@ -7,7 +7,6 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import org.antlr.v4.runtime.misc.NotNull;
 
-
 import java.util.ArrayList;
 
 /**
@@ -38,10 +37,11 @@ public class ZExprEvaluator extends AtcalBaseVisitor<ZExpr> {
     @Override
     public ZExpr visitIdent(@NotNull AtcalParser.IdentContext ctx) {
         Optional<ZVar> var = scope.getVar(ctx.ID().getText());
-        if (var.isPresent())
+        if (var.isPresent()) {
             return var.get().getValue();
-        else
-            return new ZExprConst(ctx.ID().getText(), ZExprConst.ConstantType.BASIC);
+        } else {
+            throw new RuntimeException(String.format("Unknown identifier %s.", ctx.ID().getText()));
+        }
     }
 
     @Override

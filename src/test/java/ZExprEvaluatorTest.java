@@ -141,35 +141,19 @@ public class ZExprEvaluatorTest {
     }
 
     @Test
-    public void setTest11() {
-        String inputExpr = "<a>";
-        ZExpr result = evalExpr(inputExpr, atc2);
-        System.out.println(result.toString());
-        assert (result.equals(ZExprProd.of(new ZExprConst("a", ZExprConst.ConstantType.BASIC))));
-    }
-
-    @Test
-    public void setTest12() {
-        String inputExpr = "{a,b}";
-        ZExpr result = evalExpr(inputExpr, atc2);
-        System.out.println(result.toString());
-        assert (result.equals(ZExprSet.of(new ZExprConst("a", ZExprConst.ConstantType.BASIC), new ZExprConst("b", ZExprConst.ConstantType.BASIC))));
-    }
-
-    @Test
     public void setTest13() {
-        String inputExpr = "{var4,b}";
+        String inputExpr = "{var4,1}";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprSet.of(ZExprSet.of(num1, num2), new ZExprConst("b", ZExprConst.ConstantType.BASIC))));
+        assert (result.equals(ZExprSet.of(ZExprSet.of(num1, num2), new ZExprNum(1))));
     }
 
     @Test
     public void setTest14() {
-        String inputExpr = "<var4,b>";
+            String inputExpr = "<var4,1>";
         ZExpr result = evalExpr(inputExpr, atc2);
         System.out.println(result.toString());
-        assert (result.equals(ZExprProd.of(ZExprSet.of(num1, num2), new ZExprConst("b", ZExprConst.ConstantType.BASIC))));
+        assert (result.equals(ZExprProd.of(ZExprSet.of(num1, num2), new ZExprNum(1))));
     }
 
     @Test

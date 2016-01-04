@@ -38,8 +38,8 @@ public class RefinementLawEvaluatorTest {
     private ZVar var7 = new ZVar("var7", ZExprSet.of(prod3, prod4));
     private ZExprSchema atc1 = ZExprSchema.of(var1, var2, var3, var4);
     private ZExprSchema atc2 = ZExprSchema.of(var4, var5, var6, var7);
-    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", ZExprConst.ConstantType.BASIC)),
-            new ZVar("var2", new ZExprConst("pepe", ZExprConst.ConstantType.BASIC)));
+    private ZExprSchema atc3 = ZExprSchema.of(new ZVar("var1", new ZExprConst("toto", "var1", ZExprConst.ConstantType.BASIC)),
+            new ZVar("var2", new ZExprConst("pepe", "var2", ZExprConst.ConstantType.BASIC)));
 
     private static final Map<String, ATCALType> DATATYPES = parseDatatypes();
 
@@ -76,7 +76,7 @@ public class RefinementLawEvaluatorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory(), new ConstantMapper());
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory(), Maps.newHashMap());
         return eval.visit(tree);
     }
 
@@ -178,8 +178,8 @@ public class RefinementLawEvaluatorTest {
         String inputExpr = "var1 ==> a AS myEnum";
         List<APLStmt> expectedStmts = Lists.newArrayList(new AssignStmt(new APLVar("a", DATATYPES.get("myEnum")), new ConsExpr("E1")));
         List<APLStmt> stmts = evalLaw(inputExpr, atc3).getStmtList();
-//        System.out.println(stmts);
-//        System.out.println(expectedStmts);
+        System.out.println(stmts);
+        System.out.println(expectedStmts);
         assert (stmts.equals(expectedStmts));
     }
 

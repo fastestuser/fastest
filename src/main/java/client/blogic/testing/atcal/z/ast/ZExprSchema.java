@@ -100,7 +100,7 @@ public class ZExprSchema implements ZExpr {
         }
 
         public Builder addConstVar(String name, String cons){
-            this.vars.add(new ZVar(name, new ZExprConst(cons, ZExprConst.ConstantType.BASIC)));
+            this.vars.add(new ZVar(name, new ZExprConst(cons, name, ZExprConst.ConstantType.BASIC)));
             return this;
         }
 

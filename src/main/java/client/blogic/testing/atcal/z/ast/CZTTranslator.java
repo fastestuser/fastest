@@ -23,6 +23,16 @@ import java.util.stream.Collectors;
  */
 public final class CZTTranslator implements ExprVisitor<ZExpr> {
 
+    private final String zVarName;
+
+    public CZTTranslator(String zVarName) {
+        this.zVarName = zVarName;
+    }
+
+    public String getzVarName() {
+        return zVarName;
+    }
+
     @Override
     public ZExpr visitExpr(Expr expr) {
 
@@ -46,7 +56,7 @@ public final class CZTTranslator implements ExprVisitor<ZExpr> {
             if (refExpr.getZName().getWord().equals("∅"))
                 return ZExprSet.getEmptySet();
             else
-                return new ZExprConst(refExpr.getZName().getWord(), ZExprConst.ConstantType.BASIC);
+                return new ZExprConst(refExpr.getZName().getWord(), this.getzVarName(), ZExprConst.ConstantType.BASIC);
 
         } else if (expr instanceof TupleExpr) {
             ZExpr[] array = {};

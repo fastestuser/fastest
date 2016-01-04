@@ -34,12 +34,13 @@ public class Atcal {
      * @return an ATCAL abstract test case
      */
     public static ZExprSchema ATCToZExpr(AbstractTCase atc) {
-        final CZTTranslator cztTranslator = new CZTTranslator();
-        ArrayList<ZVar> translatedVars = new ArrayList<ZVar>();
+        final ArrayList<ZVar> translatedVars = new ArrayList<ZVar>();
 
+        // Instantiate the translator for each variable and translate the expressions
         for (Map.Entry<RefExpr, Expr> varExpr : atc.getVarExpMap().entrySet()) {
-            ZExpr expr = varExpr.getValue().accept(cztTranslator);
-            translatedVars.add(new ZVar(varExpr.getKey().getName().toString(), expr));
+            final String zVarName = varExpr.getKey().getName().toString();
+            final ZExpr expr = varExpr.getValue().accept(new CZTTranslator(zVarName));
+            translatedVars.add(new ZVar(zVarName, expr));
         }
         return new ZExprSchema(translatedVars.toArray(new ZVar[translatedVars.size()]));
     }

@@ -11,6 +11,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import common.z.AbstractTCase;
 
+import java.util.Map;
+
 /**
  * This class represents an immutable refined test case.
  */
@@ -21,7 +23,7 @@ public class ConcreteTCase {
     private final String code;
     private final AbstractTCase abstractTCase;
     private final ZExprSchema zExprSchema;
-    private final ConstantMapper constantMapper;
+    private final Map<String, ConstantMapper> zVarConstantMaps;
 
     /**
      * Returns a new immutable instance of a refined test case
@@ -29,13 +31,13 @@ public class ConcreteTCase {
      * @param language the programming language
      * @param code     the code of the program
      */
-    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase, ConstantMapper constantMapper) {
+    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase, Map<String, ConstantMapper> zVarConstantMaps) {
         this.name = name;
         this.language = language;
         this.code = code;
         this.abstractTCase = abstractTCase;
         this.zExprSchema = zExprSchema;
-        this.constantMapper = constantMapper;
+        this.zVarConstantMaps = zVarConstantMaps;
     }
 
     /**
@@ -88,8 +90,8 @@ public class ConcreteTCase {
      *
      * @return the bijection map
      */
-    public ConstantMapper getConstantMapper() {
-        return constantMapper;
+    public Map<String, ConstantMapper> getZVarConstantMaps() {
+        return zVarConstantMaps;
     }
 
     /**
