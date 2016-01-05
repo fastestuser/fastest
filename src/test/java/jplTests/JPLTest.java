@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class JPLTest {
 
-    @Test
+//    @Test
     public void test0() {
         String t0 = "consult('src/test/java/jplTests/test.pl')";
         assert (Query.hasSolution(t0));
@@ -30,7 +30,7 @@ public class JPLTest {
         System.out.println("passed");
     }
 
-    @Test
+//    @Test
     public void test1() {
 
         // Load swipl symbol definitions into global symbol namespace to make them available to other dynamic libraries.
@@ -65,7 +65,7 @@ public class JPLTest {
         System.out.println(t);
     }
 
-    @Test
+//    @Test
     public void test2() {
 
         // Load database
