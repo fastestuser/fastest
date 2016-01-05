@@ -1,6 +1,5 @@
 package common.z;
 
-import client.blogic.testing.atcal.z.ast.CZTTranslator;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTCloner;
 import net.sourceforge.czt.animation.eval.ZLive;
@@ -67,6 +66,13 @@ public class AbstractTCaseImpl implements AbstractTCase {
         this.varExprMap = varExprMap;
     }
 
+    /**
+     * Parse a latex file containing an abstract test case specification
+     * FIXME: the method only works if the file contains a single schema, therefore it does not work if one or more variables are of schema types that require their own previous definition.
+     *
+     * @param fileURL the latex file to parse
+     * @return an abstract test case
+     */
     public static AbstractTCase fromFile(URL fileURL) {
         try {
             ZLive zLive = UniqueZLive.getInstance();
