@@ -1,5 +1,7 @@
 package client.blogic.testing.atcal;
 
+import client.blogic.testing.atcal.apl.LongExpr;
+import client.blogic.testing.atcal.apl.StringExpr;
 import client.blogic.testing.atcal.z.ast.*;
 import client.blogic.testing.atcal.z.ast.ZExprList;
 import com.google.common.collect.Lists;
@@ -51,69 +53,69 @@ public class Abstraction {
         this.concreteTCase = concreteTCase;
     }
 
-    public Expr toZExpr(Object o, ZExpr target) {
-        if (target instanceof ZExprNum) {
-            if (o instanceof Integer)
-                return zFactory.createNumExpr((Integer) o);
+    public Expr toZExpr(Object yamlObject, String zVarName, ZExpr targetType) {
+        if (targetType instanceof ZExprNum) {
+            if (yamlObject instanceof Integer)
+                return zFactory.createNumExpr((Integer) yamlObject);
             else
                 throw new RuntimeException("Cannot abstract object as number.");
 
-        } else if (target instanceof ZExprConst) {
-            // TODO: this conversion should consider bijection mappings
-            if (o instanceof Integer) {
-                String constantName = concreteTCase.getBijectionMap().get(o).getValue();
-                return null; //FIXME: return a constant expression zFactory.createZName(constantName);
-            } else if (o instanceof String) {
-                return zFactory.createRefExpr(zFactory.createZName((String) o));
+        } else if (targetType instanceof ZExprConst) {
+            if (yamlObject instanceof Integer) {
+                ZExprConst zExprConst = concreteTCase.getZVarConstantMaps().get(zVarName).fromAPLExpr(new LongExpr((Integer) yamlObject));
+                return zFactory.createRefExpr(zFactory.createZName(zExprConst.getValue()));
+            } else if (yamlObject instanceof String) {
+                ZExprConst zExprConst = concreteTCase.getZVarConstantMaps().get(zVarName).fromAPLExpr(new StringExpr((String) yamlObject));
+                return zFactory.createRefExpr(zFactory.createZName(zExprConst.getValue()));
             } else {
                 throw new RuntimeException("Cannot abstract object as constant.");
             }
 
-        } else if (target instanceof ZExprProd) {
-            ZExprProd zExprProd = (ZExprProd) target;
-            if (o instanceof List) {
+        } else if (targetType instanceof ZExprProd) {
+            ZExprProd zExprProd = (ZExprProd) targetType;
+            if (yamlObject instanceof List) {
                 List<Expr> exprList = Lists.newArrayList();
                 for (int i = 0; i < zExprProd.getValues().size(); i++) {
-                    exprList.add(toZExpr(((List) o).get(i), zExprProd.getValue(i)));
+                    exprList.add(toZExpr(((List) yamlObject).get(i), zVarName, zExprProd.getValue(i)));
                 }
                 return null; //FIXME: zFactory.createProdExpr(exprList);
             } else {
                 throw new RuntimeException("Cannot abstract object as cross product.");
             }
 
-        } else if (target instanceof ZExprList) {
-            if (o instanceof String) {
-                return zFactory.createSequence(Arrays.asList(((String) o).split("")).stream().map(
+        } else if (targetType instanceof ZExprList) {
+            if (yamlObject instanceof String) {
+                return zFactory.createSequence(Arrays.asList(((String) yamlObject).split("")).stream().map(
                         s -> zFactory.createRefExpr(zFactory.createZName(s))
                 ).collect(Collectors.toList()));
-            } else if (o instanceof List) {
-                List<Object> objectList = (List<Object>) o;
+            } else if (yamlObject instanceof List) {
+                List<Object> objectList = (List<Object>) yamlObject;
                 List<Expr> exprList = objectList.stream().flatMap(
-                        obj -> stream(((ZExprList) target)).map(t -> toZExpr(obj, t))
+                        obj -> stream(((ZExprList) targetType)).map(t -> toZExpr(obj, zVarName, t))
                 ).collect(Collectors.toList());
                 return zFactory.createSequence(exprList);
             } else {
                 throw new RuntimeException("Cannot abstract object into a sequence.");
             }
 
-        } else if (target instanceof ZExprSet) {
-            if (o instanceof List) {
-                List<Object> objectSet = (List<Object>) o;
-                ZExpr t = ((ZExprSet)target).get(0);
-                List<Expr> exprList = objectSet.stream().map(obj -> toZExpr(obj, t)).collect(Collectors.toList());
+        } else if (targetType instanceof ZExprSet) {
+            if (yamlObject instanceof List) {
+                List<Object> objectSet = (List<Object>) yamlObject;
+                ZExpr t = ((ZExprSet) targetType).get(0);
+                List<Expr> exprList = objectSet.stream().map(obj -> toZExpr(obj, zVarName, t)).collect(Collectors.toList());
                 return zFactory.createSetExpr(zFactory.createZExprList(exprList));
             } else {
                 throw new RuntimeException("Cannot abstract object into a set.");
             }
 
-        } else if (target instanceof ZExprSchema) {
-            if (o instanceof Map) {
-                Map<String, Object> objectMap = (Map<String, Object>) o;
-                ZExprSchema targetSchema = (ZExprSchema) target;
+        } else if (targetType instanceof ZExprSchema) {
+            if (yamlObject instanceof Map) {
+                Map<String, Object> objectMap = (Map<String, Object>) yamlObject;
+                ZExprSchema targetSchema = (ZExprSchema) targetType;
                 Map<RefExpr, Expr> vars = Maps.newHashMap();
                 for (ZVar zVar : targetSchema.getMap().values()) {
                     Object impVar = objectMap.get(zVar.getName());
-                    vars.put(zFactory.createRefExpr(zFactory.createZName(zVar.getName())), toZExpr(impVar, zVar.getValue()));
+                    vars.put(zFactory.createRefExpr(zFactory.createZName(zVar.getName())), toZExpr(impVar, zVarName, zVar.getValue()));
                 }
 
                 Pred pred = SpecUtils.createAndPred(vars);
@@ -122,15 +124,23 @@ public class Abstraction {
                 throw new RuntimeException("Cannot abstract object into a schema.");
             }
         } else {
-            throw new RuntimeException("Unsupported target abstraction type");
+            throw new RuntimeException("Unsupported targetType abstraction type");
         }
     }
 
+    /**
+     * Abstracts the result of the execution of a concrete test case into a CZT schema. The result of the execution is
+     * given in YAML format.
+     *
+     * @param yamlData the yaml representation of the execution to abstract
+     * @return a CZT schema with the abstracted values
+     */
     public AxPara toAxPara(Map<String, Object> yamlData) {
+        // FIXME: Z variables name and implementation variable name must be the same for this to work.
         Map<RefExpr, Expr> vars = Maps.newHashMap();
         for (Map.Entry<String, Object> var : yamlData.entrySet())
             vars.put(zFactory.createRefExpr(zFactory.createZName(var.getKey())),
-                    toZExpr(var.getValue(), concreteTCase.getZExprSchema().getVar(var.getKey()).get().getValue()));
+                    toZExpr(var.getValue(), var.getKey(), concreteTCase.getZExprSchema().getVar(var.getKey()).get().getValue()));
 
         Pred pred2 = SpecUtils.createAndPred(vars);
 
