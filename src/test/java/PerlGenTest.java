@@ -47,22 +47,9 @@ public class PerlGenTest {
         }
     }
 
-    private AbstractTCase loadATCResource(URL fileURL) {
-        try {
-            ZLive zLive = UniqueZLive.getInstance();
-            Spec spec = (Spec) ParseUtils.parse(new FileSource(fileURL.getFile()), zLive.getSectionManager());
-            ZParaList o = (ZParaList) (spec.getSect().get(0).getChildren()[2]);
-            AxPara axPara = (AxPara) (o.get(1));
-            return new AbstractTCaseImpl(axPara, "test");
-        } catch (ParseException | IOException | UnmarshalException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     @Test
     public void test1() {
-        AbstractTCase atc = loadATCResource(Resources.getResource("perlGenTest/atc1.tex"));
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(Resources.getResource("perlGenTest/atc1.tex"));
         ParseTree parseTree = parseFile("perlGenTest/perlGenTest1.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc, new PerlGen());
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
@@ -71,7 +58,7 @@ public class PerlGenTest {
 
     @Test
     public void test2() {
-        AbstractTCase atc = loadATCResource(Resources.getResource("perlGenTest/atc2.tex"));
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(Resources.getResource("perlGenTest/atc2.tex"));
         ParseTree parseTree = parseFile("perlGenTest/perlGenTest2.atcal");
         AtcalEvaluator evaluator = new AtcalEvaluator(atc, new PerlGen());
         ConcreteTCase output = evaluator.visitRefinementRule((AtcalParser.RefinementRuleContext) parseTree);
