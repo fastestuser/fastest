@@ -1,0 +1,10 @@
+\begin{schema}{t}\\
+a : A ;
+b : B
+\end{schema}
+
+\begin{schema}{schema\_test}\\
+ myHash : t
+\where
+ myHash = \lblot a == x , b == y \rblot
+\end{schema}
