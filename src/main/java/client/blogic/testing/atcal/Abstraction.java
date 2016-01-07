@@ -78,7 +78,7 @@ public class Abstraction {
                 for (int i = 0; i < zExprProd.getValues().size(); i++) {
                     exprList.add(toZExpr(((List) yamlObject).get(i), zVarName, zExprProd.getValue(i)));
                 }
-                return null; //FIXME: zFactory.createProdExpr(exprList);
+                return zFactory.createProdExpr(zFactory.createZExprList(exprList));
             } else {
                 throw new RuntimeException("Cannot abstract object as cross product.");
             }
@@ -104,9 +104,15 @@ public class Abstraction {
                 ZExpr t = ((ZExprSet) targetType).get(0);
                 List<Expr> exprList = objectSet.stream().map(obj -> toZExpr(obj, zVarName, t)).collect(Collectors.toList());
                 return zFactory.createSetExpr(zFactory.createZExprList(exprList));
-            } else {
-                throw new RuntimeException("Cannot abstract object into a set.");
+            } else if (yamlObject instanceof Map) {
+                Map<Object, Object> objectMap = (Map<Object, Object>) yamlObject;
+                ZExpr t = ((ZExprSet) targetType).get(0);
+                if (t instanceof ZExprProd) {
+                    List<Expr> exprList = objectMap.entrySet().stream().map(keyVal -> toZExpr(Lists.newArrayList(keyVal.getKey(), keyVal.getValue()), zVarName, t)).collect(Collectors.toList());
+                    return zFactory.createSetExpr(zFactory.createZExprList(exprList));
+                }
             }
+            throw new RuntimeException("Cannot abstract object into a set.");
 
         } else if (targetType instanceof ZExprSchema) {
             if (yamlObject instanceof Map) {
