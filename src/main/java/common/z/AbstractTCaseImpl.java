@@ -66,6 +66,12 @@ public class AbstractTCaseImpl implements AbstractTCase {
         this.varExprMap = varExprMap;
     }
 
+    private AbstractTCaseImpl(AxPara axPara, Map<RefExpr, Expr> varExprMap) {
+        this.schName = SpecUtils.getAxParaName(axPara);
+        this.myAxPara = axPara;
+        this.varExprMap = varExprMap;
+    }
+
     /**
      * Parse a latex file containing an abstract test case specification
      * FIXME: the method only works if the file contains a single schema, therefore it does not work if one or more variables are of schema types that require their own previous definition.
@@ -83,15 +89,12 @@ public class AbstractTCaseImpl implements AbstractTCase {
             Pred p = SpecUtils.getAxParaPred(axPara);
             Map<RefExpr, Expr> translatedVars = SpecUtils.getAssignedValues(p).entrySet().stream().collect(
                     Collectors.toMap(entry -> zFactory.createRefExpr(zFactory.createZName(entry.getKey())), Map.Entry::getValue));
-            return new AbstractTCaseImpl(axPara, fileURL.getFile(), translatedVars);
+            return new AbstractTCaseImpl(axPara, translatedVars);
         } catch (ParseException | IOException | UnmarshalException e) {
             e.printStackTrace();
         }
         return null;
     }
-
-    ;
-
 
     /**
      * Verifies whether the specified AxPara's predicate has an equality for each explicitly
