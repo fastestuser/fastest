@@ -76,4 +76,24 @@ public class AbstractionTest {
         ZExprSet zExprSet = ZExprSet.of(new ZExprNum(1), new ZExprNum(2));
         System.out.println(SpecUtils.termToLatex(abstraction.toZExpr(yamlData.get("myArr"), "myArr", zExprSet)));
     }
+
+    @Test
+    public void toAxParaTest() {
+        AbstractTCase atc = AbstractTCaseImpl.fromFile(Resources.getResource("AbstractionTest/toAxPara_test.tex"));
+        ZExprSchema atcalAtc = Atcal.ATCToZExpr(atc);
+        Map<String, ConstantMapper> zVarConstantMaps = Maps.newHashMap();
+        ConstantMapper constantMapper = new ConstantMapper();
+        constantMapper.toString(ZExprConst.basic("1", "myHash"));
+        constantMapper.toString(ZExprConst.basic("a", "myHash"));
+        constantMapper.toString(ZExprConst.basic("2", "myHash"));
+        constantMapper.toString(ZExprConst.basic("b", "myHash"));
+        constantMapper.toString(ZExprConst.basic("3", "myHash"));
+        constantMapper.toString(ZExprConst.basic("c", "myHash"));
+        zVarConstantMaps.put("myHash", constantMapper);
+        ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", atcalAtc, atc, zVarConstantMaps);
+        Abstraction abstraction = new Abstraction(concreteTCase);
+        Map<String, Object> yamlData = loadYaml("AbstractionTest/toAxPara_test.yml");
+        System.out.println(SpecUtils.termToLatex(abstraction.toAxPara(yamlData)));
+    }
+
 }
