@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class AbstractionTest {
         // We are not running the refinement law evaluator, thus create the maps of constants for the Z vars manually.
         Map<String, ConstantMapper> zVarConstantMaps = Maps.newHashMap();
         ConstantMapper constantMapper = new ConstantMapper();
-        for(ZVar zVar: myHash.getMap().values()) {
+        for (ZVar zVar : myHash.getMap().values()) {
             constantMapper.toString((ZExprConst) zVar.getValue());
         }
         zVarConstantMaps.put("myHash", constantMapper);
@@ -95,5 +94,4 @@ public class AbstractionTest {
         Map<String, Object> yamlData = loadYaml("AbstractionTest/toAxPara_test.yml");
         System.out.println(SpecUtils.termToLatex(abstraction.toAxPara(yamlData)));
     }
-
 }
