@@ -93,19 +93,16 @@ public final class SetLogGenerator {
 	private  String runSetLog(String setLogInput, String setlogFile, int timeout){
 		StringBuilder setlogOutput = new StringBuilder();
 		try{
+            // prepare prolog execution process
 			String[] cmd = {"prolog" , "-q"};
 			final Process proc = Runtime.getRuntime().exec(cmd); 
 			OutputStream out = proc.getOutputStream();
 
-			URL location = SetLogGenerator.class.getProtectionDomain().getCodeSource().getLocation();
-			String path = location.getFile();
-			if (path.endsWith("/")) //Al correrlo desde eclipse, el path termina en /bin/, con lo cual se elimina primero la ultima /
-				path = path.substring(0, path.lastIndexOf("/"));
-			//Luego, se elimina la ultima parte del path, ya sea /bin o /fastest.jar si se esta corriendo desde un jar
-			//Por ultimo agregamos la direccion de setlog
-			path = path.substring(0, path.lastIndexOf("/")) + "/lib/setlog/"; 
+            // build setlog path
+			String path = System.getProperty("user.dir") + "/lib/setlog/";
 			path = URLDecoder.decode(path, "UTF-8");
 
+            // build prolog query to invoke setlog on the input
 			String goal = "consult('" + path + setlogFile + "')."//"setlog4617.pl')."
 					+ "\nset_prolog_flag(toplevel_print_options, [quoted(true), portray(true)])."
 					+ "\nuse_module(library(dialect/sicstus/timeout))."
