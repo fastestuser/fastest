@@ -4,6 +4,7 @@ import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.management.ii.events.*;
 import client.blogic.testing.atcal.ConcreteTCase;
+import client.blogic.testing.atcal.ConcreteTCaseRun;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
@@ -75,6 +76,8 @@ public final class Controller extends IIComponent {
     private Map<String, ConcreteTCase> opRefTCaseMap;
     //Map from abstract test case name to refined test cases
     private Map<String, ConcreteTCase> absTCaseRefTCaseMap;
+    //Map from concrete test case name to the abstracted run results
+    private Map<String, ConcreteTCaseRun> concreteTCaseRunMap;
     //Indicates the selected refinement law
     private String selectedRefLaw;
     // Indicates how many abstract test cases are being calculated
@@ -1105,7 +1108,11 @@ public final class Controller extends IIComponent {
         return this.absTCaseRefTCaseMap;
     }
 
-	public void setCompilationInfo(CompilationInfo compilationInfo) {
+    public Map<String, ConcreteTCaseRun> getConcreteTCaseRunMap() {
+        return concreteTCaseRunMap;
+    }
+
+    public void setCompilationInfo(CompilationInfo compilationInfo) {
 		this.compilationInfo = compilationInfo;
 	}
 

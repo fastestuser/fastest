@@ -18,7 +18,7 @@ public class RunCTCFinished extends Event_{
      * Creates an instance of RunCTCFinished.
      */
 	public RunCTCFinished(ConcreteTCase concreteTCase, Execution execution){
-		super.setEventName("CTCaseRunFinished");
+		super.setEventName("runCTCFinished");
         this.concreteTCase =  concreteTCase;
         this.execution = execution;
 	}
