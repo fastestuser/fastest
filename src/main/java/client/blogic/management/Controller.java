@@ -171,6 +171,7 @@ public final class Controller extends IIComponent {
         dnfPredListMap = new HashMap<String, List<Pred>>();
         opRefTCaseMap = new HashMap<String, ConcreteTCase>();
         absTCaseRefTCaseMap = new HashMap<String, ConcreteTCase>();
+        concreteTCaseRunMap = new HashMap<String, ConcreteTCaseRun>();
         selectedRefLaw = null;
         pendingAbsTCases = 0;
         pendingPrunnings = 0;
