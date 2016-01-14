@@ -6,6 +6,7 @@ import client.blogic.testing.atcal.ConcreteTCase;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 
 /**
@@ -55,12 +56,11 @@ public class RunTCaseClientRunner implements Runnable {
             Execution execution = Executor.execute(execCommand, workingDirectory);
 
             // TODO: abstract the output
-
-            EventAdmin eventAdmin = EventAdmin.getInstance();
             RunCTCFinished event = new RunCTCFinished(concreteTCase, execution);
+            EventAdmin eventAdmin = EventAdmin.getInstance();
             eventAdmin.announceEvent(event);
 
-        } catch (Exception e) {
+        } catch (IOException | IllegalAccessException e) {
             e.printStackTrace(System.out);
         }
     }
