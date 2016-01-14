@@ -3,7 +3,6 @@ package client.blogic.testing.atcal;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.events.TCaseRefineRequested;
-import client.blogic.testing.refinement.TCaseRefClientRunner;
 import common.z.AbstractTCase;
 
 /**
@@ -19,7 +18,7 @@ public class TCaseRefineClient extends IIComponent {
             AbstractTCase absTCase = tCaseRefineRequested.getAbstractTCase();
             String targetLanguage = tCaseRefineRequested.getTargetLanguage();
             RefinementRule refinementRule = tCaseRefineRequested.getRefinementRule();
-                    (new Thread(new TCaseRefineClientRunner(opName, absTCase, targetLanguage, refinementRule))).start();
+            (new Thread(new TCaseRefineClientRunner(opName, absTCase, targetLanguage, refinementRule))).start();
         } else {
             throw new IllegalArgumentException();
         }
