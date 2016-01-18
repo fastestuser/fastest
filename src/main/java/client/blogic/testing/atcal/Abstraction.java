@@ -150,11 +150,11 @@ public class Abstraction {
 
         Pred pred2 = SpecUtils.createAndPred(vars);
 
+        Name name = zFactory.createZName(concreteTCase.getName() + "_RUN");
         DeclList declList = SpecUtils.getAxParaListOfDecl(concreteTCase.getAbstractTCase().getMyAxPara());
-        NameList nameList = concreteTCase.getAbstractTCase().getMyAxPara().getNameList();
 
         // Construct the Z schema with the parsed predicates
         SchText schText = zFactory.createZSchText(declList, pred2);
-        return zFactory.createAxPara(nameList, schText, Box.AxBox);
+        return zFactory.createSchema(name, schText);
     }
 }
