@@ -16,6 +16,8 @@ import compserver.abstraction.capture.execution.CompilationInfo;
 import net.sourceforge.czt.z.ast.AxPara;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.util.Map;
 
 public class RunCTCCommand extends IIComponent implements Command {
@@ -47,7 +49,10 @@ public class RunCTCCommand extends IIComponent implements Command {
                 System.out.println("You must set this information before try to run " + concreteTCaseName);
             }
 
-            RunCTCRequested event = new RunCTCRequested(concreteTCase, compilationInfo, "");
+            // Get test run directory
+            String testRunDirectory = URLDecoder.decode(System.getProperty("user.dir") + "/temp/testrun/", "UTF-8");
+
+            RunCTCRequested event = new RunCTCRequested(concreteTCase, compilationInfo, testRunDirectory);
             EventAdmin eventAdmin = EventAdmin.getInstance();
             eventAdmin.announceEvent(event);
 
@@ -68,27 +73,36 @@ public class RunCTCCommand extends IIComponent implements Command {
      */
     public synchronized void manageEvent(Event_ event) throws IllegalArgumentException {
         if (event instanceof RunCTCFinished) {
-            RunCTCFinished runCTCFinished = (RunCTCFinished) event;
-            Execution execution = runCTCFinished.getExecution();
-            ConcreteTCase concreteTCase = runCTCFinished.getConcreteTCase();
-
-            // Parse the YAML output and abstract it back to a Z schema
-            Yaml yaml = new Yaml();
-            Map<String, Object> yamlData = (Map<String, Object>) yaml.load(execution.getYamlData());
-            Abstraction abstraction = new Abstraction(concreteTCase);
-            AxPara resultsSchema = abstraction.toAxPara(yamlData);
-            ConcreteTCaseRun concreteTCaseRun = new ConcreteTCaseRun(resultsSchema);
-
-            // Put the run results into the controller concrete test case runs map
-            ClientUI clientUI = getMyClientUI();
-            clientUI.getMyController().getConcreteTCaseRunMap().put(concreteTCase.getName(), concreteTCaseRun);
-
             try {
+                ClientUI clientUI = getMyClientUI();
+                RunCTCFinished runCTCFinished = (RunCTCFinished) event;
+                Execution execution = runCTCFinished.getExecution();
+                ConcreteTCase concreteTCase = runCTCFinished.getConcreteTCase();
+
+                if (execution.getExitCode() == 0) {
+                    // Parse the YAML output and abstract it back to a Z schema
+                    Yaml yaml = new Yaml();
+                    Map<String, Object> yamlData = (Map<String, Object>) yaml.load(execution.getYamlData());
+                    Abstraction abstraction = new Abstraction(concreteTCase);
+                    AxPara resultsSchema = abstraction.toAxPara(yamlData);
+                    ConcreteTCaseRun concreteTCaseRun = new ConcreteTCaseRun(resultsSchema);
+
+                    // Put the run results into the controller concrete test case runs map
+                    clientUI.getMyController().getConcreteTCaseRunMap().put(concreteTCase.getName(), concreteTCaseRun);
+
+                } else {
+                    if (clientUI instanceof ClientTextUI) {
+                        PrintWriter output = ((ClientTextUI) clientUI).getOutput();
+                        output.println("There was an error executing the test case " + concreteTCase.getName() + ".");
+                    }
+                }
+
                 if (clientUI instanceof ClientTextUI) {
                     synchronized (clientUI) {
                         clientUI.notify();
                     }
                 }
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
