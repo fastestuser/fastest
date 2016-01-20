@@ -42,7 +42,9 @@ public class RunTCaseClientRunner implements Runnable {
         try {
             // Write the test program code into a file
             String testFileName = commandBuilder.getTestFileName(concreteTCase.getName());
-            PrintWriter printer = new PrintWriter(new FileWriter(workingDirectory + testFileName));
+            File testProgramPath = new File(workingDirectory + testFileName);
+            testProgramPath.getParentFile().mkdirs();
+            PrintWriter printer = new PrintWriter(new FileWriter(testProgramPath));
             printer.println(concreteTCase.getCode());
             printer.flush();
 
@@ -55,7 +57,6 @@ public class RunTCaseClientRunner implements Runnable {
             String execCommand = commandBuilder.getExecCommand(testFileName);
             Execution execution = Executor.execute(execCommand, workingDirectory);
 
-            // TODO: abstract the output
             RunCTCFinished event = new RunCTCFinished(concreteTCase, execution);
             EventAdmin eventAdmin = EventAdmin.getInstance();
             eventAdmin.announceEvent(event);

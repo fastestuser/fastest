@@ -25,7 +25,7 @@ public class RunTCaseClient extends IIComponent {
         if (event_ instanceof RunCTCRequested) {
             RunCTCRequested runRequest = (RunCTCRequested) event_;
             ConcreteTCase concreteTCase = runRequest.getConcreteTCase();
-            String workingDirectory = runRequest.getCompilationInfo().getWorkingDirectory();
+            String workingDirectory = runRequest.getWorkingDirectory();
             (new Thread(new RunTCaseClientRunner(concreteTCase, workingDirectory))).start();
         } else
             throw new IllegalArgumentException();
