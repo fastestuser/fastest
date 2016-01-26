@@ -8,7 +8,7 @@ import net.sourceforge.czt.z.impl.*;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
-import client.blogic.testing.refinement.ConcreteTCase;
+import client.blogic.testing.atcal.ConcreteTCase;
 import compserver.abstraction.*;
 import compserver.abstraction.capture.*;
 import compserver.abstraction.types.spectypes.SpecNode;
@@ -28,7 +28,7 @@ public class ASTAbstraction{
 	public AbstractTCase abstractConcreteTCase(ConcreteTCase concreteTCase){
 		// First we set the path of the file to which was redirected the output
 		// for that CapturedVar's that are instances of CapturedVarScreen
-		String ctcName = concreteTCase.getConcreteTCaseName();
+		String ctcName = concreteTCase.getName();
 		for(int i=0;i<capturedVars.size();i++){
 			CapturedVar auxVar = capturedVars.get(i);
 			if(auxVar instanceof CapturedVarScreen){

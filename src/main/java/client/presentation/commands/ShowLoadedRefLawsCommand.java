@@ -1,42 +1,32 @@
 package client.presentation.commands;
 
-import java.io.*;
-
+import client.blogic.testing.atcal.RefinementRule;
+import client.blogic.testing.atcal.RuleManager;
 import client.presentation.ClientTextUI;
-
-import java.util.Iterator;
-
-import client.blogic.management.Controller;
-import client.blogic.testing.refinement.tcrlrules.RefinementRules;
+import java.io.PrintWriter;
 
 /**
- *
  * @author Hache
  */
-public class ShowLoadedRefLawsCommand implements Command{
+public class ShowLoadedRefLawsCommand implements Command {
     /**
-    * Runs this command.
-    * @param clientTextUI
-    * @param args
-    */
+     * Runs this command.
+     *
+     * @param clientTextUI
+     * @param args
+     */
     @Override
-    public void run(ClientTextUI clientTextUI, String args){
+    public void run(ClientTextUI clientTextUI, String args) {
         PrintWriter output = clientTextUI.getOutput();
-
-        if (!args.equals("")){
+        if (!args.isEmpty()) {
             output.println("Invalid parameters.  Try 'help'.");
-        }
-        else{
-            //Controller controller = clientTextUI.getMyController();
-
-            if (RefinementRules.getInstance().size() == 0){
-                output.println("There is not any refinement law in the repository.");
-            }
-            else{
-                Iterator<String> it = RefinementRules.getInstance().getRefRuleNames();
-                while(it.hasNext())
-                    output.println("* "+ it.next());
+        } else if (RuleManager.getInstance().isEmpty()) {
+            output.println("There is not any refinement law in the repository.");
+        } else {
+            for (RefinementRule rule : RuleManager.getInstance()) {
+                output.println("* " + rule);
             }
         }
     }
+
 }

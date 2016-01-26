@@ -7,7 +7,6 @@ import client.blogic.testing.atcal.ConcreteTCase;
 import common.z.AbstractTCase;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
-import client.blogic.testing.refinement.CTCPrinter;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.visitors.TCaseNodeFinder;
@@ -98,13 +97,11 @@ public class ShowConcreteTCaseCommand implements Command{
 			}
 		}
 		
-		CTCPrinter printer;
 		// Now we decide if we print the results in the screen or in files
 		if(folderPath.equals("")){
 			// We must print in the screen
 			for(int i=0;i<ctCases.size();i++){
-				printer = CTCPrinter.getPrinter(ctCases.get(i));
-				output.println(printer.print() + "\n\n");
+				output.println(ctCases.get(i).getCode() + "\n\n");
 				}
 		}
 		else{

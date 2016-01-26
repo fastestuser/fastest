@@ -102,7 +102,7 @@ public class RunCTCCommand extends IIComponent implements Command {
                         clientUI.notify();
                     }
                 }
-                
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

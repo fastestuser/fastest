@@ -1,17 +1,16 @@
 package client.presentation.commands;
 
-import antlr.StringUtils;
 import client.blogic.testing.atcal.RefinementRule;
 import client.blogic.testing.atcal.RuleManager;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
-import client.blogic.testing.refinement.FTCRLUtils;
-import client.blogic.testing.refinement.tcrlrules.TCRLFileParser;
 import client.presentation.ClientTextUI;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * An instance of this class represents a command to load a refinement rule written in ATCALv2.0
