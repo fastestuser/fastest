@@ -1,12 +1,12 @@
 package client.blogic.testing.atcal.z.ast;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -54,7 +54,7 @@ public class ZExprSchema implements ZExpr {
     }
 
     public Optional<ZVar> getVar(String varName) {
-        return Optional.fromNullable(schema.get(varName));
+        return Optional.ofNullable(schema.get(varName));
     }
 
     public ImmutableMap<String, ZVar> getMap() {

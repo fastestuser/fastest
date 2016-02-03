@@ -228,6 +228,26 @@ public class RefinementLawEvaluator extends AtcalBaseVisitor<CodeBlock> {
         return codeBlock;
     }
 
+    @Override
+    public CodeBlock visitUUTNoRetVal(AtcalParser.UUTNoRetValContext ctx) {
+        CodeBlock codeBlock = new CodeBlock();
+        List<APLLValue> uutCallArgs = Lists.transform(ctx.args().ID(), tn -> lValueFactory.getLValue(tn.getText()));
+        CallExpr uutCall = new CallExpr(ctx.ID().getText(), uutCallArgs);
+        codeBlock.addStmt(uutCall);
+        return codeBlock;
+    }
+
+    @Override
+    public CodeBlock visitUUTRetVal(AtcalParser.UUTRetValContext ctx) {
+        CodeBlock codeBlock = new CodeBlock();
+        List<APLLValue> uutCallArgs = Lists.transform(ctx.args().ID(), tn -> lValueFactory.getLValue(tn.getText()));
+        CallExpr uutCall = new CallExpr(ctx.ID(1).getText(), uutCallArgs);
+        APLLValue retVal = this.lValueFactory.newVar(ctx.ID(0).getText(), this.types.get(ctx.type().getText()));
+        AssignStmt uutRetVal = new AssignStmt(retVal, uutCall);
+        codeBlock.addStmt(uutRetVal);
+        return codeBlock;
+    }
+
     // Private nested class to evaluate lvalues and their APL types.
     public class LValueEvaluator extends AtcalBaseVisitor<APLLValue> {
 

@@ -1,6 +1,5 @@
 package client.blogic.testing.atcal;
 
-import client.blogic.testing.atcal.apl.APLLValue;
 import client.blogic.testing.atcal.apl.CallExpr;
 import client.blogic.testing.atcal.apl.CodeBlock;
 import client.blogic.testing.atcal.generators.Generator;
@@ -8,10 +7,8 @@ import client.blogic.testing.atcal.parser.AtcalBaseVisitor;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
-import client.blogic.testing.atcal.z.ast.ZVar;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import common.z.AbstractTCase;
@@ -23,7 +20,6 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -130,7 +126,9 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
             this.plCode = ctx.PLCODE().getText();
 
         // Evaluate the UUT
-        CallExpr uutCall = UUTEval(ctx.uut(), lValueFactory);
+        RefinementLawEvaluator refLawEval =
+                new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps);
+        CodeBlock uutCallBlock = refLawEval.visit(ctx.uut());
 
         // Get preamble if present
         this.epilogue = "";
@@ -139,32 +137,19 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
             this.epilogue += plcode + "\n";
         }
 
+        // Generate the final refined code with the code generator
+        String refinedCode = refinedLawsCode.getStmtList().stream().map(codegen::generate).collect(Collectors.joining("\n"));
+        String uutCallCode = uutCallBlock.getStmtList().stream().map(codegen::generate).collect(Collectors.joining("\n"));
+
         // Generate calls to dump functions to capture the changes in state variables
         String dumpCalls = codegen.getDumpCode(lValueFactory.getLValues());
 
-
-        // Generate the final refined code with the code generator
-        String refinedCode = refinedLawsCode.getStmtList().stream().map(
-                e -> codegen.generate(e)).collect(Collectors.joining("\n"));
-
         // Assemble the final test case code
         String testCaseCode = (Strings.nullToEmpty(preamble) +
-                refinedCode + plCode + "\n" + codegen.generate(uutCall) + "\n" + epilogue + dumpCalls).trim();
+                refinedCode + plCode + "\n" + uutCallCode + "\n" + epilogue + dumpCalls).trim();
 
         // Generate a new concrete test case with the result of the refinement.
         return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode, zExprSchema,
                 abstractTCase, zVarConstantMaps);
-    }
-
-    /**
-     * Generates a UUT call expression using a given lvalues factory to look up the arguments values.
-     *
-     * @param uutCtx        the UUT context to evaluate
-     * @param lValueFactory the lvalues factory
-     * @return a call expression that invokes the UUT
-     */
-    private CallExpr UUTEval(AtcalParser.UutContext uutCtx, LValueFactory lValueFactory) {
-        List<APLLValue> uutCallArgs = Lists.transform(uutCtx.args().ID(), tn -> lValueFactory.getLValue(tn.getText()));
-        return new CallExpr(uutCtx.ID().getText(), uutCallArgs);
     }
 }

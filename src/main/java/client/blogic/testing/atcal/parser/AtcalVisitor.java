@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/fastest/Fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
+// Generated from /home/cristian/workspace/fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
 package client.blogic.testing.atcal.parser;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 
@@ -115,11 +115,19 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLaws(AtcalParser.LawsContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link AtcalParser#uut}.
+	 * Visit a parse tree produced by the {@code UUTNoRetVal}
+	 * labeled alternative in {@link AtcalParser#uut}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitUut(AtcalParser.UutContext ctx);
+	T visitUUTNoRetVal(AtcalParser.UUTNoRetValContext ctx);
+	/**
+	 * Visit a parse tree produced by the {@code UUTRetVal}
+	 * labeled alternative in {@link AtcalParser#uut}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitUUTRetVal(AtcalParser.UUTRetValContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link AtcalParser#epilogue}.
 	 * @param ctx the parse tree

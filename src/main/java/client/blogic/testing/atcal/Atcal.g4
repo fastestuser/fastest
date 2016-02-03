@@ -34,7 +34,9 @@ constMap: ID '->' ( ID | STRING | NUMBER ) ;
 laws: '@LAWS'
       (law STMTEND)* ;
 
-uut: '@UUT' ID args STMTEND ;
+uut : '@UUT' ID args STMTEND                             # UUTNoRetVal
+    | ID '<==' '@UUT' ID args 'AS' type STMTEND          # UUTRetVal
+    ;
 
 epilogue: '@EPILOGUE' ( PLCODE | ID '.@EPILOGUE')+ ;
 

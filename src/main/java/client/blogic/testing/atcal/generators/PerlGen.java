@@ -1,6 +1,9 @@
 package client.blogic.testing.atcal.generators;
 
+import client.blogic.testing.atcal.ATCALType;
 import client.blogic.testing.atcal.ContractType;
+import client.blogic.testing.atcal.FloatType;
+import client.blogic.testing.atcal.IntType;
 import client.blogic.testing.atcal.apl.*;
 import com.google.common.collect.Lists;
 
@@ -13,6 +16,10 @@ import java.util.stream.Collectors;
  */
 public class PerlGen implements Generator {
 
+    private static boolean isScalarType(ATCALType type) {
+        return type instanceof IntType || type instanceof FloatType;
+    }
+
     @Override
     public String getTargetLanguage() {
         return "perl";
@@ -21,7 +28,7 @@ public class PerlGen implements Generator {
     @Override
     public String getDumpCode(Collection<APLLValue> lvaluesSet) {
         String dumpCode = lvaluesSet.stream().map(
-                lvalue -> "$state->{'" + lvalue.getName() + "'} = \\" + generate(lvalue) + ";"
+                lvalue -> "$state->{'" + lvalue.getName() + "'} = " + (isScalarType(lvalue.getType()) ? "" : " \\") + generate(lvalue) + ";"
         ).collect(Collectors.joining("\n"));
 
         dumpCode += "\n__fastest_dump($state);";

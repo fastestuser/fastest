@@ -3,4 +3,4 @@
 @LAWS
 b ==> b AS ARRAY INT(10) WITH [@ELEM ==> [] AS INT];
 
-@UUT print(b);
+out <== @UUT print(b) AS INT;

@@ -4,10 +4,10 @@ import client.blogic.testing.atcal.parser.AtcalBaseVisitor;
 import client.blogic.testing.atcal.parser.AtcalParser;
 import client.blogic.testing.atcal.z.ast.*;
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Optional;
 import org.antlr.v4.runtime.misc.NotNull;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 /**
  * Created by Cristian on 3/31/15.

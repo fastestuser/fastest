@@ -1,4 +1,4 @@
-// Generated from /home/cristian/workspace/fastest/Fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
+// Generated from /home/cristian/workspace/fastest/src/main/java/client/blogic/testing/atcal/Atcal.g4 by ANTLR 4.5.1
 package client.blogic.testing.atcal.parser;
 import org.antlr.v4.runtime.tree.AbstractParseTreeVisitor;
 
@@ -129,7 +129,14 @@ public class AtcalBaseVisitor<T> extends AbstractParseTreeVisitor<T> implements 
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitUut(AtcalParser.UutContext ctx) { return visitChildren(ctx); }
+	@Override public T visitUUTNoRetVal(AtcalParser.UUTNoRetValContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
+	@Override public T visitUUTRetVal(AtcalParser.UUTRetValContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
