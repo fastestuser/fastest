@@ -1,11 +1,6 @@
 package compserver.axdef;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,8 +20,8 @@ import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import common.regex.RegExUtils;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.AndPredClausesExtractor;
@@ -43,8 +38,8 @@ public final class AxDefsLoader {
 		if (pred == null) {
 			return;
 		}
-		AbstractRepository<Pred> predClauses = pred.accept(new AndPredClausesExtractor());
-		AbstractIterator<Pred> predClausesIt = predClauses.createIterator();
+		Collection<Pred> predClauses = pred.accept(new AndPredClausesExtractor());
+		Iterator<Pred> predClausesIt = predClauses.iterator();
 		while (predClausesIt.hasNext()) {
 			Pred auxPred = predClausesIt.next();
 			if (auxPred instanceof ForallPred) { //Axiomatic definitions with forall
@@ -71,7 +66,7 @@ public final class AxDefsLoader {
 					theorem.setVarRegExGroups(mapGroups);
 					theorem.setRegEx(patterns);
 
-					AxDefsControl.getInstance().addElement(theorem);
+					AxDefsControl.getInstance().add(theorem);
 				}
 			}
 		}
@@ -160,7 +155,7 @@ public final class AxDefsLoader {
 			axDefName = axDefName + "_" + random;
 
 			//Chequeamos que el nombre de la axDef no haya sido usada
-			AbstractIterator<Theorem> it = AxDefsControl.getInstance().createIterator();
+			Iterator<Theorem> it = AxDefsControl.getInstance().iterator();
 			while (it.hasNext())
 				if (it.next().getName().equals(axDefName))
 					axDefName = extractAxDefName(line, type, axDefVars);

@@ -23,7 +23,7 @@ import net.sourceforge.czt.z.ast.RefExpr;
 import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.TClass;
 import common.z.TClassImpl;
 import common.z.SpecUtils;
@@ -183,8 +183,8 @@ public class NRTactic extends AbstractTactic {
             return false;
         }
         AxPara opAxPara = (AxPara) originalOp.getMyAxPara();
-        AbstractRepository<String> opNames = controller.getOpsToTestRep();
-        AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+        Collection<String> opNames = controller.getOpsToTestRep();
+        Collection<String> schPredNames = controller.getSchemaPredicatesRep();
 
         ZParaList zParaList = null;
         for (Sect sect : spec.getSect()) {

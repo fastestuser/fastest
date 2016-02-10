@@ -1,9 +1,9 @@
 package client.blogic.testing.ttree.visitors;
 
 import client.blogic.testing.ttree.*;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -11,7 +11,7 @@ import common.repository.AbstractIterator;
  * obtain those TClassNode that are leaves of the test tree (si la clase tiene un caso, entonces 
  * no es hoja).
  */
-public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<TClassNode>>{
+public class TClassNodeLeavesFinder implements TTreeVisitor<Collection<TClassNode>>{
 
     /**
      * Visit the specified instance of TClassNode and returns the TClassNodes of
@@ -19,15 +19,15 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
      * @param tClassNode
      * @return the test classes of this subtree that are leaves of the test tree.
      */
-	public AbstractRepository<TClassNode> visitTClassNode(TClassNode tClassNode){
+	public Collection<TClassNode> visitTClassNode(TClassNode tClassNode){
 
-		AbstractRepository<TClassNode> tClassRep = new ConcreteRepository<TClassNode>();
+		Collection<TClassNode> tClassRep = new ArrayList<TClassNode>();
 	
 	    if(tClassNode.isPruned())
 	    	return null;
 	
-	    AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+	    Collection<? extends TTreeNode> children = tClassNode.getChildren();
+		Iterator<? extends TTreeNode> childrenIt = children.iterator();
 		// This test class node will be consider a leaf if it has not any child 
 	    // or every child is a pruned test class node
 	    boolean isALeaf = true;
@@ -41,18 +41,18 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
 	        }
 	        
 	        //if (!isALeaf){
-			    AbstractRepository<TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
+			    Collection<TClassNode> tClassChildRep = tTreeNode.acceptVisitor(this);
 			    if(tClassChildRep != null){
-			    	AbstractIterator<TClassNode> tClassIt = tClassChildRep.createIterator();
+			    	Iterator<TClassNode> tClassIt = tClassChildRep.iterator();
 			    	while(tClassIt.hasNext())
-			    		tClassRep.addElement(tClassIt.next());
+			    		tClassRep.add(tClassIt.next());
 			    }
 		
 	        //}
 		}
 		
 		if(isALeaf)
-			tClassRep.addElement(tClassNode);
+			tClassRep.add(tClassNode);
 		return tClassRep;
 		
 	}
@@ -64,7 +64,7 @@ public class TClassNodeLeavesFinder implements TTreeVisitor<AbstractRepository<T
      * @param tCaseNode
      * @return null
      */
-	public AbstractRepository<TClassNode> visitTCaseNode(TCaseNode tCaseNode){
+	public Collection<TClassNode> visitTCaseNode(TCaseNode tCaseNode){
 		return null;
 	}
 }

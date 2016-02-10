@@ -2,8 +2,8 @@ package client.blogic.testing.ttree.strategies;
 
 import client.blogic.testing.ttree.tactics.*;
 import java.util.*;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+import java.util.Collection;
+import java.util.ArrayList;
 import common.z.TClass;
 import common.z.VISGen;
 import common.z.OpScheme;
@@ -59,14 +59,14 @@ public class IterativeTTreeStrategy implements TTreeStrategy {
                 TacticInfo tacticInfo = tactic.getTacticInfo();
                 tClassNode.setTacticInfo(tacticInfo);
 
-                AbstractRepository<TClassNode> tClassChildrenRep =
-                        new ConcreteRepository<TClassNode>();
+                Collection<TClassNode> tClassChildrenRep =
+                        new ArrayList<TClassNode>();
 
                 for (int j = 0; j < tClassList.size(); j++) {
                     TClass childTClass = tClassList.get(j);
                     TClassNode tClassChildNode = new TClassNode(childTClass
                             ,tClassNode);
-                    tClassChildrenRep.addElement(tClassChildNode);
+                    tClassChildrenRep.add(tClassChildNode);
                     List<Tactic> newTacticList = new ArrayList<Tactic>();
                     // We copy the list of tactics without the tactic recently
                     // applied and generates recursively the test subtree

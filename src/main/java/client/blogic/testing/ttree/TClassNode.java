@@ -1,8 +1,10 @@
 package client.blogic.testing.ttree;
 
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+
+import java.util.ArrayList;
+import java.util.Collection;
+
 import common.z.Scheme;
 import common.z.TClass;
 import client.blogic.testing.ttree.tactics.TacticInfo;
@@ -14,7 +16,7 @@ public class TClassNode implements TTreeNode {
 
     private TClass tClass;
     private TacticInfo tacticInfo;
-    private AbstractRepository<? extends TTreeNode> children;
+    private Collection<? extends TTreeNode> children;
     private TClassNode dadNode;
     private boolean pruned;
 
@@ -26,7 +28,7 @@ public class TClassNode implements TTreeNode {
     public TClassNode(TClass tClass, TClassNode dadNode) {
         this.tClass = tClass;
         tacticInfo = null;
-        children = new ConcreteRepository<TTreeNode>();
+        children = new ArrayList<TTreeNode>();
         this.dadNode = dadNode;
     }
 
@@ -35,7 +37,7 @@ public class TClassNode implements TTreeNode {
      * @param tTreeNodeRep
      * @throws java.lang.IllegalAccessException.
      */
-    public void setChildren(AbstractRepository<? extends TTreeNode> tTreeNodeRep) {
+    public void setChildren(Collection<? extends TTreeNode> tTreeNodeRep) {
         children = tTreeNodeRep;
     }
 
@@ -43,7 +45,7 @@ public class TClassNode implements TTreeNode {
      * Gets the children of this node.
      * @return 
      */
-    public AbstractRepository<? extends TTreeNode> getChildren() {
+    public Collection<? extends TTreeNode> getChildren() {
         return children;
     }
 

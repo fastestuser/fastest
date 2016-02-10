@@ -2,8 +2,8 @@ package client.presentation.commands;
 
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import java.io.PrintWriter;
 
 /**
@@ -30,9 +30,9 @@ public class ShowSelPredsCommand implements Command {
                 output.println("There is not any loaded specification.");
 
             } else {
-                AbstractRepository<String> schemaPredsRep =
+                Collection<String> schemaPredsRep =
                         controller.getSchemaPredicatesRep();
-                AbstractIterator<String> schemaPredsIt = schemaPredsRep.createIterator();
+                Iterator<String> schemaPredsIt = schemaPredsRep.iterator();
                 while (schemaPredsIt.hasNext()) {
                     String schemaPred = schemaPredsIt.next();
                     output.println(schemaPred);

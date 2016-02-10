@@ -1,16 +1,14 @@
 package client.blogic.testing.ttree.visitors;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import net.sourceforge.czt.z.ast.PreExpr;
 import net.sourceforge.czt.z.ast.Pred;
 import client.blogic.testing.ttree.*;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+
+import java.util.Iterator;
 import common.z.SpecUtils;
-import common.z.TClass;
 import common.z.czt.visitors.PreExprExtractor;
 
 
@@ -37,8 +35,8 @@ public class TTReePreExprFinder implements TTreeVisitor<TTreeNode>{
 			tClassNode.getValue().setInclPreds(preds);
 		} 
 		
-		AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+		Collection<? extends TTreeNode> children = tClassNode.getChildren();
+		Iterator<? extends TTreeNode> childrenIt = children.iterator();
 		while(childrenIt.hasNext()){
 			TTreeNode tTreeNode = childrenIt.next();
 			if(tTreeNode instanceof TClassNode && !((TClassNode) tTreeNode).isPruned())

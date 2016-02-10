@@ -1,12 +1,7 @@
 package compserver.tcasegen.strategies;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.TClassNodeFinder;
@@ -32,8 +27,8 @@ import net.sourceforge.czt.z.ast.ZFreetypeList;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.z.impl.ZFreetypeListImpl;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import common.z.AbstractTCase;
 import common.z.AbstractTCaseImpl;
 import common.z.SpecUtils;
@@ -99,8 +94,8 @@ public final class SetLogStrategy implements TCaseStrategy{
 		String opName; //nombre de la operacion incluida como \pre B
 		Map<String, TClassNode> opTTreeMap = clientUI.getMyController().getOpTTreeMap();
 		TClassNode vis,tClassNode;
-		AbstractRepository<TClassNode> tClassNodeLeaves;
-		AbstractIterator<TClassNode> tClassNodeIt;
+		Collection<TClassNode> tClassNodeLeaves;
+		Iterator<TClassNode> tClassNodeIt;
 		DeclList declList = SpecUtils.getAxParaListOfDecl(tClass.getMyAxPara()); //declaracion de A
 		Pred classPred,casePred,newPred; //predicado B
 		AxPara axPara;
@@ -112,7 +107,7 @@ public final class SetLogStrategy implements TCaseStrategy{
 			inclsNotIntegrated.add(opName); //por defecto no integra
 			vis = opTTreeMap.get(opName);
 			tClassNodeLeaves = vis.acceptVisitor(new TClassNodeFinder());
-			tClassNodeIt = tClassNodeLeaves.createIterator();
+			tClassNodeIt = tClassNodeLeaves.iterator();
 			while (tClassNodeIt.hasNext()) { //iteramos sobre cada clase de B o C
 				tClassNode = tClassNodeIt.next(); //obtenemos una clase de preuba de B
 				//obtenemos las preciondiciones de B

@@ -104,7 +104,7 @@ public class AbstractCommand implements Command{
 //				// We look for the abstraction law in the repository that was used 
 //				// to start the abstraction process
 //				String absLawName = ctCase.getAbsLawName();
-//				AbstractIterator<AbstractionLaw> lawsIt = lawsRepository.createIterator();
+//				AbstractIterator<AbstractionLaw> lawsIt = lawsRepository.iterator();
 //				AbstractionLaw law = null;
 //				while(lawsIt.hasNext() && law==null)
 //				{

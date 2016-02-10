@@ -1,7 +1,7 @@
 package client.blogic.testing.ttree;
 
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.Scheme;
 import client.blogic.testing.ttree.tactics.TacticInfo;
 
@@ -16,13 +16,13 @@ public interface TTreeNode {
      * @param tTreeNodeRep
      * @throws java.lang.IllegalAccessException
      */
-    public void setChildren(AbstractRepository<? extends TTreeNode> tTreeNodeRep) throws IllegalAccessException;
+    public void setChildren(Collection<? extends TTreeNode> tTreeNodeRep) throws IllegalAccessException;
 
     /**
      * Gets the children of this node.
      * @return 
      */
-    public AbstractRepository<? extends TTreeNode> getChildren();
+    public Collection<? extends TTreeNode> getChildren();
 
     /**
      * Sets the node which is the dad of this node.

@@ -9,8 +9,8 @@ import net.sourceforge.czt.z.visitor.AndPredVisitor;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
 
 import common.z.SpecUtils;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An instance of this class allow the application of the rules of conjunction 
@@ -39,8 +39,8 @@ public class AndPredSimplifier
         } else if (!(leftPred instanceof AndPred) && rightPred instanceof AndPred) {
             boolean found = false;
             if (leftPred instanceof OrPred) {
-                AbstractRepository<Pred> predRep = rightPred.accept(new AndPredClausesExtractor());
-                AbstractIterator<Pred> predIt = predRep.createIterator();
+                Collection<Pred> predRep = rightPred.accept(new AndPredClausesExtractor());
+                Iterator<Pred> predIt = predRep.iterator();
                 found = leftPred.accept(new PredInOrVerifier(rightPred));
                 while (predIt.hasNext() && !found) {
                     found = leftPred.accept(new PredInOrVerifier(predIt.next())).booleanValue();
@@ -74,8 +74,8 @@ public class AndPredSimplifier
 
             boolean found = false;
             if (rightPred instanceof OrPred) {
-                AbstractRepository<Pred> predRep = leftPred.accept(new AndPredClausesExtractor());
-                AbstractIterator<Pred> predIt = predRep.createIterator();
+                Collection<Pred> predRep = leftPred.accept(new AndPredClausesExtractor());
+                Iterator<Pred> predIt = predRep.iterator();
                 while (predIt.hasNext() && !found) {
                     found = rightPred.accept(new PredInOrVerifier(predIt.next())).booleanValue();
                 }
@@ -107,8 +107,8 @@ public class AndPredSimplifier
 
             Pred leftPredClone = (Pred) leftPred.accept(new CZTCloner());
 
-            AbstractRepository<Pred> rightPredRep = rightPred.accept(new AndPredClausesExtractor());
-            AbstractIterator<Pred> rightPredIt = rightPredRep.createIterator();
+            Collection<Pred> rightPredRep = rightPred.accept(new AndPredClausesExtractor());
+            Iterator<Pred> rightPredIt = rightPredRep.iterator();
 
             while (rightPredIt.hasNext() && leftPred != null) {
                 leftPred = leftPred.accept(new OrPredRemover(rightPredIt.next()));
@@ -117,8 +117,8 @@ public class AndPredSimplifier
             if (leftPred != null) {
                 leftPred = leftPred.accept(this);
             }
-            AbstractRepository<Pred> leftPredRep = leftPredClone.accept(new AndPredClausesExtractor());
-            AbstractIterator<Pred> leftPredIt = leftPredRep.createIterator();
+            Collection<Pred> leftPredRep = leftPredClone.accept(new AndPredClausesExtractor());
+            Iterator<Pred> leftPredIt = leftPredRep.iterator();
             while (leftPredIt.hasNext() && rightPred != null) {
                 Pred clauseToRemove = leftPredIt.next();
                 rightPred = rightPred.accept(new AndPredClausesRemover(clauseToRemove));

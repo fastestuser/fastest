@@ -1,9 +1,6 @@
 package client.blogic.testing.ttree.strategies.ftsdl;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
@@ -12,8 +9,8 @@ import client.blogic.testing.ttree.strategies.ftsdl.Values.NodeValue;
 import client.blogic.testing.ttree.strategies.ftsdl.Values.TClassNodeValue;
 import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
 import common.fastest.FastestUtils;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import common.z.SpecUtils;
 import common.z.czt.visitors.AtomicPredExtractor;
 import common.z.czt.visitors.FreeTypeVarsExtractor;
@@ -197,10 +194,10 @@ public final class FTSDLUtils {
 			String opName = FastestUtils.getOpAssociated(c, SpecUtils.getAxParaName(n.getValue().getMyAxPara()));
 
 			TClassNode tClassRoot = opTTreeMap.get(opName);
-			AbstractRepository<TClassNode> leaves = tClassRoot.acceptVisitor(new TClassNodeLeavesFinder());
+			Collection<TClassNode> leaves = tClassRoot.acceptVisitor(new TClassNodeLeavesFinder());
 			
 			// Create a list with the leaves.
-			AbstractIterator<TClassNode> it = leaves.createIterator();
+			Iterator<TClassNode> it = leaves.iterator();
 			while (it.hasNext())
 			{
 				l.add(new TClassNodeValue(it.next(), c));

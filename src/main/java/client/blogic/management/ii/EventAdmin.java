@@ -3,9 +3,9 @@ package client.blogic.management.ii;
 import java.util.*;
 import java.util.concurrent.locks.*;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 import client.presentation.ClientUI;
 import client.blogic.management.ii.events.Event_;
 
@@ -22,7 +22,7 @@ public class EventAdmin {
 
     private ClientUI myClientUI;
     private static EventAdmin eventAdmin;
-    private AbstractRepository<Subscriptor> eventTable;
+    private Collection<Subscriptor> eventTable;
     public Lock myLock;
     Map<String, IIComponent> componentMap;
 
@@ -81,7 +81,7 @@ public class EventAdmin {
      */
     public void announceEvent(Event_ event_) {
         myLock.lock();
-        AbstractIterator<Subscriptor> it = eventTable.createIterator();
+        Iterator<Subscriptor> it = eventTable.iterator();
         String eventName = event_.getEventName();
         while (it.hasNext()) {
             Subscriptor subscriptor = it.next();
@@ -103,7 +103,7 @@ public class EventAdmin {
      */
     private void readFile() {
 
-        eventTable = new ConcreteRepository<Subscriptor>();
+        eventTable = new ArrayList<Subscriptor>();
         Properties props = new Properties();
 
         try {
@@ -133,7 +133,7 @@ public class EventAdmin {
                             IIOrder iIOrder = new IIOrder(component_, methodName);
                             //We build a new subscriptor and add it to the event table
                             Subscriptor subscriptor = new Subscriptor(eventName, iIOrder);
-                            eventTable.addElement(subscriptor);
+                            eventTable.add(subscriptor);
                         }
                     }
 

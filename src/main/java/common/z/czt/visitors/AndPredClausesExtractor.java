@@ -5,9 +5,9 @@ import net.sourceforge.czt.z.ast.AndPred;
 import net.sourceforge.czt.z.visitor.PredVisitor;
 import net.sourceforge.czt.z.visitor.AndPredVisitor;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import net.sourceforge.czt.z.ast.AndExpr;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.ExprPred;
@@ -22,47 +22,47 @@ import net.sourceforge.czt.z.visitor.ExprVisitor;
  * @author Pablo Rodriguez Monetti
  */
 public class AndPredClausesExtractor
-        implements AndPredVisitor<AbstractRepository<Pred>>,
-        PredVisitor<AbstractRepository<Pred>>,
-        ExprPredVisitor<AbstractRepository<Pred>>,
-        AndExprVisitor<AbstractRepository<Pred>>,
-        ExprVisitor<AbstractRepository<Pred>>{
+        implements AndPredVisitor<Collection<Pred>>,
+        PredVisitor<Collection<Pred>>,
+        ExprPredVisitor<Collection<Pred>>,
+        AndExprVisitor<Collection<Pred>>,
+        ExprVisitor<Collection<Pred>>{
 
-    public AbstractRepository<Pred> visitAndPred(AndPred andPred) {
-        AbstractRepository<Pred> predRep1 = andPred.getLeftPred().accept(this);
-        AbstractRepository<Pred> predRep2 = andPred.getRightPred().accept(this);
-        AbstractIterator<Pred> predIt = predRep2.createIterator();
+    public Collection<Pred> visitAndPred(AndPred andPred) {
+        Collection<Pred> predRep1 = andPred.getLeftPred().accept(this);
+        Collection<Pred> predRep2 = andPred.getRightPred().accept(this);
+        Iterator<Pred> predIt = predRep2.iterator();
         while (predIt.hasNext()) {
             Pred pred = predIt.next();
-            predRep1.addElement(pred);
+            predRep1.add(pred);
         }
         return predRep1;
     }
 
-    public AbstractRepository<Pred> visitPred(Pred pred) {
-        AbstractRepository<Pred> predRep = new ConcreteRepository<Pred>();
-        predRep.addElement(pred);
+    public Collection<Pred> visitPred(Pred pred) {
+        Collection<Pred> predRep = new ArrayList<Pred>();
+        predRep.add(pred);
         return predRep;
     }
 
-    public AbstractRepository<Pred> visitExprPred(ExprPred exprPred) {
+    public Collection<Pred> visitExprPred(ExprPred exprPred) {
         return (exprPred.getExpr()).accept(this);
     }
 
-    public AbstractRepository<Pred> visitAndExpr(AndExpr andExpr) {
-        AbstractRepository<Pred> predRep1 = andExpr.getLeftExpr().accept(this);
-        AbstractRepository<Pred> predRep2 = andExpr.getRightExpr().accept(this);
-        AbstractIterator<Pred> predIt = predRep2.createIterator();
+    public Collection<Pred> visitAndExpr(AndExpr andExpr) {
+        Collection<Pred> predRep1 = andExpr.getLeftExpr().accept(this);
+        Collection<Pred> predRep2 = andExpr.getRightExpr().accept(this);
+        Iterator<Pred> predIt = predRep2.iterator();
         while (predIt.hasNext()) {
-            predRep1.addElement(predIt.next());
+            predRep1.add(predIt.next());
         }
         return predRep1;
    }
 
 
-    public AbstractRepository<Pred> visitExpr(Expr expr) {
-        AbstractRepository<Pred> predRep = new ConcreteRepository<Pred>();
-        predRep.addElement((new ZFactoryImpl()).createExprPred(expr));
+    public Collection<Pred> visitExpr(Expr expr) {
+        Collection<Pred> predRep = new ArrayList<Pred>();
+        predRep.add((new ZFactoryImpl()).createExprPred(expr));
         return predRep;
     }
 

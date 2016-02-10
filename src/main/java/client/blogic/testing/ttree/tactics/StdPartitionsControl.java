@@ -4,25 +4,25 @@
  */
 package client.blogic.testing.ttree.tactics;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * The instance of this class (which is a singleton) contains a number of
  * instances of StdPartition.
  * @author Pablo Rodriguez Monetti
  */
-public class StdPartitionsControl implements AbstractRepository<StdPartition> {
+public class StdPartitionsControl {
 
     private static StdPartitionsControl stdPartitionsControl;
-    private AbstractRepository<StdPartition> repository;
+    private final Collection<StdPartition> repository;
 
     /**
      * Creates intances of StdPartitionsControl.
      */
     private StdPartitionsControl() {
-        repository = new ConcreteRepository<StdPartition>();
+        repository = new ArrayList<StdPartition>();
     }
 
     /**
@@ -41,15 +41,15 @@ public class StdPartitionsControl implements AbstractRepository<StdPartition> {
      * structure.
      * @return
      */
-    public AbstractIterator<StdPartition> createIterator() {
-        return repository.createIterator();
+    public Iterator<StdPartition> iterator() {
+        return repository.iterator();
     }
 
     /**
      * Add a new instance of StdPartition to this object.
      * @param stdPartition
      */
-    public void addElement(StdPartition stdPartition) {
-        repository.addElement(stdPartition);
+    public boolean add(StdPartition stdPartition) {
+        return repository.add(stdPartition);
     }
 }

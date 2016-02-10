@@ -5,9 +5,8 @@ import compserver.prunning.TheoremsControl;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
 import common.z.TClass;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 
-import net.sourceforge.czt.z.ast.Name;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.Expr;
@@ -19,18 +18,11 @@ import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.z.ast.Decl;
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
-import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.ast.ZNameList;
-import net.sourceforge.czt.z.ast.Sect;
-import net.sourceforge.czt.z.ast.ZSect;
-import net.sourceforge.czt.z.ast.Spec;
-import net.sourceforge.czt.z.ast.SectTypeEnvAnn;
 import net.sourceforge.czt.z.ast.ZFactory;
 import common.util.MathUtils;
 import common.z.czt.visitors.ExpressionsExtractor;
-import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.DeleteParenAnn;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.Type;
@@ -40,21 +32,8 @@ import net.sourceforge.czt.z.ast.PowerType;
 import net.sourceforge.czt.z.ast.ProdType;
 import net.sourceforge.czt.z.ast.GivenType;
 
-import net.sourceforge.czt.session.SectionManager;
-import net.sourceforge.czt.animation.eval.TextUI;
-import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.session.Markup;
-import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
-import net.sourceforge.czt.typecheck.z.ErrorAnn;
-import common.z.czt.UniqueZLive;
-import net.sourceforge.czt.session.*;
 import client.blogic.management.Controller;
 
-import net.sourceforge.czt.parser.z.ParseUtils;
-import net.sourceforge.czt.session.*;
-import net.sourceforge.czt.z.ast.Para;
-import net.sourceforge.czt.z.ast.ParaList;
-import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.AxPara;
 
 /**
@@ -159,7 +138,7 @@ public class ParamExaminerPred{
 	{
 		TheoremsControl theoremsControl = TheoremsControl.getInstance();
 		maxCard = theoremsControl.getMaxCardinality();
-		theoremsIt = theoremsControl.createIterator();
+		theoremsIt = theoremsControl.iterator();
 	}
 
 	// This operation is used only for the command searchtheorems
@@ -780,7 +759,7 @@ public class ParamExaminerPred{
 	private String tClassName;
 	private List<Expr> constantsList;
 	private List<Expr> varList;
-	AbstractIterator<Theorem> theoremsIt;
+	Iterator<Theorem> theoremsIt;
 	private List<List<Expr>> powerSet;
 	private int maxCard;
 	private String rootName;

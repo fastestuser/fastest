@@ -2,14 +2,15 @@ package client.blogic.testing.ttree.visitors;
 
 import client.blogic.testing.ttree.*;
 import java.io.*;
+import java.util.Collection;
 
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Pred;
 
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+
+import java.util.Iterator;
 
 /**
  * Instances of this class make possible the printing of the test cases of a
@@ -42,8 +43,8 @@ public class TCaseNodeTextUIPrinter implements TTreeVisitor<Void> {
             return null;
         }
 
-        AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-        AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+        Collection<? extends TTreeNode> children = tClassNode.getChildren();
+        Iterator<? extends TTreeNode> childrenIt = children.iterator();
         while (childrenIt.hasNext()) {
             childrenIt.next().acceptVisitor(this);
         }

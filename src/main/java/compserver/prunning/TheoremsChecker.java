@@ -1,7 +1,7 @@
 package compserver.prunning;
 
 import java.util.*;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import common.z.TClass;
 import net.sourceforge.czt.z.ast.AxPara;
 import common.z.SpecUtils;
@@ -23,7 +23,7 @@ public class TheoremsChecker
 	public TheoremsChecker(TClass tClass)
 	{
 		TheoremsControl theoremsControl = TheoremsControl.getInstance();
-		theoremsIt = theoremsControl.createIterator();
+		theoremsIt = theoremsControl.iterator();
 		this.tClass = tClass;
 		AxPara axParaAux = tClass.getMyAxPara();
 		Pred tClassPred = SpecUtils.getAxParaPred(axParaAux);
@@ -237,7 +237,7 @@ public class TheoremsChecker
 
 
 
-	private AbstractIterator<Theorem> theoremsIt;
+	private Iterator<Theorem> theoremsIt;
 	private TClass tClass;
 	private String strPred;
 	private String originalPred;

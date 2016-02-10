@@ -22,7 +22,7 @@ import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.util.Visitor;
 
 import common.z.SpecUtils;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.czt.visitors.ISEExpressionExtractor;
 import common.z.czt.visitors.SchemeUnfolder;
 
@@ -76,8 +76,8 @@ public class ISEStrategy{
 
 		//Buscamos las expresiones de la forma "var \in \{...\}" que se encuentran en la definicion de la operacion,
 		Spec spec = controller.getUnfoldedSpec();
-		AbstractRepository<String> opNames = controller.getOpsToTestRep();
-		AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+		Collection<String> opNames = controller.getOpsToTestRep();
+		Collection<String> schPredNames = controller.getSchemaPredicatesRep();
 		spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
 
 		AxPara axPara = null;

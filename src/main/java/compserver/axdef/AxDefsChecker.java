@@ -4,9 +4,9 @@ import client.presentation.commands.ReplaceAxDefCommand;
 import common.z.SpecUtils;
 import common.regex.RegExUtils;
 import common.z.czt.UniqueZLive;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.ArrayList;
 import compserver.prunning.Theorem;
 import compserver.prunning.Variable;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import net.sourceforge.czt.z.ast.Pred;
 public final class AxDefsChecker
 {
 
-	private AbstractIterator<Theorem> axDefsIt;
+	private Iterator<Theorem> axDefsIt;
 	private String strPred;
 	private String currentAxDef;
 
@@ -36,7 +36,7 @@ public final class AxDefsChecker
 	public AxDefsChecker(Pred pred)
 	{
 		AxDefsControl axDefsControl = AxDefsControl.getInstance();
-		axDefsIt = axDefsControl.createIterator();
+		axDefsIt = axDefsControl.iterator();
 		strPred = SpecUtils.termToLatex(pred);
 		String[] parts = strPred.split("\n");
 		StringBuilder auxPred = new StringBuilder();
@@ -54,14 +54,14 @@ public final class AxDefsChecker
 	 * @throws CommandException 
 	 * @throws IOException 
 	 */
-	public String replacedPred(AbstractRepository<String> decls) throws IOException, CommandException{
+	public String replacedPred(Collection<String> decls) throws IOException, CommandException{
 
 		if(axDefsIt.hasNext()){
 			Theorem theAxDef = axDefsIt.next();
 			
 			//Chequeamos que no coincida con el nombre de una de las variables del schema
 			boolean isVar = false;
-			AbstractIterator<String> it = decls.createIterator();
+			Iterator<String> it = decls.iterator();
 			String name = theAxDef.getName();
 			name = name.substring(name.indexOf('_')+1, name.lastIndexOf('_'));
 			while (it.hasNext()) {
@@ -107,7 +107,7 @@ public final class AxDefsChecker
 			return strPred ;
 	}
 
-	private void analyzePatterns(Theorem theAxDef, AbstractRepository<String> decls) throws IOException, CommandException
+	private void analyzePatterns(Theorem theAxDef, Collection<String> decls) throws IOException, CommandException
 	{
 		if(currentAxDef!=theAxDef.getName()){
 			currentAxDef = theAxDef.getName();
@@ -232,9 +232,9 @@ public final class AxDefsChecker
 						if (result) {
 							
 							Iterator<String> it = mapFRCopy.keySet().iterator();
-							ConcreteRepository<String> axDefDecls = new ConcreteRepository<String>();
+							ArrayList<String> axDefDecls = new ArrayList<String>();
 							while (it.hasNext())
-								axDefDecls.addElement(it.next());
+								axDefDecls.add(it.next());
 							finalStrPred = finalStrPred.replace("\n", "\\\\\n");
 							Pred finalPred = ParseUtils.parsePred(new StringSource(finalStrPred),zLive.getCurrentSection(), zLive.getSectionManager());
 							//finalPred = ReplaceAxDefCommand.replaceAxDefsInPred(finalPred, axDefDecls); //Antes reemplazaba acá, pero esta mal

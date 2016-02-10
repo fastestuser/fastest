@@ -12,8 +12,8 @@ import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Pred;
 import common.z.TClass;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 import net.sourceforge.czt.session.*;
 import net.sourceforge.czt.animation.eval.*;
@@ -46,8 +46,8 @@ public class Checker
             	while(iterator.hasNext()  && tClassFounded == null){
                 	Map.Entry<String, TClassNode> mapEntry = iterator.next();
                 	TClassNode opTTreeRoot = mapEntry.getValue();
-			AbstractRepository<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
-			AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
+			Collection<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
+			Iterator<TClass> tClassIt = tClassLeaves.iterator();
 			while(tClassIt.hasNext() && tClassFounded == null){
 		                    TClass tClass = tClassIt.next();
                 		    String auxTClassName = tClass.getSchName();

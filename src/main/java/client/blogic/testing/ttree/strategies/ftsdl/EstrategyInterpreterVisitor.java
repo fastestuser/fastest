@@ -1,11 +1,7 @@
 package client.blogic.testing.ttree.strategies.ftsdl;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
@@ -20,7 +16,7 @@ import client.presentation.commands.AddTacticCommand;
 import client.presentation.commands.GenAllTTCommand;
 import client.presentation.commands.PruneTreeCommand;
 import common.fastest.FastestUtils;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.SpecUtils;
 import common.z.czt.visitors.SchemeUnfolder;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -175,8 +171,8 @@ public class EstrategyInterpreterVisitor extends FTSDLBaseVisitor<NodeValue>
 	                	
 	                	// Generate the unfolded AxPara.
 	                	Spec spec = controller.getUnfoldedSpec();
-						AbstractRepository<String> opNames = controller.getOpsToTestRep();
-						AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+						Collection<String> opNames = controller.getOpsToTestRep();
+						Collection<String> schPredNames = controller.getSchemaPredicatesRep();
 						spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
 
 						AxPara axPara = null;

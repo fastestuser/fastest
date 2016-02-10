@@ -4,16 +4,16 @@ import java.util.*;
 import client.blogic.management.Controller;
 import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.Pred;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import common.z.TClass;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
 import net.sourceforge.czt.z.ast.AxPara;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import client.blogic.testing.ttree.TClassNode;
 import compserver.prunning.operators.SpecialLine;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import common.repository.ConcreteRepository;
+import java.util.ArrayList;
 import common.regex.RegExUtils;
 import net.sourceforge.czt.z.ast.Type;
 import net.sourceforge.czt.z.ast.GivenType;
@@ -31,7 +31,7 @@ public class PruneUtils {
 	public static Theorem getTheorem(String name)
 	{
 		TheoremsControl theoremsControl = TheoremsControl.getInstance();
-		AbstractIterator<Theorem> theoremsIt = theoremsControl.createIterator();
+		Iterator<Theorem> theoremsIt = theoremsControl.iterator();
 		Theorem result = null;
 		while(theoremsIt.hasNext() && result==null)
 		{
@@ -140,8 +140,8 @@ public class PruneUtils {
 		while(iterator.hasNext()  && tClassFounded == null){
 			Map.Entry<String, TClassNode> mapEntry = iterator.next();
 			TClassNode opTTreeRoot = mapEntry.getValue();
-			AbstractRepository<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
-			AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
+			Collection<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
+			Iterator<TClass> tClassIt = tClassLeaves.iterator();
 			while(tClassIt.hasNext() && tClassFounded == null){
 				TClass tClass = tClassIt.next();
 				String auxTClassName = tClass.getSchName();
@@ -159,9 +159,9 @@ public class PruneUtils {
 	 * @param controller A reference to the Controller
 	 * @return The repository
 	 */
-	public static AbstractRepository<TClass> obtainTClasses(Controller controller)
+	public static Collection<TClass> obtainTClasses(Controller controller)
 	{
-		AbstractRepository<TClass> leaves = new ConcreteRepository<TClass>();
+		Collection<TClass> leaves = new ArrayList<TClass>();
 		Map<String, TClassNode> opTTreeMap = controller.getOpTTreeMap();
 		if(!opTTreeMap.isEmpty()){
 			Set<Map.Entry<String, TClassNode>> set = opTTreeMap.entrySet();
@@ -169,11 +169,11 @@ public class PruneUtils {
 			while(iterator.hasNext()){
 				Map.Entry<String, TClassNode> mapEntry = iterator.next();
 				TClassNode opTTreeRoot = mapEntry.getValue();
-				AbstractRepository<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
-				AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
+				Collection<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
+				Iterator<TClass> tClassIt = tClassLeaves.iterator();
 				while(tClassIt.hasNext()){
 					TClass tClass = tClassIt.next();
-					leaves.addElement(tClass);
+					leaves.add(tClass);
 				}
 			}
 			return leaves;

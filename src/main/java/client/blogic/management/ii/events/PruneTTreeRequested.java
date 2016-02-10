@@ -1,7 +1,7 @@
 package client.blogic.management.ii.events;
 
 import common.z.TClass;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 
 /**
  * Represents the implicit invocation event that must be announced when the user orders the
@@ -10,14 +10,14 @@ import common.repository.AbstractRepository;
 public class PruneTTreeRequested extends Event_{
 
 	//private String opName;
-	private AbstractRepository<TClass> leaves;
+	private Collection<TClass> leaves;
 
 
     /**
      * Creates instances of PruneTTreeRequested.
      * @param leaves A repository with the leaves of the testing tree
      */
-	public PruneTTreeRequested(AbstractRepository<TClass> leaves){
+	public PruneTTreeRequested(Collection<TClass> leaves){
 		this.leaves = leaves;
 		super.setEventName("pruneTTreeRequested");
 	}
@@ -26,14 +26,14 @@ public class PruneTTreeRequested extends Event_{
      * Sets the repository with the leaves of the testing tree
      * @param leaves A repository with the leaves of the testing tree
      */
-	public void setLeaves(AbstractRepository<TClass> leaves){
+	public void setLeaves(Collection<TClass> leaves){
 		this.leaves = leaves;
 	}
     /**
      * Gets the repository with the leaves of the testing tree
      * @return
      */
-	public AbstractRepository<TClass> getLeaves(){
+	public Collection<TClass> getLeaves(){
 		return leaves;
 	}	
 }

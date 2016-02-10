@@ -18,8 +18,8 @@ import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import common.z.TClass;
 
 /**
@@ -69,8 +69,8 @@ public class SetFiniteModelsCommand implements Command{
             while(iterator.hasNext()  && foundTClass == null){
                 Map.Entry<String, TClassNode> mapEntry = iterator.next();
                 TClassNode opTTreeRoot = mapEntry.getValue();
-				AbstractRepository<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
-				AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
+				Collection<TClass> tClassLeaves = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
+				Iterator<TClass> tClassIt = tClassLeaves.iterator();
 				while(tClassIt.hasNext() && foundTClass == null){
                     TClass tClass = tClassIt.next();
                     String auxTClassName = tClass.getSchName();

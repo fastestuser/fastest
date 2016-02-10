@@ -4,8 +4,8 @@ import client.blogic.management.Controller;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import common.z.SpecUtils;
 import java.io.PrintWriter;
 import java.util.List;
@@ -77,9 +77,9 @@ public class SelPredCommand implements Command {
 
 
             //We check if schema was already selected. If not, we select it.
-            AbstractRepository<String> schemaPredsRep =
+            Collection<String> schemaPredsRep =
                     controller.getSchemaPredicatesRep();
-            AbstractIterator<String> it = schemaPredsRep.createIterator();
+            Iterator<String> it = schemaPredsRep.iterator();
             boolean hasFound = false;
             while (it.hasNext() && !hasFound) {
                 if (it.next().equals(schName)) {
@@ -87,14 +87,14 @@ public class SelPredCommand implements Command {
                 }
             }
             if (!hasFound) {
-                schemaPredsRep.addElement(schName);
+                schemaPredsRep.add(schName);
             }
 
             // Now we check if the schema was previously selected as an
             // operation to be tested. If so, we remove it from the list of
             // selected operations
-            AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
-            it = opsToTestRep.createIterator();
+            Collection<String> opsToTestRep = controller.getOpsToTestRep();
+            it = opsToTestRep.iterator();
             hasFound = false;
             while (it.hasNext() && !hasFound) {
                 if (it.next().equals(schName)) {

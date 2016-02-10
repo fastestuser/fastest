@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import client.presentation.ClientTextUI;
-import common.repository.ConcreteRepository;
+import java.util.ArrayList;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
@@ -29,7 +29,7 @@ public class UnSelAllOpsCommand implements Command{
 		}
 		else{
 			Controller controller = clientTextUI.getMyController();
-			controller.setOpsToTestRep(new ConcreteRepository<String>());
+			controller.setOpsToTestRep(new ArrayList<String>());
 			controller.setOpTTreeStrategyMap(new HashMap<String,TTreeStrategy>());
 			controller.setTacticMap(new HashMap<String,List<Tactic>>());
 		}

@@ -7,8 +7,8 @@ import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import common.z.TClass;
 
 /**
@@ -39,8 +39,8 @@ public class TClassExtractor extends IIComponent {
 
                 // Extracts all the TCLassNodes that are leaves of the tClassNode test tree
                 // except for those leaves that are descendants of pruned test classes.
-                AbstractRepository<TClass> tClassLeaves = tClassNode.acceptVisitor(new TClassLeavesFinder());
-                AbstractIterator<TClass> tClassIt = tClassLeaves.createIterator();
+                Collection<TClass> tClassLeaves = tClassNode.acceptVisitor(new TClassLeavesFinder());
+                Iterator<TClass> tClassIt = tClassLeaves.iterator();
                 EventAdmin eventAdmin = EventAdmin.getInstance();
                 while (tClassIt.hasNext()) {
                     TClass tClass = tClassIt.next();

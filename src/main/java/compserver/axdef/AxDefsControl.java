@@ -1,25 +1,25 @@
 package compserver.axdef;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import compserver.prunning.Theorem;
 
 /**
  * The instance of this class (which is a singleton) contains a number of
  * instances of Theorem, representing axiomatic definitions that uses forall
  */
-public final class AxDefsControl implements AbstractRepository<Theorem>{
+public final class AxDefsControl {
     
     private static AxDefsControl axDefsControl;
-    private AbstractRepository<Theorem> repository;
+    private final Collection<Theorem> repository;
     private int maxCard;
     
     /**
      * Creates intances of AxDefsControl.
      */
 	private AxDefsControl(){
-		repository = new ConcreteRepository<Theorem>();
+		repository = new ArrayList<Theorem>();
 	}
 
     /**
@@ -37,16 +37,16 @@ public final class AxDefsControl implements AbstractRepository<Theorem>{
      * structure.
      * @return
      */
-	public AbstractIterator<Theorem> createIterator(){
-		return repository.createIterator();
+	public Iterator<Theorem> iterator(){
+		return repository.iterator();
 	}
     
     /**
      * Add a new instance of Theorem to this object.
-     * @param theorem
-     */
-	public void addElement(Theorem theorem){
-		repository.addElement(theorem);
+	 * @param theorem
+	 */
+	public boolean add(Theorem theorem){
+		return repository.add(theorem);
 	}
 
 	public void setMaxCardinality(int maxCard){

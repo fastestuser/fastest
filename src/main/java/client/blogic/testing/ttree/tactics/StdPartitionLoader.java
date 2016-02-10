@@ -109,7 +109,7 @@ public class StdPartitionLoader {
                     }
                 }
                 stdPartition.setPredList(predList);
-                stdPartitionsControl.addElement(stdPartition);
+                stdPartitionsControl.add(stdPartition);
             }
 
         } catch (FileNotFoundException e) {

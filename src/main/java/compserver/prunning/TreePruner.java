@@ -153,7 +153,7 @@ public class TreePruner {
 			
 			//if (dadNode != null) { //Mi padre no es el VIS
 			//	AbstractRepository<? extends TTreeNode> childs = dadNode.getChildren();
-			//	if (!childs.createIterator().hasNext()) { //is empty
+			//	if (!childs.iterator().hasNext()) { //is empty
 			//		System.out.println("HAY QUE HACER GENALLTCA DEL PADREEEE");	
 			//	}
 				

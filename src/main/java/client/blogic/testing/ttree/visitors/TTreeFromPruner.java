@@ -2,8 +2,8 @@ package client.blogic.testing.ttree.visitors;
 
 import client.blogic.testing.ttree.*;
 import common.z.TClass;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 
@@ -46,8 +46,8 @@ public class TTreeFromPruner implements TTreeVisitor<Boolean>{
             return new Boolean(true);
 		}
 
-        AbstractRepository<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.createIterator();
+        Collection<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
+		Iterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.iterator();
         Boolean result = new Boolean(false);
 		while(tTreeNodeIt.hasNext() && result.booleanValue() == false)
             result = tTreeNodeIt.next().acceptVisitor(this);

@@ -1,25 +1,25 @@
 package compserver.abstraction.capture;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
  * The instance of this class (which is a singleton) contains a number of
  * instances of CapturedVar.
  */
-public class CapturedVarsControl implements AbstractRepository<CapturedVar>{
+public class CapturedVarsControl {
     
     private static CapturedVarsControl capturedVarsControl;
-    private AbstractRepository<CapturedVar> repository;
+    private final Collection<CapturedVar> repository;
     
 
     /**
      * Creates intances of CapturedVarsControl.
      */
 	private CapturedVarsControl(){
-		repository = new ConcreteRepository<CapturedVar>();
+		repository = new ArrayList<CapturedVar>();
 	}
 
     /**
@@ -38,18 +38,18 @@ public class CapturedVarsControl implements AbstractRepository<CapturedVar>{
      * structure.
      * @return
      */
-	public AbstractIterator<CapturedVar> createIterator(){
-		return repository.createIterator();
+	public Iterator<CapturedVar> iterator(){
+		return repository.iterator();
 	}
 
     
     
     /**
      * Add a new instance of CapturedVar to this object.
-     * @param theorem
-     */
-	public void addElement(CapturedVar capturedVar){
-		repository.addElement(capturedVar);
+	 * @param theorem
+	 */
+	public boolean add(CapturedVar capturedVar){
+		return repository.add(capturedVar);
 	}
 
 }

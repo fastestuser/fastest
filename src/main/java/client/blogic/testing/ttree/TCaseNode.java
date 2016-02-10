@@ -1,7 +1,7 @@
 package client.blogic.testing.ttree;
 
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.Scheme;
 import common.z.AbstractTCase;
 import client.blogic.testing.ttree.tactics.TacticInfo;
@@ -39,7 +39,7 @@ public class TCaseNode implements TTreeNode {
      * @throws java.lang.IllegalAccessException always, since a test case node 
      * can not have children. It must be a leaf of a test tree.
      */
-    public void setChildren(AbstractRepository<? extends TTreeNode> tTreeNodeRep)
+    public void setChildren(Collection<? extends TTreeNode> tTreeNodeRep)
             throws IllegalAccessException {
         throw new IllegalAccessException();
     }
@@ -49,7 +49,7 @@ public class TCaseNode implements TTreeNode {
      * @return null. Always, since a test case node can not have any child. 
      * It must be a leaf of a test tree.
      */
-    public AbstractRepository<? extends TTreeNode> getChildren() {
+    public Collection<? extends TTreeNode> getChildren() {
         return null;
     }
 

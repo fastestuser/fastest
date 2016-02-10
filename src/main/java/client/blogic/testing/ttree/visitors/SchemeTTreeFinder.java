@@ -8,8 +8,8 @@ import common.z.AbstractTCase;
 import common.z.Scheme;
 import common.z.TClass;
 import common.z.czt.visitors.AndPredSimplifier;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -67,8 +67,8 @@ public class SchemeTTreeFinder implements TTreeVisitor<Scheme>{
 			return tClass;
 		}
 		else{
-			AbstractRepository<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
-			AbstractIterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.createIterator();
+			Collection<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
+			Iterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.iterator();
 			Scheme scheme = null;
 			while(tTreeNodeIt.hasNext() && scheme == null)
 				scheme = tTreeNodeIt.next().acceptVisitor(this);

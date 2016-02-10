@@ -12,8 +12,8 @@ import net.sourceforge.czt.z.ast.NegPred;
 import net.sourceforge.czt.z.ast.ExprPred;
 import net.sourceforge.czt.z.ast.NegExpr;
 import net.sourceforge.czt.z.ast.RefExpr;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import common.z.czt.visitors.AndPredClausesExtractor;
 
 /**
@@ -33,17 +33,17 @@ public class PrePruner {
             return false;
         }
 
-        AbstractRepository<Pred> predRep =
+        Collection<Pred> predRep =
                 pred.accept(new AndPredClausesExtractor());
-        AbstractIterator<Pred> predRepIterator1 = predRep.createIterator();
+        Iterator<Pred> predRepIterator1 = predRep.iterator();
         boolean contradiction = false;
         while (predRepIterator1.hasNext() && !contradiction) {
             Pred auxPred1 = predRepIterator1.next();
             if (auxPred1 instanceof NegPred) {
                 Pred predToFind = ((NegPred) auxPred1).getPred();
 
-                AbstractIterator<Pred> predRepIterator2 =
-                        predRep.createIterator();
+                Iterator<Pred> predRepIterator2 =
+                        predRep.iterator();
 
                 while (predRepIterator2.hasNext() && !contradiction) {
                     Pred auxPred2 = predRepIterator2.next();
@@ -64,9 +64,9 @@ public class PrePruner {
         Pred pred = SpecUtils.getAxParaPred(tClass.getMyAxPara());
         if(!(pred instanceof AndPred))
             return false;
-        AbstractRepository<Pred> predRep =
+        Collection<Pred> predRep =
             pred.accept(new AndPredClausesExtractor());
-        AbstractIterator<Pred> predRepIterator1 = predRep.createIterator();
+        Iterator<Pred> predRepIterator1 = predRep.iterator();
         boolean contradiction = false;
         while(predRepIterator1.hasNext() && !contradiction){
             Pred auxPred1 = predRepIterator1.next();
@@ -77,8 +77,8 @@ public class PrePruner {
                 	if(negExpr1.getExpr() instanceof RefExpr){
 				RefExpr refExpr1 = (RefExpr) negExpr1.getExpr();
 				String nameToFind = refExpr1.getZName().getWord();
-				AbstractIterator<Pred> predRepIterator2 =
-					predRep.createIterator();
+				Iterator<Pred> predRepIterator2 =
+					predRep.iterator();
 		
 				while(predRepIterator2.hasNext() && !contradiction){
 				Pred auxPred2 = predRepIterator2.next();

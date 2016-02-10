@@ -12,8 +12,8 @@ import net.sourceforge.czt.z.ast.Box;
 import net.sourceforge.czt.util.Visitor;
 
 import common.z.czt.visitors.CZTCloner;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An implementation of the interface OpScheme.
@@ -117,10 +117,10 @@ public class OpSchemeImpl implements OpScheme {
     /**
     Determines whether the specified repository has primed and not-primed ocurrencies for evey name
      */
-    private static boolean isThereTransition(AbstractRepository<String> varNameRep) {
+    private static boolean isThereTransition(Collection<String> varNameRep) {
         boolean transitionFound = false;
 
-        AbstractIterator<String> it = varNameRep.createIterator();
+        Iterator<String> it = varNameRep.iterator();
         while (it.hasNext() && !transitionFound) {
             String varName = it.next();
             int varNameLen = varName.length();
@@ -134,10 +134,10 @@ public class OpSchemeImpl implements OpScheme {
         return (transitionFound);
     }
 
-    private static boolean isThereIO(AbstractRepository<String> varNameRep) {
+    private static boolean isThereIO(Collection<String> varNameRep) {
         boolean inputVarFound = false;
         boolean outputVarFound = false;
-        AbstractIterator<String> it = varNameRep.createIterator();
+        Iterator<String> it = varNameRep.iterator();
         while (it.hasNext() && (!inputVarFound || !outputVarFound)) {
             String varName = it.next();
             int varNameLen = varName.length();
@@ -154,9 +154,9 @@ public class OpSchemeImpl implements OpScheme {
     /**
     Determines whether the specified repository has the specified name or no
      */
-    private static boolean lookUp(AbstractRepository<String> varNameRep, String varName) {
+    private static boolean lookUp(Collection<String> varNameRep, String varName) {
         boolean varFound = false;
-        AbstractIterator<String> it = varNameRep.createIterator();
+        Iterator<String> it = varNameRep.iterator();
         while (it.hasNext() && !varFound) {
             varFound = it.next().equals(varName);
         }

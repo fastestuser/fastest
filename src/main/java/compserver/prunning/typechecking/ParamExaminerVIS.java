@@ -3,11 +3,9 @@ package compserver.prunning.typechecking;
 import java.util.*;
 import compserver.prunning.TheoremsControl;
 import compserver.prunning.Theorem;
-import compserver.prunning.Variable;
 import common.z.TClass;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 
-import net.sourceforge.czt.z.ast.Name;
 import net.sourceforge.czt.z.ast.ZDeclList;
 import net.sourceforge.czt.z.ast.ZName;
 import net.sourceforge.czt.z.ast.Expr;
@@ -20,14 +18,12 @@ import common.z.SpecUtils;
 import common.z.UtilSymbols;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
-import net.sourceforge.czt.z.impl.ZNameListImpl;
 import net.sourceforge.czt.z.ast.ZNameList;
 import net.sourceforge.czt.z.ast.ZFactory;
 import common.util.MathUtils;
 import common.z.czt.visitors.ExpressionsExtractor;
 import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.Type;
-import net.sourceforge.czt.z.ast.Ann; // PRUEBA
 import net.sourceforge.czt.z.ast.TypeAnn; // PRUEBA
 
 
@@ -78,7 +74,7 @@ public class ParamExaminerVIS{
 		// We travel the repository with the Theorems and search that theorms whose
 		// arguments "match" with zDeclList
 		TheoremsControl theoremsControl = TheoremsControl.getInstance();
-		AbstractIterator<Theorem> theoremsIt = theoremsControl.createIterator();
+		Iterator<Theorem> theoremsIt = theoremsControl.iterator();
 		while(theoremsIt.hasNext()){
 			List<ZDeclList> zListMatch = new ArrayList<ZDeclList>();
 			Theorem theTheorem = theoremsIt.next();

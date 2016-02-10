@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 
@@ -39,10 +39,10 @@ public class ShowSelOpsCommand implements Command{
 					
 			}
 			else{
-				AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
+				Collection<String> opsToTestRep = controller.getOpsToTestRep();
 				//Map<String,TTreeStrategy> opTTreeStrategyMap = controller.getOpTTreeStrategyMap();
 				Map<String,List<Tactic>> opTacticMap = controller. getTacticMap();
-				AbstractIterator<String> opsIt = opsToTestRep.createIterator();
+				Iterator<String> opsIt = opsToTestRep.iterator();
 				while (opsIt.hasNext()){
 					String opName = opsIt.next();
 					//TTreeStrategy tTreeStrategy = opTTreeStrategyMap.get(opName);

@@ -1,12 +1,7 @@
 package compserver.tcasegen.strategies;
 
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.math.BigInteger;
-import java.util.List;
-import java.util.Set;
-import java.util.Iterator;
 
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.Pred;
@@ -19,8 +14,8 @@ import common.z.TClass;
 import compserver.tcasegen.eval.SchemeEvaluator;
 import compserver.tcasegen.eval.EvaluationResp;
 import common.z.czt.visitors.AndPredClausesExtractor;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import compserver.tcasegen.fm.TClassFiniteModel;
 import compserver.tcasegen.fm.FiniteModelCreator;
 import common.z.czt.visitors.NumericConstsExtractor;
@@ -223,7 +218,7 @@ public class IncrementalAtomicPredTCaseStrategy implements TCaseStrategy {
             boolean trunkEvaluations = false;
 
             // Now we obtain the atomic predicates from the predicate of the test class
-            AbstractRepository<Pred> atomicPreds = pred.accept(new AndPredClausesExtractor());
+            Collection<Pred> atomicPreds = pred.accept(new AndPredClausesExtractor());
 
             // We rearrange the predicate taking in account the size of the finite
             // models of the atomic predicates
@@ -781,13 +776,13 @@ public class IncrementalAtomicPredTCaseStrategy implements TCaseStrategy {
         return isIndependent;
     }
 
-    private List<Pred> reorderPredicate(AbstractRepository<Pred> originalPred, TClass tClass, FiniteModelCreator finiteModelCreator, Pred dadPred) {
+    private List<Pred> reorderPredicate(Collection<Pred> originalPred, TClass tClass, FiniteModelCreator finiteModelCreator, Pred dadPred) {
         Map<RefExpr, List<Expr>> auxMap = new HashMap<RefExpr, List<Expr>>();
         List<Pred> fatherPreds = new ArrayList<Pred>();
         List<Pred> classPreds = new ArrayList<Pred>();
         List<Integer> fatherSizes = new ArrayList<Integer>();
         List<Integer> classSizes = new ArrayList<Integer>();
-        AbstractIterator<Pred> predClausesIt = originalPred.createIterator();
+        Iterator<Pred> predClausesIt = originalPred.iterator();
         while (predClausesIt.hasNext()) {
             Pred atomicPred = predClausesIt.next();
             List<Pred> auxPredList = new ArrayList<Pred>();
@@ -832,8 +827,8 @@ public class IncrementalAtomicPredTCaseStrategy implements TCaseStrategy {
         if (fatherPred == null) {
             return false;
         }
-        AbstractRepository<Pred> atomicPreds = fatherPred.accept(new AndPredClausesExtractor());
-        AbstractIterator<Pred> predClausesIt = atomicPreds.createIterator();
+        Collection<Pred> atomicPreds = fatherPred.accept(new AndPredClausesExtractor());
+        Iterator<Pred> predClausesIt = atomicPreds.iterator();
         boolean found = false;
         while (predClausesIt.hasNext() && !found) {
             Pred auxPred = predClausesIt.next();
@@ -886,8 +881,8 @@ public class IncrementalAtomicPredTCaseStrategy implements TCaseStrategy {
 
     private int getNumberOfAtomicPreds(Pred pred) {
         int count = 0;
-        AbstractRepository<Pred> atomicPreds = pred.accept(new AndPredClausesExtractor());
-        AbstractIterator<Pred> predClausesIt = atomicPreds.createIterator();
+        Collection<Pred> atomicPreds = pred.accept(new AndPredClausesExtractor());
+        Iterator<Pred> predClausesIt = atomicPreds.iterator();
         while (predClausesIt.hasNext()) {
             Pred auxPred = predClausesIt.next();
             count++;

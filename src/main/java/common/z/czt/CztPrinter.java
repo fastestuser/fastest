@@ -209,7 +209,7 @@ public class CztPrinter {
         TClassNode rootNode = new IterativeTTreeStrategy().generateTTree(opScheme, tacticRep);
 
         AbstractRepository<? extends TTreeNode> children = rootNode.getChildren();
-        AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+        AbstractIterator<? extends TTreeNode> childrenIt = children.iterator();
 
         while(childrenIt.hasNext()){
         TTreeNode child = childrenIt.next();

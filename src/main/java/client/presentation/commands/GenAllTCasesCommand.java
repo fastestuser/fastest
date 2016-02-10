@@ -3,12 +3,10 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 
-import net.sourceforge.czt.z.ast.PreExpr;
-import net.sourceforge.czt.z.ast.Pred;
 import net.sourceforge.czt.z.ast.ZDeclList;
 
 import client.presentation.ClientTextUI;
-import common.repository.ConcreteRepository;
+import java.util.ArrayList;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.TClassNode;
@@ -17,11 +15,10 @@ import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.events.TCaseRequested;
 import client.blogic.testing.ttree.visitors.TClassNodeLeavesFinder;
 import client.blogic.testing.ttree.visitors.TTReePreExprFinder;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import common.z.SpecUtils;
 import common.z.TClass;
-import common.z.czt.visitors.PreExprExtractor;
 import common.z.czt.visitors.TClassNodeUnfolder;
 
 /**
@@ -70,8 +67,8 @@ public class GenAllTCasesCommand implements Command {
 				opTTreeRoot.acceptVisitor(new TTReePreExprFinder());
 				// Extracts all the TCLassNodes that are leaves of the tClassNode test tree
 				// except for those leaves that are descendants of pruned test classes.
-				AbstractRepository<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
-				AbstractIterator<TClassNode> tClassNodeIt = tClassNodeLeaves.createIterator();
+				Collection<TClassNode> tClassNodeLeaves = opTTreeRoot.acceptVisitor(new TClassNodeLeavesFinder());
+				Iterator<TClassNode> tClassNodeIt = tClassNodeLeaves.iterator();
 				
 				TClassNode tClassNode;
 				TClassNodeUnfolder tClassNodeUnfolder;
@@ -103,7 +100,7 @@ public class GenAllTCasesCommand implements Command {
 			}
 
 			// Quitamos las seleccion de las operaciones elegidas
-			controller.setOpsToTestRep(new ConcreteRepository<String>());
+			controller.setOpsToTestRep(new ArrayList<String>());
 			controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
 			controller.setTacticMap(new HashMap<String, List<Tactic>>());
 

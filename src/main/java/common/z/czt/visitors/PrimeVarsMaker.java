@@ -8,8 +8,8 @@ import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.z.visitor.ZNameVisitor;
 import net.sourceforge.czt.z.ast.ZName;
 
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import net.sourceforge.czt.z.ast.ZFactory;
 import net.sourceforge.czt.z.ast.ZStrokeList;
 import net.sourceforge.czt.z.impl.ZFactoryImpl;
@@ -25,17 +25,17 @@ public class PrimeVarsMaker
         implements TermVisitor<Term>,
         ZNameVisitor<Term> {
 
-    private AbstractRepository<String> varNameRep;
+    private Collection<String> varNameRep;
 
-    public PrimeVarsMaker(AbstractRepository<String> varNameRep) {
+    public PrimeVarsMaker(Collection<String> varNameRep) {
         this.varNameRep = varNameRep;
     }
 
-    public void setVarNameRep(AbstractRepository<String> varNameRep) {
+    public void setVarNameRep(Collection<String> varNameRep) {
         this.varNameRep = varNameRep;
     }
 
-    public AbstractRepository<String> getVarNameRep() {
+    public Collection<String> getVarNameRep() {
         return varNameRep;
     }
 
@@ -62,7 +62,7 @@ public class PrimeVarsMaker
         String zNameWord = zName.getWord();
 
         boolean found = false;
-        AbstractIterator<String> it = varNameRep.createIterator();
+        Iterator<String> it = varNameRep.iterator();
         while (it.hasNext() && !found) {
             if (it.next().equals(zNameWord)) {
                 found = true;

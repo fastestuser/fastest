@@ -6,7 +6,7 @@ import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
 import compserver.prunning.PruneUtils;
 import common.z.TClass;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import client.blogic.management.ii.events.PruneTTreeRequested;
 import client.blogic.management.ii.EventAdmin;
 
@@ -74,7 +74,7 @@ public class PruneTreeCommand implements Command {
             */
             boolean someEventAnnounced = false;
             PruneUtils.prePrune(controller);
-            AbstractRepository<TClass> leaves = PruneUtils.obtainTClasses(controller);
+            Collection<TClass> leaves = PruneUtils.obtainTClasses(controller);
 
             if (leaves != null) {
                 PruneTTreeRequested pruneTTreeRequested = new PruneTTreeRequested(leaves);

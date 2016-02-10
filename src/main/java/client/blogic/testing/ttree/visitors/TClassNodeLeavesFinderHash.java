@@ -1,12 +1,11 @@
 package client.blogic.testing.ttree.visitors;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import client.blogic.testing.ttree.*;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
 
 
 /**
@@ -28,8 +27,8 @@ public class TClassNodeLeavesFinderHash implements TTreeVisitor<Map<String,TClas
 	    if(tClassNode.isPruned())
 	    	return null;
 	
-	    AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+	    Collection<? extends TTreeNode> children = tClassNode.getChildren();
+		Iterator<? extends TTreeNode> childrenIt = children.iterator();
 		// This test class node will be consider a leaf if it has not any child 
 	    // or every child is a pruned test class node
 	    boolean isALeaf = true;

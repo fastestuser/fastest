@@ -1,7 +1,6 @@
 package common.z.czt.visitors;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import net.sourceforge.czt.z.ast.AxPara;
@@ -21,7 +20,7 @@ import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.*;
 import client.blogic.testing.ttree.visitors.TTreeVisitor;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
@@ -134,7 +133,7 @@ public class TClassNodeUnfolder implements TTreeVisitor<TClassNode>{
         }*/
 		
 		//soy la Hoja si no tengo hijos, o mis hijos es un TCase o son TClass pero estan pruneados
-		AbstractIterator<? extends TTreeNode> childrenIt = tClassNode.getChildren().createIterator();
+		Iterator<? extends TTreeNode> childrenIt = tClassNode.getChildren().iterator();
 		boolean esHoja = true;
 		while (  childrenIt.hasNext() ){
 			esHoja = false;

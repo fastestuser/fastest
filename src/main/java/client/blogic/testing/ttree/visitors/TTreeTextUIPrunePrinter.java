@@ -8,8 +8,8 @@ import client.blogic.testing.ttree.TTreeNode;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TCaseNode;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 
@@ -56,8 +56,8 @@ import common.repository.AbstractIterator;
         else{
             out.println(getStrTab(nroTab, true) + tClassStr);
             out.flush();
-            AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();	
-            AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+            Collection<? extends TTreeNode> children = tClassNode.getChildren();
+            Iterator<? extends TTreeNode> childrenIt = children.iterator();
             boolean hasChildren = false;
     		while(childrenIt.hasNext()){
     			TTreeNode child = childrenIt.next();

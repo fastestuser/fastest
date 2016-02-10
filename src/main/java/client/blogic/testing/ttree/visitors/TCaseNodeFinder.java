@@ -1,12 +1,13 @@
 package client.blogic.testing.ttree.visitors;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
 
 import client.blogic.testing.ttree.*;
 import common.z.AbstractTCase;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+
+import java.util.Iterator;
 
 
 
@@ -39,8 +40,8 @@ public class TCaseNodeFinder implements TTreeVisitor<Map<String, AbstractTCase>>
         if(tClassNode.isPruned()){
             return this.tcaMap;
         }
-        AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-        AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+        Collection<? extends TTreeNode> children = tClassNode.getChildren();
+        Iterator<? extends TTreeNode> childrenIt = children.iterator();
         while(childrenIt.hasNext()){
             childrenIt.next().acceptVisitor(this);
         }

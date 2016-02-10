@@ -1,66 +1,65 @@
 package compserver.prunning;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
  * The instance of this class (which is a singleton) contains a number of
  * instances of Theorem.
  */
-public class TheoremsControl implements AbstractRepository<Theorem>{
-    
+public class TheoremsControl {
+
     private static TheoremsControl theoremsControl;
-    private AbstractRepository<Theorem> repository;
+    private final Collection<Theorem> repository;
     private int maxCard;
-    
-    
-    
+
     /**
      * Creates intances of TheoremsControl.
      */
-	private TheoremsControl(){
-		repository = new ConcreteRepository<Theorem>();
-	}
+    private TheoremsControl() {
+        repository = new ArrayList<Theorem>();
+    }
 
     /**
      * Gets the instance of this class, creating it if necessary.
+     *
      * @return
      */
-	public static TheoremsControl getInstance(){	
-		if(theoremsControl==null)
-			theoremsControl = new TheoremsControl();
-		return theoremsControl;
-	}
+    public static TheoremsControl getInstance() {
+        if (theoremsControl == null)
+            theoremsControl = new TheoremsControl();
+        return theoremsControl;
+    }
 
-    
-    
+
     /**
      * Creates an iterator in order to be possible the traversal along this
      * structure.
+     *
      * @return
      */
-	public AbstractIterator<Theorem> createIterator(){
-		return repository.createIterator();
-	}
+    public Iterator<Theorem> iterator() {
+        return repository.iterator();
+    }
 
-    
-    
+
     /**
      * Add a new instance of Theorem to this object.
+     *
      * @param theorem
      */
-	public void addElement(Theorem theorem){
-		repository.addElement(theorem);
-	}
+    public boolean add(Theorem theorem) {
+        return repository.add(theorem);
+    }
 
-	public void setMaxCardinality(int maxCard){
-		this.maxCard = maxCard;
-	}
+    public void setMaxCardinality(int maxCard) {
+        this.maxCard = maxCard;
+    }
 
-	public int getMaxCardinality(){
-		return maxCard;
-	}
+    public int getMaxCardinality() {
+        return maxCard;
+    }
 
 }

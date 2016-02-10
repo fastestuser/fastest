@@ -22,7 +22,7 @@ import net.sourceforge.czt.z.ast.ZSect;
 import net.sourceforge.czt.util.Visitor;
 
 import common.z.SpecUtils;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 import common.z.czt.visitors.AtomicPredExtractor;
 import common.z.czt.visitors.SchemeUnfolder;
 
@@ -71,8 +71,8 @@ public class SPStrategy{
 		//Buscamos las expresiones que se encuentran en la operacion unfoldeada,
 		// y las almacenamos en expressions
 		Spec spec = controller.getUnfoldedSpec();
-		AbstractRepository<String> opNames = controller.getOpsToTestRep();
-		AbstractRepository<String> schPredNames = controller.getSchemaPredicatesRep();
+		Collection<String> opNames = controller.getOpsToTestRep();
+		Collection<String> schPredNames = controller.getSchemaPredicatesRep();
 		spec = (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
 
 		AxPara axPara = null;

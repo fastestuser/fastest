@@ -14,9 +14,9 @@ import client.blogic.testing.ttree.visitors.TCaseNodeAdder;
 import client.presentation.ClientTextUI;
 import client.presentation.ClientUI;
 import common.fastest.FastestUtils;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.ArrayList;
 import common.z.AbstractTCase;
 import common.z.Scheme;
 import common.z.SpecUtils;
@@ -55,13 +55,13 @@ public final class Controller extends IIComponent {
     private Spec originalSpec;
     //private Spec unfoldedSpec;
     // Repository of the loaded operations from the loaded specification
-    private AbstractRepository<String> loadedOpsRep;
+    private Collection<String> loadedOpsRep;
     // Repository of the operations that the user wants to test
-    private AbstractRepository<String> opsToTestRep;
+    private Collection<String> opsToTestRep;
     // Repository of the classes that the user wants to test
-    private AbstractRepository<String> classToTestRep;
+    private Collection<String> classToTestRep;
     // Repository of the operations that the user marks as predicates
-    private AbstractRepository<String> schemaPredicatesRep;
+    private Collection<String> schemaPredicatesRep;
     // Map from operations to tactic strategies
     private Map<String, TTreeStrategy> opTTreeStrategyMap;
     // Map from operations names, or test classes names, to repositories
@@ -128,7 +128,7 @@ public final class Controller extends IIComponent {
     private Lock myLock;
     long inicio;
     long inicioPoda;
-    private AbstractRepository<TClass> leaves;
+    private Collection<TClass> leaves;
     // The maximun number of evaluations to be performed in order to find a test
     // case for a given test class
     private int maxEval;
@@ -163,8 +163,8 @@ public final class Controller extends IIComponent {
         originalSpec = null;
         loadedOpsRep = null;
         opsToTestRep = null;
-        classToTestRep = new ConcreteRepository<String>();
-        schemaPredicatesRep = new ConcreteRepository<String>();
+        classToTestRep = new ArrayList<String>();
+        schemaPredicatesRep = new ArrayList<String>();
         opTTreeStrategyMap = null;
         tacticMap = null;
         opTTreeMap = new HashMap<String, TClassNode>();
@@ -190,7 +190,7 @@ public final class Controller extends IIComponent {
         myLock = new ReentrantLock(); //solo constructor
         inicio = 0;
         inicioPoda = 0;
-        leaves = new ConcreteRepository<TClass>();
+        leaves = new ArrayList<TClass>();
         FastestUtils.resetTacticsNumbersMap();
         try {
             //
@@ -259,7 +259,7 @@ public final class Controller extends IIComponent {
             boolean allTTreeGnrtd = true;
 
             boolean isTClass = false;
-            AbstractIterator<String> iter = classToTestRep.createIterator();
+            Iterator<String> iter = classToTestRep.iterator();
             while (iter.hasNext()) {
                 if (iter.next().equals(opName)) {
                     isTClass = true;
@@ -267,7 +267,7 @@ public final class Controller extends IIComponent {
                 }
             }
 
-            AbstractIterator<String> opNameIt = opsToTestRep.createIterator();
+            Iterator<String> opNameIt = opsToTestRep.iterator();
             while (opNameIt.hasNext() && allTTreeGnrtd) {
                 if (!opTTreeMap.containsKey(opNameIt.next())) {
                     allTTreeGnrtd = false;
@@ -275,7 +275,7 @@ public final class Controller extends IIComponent {
             }
 
             if (isTClass) {
-                iter = classToTestRep.createIterator();
+                iter = classToTestRep.iterator();
                 if (iter.hasNext()) {
                     allTTreeGnrtd = false;
                 }
@@ -293,11 +293,11 @@ public final class Controller extends IIComponent {
         } else if (event_ instanceof PruneTTreeRequested) {
             PruneTTreeRequested pruneTTreeRequested = (PruneTTreeRequested) event_;
             //leaves = pruneTTreeRequested.getLeaves();
-            AbstractRepository<TClass> auxLeaves = pruneTTreeRequested.getLeaves();
-            AbstractIterator<TClass> tClassIt = auxLeaves.createIterator();
+            Collection<TClass> auxLeaves = pruneTTreeRequested.getLeaves();
+            Iterator<TClass> tClassIt = auxLeaves.iterator();
             while (tClassIt.hasNext()) {
                 TClass auxTClass = tClassIt.next();
-                leaves.addElement(auxTClass);
+                leaves.add(auxTClass);
                 pendingPrunnings++;
             }
             if (inicioPoda == 0) {
@@ -428,9 +428,9 @@ public final class Controller extends IIComponent {
             if (pendingPrunnings == 0) {
                 // We check if appears new leaves. In that case we try to prune
                 // them. In the other case we finish the pruning.
-                AbstractRepository<TClass> newLeaves = PruneUtils.obtainTClasses(this);
-                AbstractIterator<TClass> tClassItOld = leaves.createIterator();
-                AbstractIterator<TClass> tClassItNew = newLeaves.createIterator();
+                Collection<TClass> newLeaves = PruneUtils.obtainTClasses(this);
+                Iterator<TClass> tClassItOld = leaves.iterator();
+                Iterator<TClass> tClassItNew = newLeaves.iterator();
                 List<TClass> newList = new ArrayList<TClass>();
                 List<TClass> oldList = new ArrayList<TClass>();
                 while (tClassItNew.hasNext()) {
@@ -441,9 +441,9 @@ public final class Controller extends IIComponent {
                 }
                 newList.removeAll(oldList);
                 if (newList.size() > 0) {
-                    AbstractRepository<TClass> alternativeLeaves = new ConcreteRepository<TClass>();
+                    Collection<TClass> alternativeLeaves = new ArrayList<TClass>();
                     for (int i = 0; i < newList.size(); i++) {
-                        alternativeLeaves.addElement(newList.get(i));
+                        alternativeLeaves.add(newList.get(i));
                     }
 
                     try {
@@ -544,8 +544,8 @@ public final class Controller extends IIComponent {
                     //y no es el VIS
                     TClassNode dadOfDadNode = dadNode.getDadNode();
                     if (dadOfDadNode != null) { //No es el VIS
-                        AbstractRepository<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
-                        AbstractIterator<? extends TTreeNode> childsNodeIt = childsNodeRep.createIterator();
+                        Collection<? extends TTreeNode> childsNodeRep = dadNode.getChildren();
+                        Iterator<? extends TTreeNode> childsNodeIt = childsNodeRep.iterator();
                         Boolean allChildsPruned = new Boolean(true);
                         while (childsNodeIt.hasNext() && allChildsPruned.booleanValue() == true) {
                             TTreeNode child = childsNodeIt.next();
@@ -599,8 +599,8 @@ public final class Controller extends IIComponent {
             originalSpec = null;
             loadedOpsRep = null;
             opsToTestRep = null;
-            classToTestRep = new ConcreteRepository<String>();
-            schemaPredicatesRep = new ConcreteRepository<String>();
+            classToTestRep = new ArrayList<String>();
+            schemaPredicatesRep = new ArrayList<String>();
             opTTreeStrategyMap = null;
             tacticMap = null;
             opTTreeMap.clear();
@@ -623,7 +623,7 @@ public final class Controller extends IIComponent {
             basicAxDefs = null;
             inicio = 0;
             inicioPoda = 0;
-            leaves = new ConcreteRepository<TClass>();
+            leaves = new ArrayList<TClass>();
             FastestUtils.resetTacticsNumbersMap();
         } else {
             throw new IllegalArgumentException();
@@ -715,8 +715,8 @@ public final class Controller extends IIComponent {
      * @return
      */
     public Spec getUnfoldedSpec() {
-        AbstractRepository<String> opNames = this.getOpsToTestRep();
-        AbstractRepository<String> schPredNames = this.getSchemaPredicatesRep();
+        Collection<String> opNames = this.getOpsToTestRep();
+        Collection<String> schPredNames = this.getSchemaPredicatesRep();
         //System.out.println(SpecUtils.termToLatex(originalSpec));
         return (Spec) originalSpec.accept(new SchemeUnfolder(opNames, schPredNames));
         //return originalSpec;
@@ -727,7 +727,7 @@ public final class Controller extends IIComponent {
      *
      * @param opRep
      */
-    public void setOpsToTestRep(AbstractRepository<String> opRep) {
+    public void setOpsToTestRep(Collection<String> opRep) {
         opsToTestRep = opRep;
     }
 
@@ -736,7 +736,7 @@ public final class Controller extends IIComponent {
      *
      * @return
      */
-    public AbstractRepository<String> getOpsToTestRep() {
+    public Collection<String> getOpsToTestRep() {
         return opsToTestRep;
     }
 
@@ -745,7 +745,7 @@ public final class Controller extends IIComponent {
      *
      * @param opRep
      */
-    public void setClassToTestRep(AbstractRepository<String> classRep) {
+    public void setClassToTestRep(Collection<String> classRep) {
         classToTestRep = classRep;
     }
 
@@ -754,7 +754,7 @@ public final class Controller extends IIComponent {
      *
      * @return
      */
-    public AbstractRepository<String> getClassToTestRep() {
+    public Collection<String> getClassToTestRep() {
         return classToTestRep;
     }
 
@@ -763,7 +763,7 @@ public final class Controller extends IIComponent {
      *
      * @param opRep
      */
-    public void setSchemaPredicatesRep(AbstractRepository<String> schemaPredicatesRep) {
+    public void setSchemaPredicatesRep(Collection<String> schemaPredicatesRep) {
         this.schemaPredicatesRep = schemaPredicatesRep;
     }
 
@@ -772,7 +772,7 @@ public final class Controller extends IIComponent {
      *
      * @return
      */
-    public AbstractRepository<String> getSchemaPredicatesRep() {
+    public Collection<String> getSchemaPredicatesRep() {
         return schemaPredicatesRep;
     }
 
@@ -781,7 +781,7 @@ public final class Controller extends IIComponent {
      *
      * @param opRep
      */
-    public void setLoadedOpsRep(AbstractRepository<String> opRep) {
+    public void setLoadedOpsRep(Collection<String> opRep) {
         loadedOpsRep = opRep;
     }
 
@@ -790,7 +790,7 @@ public final class Controller extends IIComponent {
      *
      * @return
      */
-    public AbstractRepository<String> getLoadedOpsRep() {
+    public Collection<String> getLoadedOpsRep() {
         return loadedOpsRep;
     }
 
@@ -1154,8 +1154,8 @@ public final class Controller extends IIComponent {
      * @return
      */
     public boolean isSelectedOperation(String opName) {
-        AbstractRepository<String> selectedOpsRep = getOpsToTestRep();
-        AbstractIterator<String> it = selectedOpsRep.createIterator();
+        Collection<String> selectedOpsRep = getOpsToTestRep();
+        Iterator<String> it = selectedOpsRep.iterator();
         boolean hasFound = false;
         while (it.hasNext() && !hasFound) {
             if (it.next().equals(opName)) {
@@ -1173,8 +1173,8 @@ public final class Controller extends IIComponent {
      * @return
      */
     public boolean isSelectedPredicate(String opName) {
-        AbstractRepository<String> schemaPredicates = this.getSchemaPredicatesRep();
-        AbstractIterator<String> it = schemaPredicates.createIterator();
+        Collection<String> schemaPredicates = this.getSchemaPredicatesRep();
+        Iterator<String> it = schemaPredicates.iterator();
         boolean hasFound = false;
         while (it.hasNext() && !hasFound) {
             if (it.next().equals(opName)) {

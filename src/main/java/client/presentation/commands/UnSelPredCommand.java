@@ -2,8 +2,8 @@ package client.presentation.commands;
 
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import java.io.PrintWriter;
 
 /**
@@ -37,9 +37,9 @@ public class UnSelPredCommand implements Command {
 
         //We check if the schema to be unselected has been selected. If so,
         // we remove it from the repository of schemas selected as predicates
-        AbstractRepository<String> schemaPredicatesRep =
+        Collection<String> schemaPredicatesRep =
                 controller.getSchemaPredicatesRep();
-        AbstractIterator<String> it = schemaPredicatesRep.createIterator();
+        Iterator<String> it = schemaPredicatesRep.iterator();
         boolean hasFound = false;
         while (it.hasNext() && !hasFound) {
             if (it.next().equals(opName)) {

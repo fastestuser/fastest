@@ -3,9 +3,9 @@ package client.presentation.commands;
 import java.io.*;
 import java.util.*;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
@@ -90,8 +90,8 @@ public class GenAllTTCommand implements Command {
 							+ "operation in order to generate "
 							+ " its test tree.");
 				} else {
-					AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
-					AbstractRepository<String> classToTestRep = controller.getClassToTestRep();
+					Collection<String> opsToTestRep = controller.getOpsToTestRep();
+					Collection<String> classToTestRep = controller.getClassToTestRep();
 					// Now we analyze if opName is the name of an operation or the
 					// name of a test class and proceed accordingly
 					if (isOp) {
@@ -100,13 +100,13 @@ public class GenAllTTCommand implements Command {
 						if (tClassRoot == null) {
 							// We must generate the test tree from the beginning
 							someEventAnnounced = true;
-							opsToTestRep.addElement(opNameOrTClassName);
+							opsToTestRep.add(opNameOrTClassName);
 							TTreeRequested tTreeRequested = new TTreeRequested(opNameOrTClassName, tacticList, tTreeStrategy, null);
 							eventAdmin.announceEvent(tTreeRequested);
 						} else {
 							// We must generate the test tree from
 							// every leaf of the operation's test tree
-							AbstractIterator<String> iter = opsToTestRep.createIterator();
+							Iterator<String> iter = opsToTestRep.iterator();
 							// We must remove the opName from opsToTestRep 
 							// because we will just use the leaves corresponding
 							// to this opName
@@ -117,14 +117,14 @@ public class GenAllTTCommand implements Command {
 							}
 							// We request the creation of subtrees from
 							// every leaf of the operation's test tree
-							AbstractRepository<TClassNode> leaves = tClassRoot.acceptVisitor(new TClassNodeLeavesFinder());
-							AbstractIterator<TClassNode> leavesIt = leaves.createIterator();
+							Collection<TClassNode> leaves = tClassRoot.acceptVisitor(new TClassNodeLeavesFinder());
+							Iterator<TClassNode> leavesIt = leaves.iterator();
 							boolean someChild = false;
 							while (leavesIt.hasNext()) {
 								someChild = true;
 								TClassNode auxTClass = leavesIt.next();
 								String nodeName = auxTClass.getValue().getSchName();
-								classToTestRep.addElement(nodeName);
+								classToTestRep.add(nodeName);
 								someEventAnnounced = true;
 								TTreeRequested tTreeRequested = new TTreeRequested(nodeName, tacticList, tTreeStrategy, auxTClass);
 								eventAdmin.announceEvent(tTreeRequested);
@@ -132,7 +132,7 @@ public class GenAllTTCommand implements Command {
 
 							if (!someChild) {
 								// The ttree has only one node
-								classToTestRep.addElement(opNameOrTClassName);
+								classToTestRep.add(opNameOrTClassName);
 								someEventAnnounced = true;
 								TTreeRequested tTreeRequested = new TTreeRequested(opNameOrTClassName, tacticList,tTreeStrategy, tClassRoot);
 								eventAdmin.announceEvent(tTreeRequested);
@@ -142,21 +142,21 @@ public class GenAllTTCommand implements Command {
 						// The test tree will be generated from the specified
 						// test class
 						TClassNode tClassNodeAux = (TClassNode)FastestUtils.getTTreeNode(controller,opNameOrTClassName);
-						AbstractRepository<TClassNode> leaves = tClassNodeAux.acceptVisitor(new TClassNodeLeavesFinder());
-						AbstractIterator<TClassNode> it = leaves.createIterator();
+						Collection<TClassNode> leaves = tClassNodeAux.acceptVisitor(new TClassNodeLeavesFinder());
+						Iterator<TClassNode> it = leaves.iterator();
 						boolean someChild = false;
 						while (it.hasNext()) {
 							someChild = true;
 							TClassNode auxTClass = it.next();
 							String nodeName = auxTClass.getValue().getSchName();
-							classToTestRep.addElement(nodeName);
+							classToTestRep.add(nodeName);
 							someEventAnnounced = true;
 							TTreeRequested tTreeRequested = new TTreeRequested(nodeName,tacticList, tTreeStrategy, auxTClass);
 							eventAdmin.announceEvent(tTreeRequested);
 						}
 						// No have childs
 						if (!someChild) {
-							classToTestRep.addElement(opNameOrTClassName);
+							classToTestRep.add(opNameOrTClassName);
 							someEventAnnounced = true;
 							TTreeRequested tTreeRequested = new TTreeRequested(opNameOrTClassName, tacticList,tTreeStrategy, tClassNodeAux);
 							eventAdmin.announceEvent(tTreeRequested);
@@ -172,7 +172,7 @@ public class GenAllTTCommand implements Command {
 			}
 
 			// Quitamos la seleccion de las operaciones elegidas
-			controller.setOpsToTestRep(new ConcreteRepository<String>());
+			controller.setOpsToTestRep(new ArrayList<String>());
 			// Por ahora comento esta linea porque es la que me permite saber si una operacion
 			// ya fue seleccionada o no
 			//controller.setOpTTreeStrategyMap(new HashMap<String,TTreeStrategy>());

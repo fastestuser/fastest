@@ -6,7 +6,8 @@ import net.sourceforge.czt.z.visitor.ZNameVisitor;
 
 import net.sourceforge.czt.z.ast.ZName;
 
-import common.repository.*;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * An instance of this class allow the search for alphanumeric constants in a expression.
@@ -18,9 +19,9 @@ public class WordsFinder
         implements TermVisitor<Boolean>,
         ZNameVisitor<Boolean> {
 
-    private AbstractRepository<String> varNamesRep;
+    private Collection<String> varNamesRep;
 
-    public WordsFinder(AbstractRepository<String> varNamesRep) {
+    public WordsFinder(Collection<String> varNamesRep) {
         this.varNamesRep = varNamesRep;
     }
 
@@ -38,7 +39,7 @@ public class WordsFinder
 
     public Boolean visitZName(ZName zName) {
         String zNameWord = zName.toString();
-        AbstractIterator<String> it = varNamesRep.createIterator();
+        Iterator<String> it = varNamesRep.iterator();
         boolean hasFound = false;
         while (it.hasNext() && !hasFound) {
             String varName = it.next();

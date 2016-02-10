@@ -6,8 +6,8 @@ import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Expr;
 import net.sourceforge.czt.z.ast.RefExpr;
 import client.blogic.management.Controller;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import client.blogic.testing.ttree.*;
 import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.tactics.Tactic;
@@ -75,8 +75,8 @@ public final class FastestUtils {
 	 * @return
 	 */
 	public static boolean isLoadedOperation(Controller controller, String opName) {
-		AbstractRepository<String> loadedOpsRep = controller.getLoadedOpsRep();
-		AbstractIterator<String> it = loadedOpsRep.createIterator();
+		Collection<String> loadedOpsRep = controller.getLoadedOpsRep();
+		Iterator<String> it = loadedOpsRep.iterator();
 		boolean hasFound = false;
 		while (it.hasNext() && !hasFound) {
 			if (it.next().equals(opName)) {
@@ -95,8 +95,8 @@ public final class FastestUtils {
 	 * @return
 	 */
 	public static boolean isSelectedPred(Controller controller, String schemeName) {
-		AbstractRepository<String> schemePredsRep = controller.getSchemaPredicatesRep();
-		AbstractIterator<String> schemePredsIt = schemePredsRep.createIterator();
+		Collection<String> schemePredsRep = controller.getSchemaPredicatesRep();
+		Iterator<String> schemePredsIt = schemePredsRep.iterator();
 		boolean hasFound = false;
 		while (schemePredsIt.hasNext() && !hasFound) {
 			if (schemePredsIt.next().equals(schemeName)) {
@@ -114,8 +114,8 @@ public final class FastestUtils {
 	 * @return
 	 */
 	public static boolean isSelectedOperation(Controller controller, String opName) {
-		AbstractRepository<String> selectedOpsRep = controller.getOpsToTestRep();
-		AbstractIterator<String> it = selectedOpsRep.createIterator();
+		Collection<String> selectedOpsRep = controller.getOpsToTestRep();
+		Iterator<String> it = selectedOpsRep.iterator();
 		boolean hasFound = false;
 		while (it.hasNext() && !hasFound) {
 			if (it.next().equals(opName)) {

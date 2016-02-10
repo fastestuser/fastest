@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -33,8 +34,6 @@ import net.sourceforge.czt.z.ast.Sect;
 import net.sourceforge.czt.z.ast.Spec;
 import net.sourceforge.czt.z.ast.ZParaList;
 import net.sourceforge.czt.z.ast.ZSect;
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
 import common.z.SpecUtils;
 import common.z.czt.UniqueZLive;
 import common.z.czt.visitors.CZTReplacer;
@@ -85,7 +84,7 @@ public class ReplaceAxDefCommand implements Command{
 									SchExpr schExpr = SpecUtils.getAxParaSchExpr(axPara);
 									if (schExpr != null) {
 										//Aqui guardamos los nombres de las variables
-										AbstractRepository<String> decls = SpecUtils.getVarNames(schExpr);
+										Collection<String> decls = SpecUtils.getVarNames(schExpr);
 
 										Pred pred = SpecUtils.getAxParaPred(axPara);
 										if (pred != null) {
@@ -116,7 +115,7 @@ public class ReplaceAxDefCommand implements Command{
 		eventAdmin.announceEvent(specLoaded);
 	}
 
-	public static Pred replaceAxDefsInPred(Pred pred, AbstractRepository<String> decls) throws IOException, CommandException{
+	public static Pred replaceAxDefsInPred(Pred pred, Collection<String> decls) throws IOException, CommandException{
 		//Reemplazamos las definiciones axiomaticas de tipo "Synonyms" de tipo constante,
 		//y aquellas que ya tienen un valor (mediante setaxdef)
 		pred = (Pred) replaceAxDefValues(pred, decls);
@@ -130,7 +129,7 @@ public class ReplaceAxDefCommand implements Command{
 		return pred;
 	}
 
-	private static Term replaceAxDefValues(Term term, AbstractRepository<String> decls){
+	private static Term replaceAxDefValues(Term term, Collection<String> decls){
 
 		Map<RefExpr, Expr> axDefsValues = controller.getAxDefsValues();
 		if (axDefsValues != null) {
@@ -146,7 +145,7 @@ public class ReplaceAxDefCommand implements Command{
 
 				//Chequeamos que no coincida con el nombre de una de las variables del schema
 				boolean isVar = false;
-				AbstractIterator<String> it = decls.createIterator();
+				Iterator<String> it = decls.iterator();
 				String refName = refExpr.getZName().getWord();
 				while (it.hasNext()) {
 					String var = it.next();

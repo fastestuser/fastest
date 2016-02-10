@@ -5,8 +5,8 @@ import java.util.*;
 
 import client.presentation.ClientTextUI;
 import common.fastest.FastestUtils;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.tactics.DNFTactic;
@@ -55,8 +55,8 @@ public class SelOpCommand implements Command {
 
 			//We check if the name of the operation to be selected is contained
 			//in the repository of loaded operations names
-			AbstractRepository<String> loadedOpsRep = controller.getLoadedOpsRep();
-			AbstractIterator<String> it = loadedOpsRep.createIterator();
+			Collection<String> loadedOpsRep = controller.getLoadedOpsRep();
+			Iterator<String> it = loadedOpsRep.iterator();
 			boolean hasFound = false;
 			while (it.hasNext() && !hasFound) {
 				if (it.next().equals(opName))
@@ -85,15 +85,15 @@ public class SelOpCommand implements Command {
 				output.println("Warning: Missing value for \"" + axDef + "\" in " + SpecUtils.getAxParaName(axPara));
 			
 			//We check if the operation to be selected has been already selected
-			AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
-			AbstractIterator<String> opsToTestIt = opsToTestRep.createIterator();
+			Collection<String> opsToTestRep = controller.getOpsToTestRep();
+			Iterator<String> opsToTestIt = opsToTestRep.iterator();
 			hasFound = false;
 			while (opsToTestIt.hasNext() && !hasFound) {
 				if (opsToTestIt.next().equals(opName)) 
 					hasFound = true;
 			}
 			if (!hasFound) 
-				opsToTestRep.addElement(opName);
+				opsToTestRep.add(opName);
 			
 
 			//If the second parameter is an appropiate TTreeStrategy class we set it as the operation's tactic strategy  in
@@ -125,8 +125,8 @@ public class SelOpCommand implements Command {
 			// We check if the operation to be selected was previously selected
 			// as a predicate. If so, we remove it from the repository of schemas
 			// selected as predicates.
-			AbstractRepository<String> schemaPredicatesRep = controller.getSchemaPredicatesRep();
-			AbstractIterator<String> schemaPredicatesIt = schemaPredicatesRep.createIterator();
+			Collection<String> schemaPredicatesRep = controller.getSchemaPredicatesRep();
+			Iterator<String> schemaPredicatesIt = schemaPredicatesRep.iterator();
 			hasFound = false;
 			while (schemaPredicatesIt.hasNext() && !hasFound) {
 				if (schemaPredicatesIt.next().equals(opName)) {

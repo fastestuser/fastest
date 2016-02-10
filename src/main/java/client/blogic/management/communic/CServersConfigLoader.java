@@ -48,7 +48,7 @@ public class CServersConfigLoader{
 				// We create a new ServerInfo object
 				ServerConfig serverInfo = new ServerConfig(serverName, ip, port);
 				// We add the object to the CServersInfoControl
-				cServersControl.addElement(serverInfo);	
+				cServersControl.add(serverInfo);
 			}
 			in.close();
 			

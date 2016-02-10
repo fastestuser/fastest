@@ -1,12 +1,10 @@
 package client.blogic.testing.ttree.tactics;
 
 import java.util.*;
-import java.io.*;
 
 import net.sourceforge.czt.parser.z.ParseUtils;
 import net.sourceforge.czt.session.StringSource;
 import net.sourceforge.czt.animation.eval.ZLive;
-import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.z.ast.AxPara;
 import net.sourceforge.czt.z.ast.Pred;
@@ -24,7 +22,7 @@ import common.z.SpecUtils;
 import common.z.TClass;
 import common.z.TClassImpl;
 import common.z.czt.UniqueZLive;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import common.z.czt.visitors.ParamExtractor;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.CZTReplacer;
@@ -165,8 +163,8 @@ public class SPTactic extends AbstractTactic {
         String termStr = parts[1];
         spTacticInfo = new SPTacticInfo();
         try {
-            AbstractIterator<StdPartition> stdPartitionIt =
-                    StdPartitionsControl.getInstance().createIterator();
+            Iterator<StdPartition> stdPartitionIt =
+                    StdPartitionsControl.getInstance().iterator();
 
             // We look for the operator's standard partition
             boolean operatorFound = false;

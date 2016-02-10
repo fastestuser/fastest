@@ -4,15 +4,14 @@
  */
 package common.z.czt.visitors;
 
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+import java.util.Collection;
 import common.z.DeclDecoration;
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
+
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.base.visitor.TermVisitor;
 import net.sourceforge.czt.util.Visitor;
@@ -77,12 +76,12 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
         ExprPredVisitor<Term>,
         TermVisitor<Term>{
 
-    private AbstractRepository<String> opNames;
-    private AbstractRepository<String> schPredNames;
+    private Collection<String> opNames;
+    private Collection<String> schPredNames;
     private Map<String, AxPara> unfoldedAxParas;
     private ZParaList zParaList;
 
-    public SchemeUnfolder(AbstractRepository<String> opNames,AbstractRepository<String> schPredNames) {
+    public SchemeUnfolder(Collection<String> opNames, Collection<String> schPredNames) {
         this.opNames = opNames;
         this.schPredNames = schPredNames;
         //MODIFICADO
@@ -118,7 +117,7 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                                 // The scheme will be unfolded only if it is a
                                 // selected operation
                                 boolean isSelOp = false;
-                                AbstractIterator<String> opNamesIt = opNames.createIterator();
+                                Iterator<String> opNamesIt = opNames.iterator();
                                 while (opNamesIt.hasNext() && !isSelOp) {
                                     String opName = opNamesIt.next();
                                     if (opName.equals(axParaName)) {
@@ -253,14 +252,14 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                     ZDeclList zDeclList2 = zSchText2.getZDeclList();
                     Pred pred2 = zSchText2.getPred();
 
-                    AbstractRepository<String> varNameRep =
+                    Collection<String> varNameRep =
                             SpecUtils.getVarNames(unfoldedAxParaSchExpr);
                     PrimeVarsMaker primeVisitor = new PrimeVarsMaker(varNameRep);
 
 
                     boolean isSelOpOrSelPred = false;
-                    AbstractIterator<String> opNamesIt =
-                            opNames.createIterator();
+                    Iterator<String> opNamesIt =
+                            opNames.iterator();
                     while (opNamesIt.hasNext()) {
                         String opName = opNamesIt.next();
                         if (opName.equals(includedSchemeName)) {
@@ -268,8 +267,8 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                         }
                     }
 
-                    AbstractIterator<String> schPredNamesIt =
-                            schPredNames.createIterator();
+                    Iterator<String> schPredNamesIt =
+                            schPredNames.iterator();
                     while (schPredNamesIt.hasNext()) {
                         String schPredName = schPredNamesIt.next();
                         if (schPredName.equals(includedSchemeName)) {
@@ -339,7 +338,7 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                                     if (isXi) {
                                         // El esquema a expandir es un Xi, por lo que se agregan la conjunción de las igualdades
                                         // entre las variables del esquema a expandir y sus correspondientes variables primadas
-                                        AbstractIterator<String> it = varNameRep.createIterator();
+                                        Iterator<String> it = varNameRep.iterator();
                                         while (it.hasNext()) {
                                             zSchText.setPred(SpecUtils.andPreds(zSchText.getPred(),
                                                     SpecUtils.createUnchangedPred(it.next())));
@@ -480,13 +479,13 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
             }
 
             unfoldedAxParaSchExpr = SpecUtils.getAxParaSchExpr(unfoldedAxPara);
-            AbstractRepository<String> varNameRep = null;
+            Collection<String> varNameRep = null;
             if (unfoldedAxParaSchExpr != null)
             	varNameRep = SpecUtils.getVarNames(unfoldedAxParaSchExpr);
             PrimeVarsMaker primeVisitor = new PrimeVarsMaker(varNameRep);
 
             boolean isSelOpOrSelPred = false;
-            AbstractIterator<String> opNamesIt = opNames.createIterator();
+            Iterator<String> opNamesIt = opNames.iterator();
             while (opNamesIt.hasNext()) {
                 String opName = opNamesIt.next();
                 if (opName.equals(refExprName)) {
@@ -494,8 +493,8 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                 }
             }
 
-            AbstractIterator<String> schPredNamesIt =
-                    schPredNames.createIterator();
+            Iterator<String> schPredNamesIt =
+                    schPredNames.iterator();
             while (schPredNamesIt.hasNext()) {
                 String schPredName = schPredNamesIt.next();
                 if (schPredName.equals(refExprName)) {
@@ -540,7 +539,7 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                         if (isXi) {
                             // El esquema a expandir es un Xi, por lo que se agregan la conjunción de las igualdades
                             // entre las variables del esquema a expandir y sus correspondientes variables primadas
-                            AbstractIterator<String> it = varNameRep.createIterator();
+                            Iterator<String> it = varNameRep.iterator();
                             while (it.hasNext()) {
                                 unfoldedAxParaZSchText.setPred(SpecUtils.andPreds(unfoldedAxParaZSchText.getPred(), SpecUtils.createUnchangedPred(it.next())));
                             }
@@ -649,7 +648,7 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
             String refExprName = refExpr.getName().toString();
 
             boolean isSelOpOrSelPred = false;
-            AbstractIterator<String> opNamesIt = opNames.createIterator();
+            Iterator<String> opNamesIt = opNames.iterator();
             while (opNamesIt.hasNext()) {
                 String opName = opNamesIt.next();
                 if (opName.equals(refExprName)) {
@@ -657,8 +656,8 @@ public final class SchemeUnfolder implements SpecVisitor<Term>,
                 }
             }
 
-            AbstractIterator<String> schPredNamesIt =
-                    schPredNames.createIterator();
+            Iterator<String> schPredNamesIt =
+                    schPredNames.iterator();
             while (schPredNamesIt.hasNext()) {
                 String schPredName = schPredNamesIt.next();
                 if (schPredName.equals(refExprName)) {

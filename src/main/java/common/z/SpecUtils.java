@@ -9,9 +9,9 @@ import net.sourceforge.czt.z.impl.ZFactoryImpl;
 import net.sourceforge.czt.base.ast.Term;
 import net.sourceforge.czt.animation.eval.ZLive;
 import client.blogic.management.Controller;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
-import common.repository.ConcreteRepository;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ArrayList;
 import common.z.czt.visitors.CZTCloner;
 import common.z.czt.visitors.ContainsTermVerifier;
 import common.z.czt.visitors.ImpliesPredRemover;
@@ -52,8 +52,8 @@ public final class SpecUtils {
     }
     
     public static Spec UnfoldSpec(Spec spec, Controller c){
-    	AbstractRepository<String> opNames = c.getOpsToTestRep();
-		AbstractRepository<String> schPredNames = c.getSchemaPredicatesRep();
+    	Collection<String> opNames = c.getOpsToTestRep();
+		Collection<String> schPredNames = c.getSchemaPredicatesRep();
 		//System.out.println(SpecUtils.termToLatex(originalSpec));
 		return (Spec) spec.accept(new SchemeUnfolder(opNames,schPredNames));
     }
@@ -225,8 +225,8 @@ public final class SpecUtils {
 
 
 
-    public static AbstractRepository<String> getVarNames(SchExpr schExpr) {
-        AbstractRepository<String> varNamesRep = new ConcreteRepository<String>();
+    public static Collection<String> getVarNames(SchExpr schExpr) {
+        Collection<String> varNamesRep = new ArrayList<String>();
         DeclList declList = schExpr.getZSchText().getZDeclList();
         if (declList instanceof ZDeclList) {
             ZDeclList zDeclList = (ZDeclList) declList;
@@ -238,7 +238,7 @@ public final class SpecUtils {
                     if (nameList instanceof ZNameListImpl) {
                         ZNameListImpl zNameListImpl = (ZNameListImpl) nameList;
                         for (int k = 0; k < zNameListImpl.size(); k++) {
-                            varNamesRep.addElement(zNameListImpl.get(k).toString());
+                            varNamesRep.add(zNameListImpl.get(k).toString());
                         }
                     }
                 }
@@ -254,8 +254,8 @@ public final class SpecUtils {
      * @return an AbstractRepository&lt;String&gt; with the names of the included
      * schemas.
      */
-    public static AbstractRepository<String> getInclDeclNames(AxPara axPara) {
-        AbstractRepository<String> inclNames = new ConcreteRepository<String>();
+    public static Collection<String> getInclDeclNames(AxPara axPara) {
+        Collection<String> inclNames = new ArrayList<String>();
         ArrayList<String> namesNoRep = new ArrayList<String>();
         ZSchText zSchText = axPara.getZSchText();
         DeclList declList = zSchText.getDeclList();
@@ -311,7 +311,7 @@ public final class SpecUtils {
                                 }
                                 if (!namesNoRep.contains(name)) {
                                     namesNoRep.add(name);
-                                    inclNames.addElement(name);
+                                    inclNames.add(name);
                                 }
                             }
                         }
@@ -323,8 +323,8 @@ public final class SpecUtils {
         return inclNames;
     }
 
-    public static AbstractRepository<String> getInclDeclNames(SchExpr schExpr) {
-        AbstractRepository<String> inclNames = new ConcreteRepository<String>();
+    public static Collection<String> getInclDeclNames(SchExpr schExpr) {
+        Collection<String> inclNames = new ArrayList<String>();
         ArrayList<String> namesNoRep = new ArrayList<String>();
         String name = "";
 
@@ -359,7 +359,7 @@ public final class SpecUtils {
                 }
                 if (!namesNoRep.contains(name)) {
                     namesNoRep.add(name);
-                    inclNames.addElement(name);
+                    inclNames.add(name);
                 }
             }
         }
@@ -1015,8 +1015,8 @@ public final class SpecUtils {
         if (pred == null) {
             return assignedValues;
         }
-        AbstractRepository<Pred> predClauses = pred.accept(new AndPredClausesExtractor());
-        AbstractIterator<Pred> predClausesIt = predClauses.createIterator();
+        Collection<Pred> predClauses = pred.accept(new AndPredClausesExtractor());
+        Iterator<Pred> predClausesIt = predClauses.iterator();
         while (predClausesIt.hasNext()) {
             Pred auxPred = predClausesIt.next();
             if (auxPred instanceof MemPred) {

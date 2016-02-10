@@ -9,8 +9,8 @@ import client.blogic.management.ii.events.PrunningResult;
 import client.blogic.management.ii.events.Event_;
 import client.blogic.management.ii.EventAdmin;
 import client.blogic.management.ii.IIComponent;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import common.z.TClass;
 import common.z.czt.visitors.TClassNodeUnfolder;
 import client.blogic.management.communic.*;
@@ -32,7 +32,7 @@ public class TPrunning extends IIComponent{
 	private Map<InetAddress, Integer> mapRequests;
 	// Cantidad maxima de solicitudes a un servidor en particular
 	private final int maxRequests = 4;
-	private AbstractIterator<TClass> tClassIt;
+	private Iterator<TClass> tClassIt;
 	private boolean blocked;
 	private int serverNumber;
 	private Map<String,TClassNode> nodeLeaves;
@@ -62,12 +62,12 @@ public class TPrunning extends IIComponent{
 				serverNumber = 0;
 				serversList = CServersControl.getInstance().getServersList();
 				PruneTTreeRequested pruneTTreeRequested = (PruneTTreeRequested) event_;
-				AbstractRepository<TClass> leaves = pruneTTreeRequested.getLeaves();
-				/*AbstractIterator<TClass> tClassItAux = leaves.createIterator();
+				Collection<TClass> leaves = pruneTTreeRequested.getLeaves();
+				/*AbstractIterator<TClass> tClassItAux = leaves.iterator();
 				int nroLeaves=0;
 				while(tClassItAux.hasNext())
 					nroLeaves++;*/
-				tClassIt = leaves.createIterator();
+				tClassIt = leaves.iterator();
 				//EventAdmin eventAdmin = EventAdmin.getInstance();
 
 				//MODIFICADO obtiene todos las hojas nodos en una tabla hash, con clave nombre String, para poder unfoldear.

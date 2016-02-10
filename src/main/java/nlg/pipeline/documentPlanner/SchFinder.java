@@ -1,16 +1,14 @@
 package nlg.pipeline.documentPlanner;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.visitors.SchemeTTreeFinder;
 import client.blogic.testing.ttree.visitors.TClassLeavesFinder;
 
-import common.repository.AbstractIterator;
-import common.repository.AbstractRepository;
+import java.util.Iterator;
+
 import common.z.TClass;
 
 /** 
@@ -36,9 +34,9 @@ public class SchFinder {
         for (String key : opTTreeMap.keySet()) {
             TClassNode opTTreeRoot = opTTreeMap.get(key);
             
-            AbstractRepository<TClass> classes = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
+            Collection<TClass> classes = opTTreeRoot.acceptVisitor(new TClassLeavesFinder());
             
-            AbstractIterator<TClass> it = classes.createIterator();
+            Iterator<TClass> it = classes.iterator();
             
             while (it.hasNext()) {
             	ret.add(it.next());

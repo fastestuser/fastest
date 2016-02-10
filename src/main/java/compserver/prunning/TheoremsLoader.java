@@ -14,7 +14,7 @@ import compserver.prunning.rewriting.rwrules.RWRulesControl;
 import compserver.prunning.rewriting.rwrules.RWRule;
 import compserver.prunning.rewriting.rwrules.RWRuleLaw;
 import compserver.prunning.rewriting.rwrules.RWRuleOperator;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern; 
 import net.sourceforge.czt.z.ast.DeclList; // PRUEBA
@@ -92,7 +92,7 @@ public class TheoremsLoader {
 			RWRulesControl rwRulesControl = RWRulesControl.getInstance();
 			List<RWRuleOperator> rulesOperator = new ArrayList<RWRuleOperator>();
 			List<RWRuleLaw> rulesLaw = new ArrayList<RWRuleLaw>();
-			AbstractIterator<RWRule> itRules = rwRulesControl.createIterator();
+			Iterator<RWRule> itRules = rwRulesControl.iterator();
 			while(itRules.hasNext()){
 				RWRule rwRule = itRules.next();
 				if(rwRule instanceof RWRuleOperator)
@@ -231,7 +231,7 @@ public class TheoremsLoader {
 					theorem.setFormalParamList(formalParamList);
 					theorem.setZDeclList(zDeclList);
 					theorem.setRegEx(patterns);
-					theoremsControl.addElement(theorem);
+					theoremsControl.add(theorem);
 				}
 			}
 

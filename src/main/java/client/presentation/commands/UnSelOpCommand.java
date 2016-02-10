@@ -4,8 +4,8 @@ import java.io.*;
 import java.util.*;
 
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
@@ -41,8 +41,8 @@ public class UnSelOpCommand implements Command{
 			Controller controller = clientTextUI.getMyController();
 			
 			//We check if the name of the operation to be unselected is contained in the repository of loaded operations names
-			AbstractRepository<String> loadedOpsRep = controller.getLoadedOpsRep();
-			AbstractIterator<String> it = loadedOpsRep.createIterator();
+			Collection<String> loadedOpsRep = controller.getLoadedOpsRep();
+			Iterator<String> it = loadedOpsRep.iterator();
 			boolean hasFound = false; 
 			while (it.hasNext() && !hasFound)
 				if(it.next().equals(opName))
@@ -53,8 +53,8 @@ public class UnSelOpCommand implements Command{
 			}
 	
 			//We check if the operation to be unselected has been selected. If so, we remove it from the repository.
-			AbstractRepository<String> opsToTestRep = controller.getOpsToTestRep();
-			it = opsToTestRep.createIterator();
+			Collection<String> opsToTestRep = controller.getOpsToTestRep();
+			it = opsToTestRep.iterator();
 			hasFound = false; 
 			while (it.hasNext() && !hasFound)
 				if(it.next().equals(opName)){

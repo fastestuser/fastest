@@ -37,8 +37,8 @@ import client.blogic.management.ii.events.SpecLoaded;
 import client.blogic.testing.ttree.strategies.TTreeStrategy;
 import client.blogic.testing.ttree.tactics.Tactic;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+import java.util.Collection;
+
 import common.z.SpecUtils;
 import common.z.SpiveySpecsSorter;
 import common.z.czt.UniqueZLive;
@@ -157,7 +157,7 @@ public class LoadSpecCommand implements Command {
             // operation schemas
             OpNamesExtractor opNamesExtractor = new OpNamesExtractor(spec);
             spec.accept(opNamesExtractor);
-            AbstractRepository<String> opNamesRep = opNamesExtractor.getOpNames();
+            Collection<String> opNamesRep = opNamesExtractor.getOpNames();
 
             // The specification is traverse to identify the basic types
             List<String> basicTypeNames = spec.accept(new BasicTypeNamesExtractor());
@@ -197,7 +197,7 @@ public class LoadSpecCommand implements Command {
             controller.setOriginalSpec(spec);
             //controller.setUnfoldedSpec(spec);
             controller.setLoadedOpsRep(opNamesRep);
-            controller.setOpsToTestRep(new ConcreteRepository<String>());
+            controller.setOpsToTestRep(new ArrayList<String>());
             controller.setOpTTreeStrategyMap(new HashMap<String, TTreeStrategy>());
             controller.setTacticMap(new HashMap<String, List<Tactic>>());
             controller.setTypeCheckerManager(manager);

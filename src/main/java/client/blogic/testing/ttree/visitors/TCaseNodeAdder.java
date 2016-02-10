@@ -8,9 +8,9 @@ import common.z.TClass;
 import common.z.AbstractTCaseImpl;
 import common.z.AbstractTCase;
 import common.z.SpecUtils;
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 
 /**
@@ -61,22 +61,22 @@ public class TCaseNodeAdder implements TTreeVisitor<Boolean>{
 			SpecUtils.setAxParaName(unfoldedAxPara, SpecUtils.getAxParaName(foldedAxPara));
 			AbstractTCase unfoldedAbsTCase = new AbstractTCaseImpl(unfoldedAxPara, foldedAbsTCase.getSchName(), foldedAbsTCase.getVarExpMap());
 			TTreeNode tCaseNode = new TCaseNode(foldedAbsTCase, unfoldedAbsTCase, tClassNode);
-            AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-            AbstractRepository<TTreeNode> newChildren = new ConcreteRepository<TTreeNode>();
-            AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+            Collection<? extends TTreeNode> children = tClassNode.getChildren();
+            Collection<TTreeNode> newChildren = new ArrayList<TTreeNode>();
+            Iterator<? extends TTreeNode> childrenIt = children.iterator();
             if(children != null){
                 while(childrenIt.hasNext())
-                    newChildren.addElement(childrenIt.next());
+                    newChildren.add(childrenIt.next());
             }
-			newChildren.addElement(tCaseNode);
+			newChildren.add(tCaseNode);
 
 
 			tClassNode.setChildren(newChildren);
 			return new Boolean(true);
 		}
 		else{
-			AbstractRepository<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
-			AbstractIterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.createIterator();
+			Collection<? extends TTreeNode> tTreeNodeRep = tClassNode.getChildren();
+			Iterator<? extends TTreeNode> tTreeNodeIt = tTreeNodeRep.iterator();
 			boolean tClassFound = false;
 			while(tTreeNodeIt.hasNext() && tClassFound == false)
 				tClassFound = tTreeNodeIt.next().acceptVisitor(this).booleanValue();

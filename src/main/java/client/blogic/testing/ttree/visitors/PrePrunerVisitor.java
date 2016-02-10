@@ -10,8 +10,8 @@ import client.blogic.testing.ttree.TClassNode;
 import client.blogic.testing.ttree.TCaseNode;
 import common.z.TClass;
 import client.blogic.testing.prunning.PrePruner;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -38,10 +38,10 @@ public class PrePrunerVisitor implements TTreeVisitor<Boolean>{
                     return new Boolean(true);
 		}
 
-                AbstractRepository<? extends TTreeNode> tTreeNodeRep =
+                Collection<? extends TTreeNode> tTreeNodeRep =
                         tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> tTreeNodeIt =
-                        tTreeNodeRep.createIterator();
+		Iterator<? extends TTreeNode> tTreeNodeIt =
+                        tTreeNodeRep.iterator();
                 Boolean result = new Boolean(false);
 		while(tTreeNodeIt.hasNext())
                     result = (tTreeNodeIt.next().acceptVisitor(this)).booleanValue() && result;

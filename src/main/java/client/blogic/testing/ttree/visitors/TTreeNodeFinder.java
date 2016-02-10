@@ -2,8 +2,9 @@ package client.blogic.testing.ttree.visitors;
 
 import client.blogic.testing.ttree.*;
 import common.z.AbstractTCase;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
+
 import common.z.TClass;
 
 
@@ -36,8 +37,8 @@ public class TTreeNodeFinder implements TTreeVisitor<TTreeNode>{
 		return tClassNode;
 
 	// We obtain the childrens of this node
-        AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-        AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+        Collection<? extends TTreeNode> children = tClassNode.getChildren();
+        Iterator<? extends TTreeNode> childrenIt = children.iterator();
 	TTreeNode tTreeNode = null;
         while(childrenIt.hasNext() && tTreeNode==null){
             tTreeNode = childrenIt.next().acceptVisitor(this);

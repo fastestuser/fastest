@@ -15,20 +15,11 @@ import net.sourceforge.czt.z.ast.AxPara;
 import client.presentation.ClientTextUI;
 import client.blogic.management.Controller;
 import client.blogic.testing.ttree.tactics.Tactic;
-import client.blogic.testing.ttree.tactics.MTSTactic;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
 import common.z.SpecUtils;
 import common.z.OpScheme;
 import common.z.OpSchemeImpl;
-import client.blogic.testing.ttree.visitors.TTreeNodeFinder;
 import client.blogic.testing.ttree.*;
-import common.z.TClass;
 import common.fastest.FastestUtils;
-
-import net.sourceforge.czt.typecheck.z.ErrorAnn;
-import net.sourceforge.czt.typecheck.z.TypeCheckUtils;
-import common.z.czt.visitors.CZTCloner;
 
 /**
  * An instance of this class makes possible the addition of a new tactic (together

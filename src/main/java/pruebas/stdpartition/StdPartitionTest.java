@@ -19,7 +19,7 @@ import common.z.czt.visitors.*;
 import client.blogic.testing.ttree.tactics.StdPartition;
 import client.blogic.testing.ttree.tactics.StdPartitionsControl;
 import client.blogic.testing.ttree.tactics.StdPartitionLoader;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 
 
 /**
@@ -97,7 +97,7 @@ public class StdPartitionTest {
             // de particiones estandar
 
             (new StdPartitionLoader(args[1])).loadStdPartitions();
-            AbstractIterator<StdPartition> stdPartitionIt = StdPartitionsControl.getInstance().createIterator();
+            Iterator<StdPartition> stdPartitionIt = StdPartitionsControl.getInstance().iterator();
             
             
          

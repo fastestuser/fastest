@@ -6,7 +6,7 @@ import net.sourceforge.czt.z.ast.OrPred;
 import net.sourceforge.czt.z.visitor.PredVisitor;
 import net.sourceforge.czt.z.visitor.AndPredVisitor;
 import net.sourceforge.czt.z.visitor.OrPredVisitor;
-import common.repository.AbstractRepository;
+import java.util.Collection;
 
 /**
  * Given a predicate P in Conjunctive Normal Form (CNF), an instance of this class allow the 
@@ -17,9 +17,9 @@ import common.repository.AbstractRepository;
 public class PredRemover
         implements PredVisitor<Pred>, OrPredVisitor<Pred>, AndPredVisitor<Pred> {
 
-    private AbstractRepository<String> varNamesRep;
+    private Collection<String> varNamesRep;
 
-    public PredRemover(AbstractRepository<String> varNamesRep) {
+    public PredRemover(Collection<String> varNamesRep) {
         this.varNamesRep = varNamesRep;
     }
 

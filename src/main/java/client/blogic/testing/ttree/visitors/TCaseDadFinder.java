@@ -3,8 +3,8 @@ package client.blogic.testing.ttree.visitors;
 import client.blogic.testing.ttree.*;
 import common.z.TClass;
 import common.z.AbstractTCase;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 
 
 /**
@@ -28,8 +28,8 @@ public class TCaseDadFinder implements TTreeVisitor<String>{
 		String dadName = "";
 		TClass tClass = (TClass) tClassNode.getUnfoldedValue().clone();
 		String tClassNodeName = tClass.getSchName();
-		AbstractRepository<? extends TTreeNode> children = tClassNode.getChildren();
-		AbstractIterator<? extends TTreeNode> childrenIt = children.createIterator();
+		Collection<? extends TTreeNode> children = tClassNode.getChildren();
+		Iterator<? extends TTreeNode> childrenIt = children.iterator();
 		while(childrenIt.hasNext() && "".equals(dadName)){
 		TTreeNode tTreeNode = childrenIt.next();
 		if(tTreeNode instanceof TCaseNode){

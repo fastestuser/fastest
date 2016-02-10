@@ -27,8 +27,8 @@ import common.z.SpecUtils;
 import common.z.czt.visitors.ContainsTermVerifier;
 import common.z.czt.visitors.AndPredClausesExtractor;
 import common.z.TClass;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+import java.util.Collection;
+import java.util.Iterator;
 import common.z.UtilSymbols;
 
 /**
@@ -97,9 +97,9 @@ public class TClassFiniteModel {
                             }
                             Pred tClassPred = SpecUtils.getAxParaPred(axPara);
                             if (tClassPred != null) {
-                                AbstractRepository<Pred> predRep =
+                                Collection<Pred> predRep =
                                         tClassPred.accept(new AndPredClausesExtractor());
-                                AbstractIterator<Pred> predIt = predRep.createIterator();
+                                Iterator<Pred> predIt = predRep.iterator();
                                 boolean inEquality = false;
                                 // We verify whether the variable is equal to a constant
                                 // expression
@@ -300,7 +300,7 @@ public class TClassFiniteModel {
                                 if (groupPreds.size() > 0) {
                                     //AbstractRepository<Pred> predRep =
                                     // tClassPred.accept(new AndPredClausesExtractor());
-                                    // AbstractIterator<Pred> predIt = predRep.createIterator();
+                                    // AbstractIterator<Pred> predIt = predRep.iterator();
                                     boolean inEquality = false;
                                     // We verify whether the variable is equal to a constant
                                     // expression

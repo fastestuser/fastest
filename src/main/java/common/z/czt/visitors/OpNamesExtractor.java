@@ -1,7 +1,7 @@
 package common.z.czt.visitors;
 
-import common.repository.AbstractRepository;
-import common.repository.ConcreteRepository;
+import java.util.Collection;
+import java.util.ArrayList;
 import common.z.SchemeType;
 import common.z.SpecUtils;
 import common.z.UtilSymbols;
@@ -90,12 +90,12 @@ public class OpNamesExtractor implements SpecVisitor<SchemeType>,
     // The list of paragraph that conform the loaded specification
     private ZParaList zParaList;
     // The names of the operations that have been found
-    private AbstractRepository<String> opNames;
+    private Collection<String> opNames;
     // The types of schemas previously calculated
     private Map<String, SchemeType> schemesTypes;
 
     public OpNamesExtractor(Spec spec) {
-        opNames = new ConcreteRepository<String>();
+        opNames = new ArrayList<String>();
         schemesTypes = new HashMap<String, SchemeType>();
 
         for (Sect sect : spec.getSect()) {
@@ -156,7 +156,7 @@ public class OpNamesExtractor implements SpecVisitor<SchemeType>,
 
 
         if(schemeType == SchemeType.OP)
-            opNames.addElement(schemeName);
+            opNames.add(schemeName);
         return schemeType;
     }
 
@@ -421,7 +421,7 @@ public class OpNamesExtractor implements SpecVisitor<SchemeType>,
     }
 
 
-    public AbstractRepository<String> getOpNames(){
+    public Collection<String> getOpNames(){
         return opNames;
     }
 }

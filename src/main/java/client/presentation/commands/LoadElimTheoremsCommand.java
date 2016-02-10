@@ -2,7 +2,7 @@ package client.presentation.commands;
 
 import java.io.*;
 import client.presentation.ClientTextUI;
-import common.repository.AbstractIterator;
+import java.util.Iterator;
 import compserver.prunning.TheoremsControl;
 import compserver.prunning.Theorem;
 import compserver.prunning.TheoremsLoader;
@@ -36,14 +36,14 @@ public class LoadElimTheoremsCommand implements Command{
 
 
 		TheoremsControl theoremsControl = TheoremsControl.getInstance();
-		AbstractIterator<Theorem> theoremsIt = theoremsControl.createIterator();
+		Iterator<Theorem> theoremsIt = theoremsControl.iterator();
 		while(theoremsIt.hasNext()){
 			Theorem auxTheorem = theoremsIt.next();
 			theoremsIt.remove();
 		}
 
 		RWRulesControl rwRulesControl = RWRulesControl.getInstance();
-		AbstractIterator<RWRule> itRules = rwRulesControl.createIterator();
+		Iterator<RWRule> itRules = rwRulesControl.iterator();
 		while(itRules.hasNext()){
 			RWRule rwRule = itRules.next();
 			itRules.remove();

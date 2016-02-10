@@ -2,7 +2,7 @@ package client.presentation.commands;
 
 import client.blogic.management.Controller;
 import client.presentation.ClientTextUI;
-import common.repository.ConcreteRepository;
+import java.util.ArrayList;
 import java.io.PrintWriter;
 
 /**
@@ -23,7 +23,7 @@ public class UnSelAllPredsCommand implements Command {
             output.println("Invalid parameters.  Try 'help'.");
         } else {
             Controller controller = clientTextUI.getMyController();
-            controller.setSchemaPredicatesRep(new ConcreteRepository<String>());
+            controller.setSchemaPredicatesRep(new ArrayList<String>());
 
         }
     }

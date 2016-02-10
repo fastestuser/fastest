@@ -9,8 +9,7 @@ import net.sourceforge.czt.animation.eval.TextUI;
 import net.sourceforge.czt.animation.eval.ZLive;
 
 import common.z.czt.UniqueZLive;
-import compserver.prunning.rewriting.rwrules.RWRulesControl;
-import net.sourceforge.czt.z.ast.DeclList; 
+import net.sourceforge.czt.z.ast.DeclList;
 import net.sourceforge.czt.base.ast.Term;
 import common.z.SpecUtils;
 import net.sourceforge.czt.z.ast.AxPara;
@@ -103,7 +102,7 @@ public class RWRulesLoader {
 				rwRuleLaw.setName(ruleName);
 				rwRuleLaw.setZDeclList(zDeclList);
 				rwRuleLaw.setRegEx(regex);
-				rwRulesControl.addElement(rwRuleLaw);
+				rwRulesControl.add(rwRuleLaw);
 			}
 		}
 		catch(FileNotFoundException e){

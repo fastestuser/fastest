@@ -1,13 +1,15 @@
 package client.presentation.commands;
 
 import java.io.*;
+import java.util.Collection;
 
 
 import net.sourceforge.czt.z.ast.Spec;
 
 import client.presentation.ClientTextUI;
-import common.repository.AbstractRepository;
-import common.repository.AbstractIterator;
+
+import java.util.Iterator;
+
 import client.blogic.management.Controller;
 
 
@@ -41,8 +43,8 @@ public final class ShowLoadedOpsCommand implements Command{
 			if (spec == null)
 				output.println("There is not any specification loaded.");
 			else{
-				AbstractRepository<String> opNamesRep = controller.getLoadedOpsRep();
-				AbstractIterator<String> it = opNamesRep.createIterator();
+				Collection<String> opNamesRep = controller.getLoadedOpsRep();
+				Iterator<String> it = opNamesRep.iterator();
 				while(it.hasNext())
 					output.println("* "+ it.next());
 			}
