@@ -41,13 +41,15 @@ uut : '@UUT' ID args STMTEND                             # UUTNoRetVal
 epilogue: '@EPILOGUE' ( PLCODE | ID '.@EPILOGUE')+ ;
 
 /******************* LAWS *********************/
-law: ( ID ':' )? ( lawRefinement );
-lawRefinement : zExprs '==>' refinement ( ',' refinement )* ;
+law: ( ID ':' )? ( lawRefinement | biRefLaw);
+
+biRefLaw : ID '<==>' refinement ( ',' refinement )*;
+
+lawRefinement : zExprs '==>' refinement ( ',' refinement )*;
 
 zExprs : zExpr ('==>' zExprs)? ;
 
-refinement : lvalue 'AS' type constMapping? withRef?   # ImplRef
-           ;
+refinement : lvalue 'AS' type constMapping? withRef?;
 
 lvalue : ID                 # VarLValue
        | '[' NUMBER? ']'    # ArrayLValue

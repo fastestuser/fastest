@@ -7,8 +7,11 @@ import client.blogic.testing.atcal.parser.AtcalBaseVisitor;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
+import client.blogic.testing.atcal.z.ast.ZVar;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import common.z.AbstractTCase;
@@ -37,6 +40,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
     private String epilogue;                      // programming language code (defined in this rule and/or imported)
     private final Generator codegen;              // code generator
     private final String concreteTCaseName;       // name of the concrete test case to generate
+    private final BiMap<ZVar, String> zVarToImpVarMap;  // bidirectional mapping of z vars to the implementation vars
 
     /**
      * Creates a new ATCAL evaluator for the given abstract test case.
@@ -76,7 +80,8 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
             e.printStackTrace();
         }
         this.codegen = codegen;
-        this.concreteTCaseName = SpecUtils.getAxParaName(abstractTCase).replaceAll("_TCASE", "_CTCASE");
+        this.concreteTCaseName = SpecUtils.getAxParaName(abstractTCase).replace("_TCASE", "_CTCASE");
+        this.zVarToImpVarMap = HashBiMap.create();
     }
 
     private AtcalParser parseAtcalFile(String fileName) {
@@ -116,7 +121,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
         // Evaluate refinement laws
         for (AtcalParser.LawContext lawCtx : ctx.laws().law()) {
             RefinementLawEvaluator refLawEval =
-                    new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps);
+                    new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps, zVarToImpVarMap);
             this.refinedLawsCode = refLawEval.visit(ctx.laws());
         }
 
@@ -127,7 +132,7 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         // Evaluate the UUT
         RefinementLawEvaluator refLawEval =
-                new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps);
+                new RefinementLawEvaluator(zExprSchema, null, datatypes, lValueFactory, zVarConstantMaps, zVarToImpVarMap);
         CodeBlock uutCallBlock = refLawEval.visit(ctx.uut());
 
         // Get preamble if present
@@ -150,6 +155,6 @@ public class AtcalEvaluator extends AtcalBaseVisitor<ConcreteTCase> {
 
         // Generate a new concrete test case with the result of the refinement.
         return new ConcreteTCase(concreteTCaseName, this.codegen.getTargetLanguage(), testCaseCode, zExprSchema,
-                abstractTCase, zVarConstantMaps);
+                abstractTCase, zVarConstantMaps, zVarToImpVarMap);
     }
 }

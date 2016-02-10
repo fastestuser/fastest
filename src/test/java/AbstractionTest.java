@@ -3,6 +3,8 @@ import client.blogic.testing.atcal.Atcal;
 import client.blogic.testing.atcal.ConcreteTCase;
 import client.blogic.testing.atcal.ConstantMapper;
 import client.blogic.testing.atcal.z.ast.*;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import common.z.AbstractTCase;
@@ -20,7 +22,7 @@ import java.util.Map;
  */
 public class AbstractionTest {
 
-    private static final ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", null, null, null);
+    private static final ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", null, null, null, null);
 
     private Map<String, Object> loadYaml(String resourceName) {
         // Parse the YAML output and abstract it back to a Z schema
@@ -55,6 +57,7 @@ public class AbstractionTest {
 
         // We are not running the refinement law evaluator, thus create the maps of constants for the Z vars manually.
         Map<String, ConstantMapper> zVarConstantMaps = Maps.newHashMap();
+        BiMap<ZVar, String> zVarImpVarMap = HashBiMap.create();
         ConstantMapper constantMapper = new ConstantMapper();
         for (ZVar zVar : myHash.getMap().values()) {
             constantMapper.toString((ZExprConst) zVar.getValue());
@@ -62,7 +65,7 @@ public class AbstractionTest {
         zVarConstantMaps.put("myHash", constantMapper);
 
         // Create a concrete test case that includes the maps of constants
-        ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", zExprSchema, null, zVarConstantMaps);
+        ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", zExprSchema, null, zVarConstantMaps, zVarImpVarMap);
         Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/abstractionTest.yml");
         System.out.println(SpecUtils.termToLatex(abstraction.toZExpr(yamlData, "myHash", zExprSchema)));
@@ -81,6 +84,10 @@ public class AbstractionTest {
         AbstractTCase atc = AbstractTCaseImpl.fromFile(Resources.getResource("AbstractionTest/toAxPara_test.tex"));
         ZExprSchema atcalAtc = Atcal.ATCToZExpr(atc);
         Map<String, ConstantMapper> zVarConstantMaps = Maps.newHashMap();
+        BiMap<ZVar, String> zVarImpVarMap = HashBiMap.create();
+        zVarImpVarMap.put(atcalAtc.getVar("myA").get(), "myA");
+        zVarImpVarMap.put(atcalAtc.getVar("myArr").get(), "myArr");
+        zVarImpVarMap.put(atcalAtc.getVar("myHash").get(), "myHash");
         ConstantMapper constantMapper = new ConstantMapper();
         constantMapper.toString(ZExprConst.basic("1", "myHash"));
         constantMapper.toString(ZExprConst.basic("a", "myHash"));
@@ -89,7 +96,7 @@ public class AbstractionTest {
         constantMapper.toString(ZExprConst.basic("3", "myHash"));
         constantMapper.toString(ZExprConst.basic("c", "myHash"));
         zVarConstantMaps.put("myHash", constantMapper);
-        ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", atcalAtc, atc, zVarConstantMaps);
+        ConcreteTCase concreteTCase = new ConcreteTCase("test", "test", "test", atcalAtc, atc, zVarConstantMaps, zVarImpVarMap);
         Abstraction abstraction = new Abstraction(concreteTCase);
         Map<String, Object> yamlData = loadYaml("AbstractionTest/toAxPara_test.yml");
         System.out.println(SpecUtils.termToLatex(abstraction.toAxPara(yamlData)));

@@ -142,25 +142,23 @@ public class Abstraction {
      * @return a CZT schema with the abstracted values
      */
     public AxPara toAxPara(Map<String, Object> yamlData) {
-        // FIXME: Z variables name and implementation variable name must be the same for this to work.
         Map<RefExpr, Expr> vars = Maps.newHashMap();
         for (Map.Entry<String, Object> var : yamlData.entrySet()) {
-            RefExpr zVar = zFactory.createRefExpr(zFactory.createZName(var.getKey()));
-
-            // If the type of the zVar being abstracted is unspecified choose one for it (for a limited subset).
             ZExpr targetType;
-            Optional<ZVar> targetTypeOption = concreteTCase.getZExprSchema().getVar(var.getKey());
-            if (targetTypeOption.isPresent()) {
-                targetType = targetTypeOption.get().getValue();
+            String zVarName;
+            if(concreteTCase.getzVarImpVarMap().inverse().containsKey(var.getKey())) {
+                zVarName = concreteTCase.getzVarImpVarMap().inverse().get(var.getKey()).getName();
+                targetType = concreteTCase.getZExprSchema().getVar(zVarName).get().getValue();
             } else {
+                // If the type of the zVar being abstracted is unspecified choose one for it (for a limited subset).
+                zVarName = var.getKey();
                 targetType = new ZExprNum(0);
             }
-
-            Expr zVarValue = toZExpr(var.getValue(), var.getKey(), targetType);
+            RefExpr zVar = zFactory.createRefExpr(zFactory.createZName(zVarName));
+            Expr zVarValue = toZExpr(var.getValue(), zVarName, targetType);
             vars.put(zVar, zVarValue);
         }
         Pred pred2 = SpecUtils.createAndPred(vars);
-
         Name name = zFactory.createZName(concreteTCase.getName() + "_RUN");
         DeclList declList = SpecUtils.getAxParaListOfDecl(concreteTCase.getAbstractTCase().getMyAxPara());
 

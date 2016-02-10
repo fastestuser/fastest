@@ -3,6 +3,7 @@ import client.blogic.testing.atcal.apl.*;
 import client.blogic.testing.atcal.parser.AtcalLexer;
 import client.blogic.testing.atcal.parser.AtcalParser;
 import client.blogic.testing.atcal.z.ast.*;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -76,7 +77,7 @@ public class RefinementLawEvaluatorTest {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         AtcalParser parser = new AtcalParser(tokens);
         ParseTree tree = parser.lawRefinement(); // begin parsing at lawRefinement
-        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory(), Maps.newHashMap());
+        RefinementLawEvaluator eval = new RefinementLawEvaluator(scope, new APLVar("", null), DATATYPES, new LValueFactory(), Maps.newHashMap(), HashBiMap.create());
         return eval.visit(tree);
     }
 

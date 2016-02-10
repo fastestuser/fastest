@@ -7,6 +7,7 @@ package client.blogic.testing.atcal;
 import client.blogic.testing.atcal.apl.APLExpr;
 import client.blogic.testing.atcal.z.ast.ZExprConst;
 import client.blogic.testing.atcal.z.ast.ZExprSchema;
+import client.blogic.testing.atcal.z.ast.ZVar;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import common.z.AbstractTCase;
@@ -24,6 +25,7 @@ public class ConcreteTCase {
     private final AbstractTCase abstractTCase;
     private final ZExprSchema zExprSchema;
     private final Map<String, ConstantMapper> zVarConstantMaps;
+    private final BiMap<ZVar, String> zVarImpVarMap;
 
     /**
      * Returns a new immutable instance of a refined test case
@@ -31,13 +33,15 @@ public class ConcreteTCase {
      * @param language the programming language
      * @param code     the code of the program
      */
-    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase, Map<String, ConstantMapper> zVarConstantMaps) {
+    public ConcreteTCase(String name, String language, String code, ZExprSchema zExprSchema, AbstractTCase abstractTCase,
+                         Map<String, ConstantMapper> zVarConstantMaps, BiMap<ZVar, String> zVarImpVarMap) {
         this.name = name;
         this.language = language;
         this.code = code;
         this.abstractTCase = abstractTCase;
         this.zExprSchema = zExprSchema;
         this.zVarConstantMaps = zVarConstantMaps;
+        this.zVarImpVarMap = zVarImpVarMap;
     }
 
     /**
@@ -92,6 +96,15 @@ public class ConcreteTCase {
      */
     public Map<String, ConstantMapper> getZVarConstantMaps() {
         return zVarConstantMaps;
+    }
+
+    /**
+     * Gets the bijection map used to map the Z variables into implementation variables
+     *
+     * @return the bijection map
+     */
+    public BiMap<ZVar, String> getzVarImpVarMap() {
+        return zVarImpVarMap;
     }
 
     /**

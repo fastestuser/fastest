@@ -141,6 +141,12 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLaw(AtcalParser.LawContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link AtcalParser#biRefLaw}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitBiRefLaw(AtcalParser.BiRefLawContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link AtcalParser#lawRefinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -153,12 +159,11 @@ public interface AtcalVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitZExprs(AtcalParser.ZExprsContext ctx);
 	/**
-	 * Visit a parse tree produced by the {@code ImplRef}
-	 * labeled alternative in {@link AtcalParser#refinement}.
+	 * Visit a parse tree produced by {@link AtcalParser#refinement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
-	T visitImplRef(AtcalParser.ImplRefContext ctx);
+	T visitRefinement(AtcalParser.RefinementContext ctx);
 	/**
 	 * Visit a parse tree produced by the {@code VarLValue}
 	 * labeled alternative in {@link AtcalParser#lvalue}.
