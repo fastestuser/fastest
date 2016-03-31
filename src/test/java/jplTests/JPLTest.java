@@ -2,16 +2,13 @@ package jplTests;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
-import jpl.Atom;
-import jpl.Query;
-import jpl.Term;
-import jpl.Variable;
+import org.jpl7.Atom;
+import org.jpl7.Query;
+import org.jpl7.Term;
+import org.jpl7.Variable;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -19,7 +16,7 @@ import java.util.List;
  */
 public class JPLTest {
 
-//    @Test
+    @Test
     public void test0() {
         String t0 = "consult('src/test/java/jplTests/test.pl')";
         assert (Query.hasSolution(t0));
@@ -30,7 +27,7 @@ public class JPLTest {
         System.out.println("passed");
     }
 
-//    @Test
+    @Test
     public void test1() {
 
         // Load swipl symbol definitions into global symbol namespace to make them available to other dynamic libraries.
@@ -61,11 +58,11 @@ public class JPLTest {
         assert (Query.hasSolution(t5));
 
         System.out.println(Query.oneSolution(t5));
-        List<Hashtable> t = Arrays.asList(Query.nSolutions(t5, 2));
+        List<Map<String, Term>> t = Arrays.asList(Query.nSolutions(t5, 2));
         System.out.println(t);
     }
 
-//    @Test
+    @Test
     public void test2() {
 
         // Load database
